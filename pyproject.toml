@@ -21,7 +21,7 @@ test = [
 ]
 
 [project.scripts]
-japps = "src.japps.main:app"
+japps = "jhub_apps.japps.main:app"
 
 [tool.hatch.version]
 source = "nodejs"

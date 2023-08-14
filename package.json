@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "build": "tsc -p src && webpack",
+    "build": "tsc -p jhub_apps && webpack",
     "clean": "rimraf build",
     "prepublishOnly": "npm run build"
   },
