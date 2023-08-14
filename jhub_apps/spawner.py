@@ -47,3 +47,11 @@ class JHubSpawner(SimpleLocalProcessSpawner):
         if self.user_options.get('env'):
             env.update(self.user_options['env'])
         return env
+
+    async def start(self):
+        print("*"*200)
+        print("*"*200)
+        print(f"User options: {self.user_options}")
+        print("*"*200)
+        print("*"*200)
+        return await super().start()
