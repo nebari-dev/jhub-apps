@@ -1,24 +1,20 @@
 import shlex
+from pathlib import Path
 
+from jinja2 import Template
 from jupyterhub.spawner import SimpleLocalProcessSpawner
 
+TEMPLATES_DIR = Path(__file__).parent / "templates"
 
 class JHubSpawner(SimpleLocalProcessSpawner):
     def _options_form_default(self):
         default_env = "YOURNAME=%s\n" % self.user.name
-        return """
-        <div class="form-group">
-            <label for="args">Extra notebook CLI arguments</label>
-            <input name="args" class="form-control"
-                placeholder="e.g. --debug"></input>
-        </div>
-        <div class="form-group">
-            <label for="env">Environment variables (one per line)</label>
-            <textarea class="form-control" name="env">{env}</textarea>
-        </div>
-        """.format(
-            env=default_env
+        options_template = TEMPLATES_DIR / "server_options.html"
+        runner_template = Template(open(options_template).read())
+        rendered_template = runner_template.render(
+            env=default_env,
         )
+        return rendered_template
 
     def options_from_form(self, formdata):
         options = {}
