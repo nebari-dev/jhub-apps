@@ -1,36 +1,47 @@
 [build-system]
-requires = ["hatchling","hatch-nodejs-version"]
+requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "jupyter-server-example"
-description = "Jupyter Server Example"
+name = "jhub-apps"
+description = 'JupyterHub Apps'
 readme = "README.md"
-license = ""
 requires-python = ">=3.8"
+license = "MIT"
+
 dependencies = [
-    "jinja2",
-    "jupyter_server",
+    "hatchling",
+    "hatch",
+    "requests",
 ]
 dynamic = ["version"]
 
-[project.optional-dependencies]
-test = [
-    "pytest",
-    "pytest-asyncio",
-]
+[project.entry-points.jhub_apps]
+jhub_apps = "jhub_apps"
 
-[project.scripts]
-japps = "jhub_apps.japps.main:app"
 
 [tool.hatch.version]
-source = "nodejs"
+path = "jhub_apps/__about__.py"
 
-[tool.hatch.build.targets.wheel.shared-data]
-"etc/jupyter/jupyter_server_config.d" = "etc/jupyter/jupyter_server_config.d"
-
-[tool.hatch.build.hooks.jupyter-builder]
+[tool.hatch.envs.default]
 dependencies = [
-    "hatch-jupyter-builder>=0.8.2",
+    "pytest",
+    "pytest-cov",
+    "jupyterhub",
 ]
-build-function = "hatch_jupyter_builder.npm_builder"
+
+[[tool.hatch.envs.test.matrix]]
+python = ["38", "39", "310", "311"]
+
+[tool.coverage.run]
+branch = true
+parallel = true
+omit = [
+    "jhub_apps/__about__.py",
+]
+
+[tool.hatch.build.targets.wheel]
+include = ["jhub_apps"]
+
+[project.scripts]
+japps = "jhub_apps.main:app"
