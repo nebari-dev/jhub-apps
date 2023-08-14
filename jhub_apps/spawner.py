@@ -7,7 +7,11 @@ from jupyterhub.spawner import SimpleLocalProcessSpawner
 TEMPLATES_DIR = Path(__file__).parent / "templates"
 
 class JHubSpawner(SimpleLocalProcessSpawner):
+
+    cmd = ['jupyterhub-singleuser', '--debug']
+
     def _options_form_default(self):
+        # https://jupyterhub.readthedocs.io/en/stable/reference/spawners.html#spawner-options-form
         default_env = "YOURNAME=%s\n" % self.user.name
         options_template = TEMPLATES_DIR / "server_options.html"
         runner_template = Template(open(options_template).read())

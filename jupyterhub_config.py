@@ -20,7 +20,6 @@ c.JupyterHub.spawner_class = JHubSpawner
 c.Spawner.default_url = '/lab'
 
 c.JupyterHub.log_level = 10
-c.Spawner.cmd = ['jupyterhub-singleuser', '--debug']
 
 
 # only listen on localhost for testing
