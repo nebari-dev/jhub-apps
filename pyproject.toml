@@ -21,9 +21,7 @@ test = [
 ]
 
 [project.scripts]
-jupyter-simple-ext1 = "simple_ext1.application:main"
-jupyter-simple-ext11 = "simple_ext11.application:main"
-jupyter-simple-ext2 = "simple_ext2.application:main"
+japps = "src.japps.main:app"
 
 [tool.hatch.version]
 source = "nodejs"
