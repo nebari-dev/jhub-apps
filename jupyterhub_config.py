@@ -1,4 +1,4 @@
-"""sample jupyterhub config file for testing
+"""Sample jupyterhub config file for testing
 
 configures jupyterhub with dummyauthenticator and simplespawner
 to enable testing without administrative privileges.
@@ -10,15 +10,9 @@ from jupyterhub.auth import DummyAuthenticator
 
 c.JupyterHub.authenticator_class = DummyAuthenticator
 
-# Optionally set a global password that all users must use
-# c.DummyAuthenticator.password = "your_password"
-
 from jhub_apps.spawner import JHubSpawner
 
 c.JupyterHub.spawner_class = JHubSpawner
-# c.JupyterHub.spawner_class = SimpleLocalProcessSpawner
-c.Spawner.default_url = '/lab'
-
 c.JupyterHub.log_level = 10
 
 
