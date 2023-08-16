@@ -49,7 +49,12 @@ c.JupyterHub.services = [
         "command": ["uvicorn", "jhub_apps.service.app:app", "--port", "10202"],
         "oauth_redirect_uri": oauth_redirect_uri,
         "environment": {"PUBLIC_HOST": public_host},
-    }
+    },
+    {
+        "name": "launcher",
+        "url": "http://127.0.0.1:5000",
+        "command": ["python", "-m",  "jhub_apps.launcher.main"],
+    },
 ]
 
 c.JupyterHub.load_roles = [

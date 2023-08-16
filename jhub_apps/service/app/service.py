@@ -6,6 +6,7 @@ from .client import get_client
 from .models import AuthorizationError, HubApiError, User
 from .security import get_current_user
 
+
 # APIRouter prefix cannot end in /
 service_prefix = os.getenv("JUPYTERHUB_SERVICE_PREFIX", "").rstrip("/")
 router = APIRouter(prefix=service_prefix)
