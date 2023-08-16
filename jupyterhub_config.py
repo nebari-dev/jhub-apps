@@ -7,6 +7,7 @@ to enable testing without administrative privileges.
 c = get_config()  # noqa
 
 from jupyterhub.auth import DummyAuthenticator
+# c = config_for_dashboards(c)
 
 c.JupyterHub.authenticator_class = DummyAuthenticator
 

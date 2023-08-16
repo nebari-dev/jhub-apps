@@ -6,9 +6,26 @@ from jupyterhub.spawner import SimpleLocalProcessSpawner
 
 TEMPLATES_DIR = Path(__file__).parent / "templates"
 
-class JHubSpawner(SimpleLocalProcessSpawner):
+# presentation_path = "Panel_Introduction.ipynb"
+presentation_path = "/Users/aktech/quansight/jhub-apps/test_panel_hello.py"
+base_url = "http://127.0.0.1:8000"
+origin_host = "localhost:8000"
 
-    cmd = ['jupyterhub-singleuser', '--debug']
+
+DEFAULT_CMD = ['python', '-m', 'jhsingle_native_proxy.main', '--authtype=none']
+PANEL_ARGS = [
+    '--destport=0', 'python', '{-}m', 'bokeh_root_cmd.main', f'{presentation_path}',
+    '{--}port={port}', '--debug',
+    '{--}allow-websocket-origin='+f'{origin_host}',
+    '{--}server=panel',
+    '{--}prefix='+f'{base_url}',
+    '--ready-check-path=/ready-check',
+]
+
+
+class JHubSpawner(SimpleLocalProcessSpawner):
+    # cmd = ['jupyterhub-singleuser', '--debug']
+    cmd = DEFAULT_CMD
 
     def _options_form_default(self):
         # https://jupyterhub.readthedocs.io/en/stable/reference/spawners.html#spawner-options-form
@@ -40,6 +57,7 @@ class JHubSpawner(SimpleLocalProcessSpawner):
         argv = super().get_args()
         if self.user_options.get('argv'):
             argv.extend(self.user_options['argv'])
+        argv.extend(PANEL_ARGS)
         return argv
 
     def get_env(self):
@@ -49,9 +67,9 @@ class JHubSpawner(SimpleLocalProcessSpawner):
         return env
 
     async def start(self):
-        print("*"*200)
-        print("*"*200)
+        print("*" * 200)
+        print("*" * 200)
         print(f"User options: {self.user_options}")
-        print("*"*200)
-        print("*"*200)
+        print("*" * 200)
+        print("*" * 200)
         return await super().start()
