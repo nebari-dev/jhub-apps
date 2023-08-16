@@ -18,6 +18,7 @@ c.JupyterHub.log_level = 10
 
 # only listen on localhost for testing
 c.JupyterHub.bind_url = 'http://127.0.0.1:8000'
+c.JupyterHub.allow_named_servers = True
 
 c.JupyterHub.services = [
     {
