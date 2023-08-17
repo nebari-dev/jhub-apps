@@ -8,7 +8,10 @@ def app():
         {'/app': create_app},
         port=5000,
         address="localhost",
-        allow_websocket_origin=["localhost:8000"],
+        allow_websocket_origin=[
+            "localhost:8000",
+            "127.0.0.1:8000",
+        ],
         show=False,
     )
 
