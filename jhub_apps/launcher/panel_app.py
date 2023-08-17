@@ -1,14 +1,20 @@
 import panel as pn
 
 
-def create_dashboard():
-    pass
+name_input = pn.widgets.TextInput(name='Name')
+filepath_input = pn.widgets.TextInput(name='Filepath')
+description_input = pn.widgets.TextAreaInput(name='Description')
+
+
+def create_dashboard(event):
+    name = name_input.value
+    filepath = filepath_input.value
+    description = description_input.value
+    print(f"Name: {name}, Filepath: {filepath}, Description: {description}")
+    print(event)
 
 
 def create_app():
-    name_input = pn.widgets.TextInput(name='Name')
-    filepath_input = pn.widgets.TextInput(name='Filepath')
-    description_input = pn.widgets.TextAreaInput(name='Description')
     create_button = pn.widgets.Button(name='Create Dashboard',  button_type='primary')
     create_button.on_click(create_dashboard)
 
