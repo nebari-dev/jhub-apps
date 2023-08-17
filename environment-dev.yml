@@ -1,0 +1,12 @@
+name: jhub-apps-dev
+channels:
+  - conda-forge
+dependencies:
+  - python ==3.10
+  - fastapi
+  - httpx
+  - python-multipart
+  - uvicorn
+  - jupyterhub
+  - jupyter
+
