@@ -54,6 +54,7 @@ c.JupyterHub.services = [
         "name": "launcher",
         "url": "http://127.0.0.1:5000",
         "command": ["python", "-m",  "jhub_apps.launcher.main"],
+        "api_token": "super-secret"
     },
 ]
 
@@ -62,12 +63,17 @@ c.JupyterHub.load_roles = [
         "name": "japps-service-role",  # name the role
         "services": [
             "japps",  # assign the service to this role
+            "launcher",
         ],
         "scopes": [
             # declare what permissions the service should have
             "list:users",  # list users
             "read:users:activity",  # read user last-activity
             "admin:servers",  # start/stop servers
+            "admin:server_state",  # start/stop servers
+            "admin:server_state",  # start/stop servers
+            "access:services",
+            "list:services",
         ],
-    }
+    },
 ]
