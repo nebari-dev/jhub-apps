@@ -1,11 +1,11 @@
 import panel as pn
 
-from jhub_apps.launcher.panel_app import createApp
+from jhub_apps.launcher.panel_app import create_app
 
 
 def app():
     pn.serve(
-        {'/app': createApp},
+        {'/app': create_app},
         port=5000,
         address="localhost",
         allow_websocket_origin=["localhost:8000"],
