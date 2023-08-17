@@ -13,7 +13,6 @@ class InputFormWidget:
     description_input: Any
     spinner: Any
     button_widget: Any
-    alert: Any
 
 
 def create_input_form():
@@ -23,7 +22,6 @@ def create_input_form():
         description_input=pn.widgets.TextAreaInput(name='Description'),
         spinner=pn.indicators.LoadingSpinner(size=30, value=True, color="secondary", bgcolor='dark', visible=True),
         button_widget=pn.widgets.Button(name='Create Dashboard',  button_type='primary'),
-        alert=pn.pane.Alert("Dashboard created 🚀", visible=True),
     )
     input_form = pn.Column(
         input_form_widget.name_input,
@@ -46,7 +44,11 @@ def create_dashboard(event, input_form_widget, input_form):
     hclient.create_server("aktech", name.lower())
 
     input_form.pop(-1)
-    input_form.append(input_form_widget.alert)
+    dashboard_link = f"http://localhost:8000/user/aktech/{name}"
+    text_with_link = pn.pane.Markdown(f"""
+    ## 🚀 Dashboard created: [{dashboard_link}]({dashboard_link}).
+    """)
+    input_form.append(text_with_link)
     print(event)
 
 
