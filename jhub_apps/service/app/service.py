@@ -41,9 +41,10 @@ async def get_token(code: str = Form(...)):
 
 
 @router.get("/")
-async def index():
+async def index(request: Request):
     "Non-authenticated function that returns {'Hello': 'World'}"
-    return {"Hello": "World"}
+    script = server_document('http://127.0.0.1:5000/app')
+    return templates.TemplateResponse("launcher_base.html", {"request": request, "script": script})
 
 
 # response_model and responses dict translate to OpenAPI (Swagger) hints
@@ -71,9 +72,3 @@ async def debug(request: Request, user: User = Depends(get_current_user)):
         "headers": dict(request.headers),
         "user": user,
     }
-
-
-@router.get("/launcher")
-async def bkapp_page(request: Request):
-    script = server_document('http://127.0.0.1:5000/app')
-    return templates.TemplateResponse("launcher_base.html", {"request": request, "script": script})
