@@ -7,8 +7,8 @@ def app():
     pn.serve(
         {'/app': createApp},
         port=5000,
-        address="127.0.0.1",
-        allow_websocket_origin=["127.0.0.1:5000"],
+        address="localhost",
+        allow_websocket_origin=["localhost:8000"],
         show=False,
     )
 

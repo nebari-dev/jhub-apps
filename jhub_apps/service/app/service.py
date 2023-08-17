@@ -6,6 +6,13 @@ from .client import get_client
 from .models import AuthorizationError, HubApiError, User
 from .security import get_current_user
 
+import panel as pn
+from bokeh.embed import server_document
+from fastapi import FastAPI, Request
+from fastapi.templating import Jinja2Templates
+
+app = FastAPI()
+templates = Jinja2Templates(directory="jhub_apps/templates")
 
 # APIRouter prefix cannot end in /
 service_prefix = os.getenv("JUPYTERHUB_SERVICE_PREFIX", "").rstrip("/")
@@ -64,3 +71,9 @@ async def debug(request: Request, user: User = Depends(get_current_user)):
         "headers": dict(request.headers),
         "user": user,
     }
+
+
+@router.get("/launcher")
+async def bkapp_page(request: Request):
+    script = server_document('http://127.0.0.1:5000/app')
+    return templates.TemplateResponse("launcher_base.html", {"request": request, "script": script})
