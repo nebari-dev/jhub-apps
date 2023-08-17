@@ -54,7 +54,8 @@ c.JupyterHub.services = [
         "name": "launcher",
         "url": "http://127.0.0.1:5000",
         "command": ["python", "-m",  "jhub_apps.launcher.main"],
-        "api_token": "super-secret"
+        # Remove this get, set environment properly
+        "api_token": os.environ.get("JHUB_APP_LAUNCHER_TOKEN", "super-secret")
     },
 ]
 

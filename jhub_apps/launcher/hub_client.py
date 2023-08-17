@@ -1,11 +1,15 @@
+import os
+
 import requests
 
 API_URL = 'http://127.0.0.1:8000/hub/api'
 
+JHUB_APP_TOKEN = os.environ.get("JHUB_APP_LAUNCHER_TOKEN", "super-secret")
+
 
 class HubClient:
-    def __init__(self, token):
-        self.token = token
+    def __init__(self, token=None):
+        self.token = token or JHUB_APP_TOKEN
 
     def _headers(self):
         return {'Authorization': f'token {self.token}'}
@@ -18,14 +22,9 @@ class HubClient:
 
     def create_server(self, username, servername="foobarlar"):
         url = f"/users/{username}/servers/{servername}"
-        r = requests.post(API_URL + url, headers=self._headers())
+        data = {
+            "jhub_app": True
+        }
+        r = requests.post(API_URL + url, headers=self._headers(), json=data)
         r.raise_for_status()
-        server = r.json()
-        return server
-
-    def foo(self, username, servername="foobarlar"):
-        url = f"/users/{username}/servers/{servername}"
-        r = requests.post(API_URL + url, headers=self._headers())
-        r.raise_for_status()
-        server = r.json()
-        return server
+        return r.status_code
