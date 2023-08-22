@@ -12,6 +12,7 @@ jobs:
       fail-fast: false
       matrix:
         python-version: ["3.11"]
+        miniconda-version: "latest"
     steps:
     - uses: actions/checkout@v3
 

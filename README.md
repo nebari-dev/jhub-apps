@@ -3,8 +3,7 @@
 ## Install Dependencies
 
 ```bash
-# TODO: Change to conda
-pip install -r requirements.txt
+conda env create -f environment-dev.yaml
 ```
 
 - Starting JupyterHub
