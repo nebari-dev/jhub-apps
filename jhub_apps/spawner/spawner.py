@@ -8,23 +8,22 @@ TEMPLATES_DIR = Path(__file__).parent / "templates"
 
 
 class JHubSpawner(SimpleLocalProcessSpawner):
-
     def get_args(self):
         """Return arguments to pass to the notebook server"""
         argv = super().get_args()
-        if self.user_options.get('argv'):
-            argv.extend(self.user_options['argv'])
+        if self.user_options.get("argv"):
+            argv.extend(self.user_options["argv"])
 
         if self.user_options.get("jhub_app"):
-            framework = self.user_options.get('framework')
-            command_args = COMMANDS.get(framework)['args']
+            framework = self.user_options.get("framework")
+            command_args = COMMANDS.get(framework)["args"]
             argv.extend(command_args)
         return argv
 
     def get_env(self):
         env = super().get_env()
-        if self.user_options.get('env'):
-            env.update(self.user_options['env'])
+        if self.user_options.get("env"):
+            env.update(self.user_options["env"])
         return env
 
     async def start(self):

@@ -12,3 +12,4 @@ dependencies:
   - plotlydash-tornado-cmd
   - bokeh-root-cmd
   - jhsingle-native-proxy
+  - black

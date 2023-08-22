@@ -1,5 +1,6 @@
 """We can use this to test the bokeh_root_cmd"""
 import panel as pn
+
 pn.extension(sizing_mode="stretch_width")
 
 

@@ -19,7 +19,7 @@ c.JupyterHub.log_level = 10
 
 
 # only listen on localhost for testing
-c.JupyterHub.bind_url = 'http://127.0.0.1:8000'
+c.JupyterHub.bind_url = "http://127.0.0.1:8000"
 c.JupyterHub.allow_named_servers = True
 
 
@@ -37,7 +37,7 @@ if "PUBLIC_HOST" not in os.environ:
     warnings.warn(msg)
     public_host = "http://127.0.0.1:8000"
 else:
-    public_host = os.environ["PUBLIC_HOST"].rstrip('/')
+    public_host = os.environ["PUBLIC_HOST"].rstrip("/")
 service_name = "fastapi"
 oauth_redirect_uri = f"{public_host}/services/{service_name}/oauth_callback"
 
@@ -53,9 +53,9 @@ c.JupyterHub.services = [
     {
         "name": "launcher",
         "url": "http://127.0.0.1:5000",
-        "command": ["python", "-m",  "jhub_apps.launcher.main"],
+        "command": ["python", "-m", "jhub_apps.launcher.main"],
         # Remove this get, set environment properly
-        "api_token": os.environ.get("JHUB_APP_LAUNCHER_TOKEN", "super-secret")
+        "api_token": os.environ.get("JHUB_APP_LAUNCHER_TOKEN", "super-secret"),
     },
 ]
 
