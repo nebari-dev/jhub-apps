@@ -1,6 +1,6 @@
 # TODO: Fix this hardcoding
 DEFAULT_CMD = ['python', '-m', 'jhsingle_native_proxy.main', '--authtype=none']
-presentation_path = "/Users/aktech/quansight/jhub-apps/test_panel_hello.py"
+presentation_path = "/Users/aktech/quansight/jhub-apps/jhub_apps/examples/test_panel_hello.py"
 base_url = "http://127.0.0.1:8000"
 origin_host = "localhost:8000"
 
