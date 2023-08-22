@@ -17,7 +17,7 @@ jupyterhub -f jupyterhub_config.py
 
 - [x] Create a Panel App to show app launcher
 - [x] Render that panel app via FastAPI service
-- [] Figure out proxy paths/urls
-- [] Add support for all the dashboard frameworks mentioned in MVP
-- [] Add state management
-- [] Add CI/CD
+- [ ] Figure out proxy paths/urls
+- [ ] Add support for all the dashboard frameworks mentioned in MVP
+- [ ] Add state management
+- [ ] Add CI/CD
