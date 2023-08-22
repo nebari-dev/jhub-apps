@@ -5,6 +5,11 @@ import panel as pn
 
 from jhub_apps.launcher.hub_client import HubClient
 
+FRAMEWORKS = {
+    'Panel': 'panel',
+    'Voila': 'voila',
+}
+
 
 @dataclass
 class InputFormWidget:
@@ -13,6 +18,7 @@ class InputFormWidget:
     description_input: Any
     spinner: Any
     button_widget: Any
+    framework: Any
 
 
 def create_input_form():
@@ -21,12 +27,14 @@ def create_input_form():
         filepath_input=pn.widgets.TextInput(name='Filepath'),
         description_input=pn.widgets.TextAreaInput(name='Description'),
         spinner=pn.indicators.LoadingSpinner(size=30, value=True, color="secondary", bgcolor='dark', visible=True),
-        button_widget=pn.widgets.Button(name='Create Dashboard',  button_type='primary'),
+        button_widget=pn.widgets.Button(name='Create Dashboard', button_type='primary'),
+        framework=pn.widgets.Select(name='Framework', options=FRAMEWORKS)
     )
     input_form = pn.Column(
         input_form_widget.name_input,
         input_form_widget.filepath_input,
         input_form_widget.description_input,
+        input_form_widget.framework,
         input_form_widget.button_widget,
     )
     return input_form_widget, input_form
@@ -39,10 +47,17 @@ def create_dashboard(event, input_form_widget, input_form):
     name = input_form_widget.name_input.value
     filepath = input_form_widget.filepath_input.value
     description = input_form_widget.description_input.value
-    print(f"Name: {name}, Filepath: {filepath}, Description: {description}")
+    framework = input_form_widget.framework.value
+    print(f"Name: {name}, Filepath: {filepath}, Description: {description}, framework: {framework}")
     hclient = HubClient()
+    params = {
+        "name": input_form_widget.name_input.value,
+        "filepath": input_form_widget.filepath_input.value,
+        "description": input_form_widget.description_input.value,
+        "framework": input_form_widget.framework.value,
+    }
     # TODO: Get user from request
-    hclient.create_server("aktech", name.lower())
+    hclient.create_server("aktech", name.lower(), params=params)
     input_form.pop(-1)
     # TODO: Fix Url hardcoding
     dashboard_link = f"http://localhost:8000/user/aktech/{name}"

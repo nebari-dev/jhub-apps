@@ -16,7 +16,9 @@ class JHubSpawner(SimpleLocalProcessSpawner):
             argv.extend(self.user_options['argv'])
 
         if self.user_options.get("jhub_app"):
-            argv.extend(COMMANDS.get('panel')['args'])
+            framework = self.user_options.get('framework')
+            command_args = COMMANDS.get(framework)['args']
+            argv.extend(command_args)
         return argv
 
     def get_env(self):
