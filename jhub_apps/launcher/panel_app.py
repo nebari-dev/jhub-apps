@@ -7,10 +7,10 @@ from jhub_apps.launcher.hub_client import HubClient
 
 FRAMEWORKS = {
     'Panel': 'panel',
-    'Voila': 'voila',
-    'Streamlit': 'streamlit',
-    "Plotly": "plotly",
     "Bokeh": "bokeh",
+    'Streamlit': 'streamlit',
+    'Voila': 'voila',
+    "Plotly": "plotlydash",
     "Gradio": "gradio",
 }
 

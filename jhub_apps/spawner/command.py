@@ -1,9 +1,12 @@
 # TODO: Fix this hardcoding
 DEFAULT_CMD = ['python', '-m', 'jhsingle_native_proxy.main', '--authtype=none']
 
+# TODO: Fix this hardcoding
 EXAMPLES_PATH = {
     "panel": "/Users/aktech/quansight/jhub-apps/jhub_apps/examples/panel_basic.py",
-    "streamlit": "/Users/aktech/quansight/jhub-apps/jhub_apps/examples/streamlit_app.py"
+    "bokeh": "/Users/aktech/quansight/jhub-apps/jhub_apps/examples/bokeh_basic.py",
+    "streamlit": "/Users/aktech/quansight/jhub-apps/jhub_apps/examples/streamlit_app.py",
+    "plotlydash": "/Users/aktech/quansight/jhub-apps/jhub_apps/examples/plotlydash_app.py",
 }
 
 base_url = "http://127.0.0.1:8000"
@@ -12,7 +15,7 @@ origin_host = "localhost:8000"
 
 COMMANDS = {
     'voila': {
-        'args': ['--destport=0', 'python3', '{-}m', 'voila', f'{EXAMPLES_PATH.get("voila")}',
+        'args': ['--destport=0', 'python', '{-}m', 'voila', f'{EXAMPLES_PATH.get("voila")}',
                  '{--}port={port}',
                  '{--}no-browser',
                  '{--}Voila.base_url={base_url}/',
@@ -32,15 +35,17 @@ COMMANDS = {
         'debug_args': [],
     },
     'plotlydash': {
-        'args': ['--destport=0', 'python3', '{-}m', 'plotlydash_tornado_cmd.main', f'{EXAMPLES_PATH.get("plotlydash")}',
-                 '{--}port={port}'],
+        'args': [
+            '--destport=0', 'python', '{-}m', 'plotlydash_tornado_cmd.main', f'{EXAMPLES_PATH.get("plotlydash")}',
+            '{--}port={port}'
+        ],
         'env': {'DASH_REQUESTS_PATHNAME_PREFIX': '{base_url}/'}
     },
     'bokeh': {
-        'args': ['--destport=0', 'python3', '{-}m', 'bokeh_root_cmd.main', f'{EXAMPLES_PATH.get("bokeh")}',
+        'args': ['--destport=0', 'python', '{-}m', 'bokeh_root_cmd.main', f'{EXAMPLES_PATH.get("bokeh")}',
                  '{--}port={port}',
-                 '{--}allow-websocket-origin={origin_host}',
-                 '{--}prefix={base_url}',
+                 '{--}allow-websocket-origin='+f'{origin_host}',
+                 '{--}prefix='+f'{base_url}',
                  '--ready-check-path=/ready-check']
     },
     'panel': {
@@ -53,7 +58,7 @@ COMMANDS = {
                  '--ready-check-path=/ready-check']
     },
     'rshiny': {
-        'args': ['--destport=0', 'python3', '{-}m', 'rshiny_server_cmd.main', f'{EXAMPLES_PATH.get("rshiny")}',
+        'args': ['--destport=0', 'python', '{-}m', 'rshiny_server_cmd.main', f'{EXAMPLES_PATH.get("rshiny")}',
                  '{--}port={port}']
     }
 

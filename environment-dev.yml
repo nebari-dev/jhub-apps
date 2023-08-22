@@ -9,4 +9,6 @@ dependencies:
   - uvicorn
   - jupyterhub
   - jupyter
-
+  - plotlydash-tornado-cmd
+  - bokeh-root-cmd
+  - jhsingle-native-proxy
