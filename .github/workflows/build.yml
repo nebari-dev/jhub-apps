@@ -15,13 +15,6 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-#    - name: Setup Miniconda
-#      uses: conda-incubator/setup-miniconda@v2.2.0
-#      with:
-#        python-version: ${{ matrix.python-version }}
-#        environment-file: environment-dev.yml
-#        miniconda-version: "latest"
-
     - name: Setup Python
       uses: mamba-org/setup-micromamba@v1.4.3
       with:
