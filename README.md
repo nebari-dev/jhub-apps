@@ -6,7 +6,7 @@
 conda env create -f environment-dev.yaml
 ```
 
-- Starting JupyterHub
+## Starting JupyterHub
 
 ```bash
 jupyterhub -f jupyterhub_config.py
