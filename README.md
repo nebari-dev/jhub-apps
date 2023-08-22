@@ -4,6 +4,7 @@
 
 ```bash
 conda env create -f environment-dev.yaml
+pip install -e .
 ```
 
 ## Starting JupyterHub

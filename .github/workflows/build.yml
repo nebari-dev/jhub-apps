@@ -22,6 +22,10 @@ jobs:
         environment-file: environment-dev.yml
         miniconda-version: "latest"
 
+    - name: Install JHub Apps
+      run: |
+        pip install .
+
     - name: Install Test dependencies
       run: |
         pip install flake8 pytest
