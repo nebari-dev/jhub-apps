@@ -2,23 +2,9 @@ from pathlib import Path
 
 from jupyterhub.spawner import SimpleLocalProcessSpawner
 
+from jhub_apps.spawner.command import DEFAULT_CMD, COMMANDS
+
 TEMPLATES_DIR = Path(__file__).parent / "templates"
-
-# TODO: Fix this hardcoding
-presentation_path = "/Users/aktech/quansight/jhub-apps/test_panel_hello.py"
-base_url = "http://127.0.0.1:8000"
-origin_host = "localhost:8000"
-
-
-DEFAULT_CMD = ['python', '-m', 'jhsingle_native_proxy.main', '--authtype=none']
-PANEL_ARGS = [
-    '--destport=0', 'python', '{-}m', 'bokeh_root_cmd.main', f'{presentation_path}',
-    '{--}port={port}', '--debug',
-    '{--}allow-websocket-origin='+f'{origin_host}',
-    '{--}server=panel',
-    '{--}prefix='+f'{base_url}',
-    '--ready-check-path=/ready-check',
-]
 
 
 class JHubSpawner(SimpleLocalProcessSpawner):
@@ -30,7 +16,7 @@ class JHubSpawner(SimpleLocalProcessSpawner):
             argv.extend(self.user_options['argv'])
 
         if self.user_options.get("jhub_app"):
-            argv.extend(PANEL_ARGS)
+            argv.extend(COMMANDS.get('panel')['args'])
         return argv
 
     def get_env(self):
