@@ -4,7 +4,7 @@ from jupyterhub.spawner import SimpleLocalProcessSpawner
 
 TEMPLATES_DIR = Path(__file__).parent / "templates"
 
-# presentation_path = "Panel_Introduction.ipynb"
+# TODO: Fix this hardcoding
 presentation_path = "/Users/aktech/quansight/jhub-apps/test_panel_hello.py"
 base_url = "http://127.0.0.1:8000"
 origin_host = "localhost:8000"

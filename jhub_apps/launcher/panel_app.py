@@ -41,9 +41,10 @@ def create_dashboard(event, input_form_widget, input_form):
     description = input_form_widget.description_input.value
     print(f"Name: {name}, Filepath: {filepath}, Description: {description}")
     hclient = HubClient()
+    # TODO: Get user from request
     hclient.create_server("aktech", name.lower())
-
     input_form.pop(-1)
+    # TODO: Fix Url hardcoding
     dashboard_link = f"http://localhost:8000/user/aktech/{name}"
     text_with_link = pn.pane.Markdown(f"""
     ## 🚀 Dashboard created: [{dashboard_link}]({dashboard_link}).

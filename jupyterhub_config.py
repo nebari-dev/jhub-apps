@@ -12,7 +12,7 @@ from jupyterhub.auth import DummyAuthenticator
 
 c.JupyterHub.authenticator_class = DummyAuthenticator
 
-from jhub_apps.spawner import JHubSpawner
+from jhub_apps.spawner.spawner import JHubSpawner
 
 c.JupyterHub.spawner_class = JHubSpawner
 c.JupyterHub.log_level = 10
