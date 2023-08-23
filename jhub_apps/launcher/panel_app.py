@@ -5,6 +5,7 @@ import panel as pn
 
 from jhub_apps.launcher.hub_client import HubClient
 
+
 @dataclass
 class InputFormWidget:
     name_input: Any
@@ -24,8 +25,7 @@ FRAMEWORKS = {
     "Gradio": "gradio",
 }
 
-pn.config.sizing_mode = 'stretch_width'
-
+pn.config.sizing_mode = "stretch_width"
 
 LOGO_MAPPING = {
     "panel": "https://raw.githubusercontent.com/holoviz/panel/main/doc/_static/logo_stacked.png",
@@ -39,16 +39,20 @@ LOGO_MAPPING = {
 def _get_image_item(logo, desc, link):
     return {"image": logo, "description": desc, "link": link}
 
+
 # ... [same imports and definitions]
 
 # Define the items list
 items = [
-    _get_image_item(logo=LOGO_MAPPING.get('panel'), desc="Panel Desc", link="/"),
-    _get_image_item(logo=LOGO_MAPPING.get('streamlit'), desc="Streamlit Desc", link="/"),
-    _get_image_item(logo=LOGO_MAPPING.get('bokeh'), desc="Bokeh Desc", link="/"),
-    _get_image_item(logo=LOGO_MAPPING.get('voila'), desc="Voila Desc", link="/"),
-    _get_image_item(logo=LOGO_MAPPING.get('plotly'), desc="Plotly Desc", link="/"),
+    _get_image_item(logo=LOGO_MAPPING.get("panel"), desc="Panel Desc", link="/"),
+    _get_image_item(
+        logo=LOGO_MAPPING.get("streamlit"), desc="Streamlit Desc", link="/"
+    ),
+    _get_image_item(logo=LOGO_MAPPING.get("bokeh"), desc="Bokeh Desc", link="/"),
+    _get_image_item(logo=LOGO_MAPPING.get("voila"), desc="Voila Desc", link="/"),
+    _get_image_item(logo=LOGO_MAPPING.get("plotly"), desc="Plotly Desc", link="/"),
 ]
+
 
 class ListItem(pn.Column):  # Change the base class to pn.Column
     def __init__(self, logo, desc, link, **params):
@@ -69,11 +73,13 @@ class ListItem(pn.Column):  # Change the base class to pn.Column
         # Using a Row to group the image, description, and buttons horizontally
         content = pn.Row(
             pn.pane.PNG(self.logo, width=50),
-            pn.pane.Markdown(f"**{self.desc}**", margin=(0, 20, 0, 10)),  # Using Markdown to make the text bold
+            pn.pane.Markdown(
+                f"**{self.desc}**", margin=(0, 20, 0, 10)
+            ),  # Using Markdown to make the text bold
             self.view_button,
             self.edit_button,
             self.delete_button,
-            css_classes=['list-item']  # Apply the .list-item CSS styling
+            css_classes=["list-item"],  # Apply the .list-item CSS styling
         )
 
         # Apply styles for the list item container
@@ -106,7 +112,9 @@ class ListItem(pn.Column):  # Change the base class to pn.Column
 
 list_items = []
 for item in items:
-    list_item = ListItem(logo=item["image"], desc=item["description"], link=item["link"])
+    list_item = ListItem(
+        logo=item["image"], desc=item["description"], link=item["link"]
+    )
     list_items.append(list_item)
 
 heading = pn.pane.Markdown("## Your Dashboards", sizing_mode="stretch_width")
@@ -115,10 +123,10 @@ heading = pn.pane.Markdown("## Your Dashboards", sizing_mode="stretch_width")
 layout = pn.Column(
     heading,
     *list_items,
-    css_classes=['list-container'],
+    css_classes=["list-container"],
     width=800,
     sizing_mode="stretch_width",
-    margin=(10, 20)
+    margin=(10, 20),
 )
 
 
