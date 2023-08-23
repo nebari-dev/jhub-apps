@@ -148,7 +148,7 @@ def create_dashboards_layout():
         )
         list_items.append(list_item)
 
-    heading = pn.pane.Markdown("## Your Dashboards", sizing_mode="stretch_width")
+    heading = pn.pane.Markdown("## Your Apps", sizing_mode="stretch_width")
 
     # Wrap everything in a Column with the list-container class
     layout = pn.Column(
