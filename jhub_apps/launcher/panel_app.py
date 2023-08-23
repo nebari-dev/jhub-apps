@@ -36,22 +36,50 @@ LOGO_MAPPING = {
 }
 
 
-def _get_image_item(logo, desc, link):
-    return {"image": logo, "description": desc, "link": link}
+def _get_image_item(logo, desc, link="/"):
+    return {
+        "image": logo,
+        "description": desc,
+        "link": link
+    }
 
 
 # ... [same imports and definitions]
 
 # Define the items list
-items = [
-    _get_image_item(logo=LOGO_MAPPING.get("panel"), desc="Panel Desc", link="/"),
-    _get_image_item(
-        logo=LOGO_MAPPING.get("streamlit"), desc="Streamlit Desc", link="/"
-    ),
-    _get_image_item(logo=LOGO_MAPPING.get("bokeh"), desc="Bokeh Desc", link="/"),
-    _get_image_item(logo=LOGO_MAPPING.get("voila"), desc="Voila Desc", link="/"),
-    _get_image_item(logo=LOGO_MAPPING.get("plotly"), desc="Plotly Desc", link="/"),
-]
+# items = [
+#     _get_image_item(logo=LOGO_MAPPING.get("panel"), desc="Panel Desc", link="/"),
+#     _get_image_item(
+#         logo=LOGO_MAPPING.get("streamlit"), desc="Streamlit Desc", link="/"
+#     ),
+#     _get_image_item(logo=LOGO_MAPPING.get("bokeh"), desc="Bokeh Desc", link="/"),
+#     _get_image_item(logo=LOGO_MAPPING.get("voila"), desc="Voila Desc", link="/"),
+#     _get_image_item(logo=LOGO_MAPPING.get("plotly"), desc="Plotly Desc", link="/"),
+# ]
+
+
+def _create_items():
+    hclient = HubClient()
+    try:
+        print("Getting user")
+        user = hclient.get_user()
+    except Exception as e:
+        print("No user found")
+        return []
+    print(f"user {user}")
+    servers = user["servers"]
+    print(f"servers {servers}")
+    items = []
+    for server_name, server in servers.items():
+        user_options = server['user_options']
+        logo = LOGO_MAPPING.get(user_options['framework'])
+        items.append(_get_image_item(
+            logo=logo,
+            desc=user_options["description"] or user_options["name"],
+            link=server["progress_url"],
+        ))
+    print(f"items: {items}")
+    return items
 
 
 class ListItem(pn.Column):  # Change the base class to pn.Column
@@ -110,24 +138,28 @@ class ListItem(pn.Column):  # Change the base class to pn.Column
         # Add your edit functionality here
 
 
-list_items = []
-for item in items:
-    list_item = ListItem(
-        logo=item["image"], desc=item["description"], link=item["link"]
+def create_dashboards_layout():
+    print("Create Dashboards Layout")
+    list_items = []
+    items = _create_items()
+    for item in items:
+        list_item = ListItem(
+            logo=item["image"], desc=item["description"], link=item["link"]
+        )
+        list_items.append(list_item)
+
+    heading = pn.pane.Markdown("## Your Dashboards", sizing_mode="stretch_width")
+
+    # Wrap everything in a Column with the list-container class
+    layout = pn.Column(
+        heading,
+        *list_items,
+        css_classes=["list-container"],
+        width=800,
+        sizing_mode="stretch_width",
+        margin=(10, 20),
     )
-    list_items.append(list_item)
-
-heading = pn.pane.Markdown("## Your Dashboards", sizing_mode="stretch_width")
-
-# Wrap everything in a Column with the list-container class
-layout = pn.Column(
-    heading,
-    *list_items,
-    css_classes=["list-container"],
-    width=800,
-    sizing_mode="stretch_width",
-    margin=(10, 20),
-)
+    return layout
 
 
 def create_input_form():
@@ -196,5 +228,5 @@ def create_app():
         return create_dashboard(event, input_form_widget, input_form)
 
     input_form_widget.button_widget.on_click(button_callback)
-    created_apps = layout
+    created_apps = create_dashboards_layout()
     return pn.Row(input_form, created_apps).servable()

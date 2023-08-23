@@ -70,6 +70,7 @@ c.JupyterHub.load_roles = [
             # declare what permissions the service should have
             "list:users",  # list users
             "read:users:activity",  # read user last-activity
+            "read:users",  # read user last-activity
             "admin:servers",  # start/stop servers
             "admin:server_state",  # start/stop servers
             "admin:server_state",  # start/stop servers

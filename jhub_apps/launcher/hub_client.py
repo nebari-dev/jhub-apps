@@ -20,6 +20,12 @@ class HubClient:
         users = r.json()
         return users
 
+    def get_user(self, user="aktech"):
+        r = requests.get(API_URL + f"/users/{user}", headers=self._headers())
+        r.raise_for_status()
+        users = r.json()
+        return users
+
     def create_server(self, username, servername="foobarlar", params=None):
         url = f"/users/{username}/servers/{servername}"
         params = params or {}
