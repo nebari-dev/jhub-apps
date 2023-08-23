@@ -38,7 +38,11 @@ def _get_image_item(logo, desc, link):
     return {"image": logo, "description": desc, "link": link}
 
 
-def create_grid():
+import panel as pn
+
+# Define LOGO_MAPPING and other functions...
+
+def create_grid_with_buttons():
     items = [
         _get_image_item(logo=LOGO_MAPPING.get('panel'), desc="Desc", link="/"),
         _get_image_item(logo=LOGO_MAPPING.get('streamlit'), desc="Desc", link="/"),
@@ -55,11 +59,17 @@ def create_grid():
         text-align: center;
         transition: background-color 0.3s;
         width: 200px;   /* Set the width */
-        height: 200px;  /* Set the height */ 
+        height: 250px;  /* Set the height */
     }
     
     .card:hover {
         background-color: lightgray;
+    }
+    
+    .button-container {
+        display: flex;
+        justify-content: space-around;
+        margin-top: 10px;
     }
     """
 
@@ -73,12 +83,17 @@ def create_grid():
                 <img src="{item["image"]}" width="150">
             </a>
             <div>{item["description"]}</div>
+            <div class="button-container">
+                <button class="btn btn-secondary">View</button>
+                <button class="btn btn-secondary">Edit</button>
+                <button class="btn btn-danger">Delete</button>
+            </div>
         </div>
         """
         cards.append(card_content)
 
     # Create a GridSpec layout to arrange the cards in a grid
-    grid_spec = pn.GridSpec(sizing_mode="stretch_width", max_width=600)
+    grid_spec = pn.GridSpec(sizing_mode="stretch_width", max_width=800)
 
     # Organize the cards in a matrix-like arrangement
     num_columns = 3  # Number of columns in the matrix
@@ -89,6 +104,7 @@ def create_grid():
         grid_spec[row, col] = pn.pane.HTML(card)
 
     return grid_spec
+
 
 
 def create_input_form():
@@ -154,5 +170,5 @@ def create_app():
         return create_dashboard(event, input_form_widget, input_form)
 
     input_form_widget.button_widget.on_click(button_callback)
-    created_apps = create_grid()
+    created_apps = create_grid_with_buttons()
     return pn.Row(input_form, created_apps).servable()
