@@ -37,11 +37,7 @@ LOGO_MAPPING = {
 
 
 def _get_image_item(logo, desc, link="/"):
-    return {
-        "image": logo,
-        "description": desc,
-        "link": link
-    }
+    return {"image": logo, "description": desc, "link": link}
 
 
 # ... [same imports and definitions]
@@ -71,13 +67,15 @@ def _create_items():
     print(f"servers {servers}")
     items = []
     for server_name, server in servers.items():
-        user_options = server['user_options']
-        logo = LOGO_MAPPING.get(user_options['framework'])
-        items.append(_get_image_item(
-            logo=logo,
-            desc=user_options["description"] or user_options["name"],
-            link=server["progress_url"],
-        ))
+        user_options = server["user_options"]
+        logo = LOGO_MAPPING.get(user_options["framework"])
+        items.append(
+            _get_image_item(
+                logo=logo,
+                desc=user_options["description"] or user_options["name"],
+                link=server["progress_url"],
+            )
+        )
     print(f"items: {items}")
     return items
 
