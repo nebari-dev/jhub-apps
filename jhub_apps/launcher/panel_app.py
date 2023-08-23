@@ -27,7 +27,6 @@ FRAMEWORKS = {
 pn.config.sizing_mode = 'stretch_width'
 
 
-
 LOGO_MAPPING = {
     "panel": "https://raw.githubusercontent.com/holoviz/panel/main/doc/_static/logo_stacked.png",
     "streamlit": "https://streamlit.io/images/brand/streamlit-mark-color.png",
@@ -44,94 +43,65 @@ def _get_image_item(logo, desc, link):
 
 # Define the items list
 items = [
-    _get_image_item(logo=LOGO_MAPPING.get('panel'), desc="Desc", link="/"),
-    _get_image_item(logo=LOGO_MAPPING.get('streamlit'), desc="Desc", link="/"),
-    _get_image_item(logo=LOGO_MAPPING.get('bokeh'), desc="Desc", link="/"),
-    _get_image_item(logo=LOGO_MAPPING.get('voila'), desc="Desc", link="/"),
-    _get_image_item(logo=LOGO_MAPPING.get('plotly'), desc="Desc", link="/"),
+    _get_image_item(logo=LOGO_MAPPING.get('panel'), desc="Panel Desc", link="/"),
+    _get_image_item(logo=LOGO_MAPPING.get('streamlit'), desc="Streamlit Desc", link="/"),
+    _get_image_item(logo=LOGO_MAPPING.get('bokeh'), desc="Bokeh Desc", link="/"),
+    _get_image_item(logo=LOGO_MAPPING.get('voila'), desc="Voila Desc", link="/"),
+    _get_image_item(logo=LOGO_MAPPING.get('plotly'), desc="Plotly Desc", link="/"),
 ]
 
-# ... [previous code imports and definitions]
-
-# ... [previous code imports and definitions]
-
-class ListItem(pn.pane.HTML):
+class ListItem(pn.Column):  # Change the base class to pn.Column
     def __init__(self, logo, desc, link, **params):
-        item_style = """
-        .list-container {
-            border: 2px solid #ccc;
-            padding: 10px;
-            width: 200%;
-        }
+        self.logo = logo
+        self.desc = desc
+        self.link = link
 
+        # Define Panel buttons
+        self.view_button = pn.widgets.Button(name="View", button_type="primary")
+        self.edit_button = pn.widgets.Button(name="Edit", button_type="warning")
+        self.delete_button = pn.widgets.Button(name="Delete", button_type="danger")
+
+        # Set up event listeners for the buttons
+        self.view_button.on_click(self.on_view)
+        self.edit_button.on_click(self.on_edit)
+        self.delete_button.on_click(self.on_delete)
+
+        # Using a Row to group the image, description, and buttons horizontally
+        content = pn.Row(
+            pn.pane.PNG(self.logo, width=50),
+            pn.pane.Markdown(f"**{self.desc}**", margin=(0, 20, 0, 10)),  # Using Markdown to make the text bold
+            self.view_button,
+            self.edit_button,
+            self.delete_button,
+            css_classes=['list-item']  # Apply the .list-item CSS styling
+        )
+
+        # Apply styles for the list item container
+        item_style = """
         .list-item {
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
-            border: 1px solid #e0e0e0; 
+            border: 1px solid #e0e0e0;
             padding: 5px;
             border-radius: 4px;
-            width: 100%;   /* Increased width of the list item */
-            margin: 0 auto;  /* Centers the list item if it's less than 100% width */
-        }
-
-
-        .item-description {
-            font-size: 1.2em;  /* Increase the font size */
-            margin-left: 10px; /* Space between image and description */
-        }
-
-        .item-image {
-            margin-right: 10px;
-        }
-
-        .button-container {
-            display: flex;
-            margin-left: auto;
-        }
-
-        .list-button {
-            background-color: #3498db;
-            color: white;
-            border: none;
-            padding: 8px 16px;  /* Increase button size */
-            cursor: pointer;
-            border-radius: 5px;
-            transition: background-color 0.3s;
-            font-size: 1.1em;  /* Increase font size */
-            margin-left: 5px;
-        }
-
-        .list-button:hover {
-            background-color: #2980b9;
-        }
-
-        .list-button.delete-button {
-            background-color: #e74c3c;
+            width: 100%;
+            align-items: center;
         }
         """
 
-        content = f"""
-        <style>{item_style}</style>
-        <div class="list-item">
-            <img class="item-image" src="{logo}" width="50">
-            <div class="item-description">{desc}</div>
-            <div class="button-container">
-                <button class="list-button view-button" onclick="openLink('{link}')">View</button>
-                <button class="list-button edit-button">Edit</button>
-                <button class="list-button delete-button">Delete</button>
-            </div>
-        </div>
-        <script>
-            function openLink(link) {{
-                window.open(link, '_blank');
-            }}
-        </script>
-        """
-        super().__init__(content, **params)
+        pn.config.raw_css.append(item_style)
 
-# ... [rest of the code remains unchanged, but change all occurrences of 'Card' to 'ListItem']
+        super().__init__(content, **params)  # Initializing the pn.Column base class
 
+    def on_view(self, event):
+        print(f"View button clicked! {self.desc} {event}")
+        # window.open(self.link, '_blank')  # Open the link in a new tab
+
+    def on_edit(self, event):
+        print(f"Edit button clicked! {self.desc} {event}")
+        # Add your edit functionality here
+
+    def on_delete(self, event):
+        print(f"Delete button clicked! {self.desc} {event}")
+        # Add your edit functionality here
 
 
 list_items = []
@@ -171,6 +141,7 @@ def create_input_form():
         input_form_widget.description_input,
         input_form_widget.framework,
         input_form_widget.button_widget,
+        width=400,
     )
     return input_form_widget, input_form
 
