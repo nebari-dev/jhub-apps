@@ -15,6 +15,15 @@ FRAMEWORKS = {
 }
 
 
+LOGO_MAPPING = {
+    "panel": "https://raw.githubusercontent.com/holoviz/panel/main/doc/_static/logo_stacked.png",
+    "streamlit": "https://streamlit.io/images/brand/streamlit-mark-color.png",
+    "bokeh": "https://static.bokeh.org/branding/icons/bokeh-icon@5x.png",
+    "voila": "https://raw.githubusercontent.com/voila-dashboards/voila/main/docs/voila-logo.svg",
+    "plotly": "https://repository-images.githubusercontent.com/33702544/b4400c80-718b-11e9-9f3a-306c07a5f3de",
+}
+
+
 @dataclass
 class InputFormWidget:
     name_input: Any
@@ -23,6 +32,63 @@ class InputFormWidget:
     spinner: Any
     button_widget: Any
     framework: Any
+
+
+def _get_image_item(logo, desc, link):
+    return {"image": logo, "description": desc, "link": link}
+
+
+def create_grid():
+    items = [
+        _get_image_item(logo=LOGO_MAPPING.get('panel'), desc="Desc", link="/"),
+        _get_image_item(logo=LOGO_MAPPING.get('streamlit'), desc="Desc", link="/"),
+        _get_image_item(logo=LOGO_MAPPING.get('bokeh'), desc="Desc", link="/"),
+        _get_image_item(logo=LOGO_MAPPING.get('voila'), desc="Desc", link="/"),
+        _get_image_item(logo=LOGO_MAPPING.get('plotly'), desc="Desc", link="/"),
+    ]
+
+    # Define a CSS style for the cards and hover effect
+    card_style = """
+    .card {
+        border: 1px solid #ccc;
+        padding: 5px;
+        text-align: center;
+        transition: background-color 0.3s;
+        width: 200px;   /* Set the width */
+        height: 200px;  /* Set the height */ 
+    }
+    
+    .card:hover {
+        background-color: lightgray;
+    }
+    """
+
+    # Combine card_style CSS with the individual card contents
+    cards = []
+    for item in items:
+        card_content = f"""
+        <style>{card_style}</style>
+        <div class="card">
+            <a href="{item["link"]}" target="_blank">
+                <img src="{item["image"]}" width="150">
+            </a>
+            <div>{item["description"]}</div>
+        </div>
+        """
+        cards.append(card_content)
+
+    # Create a GridSpec layout to arrange the cards in a grid
+    grid_spec = pn.GridSpec(sizing_mode="stretch_width", max_width=600)
+
+    # Organize the cards in a matrix-like arrangement
+    num_columns = 3  # Number of columns in the matrix
+
+    for idx, card in enumerate(cards):
+        row = idx // num_columns
+        col = idx % num_columns
+        grid_spec[row, col] = pn.pane.HTML(card)
+
+    return grid_spec
 
 
 def create_input_form():
@@ -88,4 +154,5 @@ def create_app():
         return create_dashboard(event, input_form_widget, input_form)
 
     input_form_widget.button_widget.on_click(button_callback)
-    return pn.Row(input_form).servable()
+    created_apps = create_grid()
+    return pn.Row(input_form, created_apps).servable()
