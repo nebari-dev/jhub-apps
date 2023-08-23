@@ -5,6 +5,16 @@ import panel as pn
 
 from jhub_apps.launcher.hub_client import HubClient
 
+@dataclass
+class InputFormWidget:
+    name_input: Any
+    filepath_input: Any
+    description_input: Any
+    spinner: Any
+    button_widget: Any
+    framework: Any
+
+
 FRAMEWORKS = {
     "Panel": "panel",
     "Bokeh": "bokeh",
@@ -13,6 +23,9 @@ FRAMEWORKS = {
     "Plotly": "plotlydash",
     "Gradio": "gradio",
 }
+
+pn.config.sizing_mode = 'stretch_width'
+
 
 
 LOGO_MAPPING = {
@@ -24,90 +37,123 @@ LOGO_MAPPING = {
 }
 
 
-@dataclass
-class InputFormWidget:
-    name_input: Any
-    filepath_input: Any
-    description_input: Any
-    spinner: Any
-    button_widget: Any
-    framework: Any
-
-
 def _get_image_item(logo, desc, link):
     return {"image": logo, "description": desc, "link": link}
 
+# ... [same imports and definitions]
 
-import panel as pn
+# Define the items list
+items = [
+    _get_image_item(logo=LOGO_MAPPING.get('panel'), desc="Desc", link="/"),
+    _get_image_item(logo=LOGO_MAPPING.get('streamlit'), desc="Desc", link="/"),
+    _get_image_item(logo=LOGO_MAPPING.get('bokeh'), desc="Desc", link="/"),
+    _get_image_item(logo=LOGO_MAPPING.get('voila'), desc="Desc", link="/"),
+    _get_image_item(logo=LOGO_MAPPING.get('plotly'), desc="Desc", link="/"),
+]
 
-# Define LOGO_MAPPING and other functions...
+# ... [previous code imports and definitions]
 
-def create_grid_with_buttons():
-    items = [
-        _get_image_item(logo=LOGO_MAPPING.get('panel'), desc="Desc", link="/"),
-        _get_image_item(logo=LOGO_MAPPING.get('streamlit'), desc="Desc", link="/"),
-        _get_image_item(logo=LOGO_MAPPING.get('bokeh'), desc="Desc", link="/"),
-        _get_image_item(logo=LOGO_MAPPING.get('voila'), desc="Desc", link="/"),
-        _get_image_item(logo=LOGO_MAPPING.get('plotly'), desc="Desc", link="/"),
-    ]
+# ... [previous code imports and definitions]
 
-    # Define a CSS style for the cards and hover effect
-    card_style = """
-    .card {
-        border: 1px solid #ccc;
-        padding: 5px;
-        text-align: center;
-        transition: background-color 0.3s;
-        width: 200px;   /* Set the width */
-        height: 250px;  /* Set the height */
-    }
-    
-    .card:hover {
-        background-color: lightgray;
-    }
-    
-    .button-container {
-        display: flex;
-        justify-content: space-around;
-        margin-top: 10px;
-    }
-    """
+class ListItem(pn.pane.HTML):
+    def __init__(self, logo, desc, link, **params):
+        item_style = """
+        .list-container {
+            border: 2px solid #ccc;
+            padding: 10px;
+            width: 200%;
+        }
 
-    # Combine card_style CSS with the individual card contents
-    cards = []
-    for item in items:
-        card_content = f"""
-        <style>{card_style}</style>
-        <div class="card">
-            <a href="{item["link"]}" target="_blank">
-                <img src="{item["image"]}" width="150">
-            </a>
-            <div>{item["description"]}</div>
+        .list-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            border: 1px solid #e0e0e0; 
+            padding: 5px;
+            border-radius: 4px;
+            width: 100%;   /* Increased width of the list item */
+            margin: 0 auto;  /* Centers the list item if it's less than 100% width */
+        }
+
+
+        .item-description {
+            font-size: 1.2em;  /* Increase the font size */
+            margin-left: 10px; /* Space between image and description */
+        }
+
+        .item-image {
+            margin-right: 10px;
+        }
+
+        .button-container {
+            display: flex;
+            margin-left: auto;
+        }
+
+        .list-button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 16px;  /* Increase button size */
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+            font-size: 1.1em;  /* Increase font size */
+            margin-left: 5px;
+        }
+
+        .list-button:hover {
+            background-color: #2980b9;
+        }
+
+        .list-button.delete-button {
+            background-color: #e74c3c;
+        }
+        """
+
+        content = f"""
+        <style>{item_style}</style>
+        <div class="list-item">
+            <img class="item-image" src="{logo}" width="50">
+            <div class="item-description">{desc}</div>
             <div class="button-container">
-                <button class="btn btn-secondary">View</button>
-                <button class="btn btn-secondary">Edit</button>
-                <button class="btn btn-danger">Delete</button>
+                <button class="list-button view-button" onclick="openLink('{link}')">View</button>
+                <button class="list-button edit-button">Edit</button>
+                <button class="list-button delete-button">Delete</button>
             </div>
         </div>
+        <script>
+            function openLink(link) {{
+                window.open(link, '_blank');
+            }}
+        </script>
         """
-        cards.append(card_content)
+        super().__init__(content, **params)
 
-    # Create a GridSpec layout to arrange the cards in a grid
-    grid_spec = pn.GridSpec(sizing_mode="stretch_width", max_width=800)
+# ... [rest of the code remains unchanged, but change all occurrences of 'Card' to 'ListItem']
 
-    # Organize the cards in a matrix-like arrangement
-    num_columns = 3  # Number of columns in the matrix
 
-    for idx, card in enumerate(cards):
-        row = idx // num_columns
-        col = idx % num_columns
-        grid_spec[row, col] = pn.pane.HTML(card)
 
-    return grid_spec
+list_items = []
+for item in items:
+    list_item = ListItem(logo=item["image"], desc=item["description"], link=item["link"])
+    list_items.append(list_item)
 
+heading = pn.pane.Markdown("## Your Dashboards", sizing_mode="stretch_width")
+
+# Wrap everything in a Column with the list-container class
+layout = pn.Column(
+    heading,
+    *list_items,
+    css_classes=['list-container'],
+    width=800,
+    sizing_mode="stretch_width",
+    margin=(10, 20)
+)
 
 
 def create_input_form():
+    heading = pn.pane.Markdown("## Create Apps", sizing_mode="stretch_width")
     input_form_widget = InputFormWidget(
         name_input=pn.widgets.TextInput(name="Name"),
         filepath_input=pn.widgets.TextInput(name="Filepath"),
@@ -119,6 +165,7 @@ def create_input_form():
         framework=pn.widgets.Select(name="Framework", options=FRAMEWORKS),
     )
     input_form = pn.Column(
+        heading,
         input_form_widget.name_input,
         input_form_widget.filepath_input,
         input_form_widget.description_input,
@@ -170,5 +217,5 @@ def create_app():
         return create_dashboard(event, input_form_widget, input_form)
 
     input_form_widget.button_widget.on_click(button_callback)
-    created_apps = create_grid_with_buttons()
+    created_apps = layout
     return pn.Row(input_form, created_apps).servable()
