@@ -68,6 +68,10 @@ def _create_items():
     items = []
     for server_name, server in servers.items():
         user_options = server["user_options"]
+        print(f"server name {server_name}, user_options: {user_options}")
+        if not user_options or not user_options.get("jhub_app"):
+            print(f"Skipping displaying server: {server_name}")
+            continue
         logo = LOGO_MAPPING.get(user_options["framework"])
         items.append(
             _get_image_item(
