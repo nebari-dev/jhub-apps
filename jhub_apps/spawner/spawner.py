@@ -24,7 +24,7 @@ class JHubSpawner(SimpleLocalProcessSpawner):
             command_args = command.get_substituted_args(
                 filepath=EXAMPLES_PATH.get(framework),
                 origin_host=ORIGIN_HOST,
-                base_url=BASE_URL
+                base_url=BASE_URL,
             )
             argv.extend(command_args)
             env = self.get_env()

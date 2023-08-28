@@ -27,10 +27,7 @@ class TString:
         for k, v in kwargs.items():
             if f"${k}" in self.value:
                 keys_to_substitute.add(k)
-        subs = {
-            k: v for k, v in kwargs.items()
-            if k in keys_to_substitute
-        }
+        subs = {k: v for k, v in kwargs.items() if k in keys_to_substitute}
         return template.substitute(subs)
 
 
@@ -47,20 +44,6 @@ class Command:
             subs_args.append(s_arg)
         return subs_args
 
-
-panel_cmd = Command(args=[
-    "--destport=0",
-    "python",
-    "{-}m",
-    "bokeh_root_cmd.main",
-    TString("$filepath"),
-    "{--}port={port}",
-    "{--}debug",
-    TString("{--}allow-websocket-origin=$origin_host"),
-    "{--}server=panel",
-    TString("{--}prefix=$base_url"),
-    "--ready-check-path=/ready-check",
-])
 
 COMMANDS = {
     "gradio": Command(
@@ -136,5 +119,6 @@ COMMANDS = {
             "{--}server=panel",
             TString("{--}prefix=$base_url"),
             "--ready-check-path=/ready-check",
-        ]),
+        ]
+    ),
 }
