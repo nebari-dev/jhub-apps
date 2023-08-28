@@ -36,8 +36,8 @@ LOGO_MAPPING = {
 }
 
 
-def _get_image_item(logo, desc, link="/"):
-    return {"image": logo, "description": desc, "link": link}
+def _get_image_item(name, logo, desc, link="/"):
+    return {"name": name, "image": logo, "description": desc, "link": link}
 
 
 # ... [same imports and definitions]
@@ -75,6 +75,7 @@ def _create_items():
         logo = LOGO_MAPPING.get(user_options["framework"])
         items.append(
             _get_image_item(
+                name=server_name,
                 logo=logo,
                 desc=user_options["description"] or user_options["name"],
                 link=server["progress_url"],
@@ -85,7 +86,8 @@ def _create_items():
 
 
 class ListItem(pn.Column):  # Change the base class to pn.Column
-    def __init__(self, logo, desc, link, **params):
+    def __init__(self, server_name, logo, desc, link, **params):
+        self.server_name = server_name
         self.logo = logo
         self.desc = desc
         self.link = link
@@ -136,8 +138,9 @@ class ListItem(pn.Column):  # Change the base class to pn.Column
         # Add your edit functionality here
 
     def on_delete(self, event):
-        print(f"Delete button clicked! {self.desc} {event}")
-        # Add your edit functionality here
+        print(f"Delete button clicked! {self.name} {event}")
+        hclient = HubClient()
+        hclient.delete_server(username="aktech", server_name=self.server_name)
 
 
 def create_dashboards_layout():
@@ -146,7 +149,10 @@ def create_dashboards_layout():
     items = _create_items()
     for item in items:
         list_item = ListItem(
-            logo=item["image"], desc=item["description"], link=item["link"]
+            server_name=item["name"],
+            logo=item["image"],
+            desc=item["description"],
+            link=item["link"],
         )
         list_items.append(list_item)
 
