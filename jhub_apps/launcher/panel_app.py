@@ -127,6 +127,11 @@ class ListItem(pn.Column):  # Change the base class to pn.Column
 
     def on_edit(self, event):
         print(f"Edit button clicked! {self.app.name} {event}")
+        self.input_form_widget.name_input.value = self.app.name
+        self.input_form_widget.button_widget.name = "Edit Dashboard"
+        self.input_form_widget.description_input.value = self.app.description
+        self.input_form_widget.filepath_input.value = self.app.filepath
+        self.input_form_widget.framework.value = self.app.framework
 
     def on_delete(self, event):
         print(f"Delete button clicked! {self.app.name} {event}")
@@ -210,12 +215,16 @@ def _create_server(event, input_form_widget, input_form):
     input_form.pop(-1)
     # TODO: Fix Url hardcoding
     dashboard_link = f"{BASE_URL}/user/aktech/{name}"
+    dashboard_creation_action = "created"
+    if input_form_widget.button_widget.name.startswith("Edit"):
+        dashboard_creation_action = "updated"
     text_with_link = pn.pane.Markdown(
         f"""
-    ## 🚀 Dashboard created: [👉🔗]({dashboard_link})
+    ## 🚀 Dashboard {dashboard_creation_action}: [👉🔗]({dashboard_link})
     """
     )
     input_form.append(text_with_link)
+    input_form_widget.button_widget.name = "Create Dashboard"
     print(event)
 
 
@@ -235,5 +244,6 @@ def create_app():
         _create_server(event, input_form_widget, input_form)
         apps_page.pop(-1)
         apps_page.append(create_list_apps(input_form_widget))
+
     input_form_widget.button_widget.on_click(button_callback)
     return apps_page
