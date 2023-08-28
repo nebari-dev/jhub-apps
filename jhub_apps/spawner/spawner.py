@@ -24,6 +24,13 @@ class JHubSpawner(SimpleLocalProcessSpawner):
         env = super().get_env()
         if self.user_options.get("env"):
             env.update(self.user_options["env"])
+
+        if self.user_options.get("jhub_app"):
+            framework = self.user_options.get("framework")
+            framework_env = COMMANDS.get(framework).get("env", {})
+            print(f"framework_env: {framework_env}")
+            # env.update(framework_env)
+            print(f"Updated environment: {env}")
         return env
 
     async def start(self):

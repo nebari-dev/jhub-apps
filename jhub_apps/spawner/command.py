@@ -54,7 +54,7 @@ COMMANDS = {
             f'{EXAMPLES_PATH.get("plotlydash")}',
             "{--}port={port}",
         ],
-        "env": {"DASH_REQUESTS_PATHNAME_PREFIX": "{base_url}/"},
+        "env": {"DASH_REQUESTS_PATHNAME_PREFIX": f"{base_url}/"},
     },
     "bokeh": {
         "args": [
