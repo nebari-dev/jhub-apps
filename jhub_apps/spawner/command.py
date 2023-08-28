@@ -7,6 +7,7 @@ EXAMPLES_PATH = {
     "bokeh": "/Users/aktech/quansight/jhub-apps/jhub_apps/examples/bokeh_basic.py",
     "streamlit": "/Users/aktech/quansight/jhub-apps/jhub_apps/examples/streamlit_app.py",
     "plotlydash": "/Users/aktech/quansight/jhub-apps/jhub_apps/examples/plotlydash_app.py",
+    "voila": "/Users/aktech/quansight/jhub-apps/jhub_apps/examples/voila_basic.ipynb",
 }
 
 base_url = "http://127.0.0.1:8000"
@@ -23,11 +24,10 @@ COMMANDS = {
             f'{EXAMPLES_PATH.get("voila")}',
             "{--}port={port}",
             "{--}no-browser",
-            "{--}Voila.base_url={base_url}/",
             "{--}Voila.server_url=/",
             "{--}Voila.ip=0.0.0.0",
             "{--}Voila.tornado_settings",
-            "allow_origin={origin_host}",
+            "allow_origin="+f"{origin_host}",
             "--progressive",
             "--ready-check-path=/voila/static/",
         ],

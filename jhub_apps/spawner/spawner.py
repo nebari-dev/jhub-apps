@@ -18,6 +18,13 @@ class JHubSpawner(SimpleLocalProcessSpawner):
             framework = self.user_options.get("framework")
             command_args = COMMANDS.get(framework)["args"]
             argv.extend(command_args)
+            if framework == "voila":
+                env = self.get_env()
+                jh_service_prefix = env.get("JUPYTERHUB_SERVICE_PREFIX")
+                # TODO: Fix url hardcoding
+                base_url = f"http://127.0.0.1:8000{jh_service_prefix}"
+                base_url_param = "{--}Voila.base_url="+f"{base_url}/"
+                argv.append(base_url_param)
         return argv
 
     def get_env(self):
@@ -27,8 +34,8 @@ class JHubSpawner(SimpleLocalProcessSpawner):
 
         if self.user_options.get("jhub_app"):
             framework = self.user_options.get("framework")
+            jh_service_prefix = env.get("JUPYTERHUB_SERVICE_PREFIX")
             if framework == "plotlydash":
-                jh_service_prefix = env.get("JUPYTERHUB_SERVICE_PREFIX")
                 env["DASH_REQUESTS_PATHNAME_PREFIX"] = jh_service_prefix
             print(f"Updated environment: {type(env)} {env}")
         return env
