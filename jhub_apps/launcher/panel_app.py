@@ -99,9 +99,6 @@ class ListItem(pn.Column):  # Change the base class to pn.Column
         self.view_button = pn.widgets.Button(name="View", button_type="primary")
         self.edit_button = pn.widgets.Button(name="Edit", button_type="warning")
         self.delete_button = pn.widgets.Button(name="Delete", button_type="danger")
-        self.spinner = pn.indicators.LoadingSpinner(
-            size=30, value=True, color="secondary", bgcolor="dark", visible=False
-        )
 
         # Set up event listeners for the buttons
         self.view_button.on_click(self.on_view)
@@ -117,7 +114,6 @@ class ListItem(pn.Column):  # Change the base class to pn.Column
             self.view_button,
             self.edit_button,
             self.delete_button,
-            self.spinner,
             css_classes=["list-item"],  # Apply the .list-item CSS styling
         )
 
@@ -134,7 +130,9 @@ class ListItem(pn.Column):  # Change the base class to pn.Column
 
         pn.config.raw_css.append(item_style)
 
-        super().__init__(self.content, **params)  # Initializing the pn.Column base class
+        super().__init__(
+            self.content, **params
+        )  # Initializing the pn.Column base class
 
     def on_view(self, event):
         print(f"View button clicked! {self.desc} {event}")
@@ -147,11 +145,13 @@ class ListItem(pn.Column):  # Change the base class to pn.Column
     def on_delete(self, event):
         print(f"Delete button clicked! {self.name} {event}")
         hclient = HubClient()
-        self.spinner.visible = True
         self.delete_button.visible = False
+        spinner = pn.indicators.LoadingSpinner(
+            size=30, value=True, color="danger", bgcolor="dark", visible=True
+        )
+        self.content.append(spinner)
         hclient.delete_server(username="aktech", server_name=self.server_name)
-        self.spinner.visible = False
-        self.delete_button.visible = False
+        spinner.visible = False
         self.content.visible = False
 
 
