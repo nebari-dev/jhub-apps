@@ -89,11 +89,14 @@ def _create_items():
 
 
 class ListItem(pn.Column):  # Change the base class to pn.Column
-    def __init__(self, server_name, logo, desc, link, **params):
+    def __init__(
+            self, server_name, logo, desc, link, input_form_widget: InputFormWidget, **params
+    ):
         self.server_name = server_name
         self.logo = logo
         self.desc = desc
         self.link = link
+        self.input_form_widget = input_form_widget
 
         # Define Panel buttons
         self.view_button = pn.widgets.Button(name="View", button_type="primary")
@@ -155,7 +158,7 @@ class ListItem(pn.Column):  # Change the base class to pn.Column
         self.content.visible = False
 
 
-def create_list_dashboards():
+def create_list_dashboards(input_form_widget):
     print("Create Dashboards Layout")
     list_items = []
     items = _create_items()
@@ -165,6 +168,7 @@ def create_list_dashboards():
             logo=item["image"],
             desc=item["description"],
             link=item["link"],
+            input_form_widget=input_form_widget
         )
         list_items.append(list_item)
 
@@ -251,5 +255,5 @@ def create_app():
         return create_dashboard(event, input_form_widget, input_form)
 
     input_form_widget.button_widget.on_click(button_callback)
-    created_apps = create_list_dashboards()
+    created_apps = create_list_dashboards(input_form_widget)
     return create_apps_page(input_form, created_apps)
