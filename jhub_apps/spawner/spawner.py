@@ -28,22 +28,9 @@ class JHubSpawner(SimpleLocalProcessSpawner):
                 origin_host=ORIGIN_HOST,
                 base_url=BASE_URL,
                 jh_service_prefix=jh_service_prefix,
+                voila_base_url=f"{BASE_URL}{jh_service_prefix}"
             )
             argv.extend(command_args)
-            env = self.get_env()
-            jh_service_prefix = env.get("JUPYTERHUB_SERVICE_PREFIX")
-            if framework == "voila":
-                # TODO: Fix url hardcoding
-                base_url = f"{BASE_URL}{jh_service_prefix}"
-                base_url_param = "{--}Voila.base_url=" + f"{base_url}"
-                argv.append(base_url_param)
-            if framework == "gradio":
-                args = [
-                    "{--}server-port={port}",
-                    "{--}root-path=" + jh_service_prefix,
-                    "--ready-check-path=/",
-                ]
-                argv.extend(args)
         return argv
 
     def get_env(self):

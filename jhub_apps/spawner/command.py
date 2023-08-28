@@ -70,6 +70,7 @@ COMMANDS = {
             "{--}Voila.tornado_settings",
             "--debug",
             TString("allow_origin=$origin_host"),
+            TString("{--}Voila.base_url=$voila_base_url"),
             "--progressive",
             "--ready-check-path=/voila/static/",
         ],
