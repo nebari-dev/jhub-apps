@@ -4,10 +4,8 @@ from typing import Any
 
 import panel as pn
 
+from jhub_apps.constants import BASE_URL
 from jhub_apps.launcher.hub_client import HubClient
-
-# TODO: Remove hardcoding
-BASE_URL = "http://127.0.0.1:8000"
 
 
 @dataclass

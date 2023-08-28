@@ -1,4 +1,3 @@
-# TODO: Fix this hardcoding
 import string
 import typing
 from dataclasses import dataclass

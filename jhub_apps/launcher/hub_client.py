@@ -1,10 +1,6 @@
-import os
-
 import requests
 
-API_URL = "http://127.0.0.1:8000/hub/api"
-
-JHUB_APP_TOKEN = os.environ.get("JHUB_APP_LAUNCHER_TOKEN", "super-secret")
+from jhub_apps.constants import API_URL, JHUB_APP_TOKEN
 
 
 class HubClient:
