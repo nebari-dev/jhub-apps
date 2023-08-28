@@ -1,9 +1,12 @@
+import webbrowser
 from dataclasses import dataclass
 from typing import Any
 
 import panel as pn
 
 from jhub_apps.launcher.hub_client import HubClient
+
+BASE_URL = "http://localhost:8000"
 
 
 @dataclass
@@ -78,7 +81,7 @@ def _create_items():
                 name=server_name,
                 logo=logo,
                 desc=user_options["description"] or user_options["name"],
-                link=server["progress_url"],
+                link=server["url"],
             )
         )
     print(f"items: {items}")
@@ -131,11 +134,11 @@ class ListItem(pn.Column):  # Change the base class to pn.Column
 
     def on_view(self, event):
         print(f"View button clicked! {self.desc} {event}")
-        # window.open(self.link, '_blank')  # Open the link in a new tab
+        url = f"{BASE_URL}{self.link}"
+        webbrowser.open(url, new=2)
 
     def on_edit(self, event):
         print(f"Edit button clicked! {self.desc} {event}")
-        # Add your edit functionality here
 
     def on_delete(self, event):
         print(f"Delete button clicked! {self.name} {event}")
@@ -216,7 +219,7 @@ def create_dashboard(event, input_form_widget, input_form):
     hclient.create_server("aktech", name.lower(), params=params)
     input_form.pop(-1)
     # TODO: Fix Url hardcoding
-    dashboard_link = f"http://localhost:8000/user/aktech/{name}"
+    dashboard_link = f"{BASE_URL}/user/aktech/{name}"
     text_with_link = pn.pane.Markdown(
         f"""
     ## 🚀 Dashboard created: [{dashboard_link}]({dashboard_link}).
