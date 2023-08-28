@@ -37,6 +37,7 @@ LOGO_MAPPING = {
     "bokeh": "https://static.bokeh.org/branding/icons/bokeh-icon@5x.png",
     "voila": "https://raw.githubusercontent.com/voila-dashboards/voila/main/docs/voila-logo.svg",
     "plotlydash": "https://repository-images.githubusercontent.com/33702544/b4400c80-718b-11e9-9f3a-306c07a5f3de",
+    "gradio": "https://avatars.githubusercontent.com/u/51063788?s=48&v=4",
 }
 
 
