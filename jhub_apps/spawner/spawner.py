@@ -28,6 +28,7 @@ class JHubSpawner(SimpleLocalProcessSpawner):
                 argv.append(base_url_param)
             if framework == "gradio":
                 args = [
+                    "{--}server-port={port}",
                     "{--}root-path=" + jh_service_prefix,
                     "--ready-check-path=/",
                 ]
