@@ -6,7 +6,8 @@ import panel as pn
 
 from jhub_apps.launcher.hub_client import HubClient
 
-BASE_URL = "http://localhost:8000"
+# TODO: Remove hardcoding
+BASE_URL = "http://127.0.0.1:8000"
 
 
 @dataclass

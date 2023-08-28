@@ -11,7 +11,7 @@ EXAMPLES_PATH = {
 }
 
 base_url = "http://127.0.0.1:8000"
-origin_host = "localhost:8000"
+origin_host = "127.0.0.1:8000"
 
 
 COMMANDS = {
