@@ -16,9 +16,6 @@ EXAMPLES_PATH = {
     "gradio": f"{BASE_EXAMPLES_PATH}/gradio_basic.py",
 }
 
-base_url = "http://127.0.0.1:8000"
-origin_host = "127.0.0.1:8000"
-
 
 @dataclass
 class TString:
