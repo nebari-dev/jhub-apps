@@ -40,6 +40,6 @@ class HubClient:
     def delete_server(self, username, server_name):
         url = f"/users/{username}/servers/{server_name}"
         params = {"remove": True}
-        r = requests.post(API_URL + url, headers=self._headers(), json=params)
+        r = requests.delete(API_URL + url, headers=self._headers(), json=params)
         r.raise_for_status()
         return r.status_code
