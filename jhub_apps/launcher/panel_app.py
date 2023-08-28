@@ -35,7 +35,7 @@ LOGO_MAPPING = {
     "streamlit": "https://streamlit.io/images/brand/streamlit-mark-color.png",
     "bokeh": "https://static.bokeh.org/branding/icons/bokeh-icon@5x.png",
     "voila": "https://raw.githubusercontent.com/voila-dashboards/voila/main/docs/voila-logo.svg",
-    "plotly": "https://repository-images.githubusercontent.com/33702544/b4400c80-718b-11e9-9f3a-306c07a5f3de",
+    "plotlydash": "https://repository-images.githubusercontent.com/33702544/b4400c80-718b-11e9-9f3a-306c07a5f3de",
 }
 
 
