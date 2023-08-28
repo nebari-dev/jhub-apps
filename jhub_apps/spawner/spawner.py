@@ -28,7 +28,7 @@ class JHubSpawner(SimpleLocalProcessSpawner):
                 origin_host=ORIGIN_HOST,
                 base_url=BASE_URL,
                 jh_service_prefix=jh_service_prefix,
-                voila_base_url=f"{BASE_URL}{jh_service_prefix}"
+                voila_base_url=f"{BASE_URL}{jh_service_prefix}",
             )
             argv.extend(command_args)
         return argv
