@@ -27,10 +27,10 @@ class JHubSpawner(SimpleLocalProcessSpawner):
 
         if self.user_options.get("jhub_app"):
             framework = self.user_options.get("framework")
-            framework_env = COMMANDS.get(framework).get("env", {})
-            print(f"framework_env: {framework_env}")
-            # env.update(framework_env)
-            print(f"Updated environment: {env}")
+            if framework == "plotlydash":
+                jh_service_prefix = env.get("JUPYTERHUB_SERVICE_PREFIX")
+                env["DASH_REQUESTS_PATHNAME_PREFIX"] = jh_service_prefix
+            print(f"Updated environment: {type(env)} {env}")
         return env
 
     async def start(self):
