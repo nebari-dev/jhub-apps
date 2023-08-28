@@ -27,6 +27,7 @@ COMMANDS = {
             "{--}Voila.server_url=/",
             "{--}Voila.ip=0.0.0.0",
             "{--}Voila.tornado_settings",
+            "--debug",
             "allow_origin=" + f"{origin_host}",
             "--progressive",
             "--ready-check-path=/voila/static/",

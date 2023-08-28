@@ -23,7 +23,7 @@ class JHubSpawner(SimpleLocalProcessSpawner):
                 jh_service_prefix = env.get("JUPYTERHUB_SERVICE_PREFIX")
                 # TODO: Fix url hardcoding
                 base_url = f"http://127.0.0.1:8000{jh_service_prefix}"
-                base_url_param = "{--}Voila.base_url=" + f"{base_url}/"
+                base_url_param = "{--}Voila.base_url=" + f"{base_url}"
                 argv.append(base_url_param)
         return argv
 
