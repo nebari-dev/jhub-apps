@@ -2,9 +2,9 @@ from pathlib import Path
 
 from jupyterhub.spawner import SimpleLocalProcessSpawner
 
-from jhub_apps.spawner.command import DEFAULT_CMD, COMMANDS, Command, EXAMPLES_PATH
+from jhub_apps.spawner.command import DEFAULT_CMD, COMMANDS, Command, EXAMPLES_FILE
 
-TEMPLATES_DIR = Path(__file__).parent / "templates"
+EXAMPLES_DIR = Path(__file__).parent.parent / "examples"
 
 
 BASE_URL = "http://127.0.0.1:8000"
@@ -23,9 +23,10 @@ class JHubSpawner(SimpleLocalProcessSpawner):
             env = self.get_env()
             jh_service_prefix = env.get("JUPYTERHUB_SERVICE_PREFIX")
             framework = self.user_options.get("framework")
+            app_filepath = filepath or EXAMPLES_DIR / EXAMPLES_FILE.get(framework)
             command: Command = COMMANDS.get(framework)
             command_args = command.get_substituted_args(
-                filepath=filepath or EXAMPLES_PATH.get(framework),
+                filepath=app_filepath,
                 origin_host=ORIGIN_HOST,
                 base_url=BASE_URL,
                 jh_service_prefix=jh_service_prefix,

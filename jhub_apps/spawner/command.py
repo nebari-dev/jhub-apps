@@ -5,15 +5,13 @@ from dataclasses import dataclass
 
 DEFAULT_CMD = ["python", "-m", "jhsingle_native_proxy.main", "--authtype=none"]
 
-# TODO: Fix this hardcoding
-BASE_EXAMPLES_PATH = "/Users/aktech/quansight/jhub-apps/jhub_apps/examples"
-EXAMPLES_PATH = {
-    "panel": f"{BASE_EXAMPLES_PATH}/panel_basic.py",
-    "bokeh": f"{BASE_EXAMPLES_PATH}/bokeh_basic.py",
-    "streamlit": f"{BASE_EXAMPLES_PATH}/streamlit_app.py",
-    "plotlydash": f"{BASE_EXAMPLES_PATH}/plotlydash_app.py",
-    "voila": f"{BASE_EXAMPLES_PATH}/voila_basic.ipynb",
-    "gradio": f"{BASE_EXAMPLES_PATH}/gradio_basic.py",
+EXAMPLES_FILE = {
+    "panel": "panel_basic.py",
+    "bokeh": "bokeh_basic.py",
+    "streamlit": "streamlit_app.py",
+    "plotlydash": "plotlydash_app.py",
+    "voila": "voila_basic.ipynb",
+    "gradio": "gradio_basic.py",
 }
 
 
