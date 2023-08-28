@@ -19,10 +19,9 @@ origin_host = "127.0.0.1:8000"
 COMMANDS = {
     "gradio": {
         "args": [
-            "--destport=0",
+            "--destport=8500",
             "python",
             f'{EXAMPLES_PATH.get("gradio")}',
-            "--ready-check-path=/",
         ],
     },
     "voila": {

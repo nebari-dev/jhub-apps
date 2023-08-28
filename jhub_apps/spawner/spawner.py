@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 
 from jupyterhub.spawner import SimpleLocalProcessSpawner
@@ -18,13 +19,19 @@ class JHubSpawner(SimpleLocalProcessSpawner):
             framework = self.user_options.get("framework")
             command_args = COMMANDS.get(framework)["args"]
             argv.extend(command_args)
+            env = self.get_env()
+            jh_service_prefix = env.get("JUPYTERHUB_SERVICE_PREFIX")
             if framework == "voila":
-                env = self.get_env()
-                jh_service_prefix = env.get("JUPYTERHUB_SERVICE_PREFIX")
                 # TODO: Fix url hardcoding
                 base_url = f"http://127.0.0.1:8000{jh_service_prefix}"
                 base_url_param = "{--}Voila.base_url=" + f"{base_url}"
                 argv.append(base_url_param)
+            if framework == "gradio":
+                args = [
+                    "{--}root-path=" + jh_service_prefix,
+                    "--ready-check-path=/",
+                ]
+                argv.extend(args)
         return argv
 
     def get_env(self):
@@ -37,13 +44,9 @@ class JHubSpawner(SimpleLocalProcessSpawner):
             jh_service_prefix = env.get("JUPYTERHUB_SERVICE_PREFIX")
             if framework == "plotlydash":
                 env["DASH_REQUESTS_PATHNAME_PREFIX"] = jh_service_prefix
-            print(f"Updated environment: {type(env)} {env}")
         return env
 
     async def start(self):
-        print("*" * 200)
-        print(f"User options: {self.user_options}")
         if self.user_options.get("jhub_app"):
             self.cmd = DEFAULT_CMD
-        print("*" * 200)
         return await super().start()

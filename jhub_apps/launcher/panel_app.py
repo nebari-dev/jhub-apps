@@ -54,18 +54,14 @@ class App:
 def _create_items():
     hclient = HubClient()
     try:
-        print("Getting user")
         user = hclient.get_user()
     except Exception as e:
         print("No user found")
         return []
-    print(f"user {user}")
     servers = user["servers"]
-    print(f"servers {servers}")
     apps = []
     for server_name, server in servers.items():
         user_options = server["user_options"]
-        print(f"server name {server_name}, user_options: {user_options}")
         if not user_options or not user_options.get("jhub_app"):
             print(f"Skipping displaying server: {server_name}")
             continue
@@ -79,9 +75,6 @@ def _create_items():
             logo=logo,
         )
         apps.append(app)
-    print("*" * 100)
-    print(f"apps: {apps}")
-    print("*" * 100)
     return apps
 
 
