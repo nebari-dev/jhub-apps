@@ -51,6 +51,9 @@ COMMANDS = {
             "--destport=0",
             "python",
             TString("$filepath"),
+            "{--}server-port={port}",
+            TString("{--}root-path=$jh_service_prefix"),
+            "--ready-check-path=/",
         ],
     ),
     "voila": Command(

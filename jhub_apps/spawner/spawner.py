@@ -19,12 +19,15 @@ class JHubSpawner(SimpleLocalProcessSpawner):
             argv.extend(self.user_options["argv"])
 
         if self.user_options.get("jhub_app"):
+            env = self.get_env()
+            jh_service_prefix = env.get("JUPYTERHUB_SERVICE_PREFIX")
             framework = self.user_options.get("framework")
             command: Command = COMMANDS.get(framework)
             command_args = command.get_substituted_args(
                 filepath=EXAMPLES_PATH.get(framework),
                 origin_host=ORIGIN_HOST,
                 base_url=BASE_URL,
+                jh_service_prefix=jh_service_prefix
             )
             argv.extend(command_args)
             env = self.get_env()
