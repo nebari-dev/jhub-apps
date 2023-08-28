@@ -27,7 +27,7 @@ class JHubSpawner(SimpleLocalProcessSpawner):
                 filepath=EXAMPLES_PATH.get(framework),
                 origin_host=ORIGIN_HOST,
                 base_url=BASE_URL,
-                jh_service_prefix=jh_service_prefix
+                jh_service_prefix=jh_service_prefix,
             )
             argv.extend(command_args)
             env = self.get_env()

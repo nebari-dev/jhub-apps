@@ -35,3 +35,6 @@ jobs:
     - name: Lint with black
       uses: psf/black@stable
 
+    - name: Run Tests
+      run: |
+        pytest jhub_apps/tests -vvv -s
