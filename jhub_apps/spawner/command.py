@@ -3,15 +3,17 @@ import string
 import typing
 from dataclasses import dataclass
 
+from jhub_apps.spawner.types import Framework
+
 DEFAULT_CMD = ["python", "-m", "jhsingle_native_proxy.main", "--authtype=none"]
 
 EXAMPLES_FILE = {
-    "panel": "panel_basic.py",
-    "bokeh": "bokeh_basic.py",
-    "streamlit": "streamlit_app.py",
-    "plotlydash": "plotlydash_app.py",
-    "voila": "voila_basic.ipynb",
-    "gradio": "gradio_basic.py",
+    Framework.panel.value: "panel_basic.py",
+    Framework.bokeh.value: "bokeh_basic.py",
+    Framework.streamlit.value: "streamlit_app.py",
+    Framework.plotlydash.value: "plotlydash_app.py",
+    Framework.voila.value: "voila_basic.ipynb",
+    Framework.gradio.value: "gradio_basic.py",
 }
 
 
@@ -44,7 +46,7 @@ class Command:
 
 
 COMMANDS = {
-    "gradio": Command(
+    Framework.gradio.value: Command(
         args=[
             "--destport=0",
             "python",
@@ -54,7 +56,7 @@ COMMANDS = {
             "--ready-check-path=/",
         ],
     ),
-    "voila": Command(
+    Framework.voila.value: Command(
         args=[
             "--destport=0",
             "python",
@@ -73,7 +75,7 @@ COMMANDS = {
             "--ready-check-path=/voila/static/",
         ],
     ),
-    "streamlit": Command(
+    Framework.streamlit.value: Command(
         args=[
             "--destport=0",
             "streamlit",
@@ -85,7 +87,7 @@ COMMANDS = {
             "{--}browser.gatherUsageStats=false",
         ],
     ),
-    "plotlydash": Command(
+    Framework.plotlydash.value: Command(
         args=[
             "--destport=0",
             "python",
@@ -95,7 +97,7 @@ COMMANDS = {
             "{--}port={port}",
         ],
     ),
-    "bokeh": Command(
+    Framework.bokeh.value: Command(
         args=[
             "--destport=0",
             "python",
@@ -108,7 +110,7 @@ COMMANDS = {
             "--ready-check-path=/ready-check",
         ]
     ),
-    "panel": Command(
+    Framework.panel.value: Command(
         args=[
             "--destport=0",
             "python",
