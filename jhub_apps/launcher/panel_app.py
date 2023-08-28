@@ -39,24 +39,6 @@ LOGO_MAPPING = {
 }
 
 
-def _get_image_item(name, logo, desc, link="/"):
-    return {"name": name, "image": logo, "description": desc, "link": link}
-
-
-# ... [same imports and definitions]
-
-# Define the items list
-# items = [
-#     _get_image_item(logo=LOGO_MAPPING.get("panel"), desc="Panel Desc", link="/"),
-#     _get_image_item(
-#         logo=LOGO_MAPPING.get("streamlit"), desc="Streamlit Desc", link="/"
-#     ),
-#     _get_image_item(logo=LOGO_MAPPING.get("bokeh"), desc="Bokeh Desc", link="/"),
-#     _get_image_item(logo=LOGO_MAPPING.get("voila"), desc="Voila Desc", link="/"),
-#     _get_image_item(logo=LOGO_MAPPING.get("plotly"), desc="Plotly Desc", link="/"),
-# ]
-
-
 @dataclass
 class App:
     name: str
@@ -65,9 +47,6 @@ class App:
     framework: str
     url: str
     logo: str
-
-    def __str__(self):
-        return f"App_{self.name}"
 
 
 def _create_items():
