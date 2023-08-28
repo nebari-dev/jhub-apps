@@ -1,4 +1,8 @@
 # TODO: Fix this hardcoding
+import string
+import typing
+from dataclasses import dataclass
+
 DEFAULT_CMD = ["python", "-m", "jhsingle_native_proxy.main", "--authtype=none"]
 
 # TODO: Fix this hardcoding
@@ -16,92 +20,124 @@ base_url = "http://127.0.0.1:8000"
 origin_host = "127.0.0.1:8000"
 
 
+@dataclass
+class TString:
+    value: str
+
+    def replace(self, **kwargs):
+        template = string.Template(self.value)
+        keys_to_substitute = set()
+        for k, v in kwargs.items():
+            if f"${k}" in self.value:
+                keys_to_substitute.add(k)
+        subs = {
+            k: v for k, v in kwargs.items()
+            if k in keys_to_substitute
+        }
+        return template.substitute(subs)
+
+
+@dataclass
+class Command:
+    args: typing.List[str]
+
+    def get_substituted_args(self, **kwargs):
+        subs_args = []
+        for arg in self.args:
+            s_arg = arg
+            if isinstance(arg, TString):
+                s_arg = arg.replace(**kwargs)
+            subs_args.append(s_arg)
+        return subs_args
+
+
+panel_cmd = Command(args=[
+    "--destport=0",
+    "python",
+    "{-}m",
+    "bokeh_root_cmd.main",
+    TString("$filepath"),
+    "{--}port={port}",
+    "{--}debug",
+    TString("{--}allow-websocket-origin=$origin_host"),
+    "{--}server=panel",
+    TString("{--}prefix=$base_url"),
+    "--ready-check-path=/ready-check",
+])
+
 COMMANDS = {
-    "gradio": {
-        "args": [
+    "gradio": Command(
+        args=[
             "--destport=0",
             "python",
-            f'{EXAMPLES_PATH.get("gradio")}',
+            TString("$filepath"),
         ],
-    },
-    "voila": {
-        "args": [
+    ),
+    "voila": Command(
+        args=[
             "--destport=0",
             "python",
             "{-}m",
             "voila",
-            f'{EXAMPLES_PATH.get("voila")}',
+            TString("$filepath"),
             "{--}port={port}",
             "{--}no-browser",
             "{--}Voila.server_url=/",
             "{--}Voila.ip=0.0.0.0",
             "{--}Voila.tornado_settings",
             "--debug",
-            "allow_origin=" + f"{origin_host}",
+            TString("allow_origin=$origin_host"),
             "--progressive",
             "--ready-check-path=/voila/static/",
         ],
-    },
-    "streamlit": {
-        "args": [
+    ),
+    "streamlit": Command(
+        args=[
             "--destport=0",
             "streamlit",
             "run",
-            f'{EXAMPLES_PATH.get("streamlit")}',
+            TString("$filepath"),
             "{--}server.port={port}",
             "{--}server.headless=True",
-            "{--}browser.serverAddress=" + f"{origin_host}",
+            TString("{--}browser.serverAddress=$origin_host"),
             "{--}browser.gatherUsageStats=false",
         ],
-        "debug_args": [],
-    },
-    "plotlydash": {
-        "args": [
+    ),
+    "plotlydash": Command(
+        args=[
             "--destport=0",
             "python",
             "{-}m",
             "plotlydash_tornado_cmd.main",
-            f'{EXAMPLES_PATH.get("plotlydash")}',
+            TString("$filepath"),
             "{--}port={port}",
         ],
-        "env": {"DASH_REQUESTS_PATHNAME_PREFIX": f"{base_url}/"},
-    },
-    "bokeh": {
-        "args": [
+    ),
+    "bokeh": Command(
+        args=[
             "--destport=0",
             "python",
             "{-}m",
             "bokeh_root_cmd.main",
-            f'{EXAMPLES_PATH.get("bokeh")}',
+            TString("$filepath"),
             "{--}port={port}",
-            "{--}allow-websocket-origin=" + f"{origin_host}",
-            "{--}prefix=" + f"{base_url}",
+            TString("{--}allow-websocket-origin=$origin_host"),
+            TString("{--}prefix=$base_url"),
             "--ready-check-path=/ready-check",
         ]
-    },
-    "panel": {
-        "args": [
+    ),
+    "panel": Command(
+        args=[
             "--destport=0",
             "python",
             "{-}m",
             "bokeh_root_cmd.main",
-            f'{EXAMPLES_PATH.get("panel")}',
+            TString("$filepath"),
             "{--}port={port}",
             "{--}debug",
-            "{--}allow-websocket-origin=" + f"{origin_host}",
+            TString("{--}allow-websocket-origin=$origin_host"),
             "{--}server=panel",
-            "{--}prefix=" + f"{base_url}",
+            TString("{--}prefix=$base_url"),
             "--ready-check-path=/ready-check",
-        ]
-    },
-    "rshiny": {
-        "args": [
-            "--destport=0",
-            "python",
-            "{-}m",
-            "rshiny_server_cmd.main",
-            f'{EXAMPLES_PATH.get("rshiny")}',
-            "{--}port={port}",
-        ]
-    },
+        ]),
 }
