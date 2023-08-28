@@ -51,7 +51,7 @@ class App:
     logo: str
 
 
-def _create_items():
+def _get_server_apps():
     hclient = HubClient()
     try:
         user = hclient.get_user()
@@ -141,10 +141,10 @@ class ListItem(pn.Column):  # Change the base class to pn.Column
         self.content.visible = False
 
 
-def create_list_dashboards(input_form_widget):
+def create_list_apps(input_form_widget):
     print("Create Dashboards Layout")
     list_items = []
-    apps = _create_items()
+    apps = _get_server_apps()
     for app in apps:
         list_item = ListItem(app=app, input_form_widget=input_form_widget)
         list_items.append(list_item)
@@ -162,7 +162,7 @@ def create_list_dashboards(input_form_widget):
     return layout
 
 
-def create_input_form():
+def get_input_form_widget():
     heading = pn.pane.Markdown("## Create Apps", sizing_mode="stretch_width")
     input_form_widget = InputFormWidget(
         name_input=pn.widgets.TextInput(name="Name"),
@@ -186,7 +186,7 @@ def create_input_form():
     return input_form_widget, input_form
 
 
-def create_dashboard(event, input_form_widget, input_form):
+def create_input_form(event, input_form_widget, input_form, created_apps):
     input_form.append(input_form_widget.spinner)
 
     name = input_form_widget.name_input.value
@@ -225,11 +225,11 @@ def create_app():
     print("*" * 100)
     print("CREATING APP")
     print("*" * 100)
-    input_form_widget, input_form = create_input_form()
+    input_form_widget, input_form = get_input_form_widget()
+    created_apps = create_list_apps(input_form_widget)
 
     def button_callback(event):
-        return create_dashboard(event, input_form_widget, input_form)
+        return create_input_form(event, input_form_widget, input_form, created_apps)
 
     input_form_widget.button_widget.on_click(button_callback)
-    created_apps = create_list_dashboards(input_form_widget)
     return create_apps_page(input_form, created_apps)
