@@ -99,6 +99,9 @@ class ListItem(pn.Column):  # Change the base class to pn.Column
         self.view_button = pn.widgets.Button(name="View", button_type="primary")
         self.edit_button = pn.widgets.Button(name="Edit", button_type="warning")
         self.delete_button = pn.widgets.Button(name="Delete", button_type="danger")
+        self.spinner = pn.indicators.LoadingSpinner(
+            size=30, value=True, color="secondary", bgcolor="dark", visible=False
+        )
 
         # Set up event listeners for the buttons
         self.view_button.on_click(self.on_view)
@@ -106,7 +109,7 @@ class ListItem(pn.Column):  # Change the base class to pn.Column
         self.delete_button.on_click(self.on_delete)
 
         # Using a Row to group the image, description, and buttons horizontally
-        content = pn.Row(
+        self.content = pn.Row(
             pn.pane.PNG(self.logo, width=50),
             pn.pane.Markdown(
                 f"**{self.desc}**", margin=(0, 20, 0, 10)
@@ -114,6 +117,7 @@ class ListItem(pn.Column):  # Change the base class to pn.Column
             self.view_button,
             self.edit_button,
             self.delete_button,
+            self.spinner,
             css_classes=["list-item"],  # Apply the .list-item CSS styling
         )
 
@@ -130,7 +134,7 @@ class ListItem(pn.Column):  # Change the base class to pn.Column
 
         pn.config.raw_css.append(item_style)
 
-        super().__init__(content, **params)  # Initializing the pn.Column base class
+        super().__init__(self.content, **params)  # Initializing the pn.Column base class
 
     def on_view(self, event):
         print(f"View button clicked! {self.desc} {event}")
@@ -143,10 +147,15 @@ class ListItem(pn.Column):  # Change the base class to pn.Column
     def on_delete(self, event):
         print(f"Delete button clicked! {self.name} {event}")
         hclient = HubClient()
+        self.spinner.visible = True
+        self.delete_button.visible = False
         hclient.delete_server(username="aktech", server_name=self.server_name)
+        self.spinner.visible = False
+        self.delete_button.visible = False
+        self.content.visible = False
 
 
-def create_dashboards_layout():
+def create_list_dashboards():
     print("Create Dashboards Layout")
     list_items = []
     items = _create_items()
@@ -198,7 +207,6 @@ def create_input_form():
 
 
 def create_dashboard(event, input_form_widget, input_form):
-    input_form.pop(-1)
     input_form.append(input_form_widget.spinner)
 
     name = input_form_widget.name_input.value
@@ -229,6 +237,10 @@ def create_dashboard(event, input_form_widget, input_form):
     print(event)
 
 
+def create_apps_page(input_form, created_apps):
+    return pn.Row(input_form, created_apps).servable()
+
+
 def create_app():
     print("*" * 100)
     print("CREATING APP")
@@ -239,5 +251,5 @@ def create_app():
         return create_dashboard(event, input_form_widget, input_form)
 
     input_form_widget.button_widget.on_click(button_callback)
-    created_apps = create_dashboards_layout()
-    return pn.Row(input_form, created_apps).servable()
+    created_apps = create_list_dashboards()
+    return create_apps_page(input_form, created_apps)
