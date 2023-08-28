@@ -186,9 +186,11 @@ def get_input_form_widget():
     return input_form_widget, input_form
 
 
-def create_input_form(event, input_form_widget, input_form, created_apps):
+def _create_server(event, input_form_widget, input_form):
+    if isinstance(input_form[-1], pn.pane.Markdown):
+        # Remove the Markdown text, which says dashboard created
+        input_form.pop(-1)
     input_form.append(input_form_widget.spinner)
-
     name = input_form_widget.name_input.value
     filepath = input_form_widget.filepath_input.value
     description = input_form_widget.description_input.value
@@ -210,7 +212,7 @@ def create_input_form(event, input_form_widget, input_form, created_apps):
     dashboard_link = f"{BASE_URL}/user/aktech/{name}"
     text_with_link = pn.pane.Markdown(
         f"""
-    ## 🚀 Dashboard created: [{dashboard_link}]({dashboard_link}).
+    ## 🚀 Dashboard created: [👉🔗]({dashboard_link})
     """
     )
     input_form.append(text_with_link)
@@ -218,7 +220,7 @@ def create_input_form(event, input_form_widget, input_form, created_apps):
 
 
 def create_apps_page(input_form, created_apps):
-    return pn.Row(input_form, created_apps).servable()
+    return pn.Row(input_form, created_apps)
 
 
 def create_app():
@@ -227,9 +229,11 @@ def create_app():
     print("*" * 100)
     input_form_widget, input_form = get_input_form_widget()
     created_apps = create_list_apps(input_form_widget)
+    apps_page = create_apps_page(input_form, created_apps)
 
     def button_callback(event):
-        return create_input_form(event, input_form_widget, input_form, created_apps)
-
+        _create_server(event, input_form_widget, input_form)
+        apps_page.pop(-1)
+        apps_page.append(create_list_apps(input_form_widget))
     input_form_widget.button_widget.on_click(button_callback)
-    return create_apps_page(input_form, created_apps)
+    return apps_page
