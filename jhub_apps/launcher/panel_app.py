@@ -57,6 +57,19 @@ def _get_image_item(name, logo, desc, link="/"):
 # ]
 
 
+@dataclass
+class App:
+    name: str
+    filepath: str
+    description: str
+    framework: str
+    url: str
+    logo: str
+
+    def __str__(self):
+        return f"App_{self.name}"
+
+
 def _create_items():
     hclient = HubClient()
     try:
@@ -68,7 +81,7 @@ def _create_items():
     print(f"user {user}")
     servers = user["servers"]
     print(f"servers {servers}")
-    items = []
+    apps = []
     for server_name, server in servers.items():
         user_options = server["user_options"]
         print(f"server name {server_name}, user_options: {user_options}")
@@ -76,26 +89,24 @@ def _create_items():
             print(f"Skipping displaying server: {server_name}")
             continue
         logo = LOGO_MAPPING.get(user_options["framework"])
-        items.append(
-            _get_image_item(
-                name=server_name,
-                logo=logo,
-                desc=user_options["description"] or user_options["name"],
-                link=server["url"],
-            )
+        app = App(
+            name=server_name,
+            filepath=user_options["filepath"],
+            description=user_options["description"],
+            framework=user_options["framework"],
+            url=server["url"],
+            logo=logo,
         )
-    print(f"items: {items}")
-    return items
+        apps.append(app)
+    print("*" * 100)
+    print(f"apps: {apps}")
+    print("*" * 100)
+    return apps
 
 
 class ListItem(pn.Column):  # Change the base class to pn.Column
-    def __init__(
-            self, server_name, logo, desc, link, input_form_widget: InputFormWidget, **params
-    ):
-        self.server_name = server_name
-        self.logo = logo
-        self.desc = desc
-        self.link = link
+    def __init__(self, app: App, input_form_widget: InputFormWidget, **params):
+        self.app = app
         self.input_form_widget = input_form_widget
 
         # Define Panel buttons
@@ -110,10 +121,8 @@ class ListItem(pn.Column):  # Change the base class to pn.Column
 
         # Using a Row to group the image, description, and buttons horizontally
         self.content = pn.Row(
-            pn.pane.PNG(self.logo, width=50),
-            pn.pane.Markdown(
-                f"**{self.desc}**", margin=(0, 20, 0, 10)
-            ),  # Using Markdown to make the text bold
+            pn.pane.PNG(self.app.logo, width=50),
+            pn.pane.Markdown(f"**{self.app.name}**", margin=(0, 20, 0, 10)),
             self.view_button,
             self.edit_button,
             self.delete_button,
@@ -138,22 +147,22 @@ class ListItem(pn.Column):  # Change the base class to pn.Column
         )  # Initializing the pn.Column base class
 
     def on_view(self, event):
-        print(f"View button clicked! {self.desc} {event}")
-        url = f"{BASE_URL}{self.link}"
+        print(f"View button clicked! {self.app.name} {event}")
+        url = f"{BASE_URL}{self.app.url}"
         webbrowser.open(url, new=2)
 
     def on_edit(self, event):
-        print(f"Edit button clicked! {self.desc} {event}")
+        print(f"Edit button clicked! {self.app.name} {event}")
 
     def on_delete(self, event):
-        print(f"Delete button clicked! {self.name} {event}")
+        print(f"Delete button clicked! {self.app.name} {event}")
         hclient = HubClient()
         self.delete_button.visible = False
         spinner = pn.indicators.LoadingSpinner(
             size=30, value=True, color="danger", bgcolor="dark", visible=True
         )
         self.content.append(spinner)
-        hclient.delete_server(username="aktech", server_name=self.server_name)
+        hclient.delete_server(username="aktech", server_name=self.app.name)
         spinner.visible = False
         self.content.visible = False
 
@@ -161,19 +170,12 @@ class ListItem(pn.Column):  # Change the base class to pn.Column
 def create_list_dashboards(input_form_widget):
     print("Create Dashboards Layout")
     list_items = []
-    items = _create_items()
-    for item in items:
-        list_item = ListItem(
-            server_name=item["name"],
-            logo=item["image"],
-            desc=item["description"],
-            link=item["link"],
-            input_form_widget=input_form_widget
-        )
+    apps = _create_items()
+    for app in apps:
+        list_item = ListItem(app=app, input_form_widget=input_form_widget)
         list_items.append(list_item)
 
     heading = pn.pane.Markdown("## Your Apps", sizing_mode="stretch_width")
-
     # Wrap everything in a Column with the list-container class
     layout = pn.Column(
         heading,
