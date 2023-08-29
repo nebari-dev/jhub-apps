@@ -49,10 +49,10 @@ class App:
     logo: str
 
 
-def _get_server_apps():
+def _get_server_apps(username):
     hclient = HubClient()
     try:
-        user = hclient.get_user()
+        user = hclient.get_user(username)
     except Exception as e:
         print("No user found")
         return []
@@ -80,6 +80,7 @@ class ListItem(pn.Column):  # Change the base class to pn.Column
     def __init__(self, app: App, input_form_widget: InputFormWidget, **params):
         self.app = app
         self.input_form_widget = input_form_widget
+        self.username = params.get("username")
 
         # Define Panel buttons
         self.view_button = pn.widgets.Button(name="View", button_type="primary")
@@ -139,17 +140,19 @@ class ListItem(pn.Column):  # Change the base class to pn.Column
             size=30, value=True, color="danger", bgcolor="dark", visible=True
         )
         self.content.append(spinner)
-        hclient.delete_server(username="aktech", server_name=self.app.name)
+        hclient.delete_server(username=self.username, server_name=self.app.name)
         spinner.visible = False
         self.content.visible = False
 
 
-def create_list_apps(input_form_widget):
+def create_list_apps(input_form_widget, username):
     print("Create Dashboards Layout")
     list_items = []
-    apps = _get_server_apps()
+    apps = _get_server_apps(username)
     for app in apps:
-        list_item = ListItem(app=app, input_form_widget=input_form_widget)
+        list_item = ListItem(
+            app=app, input_form_widget=input_form_widget, username=username
+        )
         list_items.append(list_item)
 
     heading = pn.pane.Markdown("## Your Apps", sizing_mode="stretch_width")
@@ -189,7 +192,7 @@ def get_input_form_widget():
     return input_form_widget, input_form
 
 
-def _create_server(event, input_form_widget, input_form):
+def _create_server(event, input_form_widget, input_form, username):
     if isinstance(input_form[-1], pn.pane.Markdown):
         # Remove the Markdown text, which says dashboard created
         input_form.pop(-1)
@@ -209,10 +212,10 @@ def _create_server(event, input_form_widget, input_form):
         "framework": input_form_widget.framework.value,
     }
     # TODO: Get user from request
-    hclient.create_server("aktech", name.lower(), params=params)
+    hclient.create_server(username, name.lower(), params=params)
     input_form.pop(-1)
     # TODO: Fix Url hardcoding
-    dashboard_link = f"{BASE_URL}/user/aktech/{name}"
+    dashboard_link = f"{BASE_URL}/user/{username}/{name}"
     dashboard_creation_action = "created"
     if input_form_widget.button_widget.name.startswith("Edit"):
         dashboard_creation_action = "updated"
@@ -245,13 +248,13 @@ def create_app():
     if not username:
         return pn.pane.Markdown("# No user found!")
     input_form_widget, input_form = get_input_form_widget()
-    created_apps = create_list_apps(input_form_widget)
+    created_apps = create_list_apps(input_form_widget, username)
     apps_page = create_apps_page(input_form, created_apps)
 
     def button_callback(event):
-        _create_server(event, input_form_widget, input_form)
+        _create_server(event, input_form_widget, input_form, username)
         apps_page.pop(-1)
-        apps_page.append(create_list_apps(input_form_widget))
+        apps_page.append(create_list_apps(input_form_widget, username))
 
     input_form_widget.button_widget.on_click(button_callback)
     return apps_page

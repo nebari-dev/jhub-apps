@@ -16,7 +16,7 @@ class HubClient:
         users = r.json()
         return users
 
-    def get_user(self, user="aktech"):
+    def get_user(self, user):
         params = {"include_stopped_servers": True}
         r = requests.get(
             API_URL + f"/users/{user}", params=params, headers=self._headers()
@@ -25,7 +25,7 @@ class HubClient:
         users = r.json()
         return users
 
-    def create_server(self, username, servername="foobarlar", params=None):
+    def create_server(self, username, servername, params=None):
         url = f"/users/{username}/servers/{servername}"
         params = params or {}
         data = {"jhub_app": True, **params}
