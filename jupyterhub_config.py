@@ -38,7 +38,7 @@ if "PUBLIC_HOST" not in os.environ:
     public_host = "http://127.0.0.1:8000"
 else:
     public_host = os.environ["PUBLIC_HOST"].rstrip("/")
-service_name = "fastapi"
+service_name = "japps"
 oauth_redirect_uri = f"{public_host}/services/{service_name}/oauth_callback"
 
 
@@ -77,5 +77,10 @@ c.JupyterHub.load_roles = [
             "access:services",
             "list:services",
         ],
+    },
+    {
+        "name": "user",
+        # grant all users access to services
+        "scopes": ["self", "access:services"],
     },
 ]
