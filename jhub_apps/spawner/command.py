@@ -4,7 +4,7 @@ from dataclasses import dataclass
 
 from jhub_apps.spawner.types import Framework
 
-DEFAULT_CMD = ["python", "-m", "jhsingle_native_proxy.main", "--authtype=none"]
+DEFAULT_CMD = ["python3", "-m", "jhsingle_native_proxy.main", "--authtype=none"]
 
 EXAMPLES_FILE = {
     Framework.panel.value: "panel_basic.py",
@@ -48,7 +48,7 @@ COMMANDS = {
     Framework.gradio.value: Command(
         args=[
             "--destport=0",
-            "python",
+            "python3",
             TString("$filepath"),
             "{--}server-port={port}",
             TString("{--}root-path=$jh_service_prefix"),
@@ -58,7 +58,7 @@ COMMANDS = {
     Framework.voila.value: Command(
         args=[
             "--destport=0",
-            "python",
+            "python3",
             "{-}m",
             "voila",
             TString("$filepath"),
@@ -89,7 +89,7 @@ COMMANDS = {
     Framework.plotlydash.value: Command(
         args=[
             "--destport=0",
-            "python",
+            "python3",
             "{-}m",
             "plotlydash_tornado_cmd.main",
             TString("$filepath"),
@@ -99,7 +99,7 @@ COMMANDS = {
     Framework.bokeh.value: Command(
         args=[
             "--destport=0",
-            "python",
+            "python3",
             "{-}m",
             "bokeh_root_cmd.main",
             TString("$filepath"),
@@ -112,7 +112,7 @@ COMMANDS = {
     Framework.panel.value: Command(
         args=[
             "--destport=0",
-            "python",
+            "python3",
             "{-}m",
             "bokeh_root_cmd.main",
             TString("$filepath"),
