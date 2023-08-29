@@ -12,6 +12,7 @@ def app():
         allow_websocket_origin=[
             # "localhost:8000",
             # "127.0.0.1:8000",
+            "3.110.105.216",
             ORIGIN_HOST
         ],
         show=False,
