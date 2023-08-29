@@ -17,13 +17,13 @@ def install_jhub_apps(c):
             {
                 "name": "japps",
                 "url": "http://127.0.0.1:10202",
-                "command": ["flask", "run", "--port=10202"],
+                "command": ["python3", "-m", "flask", "run", "--port=10202"],
                 "environment": {"FLASK_APP": "jhub_apps.service.app"},
             },
             {
                 "name": "launcher",
                 "url": "http://127.0.0.1:5000",
-                "command": ["python", "-m", "jhub_apps.launcher.main"],
+                "command": ["python3", "-m", "jhub_apps.launcher.main"],
                 # Remove this get, set environment properly
                 "api_token": os.environ.get("JHUB_APP_LAUNCHER_TOKEN", "super-secret"),
             },
