@@ -1,12 +1,11 @@
 import os
 
-from fastapi import APIRouter, Depends, Form, Request
+from fastapi import APIRouter, Depends, Form
 
 from .client import get_client
 from .models import AuthorizationError, HubApiError, User
 from .security import get_current_user
 
-import panel as pn
 from bokeh.embed import server_document
 from fastapi import FastAPI, Request
 from fastapi.templating import Jinja2Templates
