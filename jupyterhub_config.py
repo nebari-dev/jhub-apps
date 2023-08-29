@@ -21,7 +21,7 @@ c.JupyterHub.services = [
         "name": "japps",
         "url": "http://127.0.0.1:10202",
         "command": ["flask", "run", "--port=10202"],
-        "environment": {"FLASK_APP": "jhub_apps/service/app.py"},
+        "environment": {"FLASK_APP": "jhub_apps.service.app"},
     },
     {
         "name": "launcher",
