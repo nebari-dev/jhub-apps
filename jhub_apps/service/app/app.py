@@ -10,7 +10,7 @@ from .service import router
 ### All routes are defined in service.py
 
 app = FastAPI(
-    title="Example FastAPI Service",
+    title="JApps FastAPI Service",
     version="0.1",
     ### Serve out Swagger from the service prefix (<hub>/services/:name/docs)
     openapi_url=router.prefix + "/openapi.json",
