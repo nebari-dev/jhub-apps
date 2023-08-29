@@ -4,7 +4,7 @@ import os
 
 def install_jhub_apps(c):
     # only listen on localhost for testing
-    BASE_URL = os.environ.get("JHUB_APP_BASE_URL", "http://127.0.0.1:8000")
+    BASE_URL = os.environ.get("JHUB_APP_BASE_URL", "http://3.110.105.216/")
     c.JupyterHub.bind_url = BASE_URL
 
     c.JupyterHub.spawner_class = JHubSpawner
