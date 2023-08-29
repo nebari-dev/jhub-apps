@@ -230,10 +230,20 @@ def create_apps_page(input_form, created_apps):
     return pn.Row(input_form, created_apps)
 
 
+def get_username():
+    username = pn.state.session_args.get("username")
+    if username:
+        return username[0].decode()
+
+
 def create_app():
     print("*" * 100)
     print("CREATING APP")
+    username = get_username()
+    print(f"User: {username}")
     print("*" * 100)
+    if not username:
+        return pn.pane.Markdown("# No user found!")
     input_form_widget, input_form = get_input_form_widget()
     created_apps = create_list_apps(input_form_widget)
     apps_page = create_apps_page(input_form, created_apps)

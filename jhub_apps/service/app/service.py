@@ -43,7 +43,9 @@ async def get_token(code: str = Form(...)):
 @router.get("/")
 async def index(request: Request):
     "Non-authenticated function that returns {'Hello': 'World'}"
-    script = server_document("http://127.0.0.1:5000/app")
+    script = server_document(
+        "http://127.0.0.1:5000/app", arguments={"username": "aktech"}
+    )
     return templates.TemplateResponse(
         "launcher_base.html", {"request": request, "script": script}
     )
