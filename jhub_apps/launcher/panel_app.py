@@ -88,7 +88,10 @@ class ListItem(pn.Column):  # Change the base class to pn.Column
         self.delete_button = pn.widgets.Button(name="Delete", button_type="danger")
 
         # Set up event listeners for the buttons
-        self.view_button.on_click(self.on_view)
+        url = f"{BASE_URL}{self.app.url}"
+        code = f"""window.open("{url}")"""
+        self.view_button.js_on_click(code=code)
+
         self.edit_button.on_click(self.on_edit)
         self.delete_button.on_click(self.on_delete)
 
