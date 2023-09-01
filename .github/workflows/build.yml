@@ -12,6 +12,9 @@ jobs:
       fail-fast: false
       matrix:
         python-version: ["3.9"]
+        test_type:
+          - tests
+          - tests_e2e
     steps:
     - uses: actions/checkout@v3
 
@@ -31,6 +34,16 @@ jobs:
     - name: Lint with black
       uses: psf/black@stable
 
+    - name: Install Playwright
+      if: matrix.test_type == 'tests_e2e'
+      run: |
+        plawright install
+
     - name: Run Tests
       run: |
-        pytest jhub_apps/tests -vvv -s
+        pytest jhub_apps/${{ matrix.test_type }} -vvv -s
+
+    - name: Test playwright
+      run: |
+        playwright install
+        pytest jhub_apps/tests_e2e -vvv -s
