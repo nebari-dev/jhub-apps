@@ -3,7 +3,7 @@
 ## Install Dependencies
 
 ```bash
-conda env create -f environment-dev.yaml
+conda env create -f environment-dev.yml
 pip install -e .
 ```
 
