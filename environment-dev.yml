@@ -2,13 +2,16 @@ name: jhub-apps-dev
 channels:
   - conda-forge
 dependencies:
-  - fastapi
-  - httpx
-  - python-multipart
-  - uvicorn
+  - flask
   - jupyterhub
   - jupyter
   - plotlydash-tornado-cmd
   - bokeh-root-cmd
   - jhsingle-native-proxy
+  - pytest
   - black
+  - panel
+  - bokeh
+  - voila
+  - dash
+  - streamlit
