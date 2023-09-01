@@ -37,7 +37,6 @@ jobs:
     - name: Install Playwright
       if: matrix.test_type == 'tests_e2e'
       run: |
-        pip install pytest-playwright
         plawright install
 
     - name: Run Tests
