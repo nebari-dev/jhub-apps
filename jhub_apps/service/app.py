@@ -48,7 +48,7 @@ def authenticated(f):
 def index(user):
     "Non-authenticated function that returns {'Hello': 'World'}"
     script = server_document(
-            "http://3.110.105.216:5000/app", arguments={"username": user["name"]}
+            "https://japps.quansight.dev/services/launcher", arguments={"username": user["name"]}
     )
     return render_template(
         "launcher_base.html", **{"request": request, "script": script}

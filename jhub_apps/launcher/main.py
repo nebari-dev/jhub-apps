@@ -6,16 +6,17 @@ from jhub_apps.launcher.panel_app import create_app
 
 def app():
     pn.serve(
-        {"/app": create_app},
+        {"/": create_app},
         port=5000,
         # address="localhost",
         allow_websocket_origin=[
             # "localhost:8000",
             # "127.0.0.1:8000",
-            "3.110.105.216",
+            "japps.quansight.dev",
             ORIGIN_HOST
         ],
         show=False,
+        prefix='/services/launcher/'
     )
 
 
