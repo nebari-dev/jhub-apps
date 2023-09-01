@@ -15,5 +15,3 @@ dependencies:
   - voila
   - dash
   - streamlit
-  pip:
-    - pytest-playwright
