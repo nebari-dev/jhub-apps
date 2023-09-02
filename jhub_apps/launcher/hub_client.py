@@ -1,6 +1,10 @@
+import os
+
 import requests
 
-from jhub_apps.constants import API_URL, JHUB_APP_TOKEN
+
+API_URL = os.environ["JUPYTERHUB_API_URL"]
+JHUB_APP_TOKEN = os.environ["JUPYTERHUB_API_TOKEN"]
 
 
 class HubClient:
