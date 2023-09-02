@@ -3,6 +3,8 @@ from urllib.parse import urlparse
 from jhub_apps.spawner.spawner import JHubSpawner
 import os
 
+PYTHON_EXEC = "python"
+
 
 def install_jhub_apps(c):
     c.JupyterHub.spawner_class = JHubSpawner
@@ -18,14 +20,14 @@ def install_jhub_apps(c):
             {
                 "name": "japps",
                 "url": "http://127.0.0.1:10202",
-                "command": ["python", "-m", "flask", "run", "--port=10202"],
+                "command": [PYTHON_EXEC, "-m", "flask", "run", "--port=10202"],
                 "environment": {"FLASK_APP": "jhub_apps.service.app"},
             },
             {
                 "name": "launcher",
                 "url": "http://127.0.0.1:5000",
                 "command": [
-                    "python",
+                    PYTHON_EXEC,
                     "-m",
                     "jhub_apps.launcher.main",
                     f"--origin-host={parsed_url.netloc}",
