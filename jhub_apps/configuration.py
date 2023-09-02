@@ -16,7 +16,7 @@ def install_jhub_apps(c):
             {
                 "name": "japps",
                 "url": "http://127.0.0.1:10202",
-                "command": ["flask", "run", "--port=10202"],
+                "command": ["python", "-m", "flask", "run", "--port=10202"],
                 "environment": {"FLASK_APP": "jhub_apps.service.app"},
             },
             {
