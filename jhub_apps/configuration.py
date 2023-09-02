@@ -7,7 +7,9 @@ import os
 def install_jhub_apps(c):
     c.JupyterHub.spawner_class = JHubSpawner
     c.JupyterHub.allow_named_servers = True
-
+    bind_url = c.JupyterHub.bind_url
+    if not isinstance(bind_url, str):
+        raise ValueError(f"c.JupyterHub.bind_url is not set: {c.JupyterHub.bind_url}")
     parsed_url = urlparse(c.JupyterHub.bind_url)
     if not c.JupyterHub.services:
         c.JupyterHub.services = []
