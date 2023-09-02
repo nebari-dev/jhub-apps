@@ -47,9 +47,7 @@ def authenticated(f):
 @authenticated
 def index(user):
     "Non-authenticated function that returns {'Hello': 'World'}"
-    script = server_document(
-        "http://127.0.0.1:5000/services/launcher", arguments={"username": user["name"]}
-    )
+    script = server_document("/services/launcher", arguments={"username": user["name"]})
     return render_template(
         "launcher_base.html", **{"request": request, "script": script}
     )
