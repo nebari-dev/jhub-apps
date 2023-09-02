@@ -1,16 +1,14 @@
+from urllib.parse import urlparse
+
 from jhub_apps.spawner.spawner import JHubSpawner
 import os
 
 
 def install_jhub_apps(c):
-    # only listen on localhost for testing
-    "https://japps.quansight.dev"
-    BASE_URL = os.environ.get("JHUB_APP_BASE_URL", "https://japps.quansight.dev/")
-    c.JupyterHub.bind_url = BASE_URL
-
     c.JupyterHub.spawner_class = JHubSpawner
     c.JupyterHub.allow_named_servers = True
 
+    parsed_url = urlparse(c.JupyterHub.bind_url)
     if not c.JupyterHub.services:
         c.JupyterHub.services = []
     c.JupyterHub.services.extend(
@@ -23,8 +21,13 @@ def install_jhub_apps(c):
             },
             {
                 "name": "launcher",
-                "url": "http://127.0.0.1:5000/services/launcher",
-                "command": ["python3", "-m", "jhub_apps.launcher.main"],
+                "url": "http://127.0.0.1:5000",
+                "command": [
+                    "python",
+                    "-m",
+                    "jhub_apps.launcher.main",
+                    f"--origin-host={parsed_url.netloc}",
+                ],
                 # Remove this get, set environment properly
                 "api_token": os.environ.get("JHUB_APP_LAUNCHER_TOKEN", "super-secret"),
             },

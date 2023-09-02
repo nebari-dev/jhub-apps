@@ -7,4 +7,5 @@ from jupyterhub.auth import DummyAuthenticator
 c.JupyterHub.authenticator_class = DummyAuthenticator
 c.JupyterHub.log_level = 10
 
+c.JupyterHub.bind_url = "http://127.0.0.1:8000"
 c = install_jhub_apps(c)
