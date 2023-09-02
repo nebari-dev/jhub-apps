@@ -1,8 +1,8 @@
+from urllib.parse import urlparse
 from pathlib import Path
 
 from jupyterhub.spawner import SimpleLocalProcessSpawner
 
-from jhub_apps.constants import ORIGIN_HOST, BASE_URL
 from jhub_apps.spawner.command import DEFAULT_CMD, COMMANDS, Command, EXAMPLES_FILE
 
 EXAMPLES_DIR = Path(__file__).parent.parent / "examples"
@@ -22,12 +22,13 @@ class JHubSpawner(SimpleLocalProcessSpawner):
             framework = self.user_options.get("framework")
             app_filepath = filepath or EXAMPLES_DIR / EXAMPLES_FILE.get(framework)
             command: Command = COMMANDS.get(framework)
+            parsed_url = urlparse(self.config.JupyterHub.bind_url)
             command_args = command.get_substituted_args(
                 filepath=app_filepath,
-                origin_host=ORIGIN_HOST,
-                base_url=BASE_URL,
+                origin_host=parsed_url.netloc,
+                base_url=self.config.JupyterHub.bind_url,
                 jh_service_prefix=jh_service_prefix,
-                voila_base_url=f"{BASE_URL}{jh_service_prefix}",
+                voila_base_url=f"{jh_service_prefix}",
             )
             argv.extend(command_args)
         return argv

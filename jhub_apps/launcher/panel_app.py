@@ -1,10 +1,8 @@
-import webbrowser
 from dataclasses import dataclass
 from typing import Any
 
 import panel as pn
 
-from jhub_apps.constants import BASE_URL
 from jhub_apps.launcher.hub_client import HubClient
 
 
@@ -88,7 +86,8 @@ class ListItem(pn.Column):  # Change the base class to pn.Column
         self.delete_button = pn.widgets.Button(name="Delete", button_type="danger")
 
         # Set up event listeners for the buttons
-        self.view_button.on_click(self.on_view)
+        code = f"""window.location.href = '{self.app.url}'"""
+        self.view_button.js_on_click(code=code)
         self.edit_button.on_click(self.on_edit)
         self.delete_button.on_click(self.on_delete)
 
@@ -118,11 +117,6 @@ class ListItem(pn.Column):  # Change the base class to pn.Column
         super().__init__(
             self.content, **params
         )  # Initializing the pn.Column base class
-
-    def on_view(self, event):
-        print(f"View button clicked! {self.app.name} {event}")
-        url = f"{BASE_URL}{self.app.url}"
-        webbrowser.open(url, new=2)
 
     def on_edit(self, event):
         print(f"Edit button clicked! {self.app.name} {event}")
@@ -211,11 +205,9 @@ def _create_server(event, input_form_widget, input_form, username):
         "description": input_form_widget.description_input.value,
         "framework": input_form_widget.framework.value,
     }
-    # TODO: Get user from request
     hclient.create_server(username, name.lower(), params=params)
     input_form.pop(-1)
-    # TODO: Fix Url hardcoding
-    dashboard_link = f"{BASE_URL}/user/{username}/{name}"
+    dashboard_link = f"/user/{username}/{name}"
     dashboard_creation_action = "created"
     if input_form_widget.button_widget.name.startswith("Edit"):
         dashboard_creation_action = "updated"
