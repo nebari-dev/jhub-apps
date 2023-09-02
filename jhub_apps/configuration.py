@@ -1,9 +1,16 @@
+from secrets import token_bytes
+from base64 import b64encode
+
 from urllib.parse import urlparse
 
 from jhub_apps.spawner.spawner import JHubSpawner
 import os
 
 PYTHON_EXEC = "python"
+
+
+def _create_token_for_service():
+    return b64encode(token_bytes(32)).decode()
 
 
 def install_jhub_apps(c):
@@ -33,7 +40,9 @@ def install_jhub_apps(c):
                     f"--origin-host={parsed_url.netloc}",
                 ],
                 # Remove this get, set environment properly
-                "api_token": os.environ.get("JHUB_APP_LAUNCHER_TOKEN", "super-secret"),
+                "api_token": os.environ.get(
+                    "JHUB_APP_LAUNCHER_TOKEN", _create_token_for_service()
+                ),
             },
         ]
     )
