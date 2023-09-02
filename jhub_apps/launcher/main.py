@@ -9,15 +9,15 @@ def app(origin_host):
     pn.serve(
         {"/app": create_app},
         port=5000,
-        allow_websocket_origin=[
-            origin_host
-        ],
+        allow_websocket_origin=[origin_host],
         show=False,
     )
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Launcher arguments")
-    parser.add_argument("--origin-host", type=str, help="origin host for the launcher panel app")
+    parser.add_argument(
+        "--origin-host", type=str, help="origin host for the launcher panel app"
+    )
     args = parser.parse_args()
     app(origin_host=args.origin_host)

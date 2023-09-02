@@ -22,7 +22,12 @@ def install_jhub_apps(c):
             {
                 "name": "launcher",
                 "url": "http://127.0.0.1:5000",
-                "command": ["python", "-m", "jhub_apps.launcher.main", f"--origin-host={parsed_url.netloc}"],
+                "command": [
+                    "python",
+                    "-m",
+                    "jhub_apps.launcher.main",
+                    f"--origin-host={parsed_url.netloc}",
+                ],
                 # Remove this get, set environment properly
                 "api_token": os.environ.get("JHUB_APP_LAUNCHER_TOKEN", "super-secret"),
             },
