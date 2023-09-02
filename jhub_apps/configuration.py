@@ -1,3 +1,5 @@
+from urllib.parse import urlparse
+
 from jhub_apps.spawner.spawner import JHubSpawner
 import os
 
@@ -6,6 +8,7 @@ def install_jhub_apps(c):
     c.JupyterHub.spawner_class = JHubSpawner
     c.JupyterHub.allow_named_servers = True
 
+    parsed_url = urlparse(c.JupyterHub.bind_url)
     if not c.JupyterHub.services:
         c.JupyterHub.services = []
     c.JupyterHub.services.extend(
@@ -19,7 +22,7 @@ def install_jhub_apps(c):
             {
                 "name": "launcher",
                 "url": "http://127.0.0.1:5000",
-                "command": ["python", "-m", "jhub_apps.launcher.main"],
+                "command": ["python", "-m", "jhub_apps.launcher.main", f"--origin-host={parsed_url.netloc}"],
                 # Remove this get, set environment properly
                 "api_token": os.environ.get("JHUB_APP_LAUNCHER_TOKEN", "super-secret"),
             },

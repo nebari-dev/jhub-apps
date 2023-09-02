@@ -1,22 +1,23 @@
+import argparse
+
 import panel as pn
 
-from jhub_apps.constants import ORIGIN_HOST
 from jhub_apps.launcher.panel_app import create_app
 
 
-def app():
+def app(origin_host):
     pn.serve(
         {"/app": create_app},
         port=5000,
-        # address="localhost",
         allow_websocket_origin=[
-            # "localhost:8000",
-            # "127.0.0.1:8000",
-            ORIGIN_HOST
+            origin_host
         ],
         show=False,
     )
 
 
 if __name__ == "__main__":
-    app()
+    parser = argparse.ArgumentParser(description="Launcher arguments")
+    parser.add_argument("--origin-host", type=str, help="origin host for the launcher panel app")
+    args = parser.parse_args()
+    app(origin_host=args.origin_host)
