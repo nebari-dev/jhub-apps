@@ -8,6 +8,7 @@ from jhub_apps.spawner.command import (
     DEFAULT_CMD,
 )
 from jhub_apps.spawner.types import Framework
+
 from traitlets import Dict, Unicode, List
 from tljh import user
 from tljh.normalize import generate_system_username
@@ -54,7 +55,7 @@ def subclass_spawner(base_spawner):
                     env["DASH_REQUESTS_PATHNAME_PREFIX"] = jh_service_prefix
             return env
 
-        async def start(self):
+        def start(self):
             if self.user_options.get("jhub_app"):
                 self.cmd = DEFAULT_CMD
             # FIXME: Move this elsewhere? Into the Authenticator?
