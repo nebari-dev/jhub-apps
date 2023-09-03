@@ -30,6 +30,7 @@ def subclass_spawner(base_spawner):
                 command: Command = COMMANDS.get(framework)
                 parsed_url = urlparse(self.config.JupyterHub.bind_url)
                 command_args = command.get_substituted_args(
+                    python_exec=PYTHON_EXEC,
                     filepath=app_filepath,
                     origin_host=parsed_url.netloc,
                     base_url=self.config.JupyterHub.bind_url,
