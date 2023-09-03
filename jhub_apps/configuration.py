@@ -15,6 +15,13 @@ def install_jhub_apps(c, spawner_to_subclass):
     c.JupyterHub.spawner_class = subclass_spawner(spawner_to_subclass)
     c.JupyterHub.allow_named_servers = True
     bind_url = c.JupyterHub.bind_url
+
+    if not isinstance(c.JAppsConfig.python_exec, str):
+        c.JAppsConfig.python_exec = "python"
+
+    if not isinstance(c.JAppsConfig.apps_auth_type, str):
+        c.JAppsConfig.apps_auth_type = "oauth"
+
     if not isinstance(bind_url, str):
         raise ValueError(f"c.JupyterHub.bind_url is not set: {c.JupyterHub.bind_url}")
     parsed_url = urlparse(c.JupyterHub.bind_url)

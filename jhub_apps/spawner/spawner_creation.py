@@ -54,7 +54,10 @@ def subclass_spawner(base_spawner):
 
         async def start(self):
             if self.user_options.get("jhub_app"):
-                self.cmd = DEFAULT_CMD.get_substituted_args(python_exec=PYTHON_EXEC)
+                self.cmd = DEFAULT_CMD.get_substituted_args(
+                    python_exec=PYTHON_EXEC,
+                    authtype=self.config.JAppsConfig.apps_auth_type,
+                )
             return await super().start()
 
         def _expand_user_vars(self, string):
