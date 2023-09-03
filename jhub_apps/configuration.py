@@ -3,10 +3,8 @@ from base64 import b64encode
 
 from urllib.parse import urlparse
 
-from jhub_apps.spawner.spawner_creation import subclass_spawner
+from jhub_apps.spawner.spawner_creation import subclass_spawner, PYTHON_EXEC
 import os
-
-PYTHON_EXEC = "python"
 
 
 def _create_token_for_service():

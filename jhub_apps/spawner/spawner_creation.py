@@ -10,6 +10,9 @@ from jhub_apps.spawner.command import (
 from jhub_apps.spawner.types import Framework
 
 
+PYTHON_EXEC = "python"
+
+
 def subclass_spawner(base_spawner):
     class JHubSpawner(base_spawner):
         def get_args(self):
@@ -50,7 +53,7 @@ def subclass_spawner(base_spawner):
 
         async def start(self):
             if self.user_options.get("jhub_app"):
-                self.cmd = DEFAULT_CMD
+                self.cmd = DEFAULT_CMD.get_substituted_args(python_exec=PYTHON_EXEC)
             return await super().start()
 
     return JHubSpawner

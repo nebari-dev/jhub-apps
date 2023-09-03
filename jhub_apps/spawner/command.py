@@ -5,8 +5,6 @@ from pathlib import Path
 
 from jhub_apps.spawner.types import Framework
 
-PYTHON_EXEC = "python"
-DEFAULT_CMD = [PYTHON_EXEC, "-m", "jhsingle_native_proxy.main", "--authtype=none"]
 
 EXAMPLES_FILE = {
     Framework.panel.value: "panel_basic.py",
@@ -48,11 +46,20 @@ class Command:
         return subs_args
 
 
+DEFAULT_CMD = Command(
+    args=[
+        TString("$python_exec"),
+        "-m",
+        "jhsingle_native_proxy.main",
+        "--authtype=none",
+    ]
+)
+
 COMMANDS = {
     Framework.gradio.value: Command(
         args=[
             "--destport=0",
-            PYTHON_EXEC,
+            TString("$python_exec"),
             TString("$filepath"),
             "{--}server-port={port}",
             TString("{--}root-path=$jh_service_prefix"),
@@ -62,7 +69,7 @@ COMMANDS = {
     Framework.voila.value: Command(
         args=[
             "--destport=0",
-            PYTHON_EXEC,
+            TString("$python_exec"),
             "{-}m",
             "voila",
             TString("$filepath"),
@@ -93,7 +100,7 @@ COMMANDS = {
     Framework.plotlydash.value: Command(
         args=[
             "--destport=0",
-            PYTHON_EXEC,
+            TString("$python_exec"),
             "{-}m",
             "plotlydash_tornado_cmd.main",
             TString("$filepath"),
@@ -103,7 +110,7 @@ COMMANDS = {
     Framework.bokeh.value: Command(
         args=[
             "--destport=0",
-            PYTHON_EXEC,
+            TString("$python_exec"),
             "{-}m",
             "bokeh_root_cmd.main",
             TString("$filepath"),
@@ -116,7 +123,7 @@ COMMANDS = {
     Framework.panel.value: Command(
         args=[
             "--destport=0",
-            PYTHON_EXEC,
+            TString("$python_exec"),
             "{-}m",
             "bokeh_root_cmd.main",
             TString("$filepath"),
