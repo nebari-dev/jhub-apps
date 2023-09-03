@@ -5,7 +5,7 @@ from pathlib import Path
 
 from jhub_apps.spawner.types import Framework
 
-PYTHON_EXEC = "python"
+PYTHON_EXEC = "python3"
 DEFAULT_CMD = [PYTHON_EXEC, "-m", "jhsingle_native_proxy.main", "--authtype=none"]
 
 EXAMPLES_FILE = {

@@ -6,7 +6,7 @@ from urllib.parse import urlparse
 from jhub_apps.spawner.spawner_creation import subclass_spawner
 import os
 
-PYTHON_EXEC = "python"
+PYTHON_EXEC = "python3"
 
 
 def _create_token_for_service():
