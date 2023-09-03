@@ -7,6 +7,7 @@ from jhub_apps.spawner.command import (
     EXAMPLES_FILE,
     DEFAULT_CMD,
 )
+from jhub_apps.spawner.types import Framework
 
 
 def subclass_spawner(base_spawner):
@@ -43,7 +44,7 @@ def subclass_spawner(base_spawner):
             if self.user_options.get("jhub_app"):
                 framework = self.user_options.get("framework")
                 jh_service_prefix = env.get("JUPYTERHUB_SERVICE_PREFIX")
-                if framework == "plotlydash":
+                if framework == Framework.plotlydash.value:
                     env["DASH_REQUESTS_PATHNAME_PREFIX"] = jh_service_prefix
             return env
 
