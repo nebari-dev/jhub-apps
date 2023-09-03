@@ -10,7 +10,7 @@ from jhub_apps.spawner.command import (
 from jhub_apps.spawner.types import Framework
 
 
-PYTHON_EXEC = "python"
+PYTHON_EXEC = "python3"
 
 
 def subclass_spawner(base_spawner):
