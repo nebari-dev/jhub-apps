@@ -3,7 +3,7 @@ from base64 import b64encode
 
 from urllib.parse import urlparse
 
-from jhub_apps.spawner.spawner import JHubSpawner
+from jhub_apps.spawner.spawner_creation import subclass_spawner
 import os
 
 PYTHON_EXEC = "python"
@@ -13,8 +13,8 @@ def _create_token_for_service():
     return b64encode(token_bytes(32)).decode()
 
 
-def install_jhub_apps(c):
-    c.JupyterHub.spawner_class = JHubSpawner
+def install_jhub_apps(c, spawner_to_subclass):
+    c.JupyterHub.spawner_class = subclass_spawner(spawner_to_subclass)
     c.JupyterHub.allow_named_servers = True
     bind_url = c.JupyterHub.bind_url
     if not isinstance(bind_url, str):

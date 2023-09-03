@@ -1,6 +1,7 @@
 import string
 import typing
 from dataclasses import dataclass
+from pathlib import Path
 
 from jhub_apps.spawner.types import Framework
 
@@ -15,6 +16,8 @@ EXAMPLES_FILE = {
     Framework.voila.value: "voila_basic.ipynb",
     Framework.gradio.value: "gradio_basic.py",
 }
+
+EXAMPLES_DIR = Path(__file__).parent.parent / "examples"
 
 
 @dataclass
