@@ -9,14 +9,9 @@ from jhub_apps.spawner.command import (
 )
 from jhub_apps.spawner.types import Framework
 
-from traitlets import Dict, Unicode, List
-from tljh import user
-from tljh.normalize import generate_system_username
-
 
 def subclass_spawner(base_spawner):
     class JHubSpawner(base_spawner):
-
         def get_args(self):
             """Return arguments to pass to the notebook server"""
             argv = super().get_args()
