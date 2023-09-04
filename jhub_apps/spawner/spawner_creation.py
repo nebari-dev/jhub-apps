@@ -64,6 +64,7 @@ def subclass_spawner(base_spawner):
             Currently expands:
               {USERNAME} -> Name of the user
               {USERID} -> UserID
+              {JHUBSERVERNAME} -> Name
             """
             jhub_server_name = ""
             if self.name:
