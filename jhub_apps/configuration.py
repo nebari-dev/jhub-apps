@@ -3,7 +3,7 @@ from base64 import b64encode
 
 from urllib.parse import urlparse
 
-from jhub_apps.spawner.spawner_creation import subclass_spawner, PYTHON_EXEC
+from jhub_apps.spawner.spawner_creation import subclass_spawner
 import os
 
 
@@ -32,14 +32,20 @@ def install_jhub_apps(c, spawner_to_subclass):
             {
                 "name": "japps",
                 "url": "http://127.0.0.1:10202",
-                "command": [PYTHON_EXEC, "-m", "flask", "run", "--port=10202"],
+                "command": [
+                    c.JAppsConfig.python_exec,
+                    "-m",
+                    "flask",
+                    "run",
+                    "--port=10202",
+                ],
                 "environment": {"FLASK_APP": "jhub_apps.service.app"},
             },
             {
                 "name": "launcher",
                 "url": "http://127.0.0.1:5000",
                 "command": [
-                    PYTHON_EXEC,
+                    c.JAppsConfig.python_exec,
                     "-m",
                     "jhub_apps.launcher.main",
                     f"--origin-host={parsed_url.netloc}",

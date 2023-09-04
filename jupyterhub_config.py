@@ -1,6 +1,5 @@
 from jupyterhub.spawner import SimpleLocalProcessSpawner
 
-from jhub_apps import JAppsConfig
 from jhub_apps.configuration import install_jhub_apps
 
 c = get_config()  # noqa
