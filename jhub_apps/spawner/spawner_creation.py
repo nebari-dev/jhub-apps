@@ -11,6 +11,7 @@ from jhub_apps.spawner.types import Framework
 
 
 def subclass_spawner(base_spawner):
+    # TODO: Find a better way to do this
     class JHubSpawner(base_spawner):
         def get_args(self):
             """Return arguments to pass to the notebook server"""

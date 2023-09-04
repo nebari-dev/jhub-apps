@@ -32,6 +32,7 @@ def install_jhub_apps(c, spawner_to_subclass):
             {
                 "name": "japps",
                 "url": "http://127.0.0.1:10202",
+                # TODO: Run flask app behind gunicorn
                 "command": [
                     c.JAppsConfig.python_exec,
                     "-m",

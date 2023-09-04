@@ -226,6 +226,8 @@ def create_apps_page(input_form, created_apps):
 
 
 def get_username():
+    # FIXME: This would be accessible by manually passing username
+    # in the url
     username = pn.state.session_args.get("username")
     if username:
         return username[0].decode()
