@@ -117,6 +117,7 @@ COMMANDS = {
             "{--}port={port}",
             TString("{--}allow-websocket-origin=$origin_host"),
             TString("{--}prefix=$base_url"),
+            "--ip=0.0.0.0",
             "--ready-check-path=/ready-check",
         ]
     ),
@@ -132,6 +133,7 @@ COMMANDS = {
             TString("{--}allow-websocket-origin=$origin_host"),
             "{--}server=panel",
             TString("{--}prefix=$base_url"),
+            "--ip=0.0.0.0",
             "--ready-check-path=/ready-check",
         ]
     ),
