@@ -29,3 +29,27 @@ pytest jhub_apps/tests
 ```bash
 pytest jhub_apps/tests_e2e -vvv -s --headed
 ```
+
+## Usage
+
+JHub Apps has been tested with local JupyterHub using `SimpleLocalProcessSpawner` and with
+The Littlest JupyterHub using `SystemdSpawner`.
+
+* Install JHub Apps
+
+```python
+pip install git+https://github.com/nebari-dev/jhub-apps.git
+```
+
+* Add the following in The Littlest JupyterHub's `jupyterhub_config.py`
+
+```python
+from tljh.user_creating_spawner import UserCreatingSpawner
+from jhub_apps.configuration import install_jhub_apps
+
+c.JupyterHub.bind_url = "<YOUR_JUPYTERHUB_URL>"
+c.SystemdSpawner.unit_name_template = 'jupyter-{USERNAME}{JHUBSERVERNAME}'
+c.JAppsConfig.apps_auth_type = "oauth" # or none (if you don't want authentication on apps)
+c.JAppsConfig.python_exec = "python3"
+c = install_jhub_apps(c, UserCreatingSpawner)
+```
