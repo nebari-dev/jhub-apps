@@ -57,4 +57,22 @@ def subclass_spawner(base_spawner):
                 )
             return await super().start()
 
+        def _expand_user_vars(self, string):
+            """
+            Expand user related variables in a given string
+
+            Currently expands:
+              {USERNAME} -> Name of the user
+              {USERID} -> UserID
+              {JHUBSERVERNAME} -> Name
+            """
+            jhub_server_name = ""
+            if self.name:
+                jhub_server_name = "-{}".format(self.name)
+            return (
+                string.replace("{USERNAME}", self.user.name)
+                .replace("{USERID}", str(self.user.id))
+                .replace("{JHUBSERVERNAME}", jhub_server_name)
+            )
+
     return JHubSpawner
