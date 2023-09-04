@@ -16,4 +16,5 @@ dependencies:
   - dash
   - streamlit
   - traitlets
-  - gradio
+  - pip:
+    - gradio

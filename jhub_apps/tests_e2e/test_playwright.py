@@ -38,6 +38,10 @@ def test_japps_service(page: Page):
     [
         (Framework.panel.value, "Panel Test App"),
         (Framework.bokeh.value, "Hello World"),
+        (Framework.streamlit.value, "streamlit_app · Streamlit"),
+        (Framework.plotlydash.value, "Dash"),
+        (Framework.voila.value, "voila_basic"),
+        (Framework.gradio.value, "Gradio"),
     ],
 )
 def test_panel_dashboard_creation(page: Page, framework, expected_title):
@@ -59,7 +63,16 @@ def test_panel_dashboard_creation(page: Page, framework, expected_title):
     time.sleep(5)
     # Click on View Dashboard
     page.click("text=View")
-    expect(page).to_have_title(re.compile(expected_title))
+    try:
+        expect(page).to_have_title(re.compile(expected_title))
+    except AssertionError as e:
+        # Go back to japps page
+        page.goto(url)
+        # Delete Dashboard
+        page.click("text=Delete")
+        raise e
+
+    # Delete dashboard anyways
     # Go back to japps page
     page.goto(url)
     # Delete Dashboard
