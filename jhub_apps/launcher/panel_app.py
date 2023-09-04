@@ -165,7 +165,7 @@ def create_list_apps(input_form_widget, username):
 def get_input_form_widget():
     heading = pn.pane.Markdown("## Create Apps", sizing_mode="stretch_width")
     input_form_widget = InputFormWidget(
-        name_input=pn.widgets.TextInput(name="Name"),
+        name_input=pn.widgets.TextInput(name="Name", id="app_name_input"),
         filepath_input=pn.widgets.TextInput(name="Filepath"),
         description_input=pn.widgets.TextAreaInput(name="Description"),
         spinner=pn.indicators.LoadingSpinner(
