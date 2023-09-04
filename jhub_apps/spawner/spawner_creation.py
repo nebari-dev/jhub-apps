@@ -10,9 +10,6 @@ from jhub_apps.spawner.command import (
 from jhub_apps.spawner.types import Framework
 
 
-PYTHON_EXEC = "python"
-
-
 def subclass_spawner(base_spawner):
     class JHubSpawner(base_spawner):
         def get_args(self):
@@ -30,7 +27,7 @@ def subclass_spawner(base_spawner):
                 command: Command = COMMANDS.get(framework)
                 parsed_url = urlparse(self.config.JupyterHub.bind_url)
                 command_args = command.get_substituted_args(
-                    python_exec=PYTHON_EXEC,
+                    python_exec=self.config.JAppsConfig.python_exec,
                     filepath=app_filepath,
                     origin_host=parsed_url.netloc,
                     base_url=self.config.JupyterHub.bind_url,
@@ -55,7 +52,7 @@ def subclass_spawner(base_spawner):
         async def start(self):
             if self.user_options.get("jhub_app"):
                 self.cmd = DEFAULT_CMD.get_substituted_args(
-                    python_exec=PYTHON_EXEC,
+                    python_exec=self.config.JAppsConfig.python_exec,
                     authtype=self.config.JAppsConfig.apps_auth_type,
                 )
             return await super().start()
