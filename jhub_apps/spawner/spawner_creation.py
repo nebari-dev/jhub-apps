@@ -47,6 +47,13 @@ def subclass_spawner(base_spawner):
                 jh_service_prefix = env.get("JUPYTERHUB_SERVICE_PREFIX")
                 if framework == Framework.plotlydash.value:
                     env["DASH_REQUESTS_PATHNAME_PREFIX"] = jh_service_prefix
+                elif framework == Framework.bokeh.value:
+                    # Seems like the bokeh is always loading static files
+                    # from localhost, this is a bug in bokeh, seen on 3.2.2
+                    # at the time of writing this, this environment variable
+                    # will load static files from cdn
+                    # See this https://github.com/bokeh/bokeh/issues/13170
+                    env["BOKEH_RESOURCES"] = "cdn"
             return env
 
         async def start(self):
