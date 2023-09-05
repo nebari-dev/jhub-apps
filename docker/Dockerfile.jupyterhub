@@ -1,0 +1,31 @@
+# Copyright (c) Jupyter Development Team.
+# Distributed under the terms of the Modified BSD License.
+ARG JUPYTERHUB_VERSION
+FROM jupyterhub/jupyterhub:$JUPYTERHUB_VERSION
+
+# Install dockerspawner, nativeauthenticator
+# hadolint ignore=DL3013
+RUN python3 -m pip install --no-cache-dir \
+    dockerspawner \
+    jupyterhub-nativeauthenticator
+
+RUN apt update && apt install git gcc musl-dev python3-dev -y
+RUN python3 -m pip install --no-cache-dir \
+    git+https://github.com/nebari-dev/jhub-apps.git \
+    flask \
+    jupyterhub \
+    jupyter \
+    plotlydash-tornado-cmd \
+    bokeh-root-cmd \
+    jhsingle-native-proxy \
+    pytest \
+    black \
+    panel \
+    bokeh \
+    voila \
+    dash \
+    streamlit \
+    traitlets \
+    gradio
+
+CMD ["jupyterhub", "-f", "/srv/jupyterhub/jupyterhub_config.py"]
