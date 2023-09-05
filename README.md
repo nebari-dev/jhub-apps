@@ -14,6 +14,8 @@ command. Currently, the following frameworks are supported:
 - [x] Voila
 - [x] Gradio
 
+![JHub Apps Demo](https://raw.githubusercontent.com/nebari-dev/jhub-apps/main/demo.gif)
+
 ## Install Dependencies
 
 ```bash
