@@ -88,6 +88,8 @@ COMMANDS = {
     Framework.streamlit.value: Command(
         args=[
             "--destport=0",
+            TString("$python_exec"),
+            "{-}m",
             "streamlit",
             "run",
             TString("$filepath"),
