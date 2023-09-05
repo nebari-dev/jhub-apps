@@ -1,0 +1,24 @@
+name: Docker Build
+
+on:
+  push:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Start JupyterHub
+      run: |
+        jupyterhub -f jupyterhub_config.py &
+        docker compose build
+        docker compose up
+        # Give it some to time to start properly
+        sleep 5
+      working-directory: docker
+
+    - name: Build JHub Image
+      run: |
+        docker build -t jhub -f Dockerfile.jhub .
+        sleep 5
+      working-directory: docker
