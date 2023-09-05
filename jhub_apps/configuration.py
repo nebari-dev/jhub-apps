@@ -49,7 +49,7 @@ def install_jhub_apps(c, spawner_to_subclass):
                     c.JAppsConfig.python_exec,
                     "-m",
                     "jhub_apps.launcher.main",
-                    f"--origin-host={parsed_url.netloc}",
+                    f"--origin-host=127.0.0.1:8000",
                 ],
                 # Remove this get, set environment properly
                 "api_token": os.environ.get(
