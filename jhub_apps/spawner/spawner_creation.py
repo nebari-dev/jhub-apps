@@ -59,10 +59,6 @@ def subclass_spawner(base_spawner):
 
         async def start(self):
             if self.user_options.get("jhub_app"):
-                print("COMMAND")
-                print("*"*100)
-                print(self.cmd)
-                print("COMMAND end")
                 self.cmd = DEFAULT_CMD.get_substituted_args(
                     python_exec=self.config.JAppsConfig.python_exec,
                     authtype=self.config.JAppsConfig.apps_auth_type,
