@@ -60,4 +60,5 @@ if admin:
 from jhub_apps.configuration import install_jhub_apps
 from dockerspawner import DockerSpawner
 c.JupyterHub.bind_url = "http://0.0.0.0:8000"
+c.DockerSpawner.name_template = "{prefix}-{username}-{servername}"
 c = install_jhub_apps(c, spawner_to_subclass=DockerSpawner)
