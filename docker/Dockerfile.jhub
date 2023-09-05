@@ -1,15 +1,18 @@
-# Copyright (c) Jupyter Development Team.
-# Distributed under the terms of the Modified BSD License.
-ARG JUPYTERHUB_VERSION
-FROM jupyterhub/jupyterhub:$JUPYTERHUB_VERSION
+FROM python:3.8
 
-# Install dockerspawner, nativeauthenticator
-# hadolint ignore=DL3013
-RUN python3 -m pip install --no-cache-dir \
-    dockerspawner \
-    jupyterhub-nativeauthenticator
-
+USER root
 RUN apt update && apt install git gcc musl-dev python3-dev -y
+
+RUN pip3 install \
+    'jupyterhub==4.0.2' \
+    'notebook==7.0.3'
+
+# create a user, since we don't want to run as root
+RUN useradd -m jovyan
+ENV HOME=/home/jovyan
+WORKDIR $HOME
+USER jovyan
+
 RUN python3 -m pip install --no-cache-dir \
     flask \
     jupyterhub \
@@ -29,5 +32,4 @@ RUN python3 -m pip install --no-cache-dir \
 
 RUN python3 -m pip install --no-cache-dir \
         git+https://github.com/nebari-dev/jhub-apps.git@28d2d3eff9cf69bd0534aa29f9d72c2e456d01a8
-
-CMD ["jupyterhub", "-f", "/srv/jupyterhub/jupyterhub_config.py"]
+CMD ["jupyterhub-singleuser"]

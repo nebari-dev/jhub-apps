@@ -33,7 +33,7 @@ c.DockerSpawner.notebook_dir = notebook_dir
 c.DockerSpawner.volumes = {"jupyterhub-user-{username}": notebook_dir}
 
 # Remove containers once they are stopped
-c.DockerSpawner.remove = True
+# c.DockerSpawner.remove = True
 
 # For debugging arguments passed to spawned containers
 c.DockerSpawner.debug = True
@@ -59,6 +59,9 @@ if admin:
 
 from jhub_apps.configuration import install_jhub_apps
 from dockerspawner import DockerSpawner
+
+c.DockerSpawner.image = "jhub:latest"
 c.JupyterHub.bind_url = "http://0.0.0.0:8000"
 c.DockerSpawner.name_template = "{prefix}-{username}-{servername}"
 c = install_jhub_apps(c, spawner_to_subclass=DockerSpawner)
+c.JupyterHub.log_level = 10
