@@ -12,9 +12,11 @@ jobs:
       run: |
         jupyterhub -f jupyterhub_config.py &
         docker compose build
-        docker compose up
-        # Give it some to time to start properly
-        sleep 5
+        docker compose up -d
+        # Give some time to start
+        sleep 10
+        docker compose logs
+
       working-directory: docker
 
     - name: Build JHub Image
