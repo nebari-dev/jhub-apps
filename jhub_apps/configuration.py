@@ -1,10 +1,10 @@
 from secrets import token_bytes
 from base64 import b64encode
 
-from urllib.parse import urlparse
-
 from jhub_apps.spawner.spawner_creation import subclass_spawner
 import os
+
+from jhub_apps.spawner.utils import get_origin_host
 
 
 def _create_token_for_service():
@@ -24,7 +24,6 @@ def install_jhub_apps(c, spawner_to_subclass):
 
     if not isinstance(bind_url, str):
         raise ValueError(f"c.JupyterHub.bind_url is not set: {c.JupyterHub.bind_url}")
-    parsed_url = urlparse(c.JupyterHub.bind_url)
     if not c.JupyterHub.services:
         c.JupyterHub.services = []
     c.JupyterHub.services.extend(
@@ -49,7 +48,7 @@ def install_jhub_apps(c, spawner_to_subclass):
                     c.JAppsConfig.python_exec,
                     "-m",
                     "jhub_apps.launcher.main",
-                    f"--origin-host=127.0.0.1:8000",
+                    f"--origin-host={get_origin_host(c.JupyterHub.bind_url)}",
                 ],
                 # Remove this get, set environment properly
                 "api_token": os.environ.get(

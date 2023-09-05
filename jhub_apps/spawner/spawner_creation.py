@@ -1,5 +1,6 @@
 from urllib.parse import urlparse
 
+from jhub_apps.spawner.utils import get_origin_host
 from jhub_apps.spawner.command import (
     EXAMPLES_DIR,
     COMMANDS,
@@ -26,11 +27,10 @@ def subclass_spawner(base_spawner):
                 framework = self.user_options.get("framework")
                 app_filepath = filepath or EXAMPLES_DIR / EXAMPLES_FILE.get(framework)
                 command: Command = COMMANDS.get(framework)
-                parsed_url = urlparse(self.config.JupyterHub.bind_url)
                 command_args = command.get_substituted_args(
                     python_exec=self.config.JAppsConfig.python_exec,
                     filepath=app_filepath,
-                    origin_host=parsed_url.netloc,
+                    origin_host=get_origin_host(self.config.JupyterHub.bind_url),
                     base_url=self.config.JupyterHub.bind_url,
                     jh_service_prefix=jh_service_prefix,
                     voila_base_url=f"{jh_service_prefix}",
