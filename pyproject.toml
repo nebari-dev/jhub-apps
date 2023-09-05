@@ -13,6 +13,15 @@ dependencies = [
     "hatchling",
     "hatch",
     "requests",
+    "flask",
+    "jupyterhub",
+    "jupyter",
+    "plotlydash-tornado-cmd",
+    "bokeh-root-cmd",
+    "jhsingle-native-proxy",
+    "panel",
+    "bokeh",
+    "traitlets",
 ]
 dynamic = ["version"]
 
