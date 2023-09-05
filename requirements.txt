@@ -1,5 +1,0 @@
-fastapi
-httpx
-python-multipart
-uvicorn
-plotlydash-tornado-cmd
