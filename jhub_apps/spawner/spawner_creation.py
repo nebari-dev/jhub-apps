@@ -26,6 +26,9 @@ def subclass_spawner(base_spawner):
                 jh_service_prefix = env.get("JUPYTERHUB_SERVICE_PREFIX")
                 framework = self.user_options.get("framework")
                 app_filepath = filepath or EXAMPLES_DIR / EXAMPLES_FILE.get(framework)
+                if not filepath:
+                    # Saving the examples file path when not provided
+                    self.user_options["filepath"] = str(app_filepath)
                 command: Command = COMMANDS.get(framework)
                 command_args = command.get_substituted_args(
                     python_exec=self.config.JAppsConfig.python_exec,
