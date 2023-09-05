@@ -31,5 +31,5 @@ RUN python3 -m pip install --no-cache-dir \
     gradio
 
 RUN python3 -m pip install --no-cache-dir \
-        git+https://github.com/nebari-dev/jhub-apps.git@824fc1b2ab11355dce93b503d580a89cc7a241b0
+        git+https://github.com/nebari-dev/jhub-apps.git@86a3e838812e5dfbfca21a4691f5c9bbab4660dd
 CMD ["jupyterhub-singleuser"]
