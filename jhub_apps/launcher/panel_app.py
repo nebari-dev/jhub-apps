@@ -205,11 +205,29 @@ def _create_server(event, input_form_widget, input_form, username):
         "description": input_form_widget.description_input.value,
         "framework": input_form_widget.framework.value,
     }
-    hclient.create_server(username, name.lower(), params=params)
+    edit = False
+    if input_form_widget.button_widget.name.startswith("Edit"):
+        edit = True
+    try:
+        response = hclient.create_server(
+            username, name.lower(), edit=edit, params=params
+        )
+        print(f"Creation Response: {response}")
+    except Exception as e:
+        print(f"Exception: {e}")
+        error_content = e
+        if hasattr(e, "response"):
+            error_content = e.response.json()
+        text_with_link = pn.pane.Markdown(
+            f"""## ❌ Dashboard Creation failed \n```{error_content}```"""
+        )
+        input_form.pop(-1)
+        input_form.append(text_with_link)
+        return
     input_form.pop(-1)
     dashboard_link = f"/user/{username}/{name}"
     dashboard_creation_action = "created"
-    if input_form_widget.button_widget.name.startswith("Edit"):
+    if edit:
         dashboard_creation_action = "updated"
     text_with_link = pn.pane.Markdown(
         f"""

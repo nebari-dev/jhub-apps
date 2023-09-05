@@ -4,12 +4,12 @@ import requests
 
 
 API_URL = os.environ["JUPYTERHUB_API_URL"]
-JHUB_APP_TOKEN = os.environ["JUPYTERHUB_API_TOKEN"]
+JUPYTERHUB_API_TOKEN = os.environ["JUPYTERHUB_API_TOKEN"]
 
 
 class HubClient:
     def __init__(self, token=None):
-        self.token = token or JHUB_APP_TOKEN
+        self.token = token or JUPYTERHUB_API_TOKEN
 
     def _headers(self):
         return {"Authorization": f"token {self.token}"}
@@ -26,10 +26,22 @@ class HubClient:
             API_URL + f"/users/{user}", params=params, headers=self._headers()
         )
         r.raise_for_status()
-        users = r.json()
-        return users
+        user = r.json()
+        return user
 
-    def create_server(self, username, servername, params=None):
+    def get_server(self, username, servername):
+        user = self.get_user(username)
+        for name, server in user["servers"].items():
+            if name == servername:
+                return server
+
+    def create_server(self, username, servername, edit=True, params=None):
+        server = self.get_server(username, servername)
+        if server:
+            if edit:
+                self.delete_server(username, server["name"])
+            else:
+                raise ValueError(f"Server: {servername} already exists")
         url = f"/users/{username}/servers/{servername}"
         params = params or {}
         data = {"jhub_app": True, **params}
