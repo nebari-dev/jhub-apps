@@ -28,6 +28,6 @@ RUN python3 -m pip install --no-cache-dir \
     gradio
 
 RUN python3 -m pip install --no-cache-dir \
-        git+https://github.com/nebari-dev/jhub-apps.git@28d2d3eff9cf69bd0534aa29f9d72c2e456d01a8
+        git+https://github.com/nebari-dev/jhub-apps.git@dec029457cae1109a2febf813a68a1fe700eb8bc
 
 CMD ["jupyterhub", "-f", "/srv/jupyterhub/jupyterhub_config.py"]
