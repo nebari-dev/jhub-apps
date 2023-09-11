@@ -42,6 +42,7 @@ def test_japps_service(page: Page):
         (Framework.plotlydash.value, "Dash"),
         (Framework.voila.value, "voila_basic"),
         (Framework.gradio.value, "Gradio"),
+        (Framework.jupyterlab.value, ".*JupyterLab"),
     ],
 )
 def test_panel_dashboard_creation(page: Page, framework, expected_title):
