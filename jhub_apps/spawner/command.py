@@ -139,4 +139,5 @@ COMMANDS = {
             "--ready-check-path=/ready-check",
         ]
     ),
+    Framework.jupyterlab.value: Command(args=[]),
 }

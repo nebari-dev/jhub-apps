@@ -4,6 +4,7 @@ from typing import Any
 import panel as pn
 
 from jhub_apps.launcher.hub_client import HubClient
+from jhub_apps.spawner.types import Framework
 
 
 @dataclass
@@ -15,15 +16,6 @@ class InputFormWidget:
     button_widget: Any
     framework: Any
 
-
-FRAMEWORKS = {
-    "Panel": "panel",
-    "Bokeh": "bokeh",
-    "Streamlit": "streamlit",
-    "Voila": "voila",
-    "Plotly": "plotlydash",
-    "Gradio": "gradio",
-}
 
 pn.config.sizing_mode = "stretch_width"
 
@@ -163,6 +155,7 @@ def create_list_apps(input_form_widget, username):
 
 
 def get_input_form_widget():
+    frameworks_display = {f.capitalize(): f for f in Framework.values()}
     heading = pn.pane.Markdown("## Create Apps", sizing_mode="stretch_width")
     input_form_widget = InputFormWidget(
         name_input=pn.widgets.TextInput(name="Name", id="app_name_input"),
@@ -172,7 +165,7 @@ def get_input_form_widget():
             size=30, value=True, color="secondary", bgcolor="dark", visible=True
         ),
         button_widget=pn.widgets.Button(name="Create Dashboard", button_type="primary"),
-        framework=pn.widgets.Select(name="Framework", options=FRAMEWORKS),
+        framework=pn.widgets.Select(name="Framework", options=frameworks_display),
     )
     input_form = pn.Column(
         heading,

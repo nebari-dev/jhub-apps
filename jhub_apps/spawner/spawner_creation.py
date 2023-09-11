@@ -1,5 +1,3 @@
-from urllib.parse import urlparse
-
 from jhub_apps.spawner.utils import get_origin_host
 from jhub_apps.spawner.command import (
     EXAMPLES_DIR,
@@ -25,7 +23,12 @@ def subclass_spawner(base_spawner):
                 env = self.get_env()
                 jh_service_prefix = env.get("JUPYTERHUB_SERVICE_PREFIX")
                 framework = self.user_options.get("framework")
-                app_filepath = filepath or EXAMPLES_DIR / EXAMPLES_FILE.get(framework)
+                app_filepath = None
+                if framework != Framework.jupyterlab.value:
+                    app_filepath = filepath or EXAMPLES_DIR / EXAMPLES_FILE.get(
+                        framework
+                    )
+
                 if not filepath:
                     # Saving the examples file path when not provided
                     self.user_options["filepath"] = str(app_filepath)
@@ -61,7 +64,11 @@ def subclass_spawner(base_spawner):
             return env
 
         async def start(self):
-            if self.user_options.get("jhub_app"):
+            framework = self.user_options.get("framework")
+            if (
+                self.user_options.get("jhub_app")
+                and framework != Framework.jupyterlab.value
+            ):
                 self.cmd = DEFAULT_CMD.get_substituted_args(
                     python_exec=self.config.JAppsConfig.python_exec,
                     authtype=self.config.JAppsConfig.apps_auth_type,
