@@ -215,7 +215,7 @@ def _create_server(event, input_form_widget, input_form, username):
         if hasattr(e, "response"):
             error_content = e.response.json()
         text_with_link = pn.pane.Markdown(
-            f"""## ❌ Dashboard Creation failed \n```{error_content}```"""
+            f"""## ❌ App Creation failed \n```{error_content}```"""
         )
         input_form.pop(-1)
         input_form.append(text_with_link)
@@ -227,7 +227,7 @@ def _create_server(event, input_form_widget, input_form, username):
         dashboard_creation_action = "updated"
     text_with_link = pn.pane.Markdown(
         f"""
-    ## 🚀 Dashboard {dashboard_creation_action}: [👉🔗]({dashboard_link})
+    ## 🚀 App {dashboard_creation_action}: [👉🔗]({dashboard_link})
     """
     )
     input_form.append(text_with_link)
