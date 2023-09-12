@@ -6,6 +6,9 @@ import panel as pn
 from jhub_apps.launcher.hub_client import HubClient
 from jhub_apps.spawner.types import Framework
 
+EDIT_APP_BTN_TXT = "Edit App"
+CREATE_APP_BTN_TXT = "Create App"
+
 
 @dataclass
 class InputFormWidget:
@@ -113,7 +116,7 @@ class ListItem(pn.Column):  # Change the base class to pn.Column
     def on_edit(self, event):
         print(f"Edit button clicked! {self.app.name} {event}")
         self.input_form_widget.name_input.value = self.app.name
-        self.input_form_widget.button_widget.name = "Edit Dashboard"
+        self.input_form_widget.button_widget.name = EDIT_APP_BTN_TXT
         self.input_form_widget.description_input.value = self.app.description
         self.input_form_widget.filepath_input.value = self.app.filepath
         self.input_form_widget.framework.value = self.app.framework
@@ -164,7 +167,7 @@ def get_input_form_widget():
         spinner=pn.indicators.LoadingSpinner(
             size=30, value=True, color="secondary", bgcolor="dark", visible=True
         ),
-        button_widget=pn.widgets.Button(name="Create Dashboard", button_type="primary"),
+        button_widget=pn.widgets.Button(name=CREATE_APP_BTN_TXT, button_type="primary"),
         framework=pn.widgets.Select(name="Framework", options=frameworks_display),
     )
     input_form = pn.Column(
@@ -228,7 +231,7 @@ def _create_server(event, input_form_widget, input_form, username):
     """
     )
     input_form.append(text_with_link)
-    input_form_widget.button_widget.name = "Create Dashboard"
+    input_form_widget.button_widget.name = CREATE_APP_BTN_TXT
     print(event)
 
 
