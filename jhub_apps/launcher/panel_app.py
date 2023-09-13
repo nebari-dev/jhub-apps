@@ -4,7 +4,7 @@ from typing import Any
 import panel as pn
 
 from jhub_apps.launcher.hub_client import HubClient
-from jhub_apps.spawner.types import Framework
+from jhub_apps.spawner.types import Framework, FRAMEWORKS_MAPPING, FrameworkConf
 
 EDIT_APP_BTN_TXT = "Edit App"
 CREATE_APP_BTN_TXT = "Create App"
@@ -21,15 +21,6 @@ class InputFormWidget:
 
 
 pn.config.sizing_mode = "stretch_width"
-
-LOGO_MAPPING = {
-    "panel": "https://raw.githubusercontent.com/holoviz/panel/main/doc/_static/logo_stacked.png",
-    "streamlit": "https://streamlit.io/images/brand/streamlit-mark-color.png",
-    "bokeh": "https://static.bokeh.org/branding/icons/bokeh-icon@5x.png",
-    "voila": "https://raw.githubusercontent.com/voila-dashboards/voila/main/docs/voila-logo.svg",
-    "plotlydash": "https://repository-images.githubusercontent.com/33702544/b4400c80-718b-11e9-9f3a-306c07a5f3de",
-    "gradio": "https://avatars.githubusercontent.com/u/51063788?s=48&v=4",
-}
 
 
 @dataclass
@@ -56,14 +47,16 @@ def _get_server_apps(username):
         if not user_options or not user_options.get("jhub_app"):
             print(f"Skipping displaying server: {server_name}")
             continue
-        logo = LOGO_MAPPING.get(user_options["framework"])
+        framework_conf: FrameworkConf = FRAMEWORKS_MAPPING.get(
+            user_options["framework"]
+        )
         app = App(
             name=server_name,
             filepath=user_options["filepath"],
             description=user_options["description"],
             framework=user_options["framework"],
             url=server["url"],
-            logo=logo,
+            logo=framework_conf.logo,
         )
         apps.append(app)
     return apps
@@ -158,7 +151,7 @@ def create_list_apps(input_form_widget, username):
 
 
 def get_input_form_widget():
-    frameworks_display = {f.capitalize(): f for f in Framework.values()}
+    frameworks_display = {f.display_name: f.name for f in FRAMEWORKS_MAPPING.values()}
     heading = pn.pane.Markdown("## Create Apps", sizing_mode="stretch_width")
     input_form_widget = InputFormWidget(
         name_input=pn.widgets.TextInput(name="Name", id="app_name_input"),
