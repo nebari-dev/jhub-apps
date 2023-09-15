@@ -80,12 +80,21 @@ class ListItem(pn.Column):  # Change the base class to pn.Column
         self.delete_button.on_click(self.on_delete)
 
         # Using a Row to group the image, description, and buttons horizontally
-        self.content = pn.Row(
-            pn.pane.PNG(self.app.logo, width=50),
-            pn.pane.Markdown(f"**{self.app.name}**", margin=(0, 20, 0, 10)),
-            self.view_button,
+        buttons = pn.Row(
             self.edit_button,
             self.delete_button,
+        )
+        self.content = pn.Column(
+            pn.pane.Image(self.app.logo, link_url=self.app.url, width=100, height=100),
+            pn.pane.Markdown(
+                f"""
+                ## {self.app.name}
+                {self.app.description or "No description found for app"}
+                """,
+                margin=(0, 20, 0, 10)
+            ),
+            # self.view_button,
+            buttons,
             css_classes=["list-item"],  # Apply the .list-item CSS styling
         )
 
@@ -139,9 +148,10 @@ def create_list_apps(input_form_widget, username):
 
     heading = pn.pane.Markdown("## Your Apps", sizing_mode="stretch_width")
     # Wrap everything in a Column with the list-container class
+    apps_grid = pn.GridBox(*list_items, ncols=6)
     layout = pn.Column(
         heading,
-        *list_items,
+        apps_grid,
         css_classes=["list-container"],
         width=800,
         sizing_mode="stretch_width",
