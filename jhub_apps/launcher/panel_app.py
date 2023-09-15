@@ -148,7 +148,7 @@ def create_list_apps(input_form_widget, username):
 
     heading = pn.pane.Markdown("## Your Apps", sizing_mode="stretch_width")
     # Wrap everything in a Column with the list-container class
-    apps_grid = pn.GridBox(*list_items, ncols=6)
+    apps_grid = pn.GridBox(*list_items, ncols=4)
     layout = pn.Column(
         heading,
         apps_grid,
