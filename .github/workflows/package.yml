@@ -3,7 +3,7 @@ name: Package
 on:
   push:
 jobs:
-  test:
+  package:
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -18,8 +18,7 @@ jobs:
     - name: Setup Python
       uses: mamba-org/setup-micromamba@v1.4.3
       with:
-        python-version: ${{ matrix.python-version }}
-        environment-file: environment-dev.yml
+        environment-name: package
         create-args: >-
           python=${{ matrix.python-version }}
 
