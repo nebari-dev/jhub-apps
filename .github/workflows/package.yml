@@ -22,9 +22,12 @@ jobs:
           environment-name: package
           create-args: >-
             python=${{ matrix.python-version }}
+            mamba
 
       - name: Install conda constructor
         run: mamba install constructor
+        shell: micromamba-shell {0}
 
       - name: Package Japps
         run: constructor .
+        shell: micromamba-shell {0}
