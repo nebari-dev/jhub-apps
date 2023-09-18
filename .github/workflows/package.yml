@@ -13,17 +13,18 @@ jobs:
       matrix:
         python-version: ["3.10"]
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - name: Setup Python
-      uses: mamba-org/setup-micromamba@v1.4.3
-      with:
-        environment-name: package
-        create-args: >-
-          python=${{ matrix.python-version }}
+      - name: Setup Python
+        uses: mamba-org/setup-micromamba@v1.4.3
+        with:
+          init-shell: bash
+          environment-name: package
+          create-args: >-
+            python=${{ matrix.python-version }}
 
-    - name: Install conda constructor
-      run: conda install constructor
+      - name: Install conda constructor
+        run: mamba install constructor
 
-    - name: Package Japps
-      run: constructor .
+      - name: Package Japps
+        run: constructor .
