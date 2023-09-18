@@ -31,3 +31,11 @@ jobs:
       - name: Package Japps
         run: constructor .
         shell: micromamba-shell {0}
+
+      - name: Install Executable
+        run: |
+          JHUB_EXECUTABLE=JHub-0.1-Linux-x86_64.sh
+          chmod +x $JHUB_EXECUTABLE
+          bash $JHUB_EXECUTABLE -b /tmp/
+          ls /tmp/jhub
+        shell: micromamba-shell {0}
