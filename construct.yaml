@@ -1,0 +1,21 @@
+name: JHub
+version: "0.1"
+channels:
+  - conda-forge
+specs:
+  - python 3.10.*
+  - flask
+  - jupyterhub
+  - jupyter
+  - plotlydash-tornado-cmd
+  - bokeh-root-cmd
+  - jhsingle-native-proxy
+  - pytest
+  - black
+  - panel
+  - bokeh
+  - voila
+  - dash
+  - streamlit
+  - traitlets
+license_file: LICENSE
