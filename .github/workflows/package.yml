@@ -36,6 +36,6 @@ jobs:
         run: |
           JHUB_EXECUTABLE=JHub-0.1-Linux-x86_64.sh
           chmod +x $JHUB_EXECUTABLE
-          bash $JHUB_EXECUTABLE -b /tmp/
+          bash $JHUB_EXECUTABLE -b -p /tmp/
           ls /tmp/jhub
         shell: micromamba-shell {0}
