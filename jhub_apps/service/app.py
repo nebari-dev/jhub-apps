@@ -43,11 +43,14 @@ def authenticated(f):
     return decorated
 
 
-@app.route(prefix)
+@app.route(f"{prefix}/")
+@app.route(f"{prefix}/<path:subpath>")
 @authenticated
-def index(user):
-    "Non-authenticated function that returns {'Hello': 'World'}"
-    script = server_document("/services/launcher", arguments={"username": user["name"]})
+def index(user, subpath=None):
+    subpath = subpath if subpath else ""
+    script = server_document(
+        f"/services/launcher/{subpath}", arguments={"username": user["name"]}
+    )
     return render_template(
         "launcher_base.html", **{"request": request, "script": script}
     )
