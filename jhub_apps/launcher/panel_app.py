@@ -143,7 +143,9 @@ def create_apps_grid(username):
         list_item = ListItem(app=app, username=username)
         list_items.append(list_item)
 
-    heading = pn.pane.Markdown("## Your Apps", sizing_mode="stretch_width")
+    services_heading = pn.pane.Markdown("# Services", sizing_mode="stretch_width")
+    apps_heading = pn.pane.Markdown("# Your Apps", sizing_mode="stretch_width")
+    shared_apps_heading = pn.pane.Markdown("# Shared Apps", sizing_mode="stretch_width")
     # Wrap everything in a Column with the list-container class
     apps_grid = pn.GridBox(*list_items, ncols=4)
     create_app_button = pn.widgets.Button(
@@ -156,8 +158,10 @@ def create_apps_grid(username):
             create_app_button,
             sizing_mode="fixed",
         ),
-        heading,
+        services_heading,
+        apps_heading,
         apps_grid,
+        shared_apps_heading,
         css_classes=["list-container"],
         width=800,
         sizing_mode="stretch_width",
