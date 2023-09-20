@@ -2,14 +2,14 @@ import argparse
 
 import panel as pn
 
-from jhub_apps.launcher.panel_app import create_app, create_app_page
+from jhub_apps.launcher.panel_app import apps_grid_view, create_app_form_page
 
 
 def app(origin_host):
     pn.serve(
         {
-            "/": create_app,
-            "/create": create_app_page,
+            "/": apps_grid_view,
+            "/create": create_app_form_page,
         },
         port=5000,
         allow_websocket_origin=[origin_host],

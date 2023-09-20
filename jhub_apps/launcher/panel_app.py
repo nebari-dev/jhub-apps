@@ -135,7 +135,7 @@ class ListItem(pn.Column):  # Change the base class to pn.Column
         self.content.visible = False
 
 
-def create_list_apps(username):
+def create_apps_grid(username):
     print("Create Dashboards Layout")
     list_items = []
     apps = _get_server_apps(username)
@@ -256,7 +256,7 @@ def get_username():
         return username[0].decode()
 
 
-def create_app_page():
+def create_app_form_page():
     input_form_widget, input_form = get_input_form_widget()
     username = get_username()
 
@@ -278,7 +278,7 @@ def create_app_page():
     )
 
 
-def create_app():
+def apps_grid_view():
     print("*" * 100)
     print("CREATING APP")
     username = get_username()
@@ -286,5 +286,5 @@ def create_app():
     print("*" * 100)
     if not username:
         return pn.pane.Markdown("# No user found!")
-    created_apps = create_list_apps(username)
+    created_apps = create_apps_grid(username)
     return pn.Row(created_apps)
