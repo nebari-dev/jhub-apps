@@ -80,7 +80,7 @@ def _get_server_apps(username):
     return apps
 
 
-class ListItem(pn.Column):  # Change the base class to pn.Column
+class ListItem(pn.Column):
     def __init__(self, app: App, username, **params):
         self.app = app
         self.username = username
@@ -165,7 +165,7 @@ class ListItem(pn.Column):  # Change the base class to pn.Column
         self.content.visible = False
 
 
-class ListServiceItem(pn.Column):  # Change the base class to pn.Column
+class ListServiceItem(pn.Column):
     def __init__(self, service: dict, username, **params):
         self.service = service
         self.username = username
