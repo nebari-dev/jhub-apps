@@ -1,6 +1,8 @@
+import json
 import os
 import uuid
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Any
 
 import panel as pn
@@ -22,6 +24,16 @@ class InputFormWidget:
     spinner: Any
     button_widget: Any
     framework: Any
+
+
+@dataclass
+class ServiceFormWidget:
+    name_input: Any
+    thumbnail: Any
+    description_input: Any
+    link: Any
+    spinner: Any
+    button_widget: Any
 
 
 pn.config.sizing_mode = "stretch_width"
@@ -153,6 +165,58 @@ class ListItem(pn.Column):  # Change the base class to pn.Column
         self.content.visible = False
 
 
+class ListServiceItem(pn.Column):  # Change the base class to pn.Column
+    def __init__(self, service: dict, **params):
+        self.service = service
+        self.username = params.get("username")
+        self.content = pn.Column(
+            pn.Row(
+                pn.pane.Image(
+                    service["thumbnail"],
+                    link_url=service["link"],
+                    width=50, height=50,
+                    align='center',
+                    sizing_mode="stretch_width",
+                    ),
+                sizing_mode="stretch_width",
+            ),
+            pn.pane.Markdown(
+                f"""
+                {service["name"]}
+                """,
+                margin=(0, 20, 0, 10),
+            ),
+            # self.view_button,
+            css_classes=["list-item"],  # Apply the .list-item CSS styling
+        )
+
+        # Apply styles for the list item container
+        item_style = """
+        .list-item {
+            border: 1px solid #e0e0e0;
+            padding: 5px;
+            border-radius: 4px;
+            width: 100%;
+            align-items: center;
+        }
+        """
+
+        pn.config.raw_css.append(item_style)
+
+        super().__init__(
+            self.content, **params
+        )  # Initializing the pn.Column base class
+
+
+def get_services(username):
+    service_json_path = Path(f"{username}-services.json")
+    service_json = {}
+    if service_json_path.exists():
+        with open(service_json_path, 'r') as fp:
+            service_json = json.loads(fp.read())
+    return service_json
+
+
 def create_apps_grid(username):
     print("Create Dashboards Layout")
     list_items = []
@@ -169,14 +233,30 @@ def create_apps_grid(username):
     create_app_button = pn.widgets.Button(
         name=CREATE_APP_BTN_TXT, button_type="primary"
     )
-    code = f"window.location.href = '/services/japps/create'"
-    create_app_button.js_on_click(code=code)
+    create_service_button = pn.widgets.Button(
+        name="Create Service", button_type="primary"
+    )
+    app_button_code = f"window.location.href = '/services/japps/create-app'"
+    service_button_code = f"window.location.href = '/services/japps/create-service'"
+    create_app_button.js_on_click(code=app_button_code)
+    create_service_button.js_on_click(code=service_button_code)
+
+    services = get_services(username)
+    service_items = []
+    for service_name, service in services.items():
+        service_item = ListServiceItem(service, username=username)
+        service_items.append(service_item)
+
+    services_grid = pn.GridBox(*service_items, ncols=7)
+
     layout = pn.Column(
         pn.Row(
             create_app_button,
+            create_service_button,
             sizing_mode="fixed",
         ),
         services_heading,
+        services_grid,
         apps_heading,
         apps_grid,
         shared_apps_heading,
@@ -210,6 +290,30 @@ def get_input_form_widget():
         input_form_widget.thumbnail,
         input_form_widget.description_input,
         input_form_widget.framework,
+        input_form_widget.button_widget,
+        width=400,
+    )
+    return input_form_widget, input_form
+
+
+def get_services_form_widget():
+    heading = pn.pane.Markdown("## Create Service", sizing_mode="stretch_width")
+    input_form_widget = ServiceFormWidget(
+        name_input=pn.widgets.TextInput(name="Name", id="app_name_input"),
+        link=pn.widgets.TextInput(name="Link", id="app_link_input"),
+        thumbnail=pn.widgets.FileInput(name="Thumbnail"),
+        description_input=pn.widgets.TextAreaInput(name="Description"),
+        spinner=pn.indicators.LoadingSpinner(
+            size=30, value=True, color="secondary", bgcolor="dark", visible=True
+        ),
+        button_widget=pn.widgets.Button(name="Create Service", button_type="primary"),
+    )
+    input_form = pn.Column(
+        heading,
+        input_form_widget.name_input,
+        pn.pane.Markdown("App Thumbnail"),
+        input_form_widget.thumbnail,
+        input_form_widget.description_input,
         input_form_widget.button_widget,
         width=400,
     )
@@ -301,6 +405,64 @@ def create_app_form_page():
 
     def button_callback(event):
         _create_server(event, input_form_widget, input_form, username)
+
+    input_form_widget.button_widget.on_click(button_callback)
+
+    your_apps_button = pn.widgets.Button(name="Apps", button_type="primary")
+    code = f"window.location.href = '/services/japps/'"
+    your_apps_button.js_on_click(code=code)
+
+    return pn.Column(
+        pn.Row(
+            your_apps_button,
+            sizing_mode="fixed",
+        ),
+        input_form,
+    )
+
+
+def _create_service(input_form_widget: ServiceFormWidget, input_form, username):
+
+    thumbnail = input_form_widget.thumbnail
+    thumbnail_local_filepath = None
+    if thumbnail.value is not None:
+        thumbnail_file_split = thumbnail.filename.split('.')
+        extension = thumbnail_file_split[-1]
+        filename_wo_extension = ''.join(thumbnail_file_split[:-1])
+        filename_to_save = f"{filename_wo_extension}-{uuid.uuid4().hex}.{extension}"
+        thumbnail_local_filepath = os.path.join(THUMBNAILS_PATH, filename_to_save)
+        print(f"Saving service thumbnail to: {thumbnail_local_filepath}")
+        thumbnail.save(thumbnail_local_filepath)
+
+    service = {
+        "name": input_form_widget.name_input.value,
+        "description": input_form_widget.description_input.value,
+        "thumbnail": thumbnail_local_filepath,
+        "link": input_form_widget.link.value or ''
+    }
+    service_json_path = Path(f"{username}-services.json")
+
+    if service_json_path.exists():
+        with open(service_json_path, 'r') as fp:
+            service_json = json.loads(fp.read())
+            service_json[service["name"]] = service
+    else:
+        service_json = {service["name"]: service}
+
+    with open(service_json_path, 'w') as fp:
+        json.dump(service_json, fp)
+
+    input_form.append(pn.pane.Markdown("## Service Created!"))
+
+
+def create_service_form_page():
+    input_form_widget, input_form = get_services_form_widget()
+    username = get_username()
+    if not username:
+        return pn.pane.Markdown("# No user found!")
+
+    def button_callback(event):
+        _create_service(input_form_widget, input_form, username)
 
     input_form_widget.button_widget.on_click(button_callback)
 
