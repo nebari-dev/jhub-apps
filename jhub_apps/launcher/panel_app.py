@@ -87,8 +87,8 @@ class ListItem(pn.Column):  # Change the base class to pn.Column
 
         # Define Panel buttons
         self.view_button = pn.widgets.Button(name="Launch", button_type="primary")
-        self.edit_button = pn.widgets.Button(name="Edit", button_type="warning")
-        self.delete_button = pn.widgets.Button(name="Delete", button_type="danger")
+        self.edit_button = pn.widgets.Button(name="Edit", button_type="primary", button_style="outline")
+        self.delete_button = pn.widgets.Button(name="Delete", button_type="danger", button_style="outline")
 
         # Set up event listeners for the buttons
         code = f"""window.location.href = '{self.app.url}'"""
@@ -251,6 +251,26 @@ def get_services_component(username):
     return create_service_button, services_grid
 
 
+def heading_markdown(heading):
+    return pn.pane.Markdown(
+        f"""
+        <style>
+            .custom-background {{
+                background-color: lightblue;
+                 font-family: Mukta, sans-serif;
+            }}
+        </style>
+
+        <div class="custom-background">
+
+        # {heading}
+
+        </div>
+        """,
+        sizing_mode="stretch_width"
+    )
+
+
 def create_apps_grid(username):
     print("Create Dashboards Layout")
     _, shared_apps_grid = get_server_apps_component(username="aktech")
@@ -263,11 +283,11 @@ def create_apps_grid(username):
             create_service_button,
             sizing_mode="fixed",
         ),
-        pn.pane.Markdown("# Services", sizing_mode="stretch_width"),
+        heading_markdown("Services"),
         services_grid,
-        pn.pane.Markdown("# Your Apps", sizing_mode="stretch_width"),
+        heading_markdown("Your Apps"),
         apps_grid,
-        pn.pane.Markdown("# Shared Apps", sizing_mode="stretch_width"),
+        heading_markdown("Shared Apps"),
         shared_apps_grid,
         css_classes=["list-container"],
         width=800,
