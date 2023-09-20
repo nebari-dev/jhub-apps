@@ -27,7 +27,7 @@ FRAMEWORKS = [
     FrameworkConf(
         name=Framework.panel.value,
         display_name="Panel",
-        logo="https://raw.githubusercontent.com/holoviz/panel/main/doc/_static/logo_stacked.png",
+        logo="https://raw.githubusercontent.com/holoviz/panel/5c69f11bc139076a0e55d444dcfbf3e44b3ed8a8/doc/_static/logo.png",
     ),
     FrameworkConf(
         name=Framework.bokeh.value,
@@ -47,7 +47,7 @@ FRAMEWORKS = [
     FrameworkConf(
         name=Framework.plotlydash.value,
         display_name="PlotlyDash",
-        logo="https://repository-images.githubusercontent.com/33702544/b4400c80-718b-11e9-9f3a-306c07a5f3de",
+        logo="https://raw.githubusercontent.com/plotly/dash/6eaf2e17c25f7ca1847c41aafeb18e87c586cb9f/components/dash-table/tests/selenium/assets/logo.png",
     ),
     FrameworkConf(
         name=Framework.gradio.value,
