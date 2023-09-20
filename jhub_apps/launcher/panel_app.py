@@ -217,37 +217,45 @@ def get_services(username):
     return service_json
 
 
-def create_apps_grid(username):
-    print("Create Dashboards Layout")
+def get_server_apps_component(username):
     list_items = []
     apps = _get_server_apps(username)
     for app in apps:
         list_item = ListItem(app=app, username=username)
         list_items.append(list_item)
 
-    services_heading = pn.pane.Markdown("# Services", sizing_mode="stretch_width")
-    apps_heading = pn.pane.Markdown("# Your Apps", sizing_mode="stretch_width")
-    shared_apps_heading = pn.pane.Markdown("# Shared Apps", sizing_mode="stretch_width")
     # Wrap everything in a Column with the list-container class
     apps_grid = pn.GridBox(*list_items, ncols=4)
     create_app_button = pn.widgets.Button(
         name=CREATE_APP_BTN_TXT, button_type="primary"
     )
-    create_service_button = pn.widgets.Button(
-        name="Create Service", button_type="primary"
-    )
-    app_button_code = f"window.location.href = '/services/japps/create-app'"
-    service_button_code = f"window.location.href = '/services/japps/create-service'"
-    create_app_button.js_on_click(code=app_button_code)
-    create_service_button.js_on_click(code=service_button_code)
 
+    app_button_code = f"window.location.href = '/services/japps/create-app'"
+    create_app_button.js_on_click(code=app_button_code)
+    return create_app_button, apps_grid
+
+
+def get_services_component(username):
     services = get_services(username)
     service_items = []
     for service_name, service in services.items():
         service_item = ListServiceItem(service, username=username)
         service_items.append(service_item)
 
+    create_service_button = pn.widgets.Button(
+        name="Create Service", button_type="primary"
+    )
+    service_button_code = f"window.location.href = '/services/japps/create-service'"
+    create_service_button.js_on_click(code=service_button_code)
     services_grid = pn.GridBox(*service_items, ncols=7)
+    return create_service_button, services_grid
+
+
+def create_apps_grid(username):
+    print("Create Dashboards Layout")
+    _, shared_apps_grid = get_server_apps_component(username="aktech")
+    create_app_button, apps_grid = get_server_apps_component(username)
+    create_service_button, services_grid = get_services_component(username)
 
     layout = pn.Column(
         pn.Row(
@@ -255,11 +263,12 @@ def create_apps_grid(username):
             create_service_button,
             sizing_mode="fixed",
         ),
-        services_heading,
+        pn.pane.Markdown("# Services", sizing_mode="stretch_width"),
         services_grid,
-        apps_heading,
+        pn.pane.Markdown("# Your Apps", sizing_mode="stretch_width"),
         apps_grid,
-        shared_apps_heading,
+        pn.pane.Markdown("# Shared Apps", sizing_mode="stretch_width"),
+        shared_apps_grid,
         css_classes=["list-container"],
         width=800,
         sizing_mode="stretch_width",
