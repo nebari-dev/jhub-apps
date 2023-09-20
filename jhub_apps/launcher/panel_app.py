@@ -1,3 +1,5 @@
+import os
+import uuid
 from dataclasses import dataclass
 from typing import Any
 
@@ -8,12 +10,14 @@ from jhub_apps.spawner.types import Framework, FRAMEWORKS_MAPPING, FrameworkConf
 
 EDIT_APP_BTN_TXT = "Edit App"
 CREATE_APP_BTN_TXT = "Create App"
+THUMBNAILS_PATH = "/tmp"
 
 
 @dataclass
 class InputFormWidget:
     name_input: Any
     filepath_input: Any
+    thumbnail: Any
     description_input: Any
     spinner: Any
     button_widget: Any
@@ -176,6 +180,7 @@ def get_input_form_widget():
     input_form_widget = InputFormWidget(
         name_input=pn.widgets.TextInput(name="Name", id="app_name_input"),
         filepath_input=pn.widgets.TextInput(name="Filepath"),
+        thumbnail=pn.widgets.FileInput(name="Thumbnail"),
         description_input=pn.widgets.TextAreaInput(name="Description"),
         spinner=pn.indicators.LoadingSpinner(
             size=30, value=True, color="secondary", bgcolor="dark", visible=True
@@ -187,6 +192,7 @@ def get_input_form_widget():
         heading,
         input_form_widget.name_input,
         input_form_widget.filepath_input,
+        input_form_widget.thumbnail,
         input_form_widget.description_input,
         input_form_widget.framework,
         input_form_widget.button_widget,
@@ -207,12 +213,24 @@ def _create_server(event, input_form_widget, input_form, username):
     print(
         f"Name: {name}, Filepath: {filepath}, Description: {description}, framework: {framework}"
     )
+
+    thumbnail_local_filepath = None
+    thumbnail = input_form_widget.thumbnail
+    if thumbnail.value is not None:
+        thumbnail_file_split = thumbnail.filename.split('.')
+        extension = thumbnail_file_split[-1]
+        filename_wo_extension = ''.join(thumbnail_file_split[:-1])
+        filename_to_save = f"{filename_wo_extension}-{uuid.uuid4().hex}.{extension}"
+        thumbnail_local_filepath = os.path.join(THUMBNAILS_PATH, filename_to_save)
+        thumbnail.save(thumbnail_local_filepath)
+
     hclient = HubClient()
     params = {
         "name": input_form_widget.name_input.value,
         "filepath": input_form_widget.filepath_input.value,
         "description": input_form_widget.description_input.value,
         "framework": input_form_widget.framework.value,
+        "thumbnail_local_filepath": thumbnail_local_filepath
     }
     edit = False
     if input_form_widget.button_widget.name.startswith("Edit"):
