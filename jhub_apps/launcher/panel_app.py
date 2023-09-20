@@ -259,6 +259,8 @@ def get_username():
 def create_app_form_page():
     input_form_widget, input_form = get_input_form_widget()
     username = get_username()
+    if not username:
+        return pn.pane.Markdown("# No user found!")
 
     def button_callback(event):
         _create_server(event, input_form_widget, input_form, username)
