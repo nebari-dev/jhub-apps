@@ -6,6 +6,10 @@ css = """
 body {
     font-family: Mukta, sans-serif;
 }
+
+.center-text {
+    text-align: center;
+}
 """
 pn.extension(
     sizing_mode="stretch_width",

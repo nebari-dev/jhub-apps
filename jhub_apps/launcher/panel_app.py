@@ -81,9 +81,9 @@ def _get_server_apps(username):
 
 
 class ListItem(pn.Column):  # Change the base class to pn.Column
-    def __init__(self, app: App, **params):
+    def __init__(self, app: App, username, **params):
         self.app = app
-        self.username = params.get("username")
+        self.username = username
 
         # Define Panel buttons
         self.view_button = pn.widgets.Button(name="Launch", button_type="primary")
@@ -111,7 +111,7 @@ class ListItem(pn.Column):  # Change the base class to pn.Column
                     link_url=self.app.url,
                     width=150, height=150,
                     align='center',
-                    sizing_mode="stretch_width",
+                    # sizing_mode="stretch_width",
                 ),
                 sizing_mode="stretch_width",
             ),
@@ -166,9 +166,9 @@ class ListItem(pn.Column):  # Change the base class to pn.Column
 
 
 class ListServiceItem(pn.Column):  # Change the base class to pn.Column
-    def __init__(self, service: dict, **params):
+    def __init__(self, service: dict, username, **params):
         self.service = service
-        self.username = params.get("username")
+        self.username = username
         self.content = pn.Column(
             pn.Row(
                 pn.pane.Image(
@@ -176,17 +176,14 @@ class ListServiceItem(pn.Column):  # Change the base class to pn.Column
                     link_url=service["link"],
                     width=50, height=50,
                     align='center',
-                    sizing_mode="stretch_width",
+                    # sizing_mode="stretch_width",
                     ),
                 sizing_mode="stretch_width",
             ),
             pn.pane.Markdown(
-                f"""
-                {service["name"]}
-                """,
-                margin=(0, 20, 0, 10),
+                f"{service['name']}",
+                css_classes=['center-text']
             ),
-            # self.view_button,
             css_classes=["list-item"],  # Apply the .list-item CSS styling
         )
 
