@@ -94,13 +94,14 @@ class ListItem(pn.Column):  # Change the base class to pn.Column
         )
         self.content = pn.Column(
             pn.Row(
-                pn.Spacer(width=50),
                 pn.pane.Image(
-                    self.app.thumbnail or self.app.logo, link_url=self.app.url, width=150, height=150,
+                    self.app.thumbnail or self.app.logo,
+                    link_url=self.app.url,
+                    width=150, height=150,
+                    align='center',
+                    sizing_mode="stretch_width",
                 ),
-                pn.Spacer(width=50),
                 sizing_mode="stretch_width",
-                align="center"
             ),
             pn.pane.Markdown(
                 f"""
