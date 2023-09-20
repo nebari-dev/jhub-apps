@@ -33,6 +33,7 @@ class App:
     filepath: str
     description: str
     framework: str
+    thumbnail: str
     url: str
     logo: str
 
@@ -61,6 +62,7 @@ def _get_server_apps(username):
             framework=user_options["framework"],
             url=server["url"],
             logo=framework_conf.logo,
+            thumbnail=user_options.get("thumbnail")
         )
         apps.append(app)
     return apps
@@ -88,7 +90,7 @@ class ListItem(pn.Column):  # Change the base class to pn.Column
             self.delete_button,
         )
         self.content = pn.Column(
-            pn.pane.Image(self.app.logo, link_url=self.app.url, width=100, height=100),
+            pn.pane.Image(self.app.thumbnail or self.app.logo, link_url=self.app.url, width=100, height=100),
             pn.pane.Markdown(
                 f"""
                 ## {self.app.name}
@@ -230,7 +232,7 @@ def _create_server(event, input_form_widget, input_form, username):
         "filepath": input_form_widget.filepath_input.value,
         "description": input_form_widget.description_input.value,
         "framework": input_form_widget.framework.value,
-        "thumbnail_local_filepath": thumbnail_local_filepath
+        "thumbnail": thumbnail_local_filepath
     }
     edit = False
     if input_form_widget.button_widget.name.startswith("Edit"):
