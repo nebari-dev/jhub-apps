@@ -74,7 +74,7 @@ class ListItem(pn.Column):  # Change the base class to pn.Column
         self.username = params.get("username")
 
         # Define Panel buttons
-        self.view_button = pn.widgets.Button(name="View", button_type="primary")
+        self.view_button = pn.widgets.Button(name="Launch", button_type="primary")
         self.edit_button = pn.widgets.Button(name="Edit", button_type="warning")
         self.delete_button = pn.widgets.Button(name="Delete", button_type="danger")
 
@@ -85,9 +85,12 @@ class ListItem(pn.Column):  # Change the base class to pn.Column
         self.delete_button.on_click(self.on_delete)
 
         # Using a Row to group the image, description, and buttons horizontally
-        buttons = pn.Row(
-            self.edit_button,
-            self.delete_button,
+        buttons = pn.Column(
+            self.view_button,
+            pn.Row(
+                self.edit_button,
+                self.delete_button,
+            )
         )
         self.content = pn.Column(
             pn.pane.Image(self.app.thumbnail or self.app.logo, link_url=self.app.url, width=100, height=100),
