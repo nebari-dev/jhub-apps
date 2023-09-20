@@ -14,6 +14,19 @@ EDIT_APP_BTN_TXT = "Edit App"
 CREATE_APP_BTN_TXT = "Create App"
 THUMBNAILS_PATH = "/tmp"
 
+css = """
+.custom-font {
+    font-family: Mukta, sans-serif;
+}
+
+.custom-heading {
+    text-align: center;
+}
+
+
+"""
+pn.extension(raw_css=[css])
+
 
 @dataclass
 class InputFormWidget:
@@ -169,14 +182,6 @@ class ListServiceItem(pn.Column):
     def __init__(self, service: dict, username, **params):
         self.service = service
         self.username = username
-
-        css = """
-        .custom-heading {
-            text-align: center;
-            font-family: Mukta, sans-serif;
-        }
-        """
-        pn.extension(raw_css=[css])
         self.content = pn.Column(
             pn.Row(
                 pn.pane.Image(
@@ -190,7 +195,7 @@ class ListServiceItem(pn.Column):
             pn.pane.Markdown(
                 f"#### {service['name']}",
                 sizing_mode="stretch_width",
-                css_classes=['custom-heading']
+                css_classes=['custom-heading', 'custom-font']
             ),
             css_classes=["list-item"],  # Apply the .list-item CSS styling
         )
