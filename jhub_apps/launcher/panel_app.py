@@ -12,7 +12,12 @@ from jhub_apps.spawner.types import FRAMEWORKS_MAPPING, FrameworkConf
 
 EDIT_APP_BTN_TXT = "Edit App"
 CREATE_APP_BTN_TXT = "Create App"
-THUMBNAILS_PATH = "~/"
+
+THUMBNAILS_PATH = os.path.expanduser("~/jupyterhub-thumbnails")
+
+if not os.path.exists(THUMBNAILS_PATH):
+    os.mkdir(THUMBNAILS_PATH)
+
 
 css = """
 .custom-font {
