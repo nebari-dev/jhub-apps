@@ -24,10 +24,29 @@ css = """
     font-size: 1.4em;
 }
 
+.bk-btn:hover {
+    background: #034c76 !important;
+    color: white !important;
+}
+
+.bk-btn-danger:hover {
+    background: #dc3545 !important;
+    color: white !important;
+}
+
 .custom-heading {
     text-align: center;
 }
 
+.center-row-image {
+    display: flex;
+    justify-content: center;
+}
+
+.bk-Column {
+    padding-right: 12px;
+    padding-bottom: 12px;
+}
 
 """
 pn.extension(raw_css=[css])
@@ -127,11 +146,11 @@ class ListItem(pn.Column):
                 pn.pane.Image(
                     self.app.thumbnail or self.app.logo,
                     link_url=self.app.url,
-                    width=150, height=150,
-                    align='center',
+                    width=130, height=130,
+                    align=('center', 'center'),
                     # sizing_mode="stretch_width",
                 ),
-                sizing_mode="stretch_width",
+                css_classes=["center-row-image"],
             ),
             pn.pane.Markdown(
                 f"""
@@ -193,12 +212,13 @@ class ListServiceItem(pn.Column):
                     service["thumbnail"],
                     link_url=service["link"],
                     width=50, height=50,
-                    align='center',
+                    align='center'
                     ),
+                css_classes=["center-row-image"],
                 sizing_mode="stretch_width",
             ),
             pn.pane.Markdown(
-                f"### {service['name']}",
+                f"### [{service['name']}]({service['link']})",
                 sizing_mode="stretch_width",
                 css_classes=['custom-heading', 'custom-font']
             ),
@@ -213,6 +233,10 @@ class ListServiceItem(pn.Column):
             border-radius: 4px;
             width: 100%;
             align-items: center;
+        }
+        .list-item:hover {
+            background: #feffff87;
+            cursor: pointer;
         }
         """
 
@@ -262,7 +286,7 @@ def get_services_component(username):
     )
     service_button_code = f"window.location.href = '/services/japps/create-service'"
     create_service_button.js_on_click(code=service_button_code)
-    services_grid = pn.GridBox(*service_items, ncols=7)
+    services_grid = pn.GridBox(*service_items, ncols=7, sizing_mode="stretch_width")
     return create_service_button, services_grid
 
 
@@ -271,6 +295,7 @@ def heading_markdown(heading):
         f"""
         <style>
             .custom-background {{
+                padding: 0px 6px;
                 background-color: lightblue;
                  font-family: Mukta, sans-serif;
             }}
@@ -282,7 +307,8 @@ def heading_markdown(heading):
 
         </div>
         """,
-        sizing_mode="stretch_width"
+        margin=0,
+        sizing_mode="stretch_width",
     )
 
 
