@@ -19,6 +19,11 @@ css = """
     font-family: Mukta, sans-serif;
 }
 
+.bk-btn {
+    font-family: Mukta, sans-serif;
+    font-size: 1.4em;
+}
+
 .custom-heading {
     text-align: center;
 }
@@ -193,7 +198,7 @@ class ListServiceItem(pn.Column):
                 sizing_mode="stretch_width",
             ),
             pn.pane.Markdown(
-                f"#### {service['name']}",
+                f"### {service['name']}",
                 sizing_mode="stretch_width",
                 css_classes=['custom-heading', 'custom-font']
             ),
