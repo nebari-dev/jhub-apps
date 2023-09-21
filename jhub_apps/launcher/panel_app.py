@@ -8,11 +8,11 @@ from typing import Any
 import panel as pn
 
 from jhub_apps.launcher.hub_client import HubClient
-from jhub_apps.spawner.types import Framework, FRAMEWORKS_MAPPING, FrameworkConf
+from jhub_apps.spawner.types import FRAMEWORKS_MAPPING, FrameworkConf
 
 EDIT_APP_BTN_TXT = "Edit App"
 CREATE_APP_BTN_TXT = "Create App"
-THUMBNAILS_PATH = "/tmp"
+THUMBNAILS_PATH = "~/"
 
 css = """
 .custom-font {
