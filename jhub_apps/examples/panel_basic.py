@@ -13,7 +13,7 @@ body {
 """
 pn.extension(
     sizing_mode="stretch_width",
-    raw_css=css
+    raw_css=[css]
 )
 
 
