@@ -154,8 +154,16 @@ class ListItem(pn.Column):
             ),
             pn.pane.Markdown(
                 f"""
+                <style>
+                    .custom-background {{
+                        font-family: Mukta, sans-serif;
+                    }}
+                </style>
+                <div class="custom-background">
+
                 ## {self.app.name}
                 {self.app.description or "No description found for app"}
+                </div>
                 """,
                 margin=(0, 20, 0, 10),
             ),
