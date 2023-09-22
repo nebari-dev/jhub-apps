@@ -119,7 +119,7 @@ class ListItem(pn.Column):  # Change the base class to pn.Column
         )
 
         # Set up event listeners for the buttons
-        code = f"""window.location.href = '{self.app.url}'"""
+        code = f"""window.open('{self.app.url}', '_blank');"""
         self.view_button.js_on_click(code=code)
         self.edit_button.on_click(self.on_edit)
         self.delete_button.on_click(self.on_delete)
