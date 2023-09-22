@@ -63,7 +63,7 @@ def test_panel_dashboard_creation(page: Page, framework, expected_title):
     # Wait for the dashboard to be created
     time.sleep(5)
     # Click on View Dashboard
-    page.click("text=View")
+    page.click("text=Launch")
     try:
         expect(page).to_have_title(re.compile(expected_title))
     except AssertionError as e:
