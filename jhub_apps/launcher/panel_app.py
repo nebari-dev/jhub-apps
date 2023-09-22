@@ -4,7 +4,7 @@ from typing import Any
 import panel as pn
 
 from jhub_apps.launcher.hub_client import HubClient
-from jhub_apps.spawner.types import Framework, FRAMEWORKS_MAPPING, FrameworkConf
+from jhub_apps.spawner.types import FRAMEWORKS_MAPPING, FrameworkConf
 
 EDIT_APP_BTN_TXT = "Edit App"
 CREATE_APP_BTN_TXT = "Create App"
@@ -13,6 +13,11 @@ CREATE_APP_BTN_TXT = "Create App"
 css = """
 .custom-font {
     font-family: Mukta, sans-serif;
+    font-size: 1.3em;
+}
+.bk-input {
+    font-family: Mukta, sans-serif;
+    font-size: 1.3em;
 }
 .bk-btn {
     font-family: Mukta, sans-serif;
@@ -28,6 +33,11 @@ css = """
 }
 .custom-heading {
     text-align: center;
+    word-wrap: break-word;
+}
+
+h2 {
+    word-wrap: break-word;
 }
 .center-row-image {
     display: flex;
@@ -230,14 +240,22 @@ def get_input_form_widget():
     frameworks_display = {f.display_name: f.name for f in FRAMEWORKS_MAPPING.values()}
     heading = heading_markdown("Create Apps")
     input_form_widget = InputFormWidget(
-        name_input=pn.widgets.TextInput(name="Name", id="app_name_input"),
-        filepath_input=pn.widgets.TextInput(name="Filepath"),
-        description_input=pn.widgets.TextAreaInput(name="Description"),
+        name_input=pn.widgets.TextInput(
+            name="Name", id="app_name_input", css_classes=["custom-font"]
+        ),
+        filepath_input=pn.widgets.TextInput(
+            name="Filepath", css_classes=["custom-font"]
+        ),
+        description_input=pn.widgets.TextAreaInput(
+            name="Description", css_classes=["custom-font"]
+        ),
         spinner=pn.indicators.LoadingSpinner(
             size=30, value=True, color="secondary", bgcolor="dark", visible=True
         ),
         button_widget=pn.widgets.Button(name=CREATE_APP_BTN_TXT, button_type="primary"),
-        framework=pn.widgets.Select(name="Framework", options=frameworks_display),
+        framework=pn.widgets.Select(
+            name="Framework", options=frameworks_display, css_classes=["custom-font"]
+        ),
     )
     input_form = pn.Column(
         heading,
