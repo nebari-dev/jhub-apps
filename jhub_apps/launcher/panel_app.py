@@ -116,8 +116,29 @@ class ListItem(pn.Column):  # Change the base class to pn.Column
 
         # Using a Row to group the image, description, and buttons horizontally
         self.content = pn.Row(
-            pn.pane.PNG(self.app.logo, width=50),
-            pn.pane.Markdown(f"**{self.app.name}**", margin=(0, 20, 0, 10)),
+            pn.pane.Image(
+                self.app.logo,
+                link_url=self.app.url,
+                width=80,
+                height=80,
+                align=("center", "center"),
+            ),
+            pn.pane.Markdown(
+                f"""
+                <style>
+                    .custom-background {{
+                        font-family: Mukta, sans-serif;
+                    }}
+                </style>
+                <div class="custom-background">
+
+                ## {self.app.name}
+
+                {self.app.description or "No description found for app"}
+                </div>
+                """,
+                margin=(0, 20, 0, 10),
+            ),
             self.view_button,
             self.edit_button,
             self.delete_button,
