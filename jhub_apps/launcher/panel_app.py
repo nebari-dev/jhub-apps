@@ -162,6 +162,27 @@ class ListItem(pn.Column):  # Change the base class to pn.Column
         self.content.visible = False
 
 
+def heading_markdown(heading):
+    return pn.pane.Markdown(
+        f"""
+        <style>
+            .custom-background {{
+                padding: 0px 6px;
+                background-color: lightblue;
+                 font-family: Mukta, sans-serif;
+            }}
+        </style>
+        <div class="custom-background">
+
+        # {heading}
+
+        </div>
+        """,
+        margin=0,
+        sizing_mode="stretch_width",
+    )
+
+
 def create_list_apps(input_form_widget, username):
     print("Create Dashboards Layout")
     list_items = []
@@ -172,10 +193,9 @@ def create_list_apps(input_form_widget, username):
         )
         list_items.append(list_item)
 
-    heading = pn.pane.Markdown("## Your Apps", sizing_mode="stretch_width")
     # Wrap everything in a Column with the list-container class
     layout = pn.Column(
-        heading,
+        heading_markdown("Your Apps"),
         *list_items,
         css_classes=["list-container"],
         width=800,
@@ -187,7 +207,7 @@ def create_list_apps(input_form_widget, username):
 
 def get_input_form_widget():
     frameworks_display = {f.display_name: f.name for f in FRAMEWORKS_MAPPING.values()}
-    heading = pn.pane.Markdown("## Create Apps", sizing_mode="stretch_width")
+    heading = heading_markdown("Create Apps")
     input_form_widget = InputFormWidget(
         name_input=pn.widgets.TextInput(name="Name", id="app_name_input"),
         filepath_input=pn.widgets.TextInput(name="Filepath"),
