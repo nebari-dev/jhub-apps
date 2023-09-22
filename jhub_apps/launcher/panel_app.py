@@ -17,7 +17,7 @@ css = """
 }
 .bk-input {
     font-family: Mukta, sans-serif;
-    font-size: 1.3em;
+    font-size: 1.1em;
 }
 .bk-btn {
     font-family: Mukta, sans-serif;
