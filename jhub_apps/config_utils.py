@@ -13,3 +13,7 @@ class JAppsConfig(SingletonConfigurable):
     python_exec = Unicode(
         "python", help="Python executable to use for running all the commands"
     ).tag(config=True)
+    origin_host = Unicode(
+        default_value="",
+        help="Host ip and port currently being used. Required for Bokeh to allow access."
+    ).tag(config=True)

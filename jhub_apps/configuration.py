@@ -37,6 +37,7 @@ def install_jhub_apps(c, spawner_to_subclass):
                     "-m",
                     "flask",
                     "run",
+                    "--host=0.0.0.0",
                     "--port=10202",
                 ],
                 "environment": {"FLASK_APP": "jhub_apps.service.app"},
@@ -48,7 +49,7 @@ def install_jhub_apps(c, spawner_to_subclass):
                     c.JAppsConfig.python_exec,
                     "-m",
                     "jhub_apps.launcher.main",
-                    f"--origin-host={get_origin_host(c.JupyterHub.bind_url)}",
+                    f"--origin-host={get_origin_host(c.JAppsConfig.origin_host)}",
                 ],
                 # Remove this get, set environment properly
                 "api_token": os.environ.get(
