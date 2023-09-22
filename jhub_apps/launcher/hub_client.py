@@ -1,4 +1,5 @@
 import os
+import uuid
 
 import requests
 
@@ -37,6 +38,8 @@ class HubClient:
 
     def create_server(self, username, servername, edit=True, params=None):
         server = self.get_server(username, servername)
+        if not edit:
+            servername = f"{servername}-{uuid.uuid4().hex[:7]}"
         if server:
             if edit:
                 self.delete_server(username, server["name"])
