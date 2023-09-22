@@ -314,7 +314,18 @@ def _create_server(event, input_form_widget, input_form, username):
         dashboard_creation_action = "updated"
     text_with_link = pn.pane.Markdown(
         f"""
-    ## 🚀 App {dashboard_creation_action}: [👉🔗]({dashboard_link})
+        <style>
+            .custom-response {{
+                padding: 0px 6px;
+                background-color: #dfdfed;
+                font-family: Mukta, sans-serif;
+            }}
+        </style>
+        <div class="custom-response">
+
+        ## 🚀 App {dashboard_creation_action}: [👉🔗]({dashboard_link})
+
+        </div>
     """
     )
     input_form.append(text_with_link)
