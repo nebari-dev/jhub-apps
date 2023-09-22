@@ -100,9 +100,9 @@ class ListItem(pn.Column):  # Change the base class to pn.Column
         self.username = params.get("username")
 
         # Define Panel buttons
-        self.view_button = pn.widgets.Button(name="View", button_type="primary")
-        self.edit_button = pn.widgets.Button(name="Edit", button_type="warning")
-        self.delete_button = pn.widgets.Button(name="Delete", button_type="danger")
+        self.view_button = pn.widgets.Button(name="Launch", button_type="primary")
+        self.edit_button = pn.widgets.Button(name="Edit", button_type="primary", button_style="outline")
+        self.delete_button = pn.widgets.Button(name="Delete", button_type="danger", button_style="outline")
 
         # Set up event listeners for the buttons
         code = f"""window.location.href = '{self.app.url}'"""
