@@ -10,6 +10,37 @@ EDIT_APP_BTN_TXT = "Edit App"
 CREATE_APP_BTN_TXT = "Create App"
 
 
+css = """
+.custom-font {
+    font-family: Mukta, sans-serif;
+}
+.bk-btn {
+    font-family: Mukta, sans-serif;
+    font-size: 1.4em;
+}
+.bk-btn:hover {
+    background: #034c76 !important;
+    color: white !important;
+}
+.bk-btn-danger:hover {
+    background: #dc3545 !important;
+    color: white !important;
+}
+.custom-heading {
+    text-align: center;
+}
+.center-row-image {
+    display: flex;
+    justify-content: center;
+}
+.bk-Column {
+    padding-right: 12px;
+    padding-bottom: 12px;
+}
+"""
+pn.extension(raw_css=[css])
+
+
 @dataclass
 class InputFormWidget:
     name_input: Any
