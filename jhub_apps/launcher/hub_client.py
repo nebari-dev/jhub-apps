@@ -40,8 +40,8 @@ class HubClient:
     def normalize_server_name(self, servername):
         # Convert text to lowercase
         text = servername.lower()
-        # Remove all special characters except spaces
-        text = re.sub(r"[^a-z0-9\s]", "", text)
+        # Remove all special characters except spaces and hyphen
+        text = re.sub(r"[^a-z0-9\s-]", "", text)
         # Replace spaces with hyphens
         text = text.replace(" ", "-")
         return text
