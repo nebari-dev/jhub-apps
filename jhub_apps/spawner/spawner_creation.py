@@ -73,6 +73,9 @@ def subclass_spawner(base_spawner):
                     python_exec=self.config.JAppsConfig.python_exec,
                     authtype=self.config.JAppsConfig.apps_auth_type,
                 )
+            if framework == Framework.jupyterlab.value:
+                self.cmd = [self.config.JAppsConfig.python_exec, "-m", "jupyterhub.singleuser"]
+            print(f"Final Spawner Command: {self.cmd}")
             return await super().start()
 
         def _expand_user_vars(self, string):
