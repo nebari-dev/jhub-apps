@@ -57,7 +57,7 @@ admin = os.environ.get("JUPYTERHUB_ADMIN")
 if admin:
     c.Authenticator.admin_users = [admin]
 
-from jhub_apps.configuration import install_jhub_apps
+from jhub_apps.config.main import install_jhub_apps
 from dockerspawner import DockerSpawner
 
 c.DockerSpawner.image = "jhub:latest"

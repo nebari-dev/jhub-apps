@@ -58,11 +58,11 @@ pip install git+https://github.com/nebari-dev/jhub-apps.git
 
 ```python
 from tljh.user_creating_spawner import UserCreatingSpawner
-from jhub_apps.configuration import install_jhub_apps
+from jhub_apps.config.main import install_jhub_apps
 
 c.JupyterHub.bind_url = "<YOUR_JUPYTERHUB_URL>"
 c.SystemdSpawner.unit_name_template = 'jupyter-{USERNAME}{JHUBSERVERNAME}'
-c.JAppsConfig.apps_auth_type = "oauth" # or none (if you don't want authentication on apps)
+c.JAppsConfig.apps_auth_type = "oauth"  # or none (if you don't want authentication on apps)
 c.JAppsConfig.python_exec = "python3"
 c = install_jhub_apps(c, UserCreatingSpawner)
 ```
