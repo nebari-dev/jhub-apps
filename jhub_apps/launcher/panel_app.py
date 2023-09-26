@@ -4,10 +4,51 @@ from typing import Any
 import panel as pn
 
 from jhub_apps.launcher.hub_client import HubClient
-from jhub_apps.spawner.types import Framework, FRAMEWORKS_MAPPING, FrameworkConf
+from jhub_apps.spawner.types import FRAMEWORKS_MAPPING, FrameworkConf
 
 EDIT_APP_BTN_TXT = "Edit App"
 CREATE_APP_BTN_TXT = "Create App"
+
+
+css = """
+.custom-font {
+    font-family: Mukta, sans-serif;
+    font-size: 1.3em;
+}
+.bk-input {
+    font-family: Mukta, sans-serif;
+    font-size: 1.1em;
+}
+.bk-btn {
+    font-family: Mukta, sans-serif;
+    font-size: 1.4em;
+}
+.bk-btn:hover {
+    background: #034c76 !important;
+    color: white !important;
+}
+.bk-btn-danger:hover {
+    background: #dc3545 !important;
+    color: white !important;
+}
+.custom-heading {
+    text-align: center;
+    word-wrap: break-word;
+}
+
+h2 {
+    word-wrap: break-word;
+}
+.center-row-image {
+    display: flex;
+    justify-content: center;
+}
+.bk-Column {
+    padding-right: 12px;
+    padding-bottom: 12px;
+}
+"""
+pn.extension(raw_css=[css])
 
 
 @dataclass
@@ -69,20 +110,45 @@ class ListItem(pn.Column):  # Change the base class to pn.Column
         self.username = params.get("username")
 
         # Define Panel buttons
-        self.view_button = pn.widgets.Button(name="View", button_type="primary")
-        self.edit_button = pn.widgets.Button(name="Edit", button_type="warning")
-        self.delete_button = pn.widgets.Button(name="Delete", button_type="danger")
+        self.view_button = pn.widgets.Button(name="Launch", button_type="primary")
+        self.edit_button = pn.widgets.Button(
+            name="Edit", button_type="primary", button_style="outline"
+        )
+        self.delete_button = pn.widgets.Button(
+            name="Delete", button_type="danger", button_style="outline"
+        )
 
         # Set up event listeners for the buttons
-        code = f"""window.location.href = '{self.app.url}'"""
+        code = f"""window.open('{self.app.url}', '_blank');"""
         self.view_button.js_on_click(code=code)
         self.edit_button.on_click(self.on_edit)
         self.delete_button.on_click(self.on_delete)
 
         # Using a Row to group the image, description, and buttons horizontally
         self.content = pn.Row(
-            pn.pane.PNG(self.app.logo, width=50),
-            pn.pane.Markdown(f"**{self.app.name}**", margin=(0, 20, 0, 10)),
+            pn.pane.Image(
+                self.app.logo,
+                link_url=self.app.url,
+                width=80,
+                height=80,
+                align=("center", "center"),
+            ),
+            pn.pane.Markdown(
+                f"""
+                <style>
+                    .custom-background {{
+                        font-family: Mukta, sans-serif;
+                    }}
+                </style>
+                <div class="custom-background">
+
+                ## {self.app.name}
+
+                {self.app.description or "No description found for app"}
+                </div>
+                """,
+                margin=(0, 20, 0, 10),
+            ),
             self.view_button,
             self.edit_button,
             self.delete_button,
@@ -127,6 +193,27 @@ class ListItem(pn.Column):  # Change the base class to pn.Column
         self.content.visible = False
 
 
+def heading_markdown(heading):
+    return pn.pane.Markdown(
+        f"""
+        <style>
+            .custom-background {{
+                padding: 0px 6px;
+                background-color: lightblue;
+                 font-family: Mukta, sans-serif;
+            }}
+        </style>
+        <div class="custom-background">
+
+        # {heading}
+
+        </div>
+        """,
+        margin=0,
+        sizing_mode="stretch_width",
+    )
+
+
 def create_list_apps(input_form_widget, username):
     print("Create Dashboards Layout")
     list_items = []
@@ -137,10 +224,9 @@ def create_list_apps(input_form_widget, username):
         )
         list_items.append(list_item)
 
-    heading = pn.pane.Markdown("## Your Apps", sizing_mode="stretch_width")
     # Wrap everything in a Column with the list-container class
     layout = pn.Column(
-        heading,
+        heading_markdown("Your Apps"),
         *list_items,
         css_classes=["list-container"],
         width=800,
@@ -152,16 +238,24 @@ def create_list_apps(input_form_widget, username):
 
 def get_input_form_widget():
     frameworks_display = {f.display_name: f.name for f in FRAMEWORKS_MAPPING.values()}
-    heading = pn.pane.Markdown("## Create Apps", sizing_mode="stretch_width")
+    heading = heading_markdown("Create Apps")
     input_form_widget = InputFormWidget(
-        name_input=pn.widgets.TextInput(name="Name", id="app_name_input"),
-        filepath_input=pn.widgets.TextInput(name="Filepath"),
-        description_input=pn.widgets.TextAreaInput(name="Description"),
+        name_input=pn.widgets.TextInput(
+            name="Name", id="app_name_input", css_classes=["custom-font"]
+        ),
+        filepath_input=pn.widgets.TextInput(
+            name="Filepath", css_classes=["custom-font"]
+        ),
+        description_input=pn.widgets.TextAreaInput(
+            name="Description", css_classes=["custom-font"]
+        ),
         spinner=pn.indicators.LoadingSpinner(
             size=30, value=True, color="secondary", bgcolor="dark", visible=True
         ),
         button_widget=pn.widgets.Button(name=CREATE_APP_BTN_TXT, button_type="primary"),
-        framework=pn.widgets.Select(name="Framework", options=frameworks_display),
+        framework=pn.widgets.Select(
+            name="Framework", options=frameworks_display, css_classes=["custom-font"]
+        ),
     )
     input_form = pn.Column(
         heading,
@@ -220,7 +314,18 @@ def _create_server(event, input_form_widget, input_form, username):
         dashboard_creation_action = "updated"
     text_with_link = pn.pane.Markdown(
         f"""
-    ## 🚀 App {dashboard_creation_action}: [👉🔗]({dashboard_link})
+        <style>
+            .custom-response {{
+                padding: 0px 6px;
+                background-color: #dfdfed;
+                font-family: Mukta, sans-serif;
+            }}
+        </style>
+        <div class="custom-response">
+
+        ## 🚀 App {dashboard_creation_action}: [👉🔗]({dashboard_link})
+
+        </div>
     """
     )
     input_form.append(text_with_link)
