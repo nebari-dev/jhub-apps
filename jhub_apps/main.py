@@ -1,3 +1,4 @@
+import signal
 import subprocess
 from pathlib import Path
 
@@ -5,13 +6,13 @@ from jhub_apps.__about__ import __version__
 
 import argparse
 
-PROJECT_ROOT_PATH = Path(__file__).parent.parent
-DEFAULT_JUPYTERHUB_CONFIG = PROJECT_ROOT_PATH / "jupyterhub_config.py"
-DEFAULT_JUPYTERHUB_SQLLITE_PATH = PROJECT_ROOT_PATH / "jupyterhub.sqlite"
+CONFIG_PATH = Path(__file__).parent / "config"
+DEFAULT_JUPYTERHUB_CONFIG = CONFIG_PATH / "jupyterhub_config.py"
+DEFAULT_JUPYTERHUB_SQLITE_PATH = CONFIG_PATH / "jupyterhub.sqlite"
 
 
 def run_japps(jupyterhub_config):
-    db_url = f"--JupyterHub.db_url=sqlite:////{DEFAULT_JUPYTERHUB_SQLLITE_PATH}"
+    db_url = f"--JupyterHub.db_url=sqlite:////{DEFAULT_JUPYTERHUB_SQLITE_PATH}"
     command = ["jupyterhub", "-f", str(jupyterhub_config), db_url]
     print(f"Running command: {' '.join(command)}")
     with subprocess.Popen(
@@ -20,16 +21,26 @@ def run_japps(jupyterhub_config):
         try:
             while True:
                 output = process.stdout.readline()
-                if output == "" and process.poll() is not None:
+                error = process.stderr.readline()
+                if output == "" and error == "" and process.poll() is not None:
                     break
-                if output:
+                if output or error:
                     print(output.strip())
+                    print(error.strip())
+        except KeyboardInterrupt:
+            print("Keyboard interrupt received. Terminating the subprocess...")
+            if process:
+                # Send a termination signal to the subprocess
+                process.send_signal(signal.SIGINT)
+                process.wait()
         except Exception as e:
             print(f"An error occurred: {e}")
         finally:
-            # Get the remaining output if any
+            # Get the remaining output/error if any
             for output in process.stdout.readlines():
                 print(output.strip())
+            for error in process.stderr.readlines():
+                print(error.strip())
 
     # Get the return code from the process and print it
     return_code = process.poll()
