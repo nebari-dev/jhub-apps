@@ -19,3 +19,4 @@ specs:
   - streamlit
   - traitlets
 license_file: LICENSE
+post_install: ./scripts/post_install.sh
