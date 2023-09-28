@@ -254,52 +254,6 @@ class ListItem(pn.Column):
         self.content.visible = False
 
 
-class ListServiceItem(pn.Column):
-    def __init__(self, service: dict, username, **params):
-        self.service = service
-        self.username = username
-        self.content = pn.Column(
-            pn.Row(
-                pn.pane.Image(
-                    service["thumbnail"],
-                    link_url=service["link"],
-                    width=50,
-                    height=50,
-                    align="center",
-                ),
-                css_classes=["center-row-image"],
-                sizing_mode="stretch_width",
-            ),
-            pn.pane.Markdown(
-                f"### [{service['name']}]({service['link']})",
-                sizing_mode="stretch_width",
-                css_classes=["custom-heading", "custom-font"],
-            ),
-            css_classes=["list-item"],  # Apply the .list-item CSS styling
-        )
-
-        # Apply styles for the list item container
-        item_style = """
-        .list-item {
-            border: 1px solid #e0e0e0;
-            padding: 5px;
-            border-radius: 4px;
-            width: 100%;
-            align-items: center;
-        }
-        .list-item:hover {
-            background: #feffff87;
-            cursor: pointer;
-        }
-        """
-
-        pn.config.raw_css.append(item_style)
-
-        super().__init__(
-            self.content, **params
-        )  # Initializing the pn.Column base class
-
-
 def get_server_apps_component(username):
     list_items = []
     apps = _get_server_apps(username)
