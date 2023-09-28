@@ -462,12 +462,12 @@ def _create_server(event, input_form_widget, input_form, username):
         # Remove the Markdown text, which says dashboard created
         input_form.pop(-1)
     input_form.append(input_form_widget.spinner)
-    name = input_form_widget.name_input.value
+    display_name = input_form_widget.name_input.value
     filepath = input_form_widget.filepath_input.value
     description = input_form_widget.description_input.value
     framework = input_form_widget.framework.value
     print(
-        f"Name: {name}, Filepath: {filepath}, Description: {description}, framework: {framework}"
+        f"Name: {display_name}, Filepath: {filepath}, Description: {description}, framework: {framework}"
     )
 
     thumbnail_local_filepath = None
@@ -482,19 +482,25 @@ def _create_server(event, input_form_widget, input_form, username):
 
     hclient = HubClient()
     user_options = UserOptions(
-        display_name=input_form_widget.name_input.value,
+        display_name=display_name,
         jhub_app=True,
-        description=input_form_widget.description_input.value,
+        description=description,
         thumbnail=thumbnail_local_filepath,
-        filepath=input_form_widget.filepath_input.value,
-        framework=input_form_widget.framework.value,
+        filepath=filepath,
+        framework=framework,
     )
     edit = False
+    servername = display_name
     if input_form_widget.button_widget.name.startswith("Edit"):
         edit = True
+        servername = input_form_widget.name_input.id
+
     try:
         response_status_code, servername = hclient.create_server(
-            username, name.lower(), edit=edit, user_options=user_options
+            username,
+            servername or display_name,
+            edit=edit,
+            user_options=user_options
         )
         print(f"Creation Response status code: {response_status_code}")
     except Exception as e:
@@ -548,6 +554,7 @@ def get_username():
 
 def create_app_form_page():
     input_form_widget, input_form = get_input_form_widget()
+    input_form_widget: InputFormWidget
     app_name_arg = pn.state.session_args.get("name")
 
     username = get_username()
@@ -555,7 +562,8 @@ def create_app_form_page():
         app_name = app_name_arg[0].decode()
         hclient = HubClient()
         server = hclient.get_server(username=username, servername=app_name)
-        input_form_widget.name_input.value = server.get("name")
+        input_form_widget.name_input.id = server.get("name")
+        input_form_widget.name_input.value = server.get("user_options").get("display_name", server.get("name"))
         input_form_widget.description_input.value = server.get("user_options").get(
             "description"
         )
