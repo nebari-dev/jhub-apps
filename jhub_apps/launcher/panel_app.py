@@ -1,5 +1,6 @@
 import json
 import os
+import typing
 import uuid
 from dataclasses import dataclass
 from pathlib import Path
@@ -37,6 +38,11 @@ css = """
 .bk-btn-danger:hover {
     background: #dc3545 !important;
     color: white !important;
+}
+
+.app-id-text {
+    color: grey !important;
+    font-size: 0.8em
 }
 
 .custom-heading {
@@ -131,6 +137,7 @@ class App:
     thumbnail: str
     url: str
     logo: str
+    display_name: typing.Optional[str] = None
 
 
 def _get_server_apps(username):
@@ -158,6 +165,7 @@ def _get_server_apps(username):
             url=server["url"],
             logo=framework_conf.logo,
             thumbnail=user_options.get("thumbnail"),
+            display_name=user_options.get("display_name", server_name),
         )
         apps.append(app)
     return apps
@@ -206,14 +214,13 @@ class ListItem(pn.Column):
             ),
             pn.pane.Markdown(
                 f"""
-                <style>
-                    .custom-background {{
-                        font-family: Mukta, sans-serif;
-                    }}
-                </style>
-                <div class="custom-background">
+                <div class="custom-font">
+                {self.app.display_name}
 
-                ## {self.app.name}
+                <div class="app-id-text">
+                ID: {self.app.name}
+                </div>
+
                 {self.app.description or "No description found for app"}
                 </div>
                 """,
