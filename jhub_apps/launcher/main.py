@@ -2,7 +2,11 @@ import argparse
 
 import panel as pn
 
-from jhub_apps.launcher.panel_app import apps_grid_view, create_app_form_page, create_service_form_page
+from jhub_apps.launcher.panel_app import (
+    apps_grid_view,
+    create_app_form_page,
+    create_service_form_page,
+)
 
 
 def app(origin_host):

@@ -116,7 +116,7 @@ def _get_server_apps(username):
             framework=user_options["framework"],
             url=server["url"],
             logo=framework_conf.logo,
-            thumbnail=user_options.get("thumbnail")
+            thumbnail=user_options.get("thumbnail"),
         )
         apps.append(app)
     return apps
@@ -129,8 +129,12 @@ class ListItem(pn.Column):
 
         # Define Panel buttons
         self.view_button = pn.widgets.Button(name="Launch", button_type="primary")
-        self.edit_button = pn.widgets.Button(name="Edit", button_type="primary", button_style="outline")
-        self.delete_button = pn.widgets.Button(name="Delete", button_type="danger", button_style="outline")
+        self.edit_button = pn.widgets.Button(
+            name="Edit", button_type="primary", button_style="outline"
+        )
+        self.delete_button = pn.widgets.Button(
+            name="Delete", button_type="danger", button_style="outline"
+        )
 
         # Set up event listeners for the buttons
         code = f"""window.open('{self.app.url}', '_blank');"""
@@ -144,15 +148,16 @@ class ListItem(pn.Column):
             pn.Row(
                 self.edit_button,
                 self.delete_button,
-            )
+            ),
         )
         self.content = pn.Column(
             pn.Row(
                 pn.pane.Image(
                     self.app.thumbnail or self.app.logo,
                     link_url=self.app.url,
-                    width=130, height=130,
-                    align=('center', 'center'),
+                    width=130,
+                    height=130,
+                    align=("center", "center"),
                     # sizing_mode="stretch_width",
                 ),
                 css_classes=["center-row-image"],
@@ -224,16 +229,17 @@ class ListServiceItem(pn.Column):
                 pn.pane.Image(
                     service["thumbnail"],
                     link_url=service["link"],
-                    width=50, height=50,
-                    align='center'
-                    ),
+                    width=50,
+                    height=50,
+                    align="center",
+                ),
                 css_classes=["center-row-image"],
                 sizing_mode="stretch_width",
             ),
             pn.pane.Markdown(
                 f"### [{service['name']}]({service['link']})",
                 sizing_mode="stretch_width",
-                css_classes=['custom-heading', 'custom-font']
+                css_classes=["custom-heading", "custom-font"],
             ),
             css_classes=["list-item"],  # Apply the .list-item CSS styling
         )
@@ -264,7 +270,7 @@ def get_services(username):
     service_json_path = Path(f"{username}-services.json")
     service_json = {}
     if service_json_path.exists():
-        with open(service_json_path, 'r') as fp:
+        with open(service_json_path, "r") as fp:
             service_json = json.loads(fp.read())
     return service_json
 
@@ -419,9 +425,9 @@ def _create_server(event, input_form_widget, input_form, username):
     thumbnail_local_filepath = None
     thumbnail = input_form_widget.thumbnail
     if thumbnail.value is not None:
-        thumbnail_file_split = thumbnail.filename.split('.')
+        thumbnail_file_split = thumbnail.filename.split(".")
         extension = thumbnail_file_split[-1]
-        filename_wo_extension = ''.join(thumbnail_file_split[:-1])
+        filename_wo_extension = "".join(thumbnail_file_split[:-1])
         filename_to_save = f"{filename_wo_extension}-{uuid.uuid4().hex}.{extension}"
         thumbnail_local_filepath = os.path.join(THUMBNAILS_PATH, filename_to_save)
         thumbnail.save(thumbnail_local_filepath)
@@ -432,7 +438,7 @@ def _create_server(event, input_form_widget, input_form, username):
         "filepath": input_form_widget.filepath_input.value,
         "description": input_form_widget.description_input.value,
         "framework": input_form_widget.framework.value,
-        "thumbnail": thumbnail_local_filepath
+        "thumbnail": thumbnail_local_filepath,
     }
     edit = False
     if input_form_widget.button_widget.name.startswith("Edit"):
@@ -505,13 +511,12 @@ def create_app_form_page():
 
 
 def _create_service(input_form_widget: ServiceFormWidget, input_form, username):
-
     thumbnail = input_form_widget.thumbnail
     thumbnail_local_filepath = None
     if thumbnail.value is not None:
-        thumbnail_file_split = thumbnail.filename.split('.')
+        thumbnail_file_split = thumbnail.filename.split(".")
         extension = thumbnail_file_split[-1]
-        filename_wo_extension = ''.join(thumbnail_file_split[:-1])
+        filename_wo_extension = "".join(thumbnail_file_split[:-1])
         filename_to_save = f"{filename_wo_extension}-{uuid.uuid4().hex}.{extension}"
         thumbnail_local_filepath = os.path.join(THUMBNAILS_PATH, filename_to_save)
         print(f"Saving service thumbnail to: {thumbnail_local_filepath}")
@@ -521,18 +526,18 @@ def _create_service(input_form_widget: ServiceFormWidget, input_form, username):
         "name": input_form_widget.name_input.value,
         "description": input_form_widget.description_input.value,
         "thumbnail": thumbnail_local_filepath,
-        "link": input_form_widget.link.value or ''
+        "link": input_form_widget.link.value or "",
     }
     service_json_path = Path(f"{username}-services.json")
 
     if service_json_path.exists():
-        with open(service_json_path, 'r') as fp:
+        with open(service_json_path, "r") as fp:
             service_json = json.loads(fp.read())
             service_json[service["name"]] = service
     else:
         service_json = {service["name"]: service}
 
-    with open(service_json_path, 'w') as fp:
+    with open(service_json_path, "w") as fp:
         json.dump(service_json, fp)
 
     input_form.append(pn.pane.Markdown("## Service Created!"))

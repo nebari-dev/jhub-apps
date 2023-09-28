@@ -11,10 +11,7 @@ body {
     text-align: center;
 }
 """
-pn.extension(
-    sizing_mode="stretch_width",
-    raw_css=[css]
-)
+pn.extension(sizing_mode="stretch_width", raw_css=[css])
 
 
 def test_panel_app():

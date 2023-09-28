@@ -74,7 +74,11 @@ def subclass_spawner(base_spawner):
                     authtype=self.config.JAppsConfig.apps_auth_type,
                 )
             if framework == Framework.jupyterlab.value:
-                self.cmd = [self.config.JAppsConfig.python_exec, "-m", "jupyterhub.singleuser"]
+                self.cmd = [
+                    self.config.JAppsConfig.python_exec,
+                    "-m",
+                    "jupyterhub.singleuser",
+                ]
             print(f"Final Spawner Command: {self.cmd}")
             return await super().start()
 
