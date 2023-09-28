@@ -1,9 +1,7 @@
-import json
 import os
 import typing
 import uuid
 from dataclasses import dataclass
-from pathlib import Path
 from typing import Any
 
 import panel as pn
@@ -68,6 +66,11 @@ css = """
     font-family: Mukta, sans-serif;
     font-size: 1.3em;
 }
+
+.loading-apps {
+    padding: 2em
+}
+
 .bk-input {
     font-family: Mukta, sans-serif;
     font-size: 1.1em;
@@ -339,7 +342,6 @@ def heading_markdown(heading):
 def create_apps_grid(username):
     print("Create Dashboards Layout")
     create_app_button, apps_grid = get_server_apps_component(username)
-
     layout = pn.Column(
         pn.Row(
             create_app_button,
@@ -535,5 +537,23 @@ def apps_grid_view():
     print("*" * 100)
     if not username:
         return pn.pane.Markdown("# No user found!")
-    created_apps = create_apps_grid(username)
-    return pn.Row(created_apps)
+
+    loading_message = pn.pane.Markdown(
+        """
+        ## Loading apps ...
+        """,
+        sizing_mode="stretch_width",
+        css_classes=["custom-heading", "custom-font", "loading-apps"],
+    )
+    apps_grid = pn.Column(loading_message, loading=True)
+    layout = pn.Row(
+        apps_grid,
+    )
+
+    def load():
+        apps_grid.append(create_apps_grid(username))
+        apps_grid.loading = False
+        loading_message.visible = False
+
+    pn.state.onload(load)
+    return layout
