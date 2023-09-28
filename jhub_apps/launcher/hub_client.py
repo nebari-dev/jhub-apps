@@ -1,9 +1,11 @@
+import dataclasses
 import os
 import re
 import uuid
 
 import requests
 
+from jhub_apps.spawner.types import UserOptions
 
 API_URL = os.environ["JUPYTERHUB_API_URL"]
 JUPYTERHUB_API_TOKEN = os.environ["JUPYTERHUB_API_TOKEN"]
@@ -46,7 +48,9 @@ class HubClient:
         text = text.replace(" ", "-")
         return text
 
-    def create_server(self, username, servername, edit=True, params=None):
+    def create_server(
+        self, username, servername, edit=True, user_options: UserOptions = None
+    ):
         server = self.get_server(username, servername)
         if not edit:
             servername = self.normalize_server_name(servername)
@@ -57,8 +61,8 @@ class HubClient:
             else:
                 raise ValueError(f"Server: {servername} already exists")
         url = f"/users/{username}/servers/{servername}"
-        params = params or {}
-        data = {"jhub_app": True, **params}
+        params = dataclasses.asdict(user_options)
+        data = {"name": servername, **params}
         r = requests.post(API_URL + url, headers=self._headers(), json=data)
         r.raise_for_status()
         return r.status_code, servername

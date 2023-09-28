@@ -8,7 +8,7 @@ from typing import Any
 import panel as pn
 
 from jhub_apps.launcher.hub_client import HubClient
-from jhub_apps.spawner.types import FRAMEWORKS_MAPPING, FrameworkConf
+from jhub_apps.spawner.types import FRAMEWORKS_MAPPING, FrameworkConf, UserOptions
 
 EDIT_APP_BTN_TXT = "Edit App"
 CREATE_APP_BTN_TXT = "Create App"
@@ -474,19 +474,20 @@ def _create_server(event, input_form_widget, input_form, username):
         thumbnail.save(thumbnail_local_filepath)
 
     hclient = HubClient()
-    params = {
-        "name": input_form_widget.name_input.value,
-        "filepath": input_form_widget.filepath_input.value,
-        "description": input_form_widget.description_input.value,
-        "framework": input_form_widget.framework.value,
-        "thumbnail": thumbnail_local_filepath,
-    }
+    user_options = UserOptions(
+        display_name=input_form_widget.name_input.value,
+        jhub_app=True,
+        description=input_form_widget.description_input.value,
+        thumbnail=thumbnail_local_filepath,
+        filepath=input_form_widget.filepath_input.value,
+        framework=input_form_widget.framework.value,
+    )
     edit = False
     if input_form_widget.button_widget.name.startswith("Edit"):
         edit = True
     try:
         response_status_code, servername = hclient.create_server(
-            username, name.lower(), edit=edit, params=params
+            username, name.lower(), edit=edit, user_options=user_options
         )
         print(f"Creation Response status code: {response_status_code}")
     except Exception as e:
