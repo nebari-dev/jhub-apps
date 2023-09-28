@@ -61,7 +61,7 @@ class HubClient:
         data = {"jhub_app": True, **params}
         r = requests.post(API_URL + url, headers=self._headers(), json=data)
         r.raise_for_status()
-        return r.status_code
+        return r.status_code, servername
 
     def delete_server(self, username, server_name):
         url = f"/users/{username}/servers/{server_name}"

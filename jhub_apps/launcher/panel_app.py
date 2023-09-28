@@ -485,10 +485,10 @@ def _create_server(event, input_form_widget, input_form, username):
     if input_form_widget.button_widget.name.startswith("Edit"):
         edit = True
     try:
-        response = hclient.create_server(
+        response_status_code, servername = hclient.create_server(
             username, name.lower(), edit=edit, params=params
         )
-        print(f"Creation Response: {response}")
+        print(f"Creation Response status code: {response_status_code}")
     except Exception as e:
         print(f"Exception: {e}")
         error_content = e
@@ -501,7 +501,7 @@ def _create_server(event, input_form_widget, input_form, username):
         input_form.append(text_with_link)
         return
     input_form.pop(-1)
-    dashboard_link = f"/user/{username}/{name}"
+    dashboard_link = f"/user/{username}/{servername}"
     dashboard_creation_action = "created"
     if edit:
         dashboard_creation_action = "updated"
