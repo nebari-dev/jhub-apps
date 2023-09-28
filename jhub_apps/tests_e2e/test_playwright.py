@@ -62,10 +62,16 @@ def test_panel_dashboard_creation(page: Page, framework, expected_title):
     page.click(".bk-btn.bk-btn-primary")
     # Wait for the dashboard to be created
     time.sleep(5)
-    # Click on View Dashboard
-    page.click("text=View")
+    # Click on Launch Dashboard
+    launch_button = page.locator('button:text("Launch")')
+
+    assert launch_button.first.is_visible()
+
+    with page.expect_popup() as framework_page_info:
+        launch_button.click()
+    framework_page = framework_page_info.value
     try:
-        expect(page).to_have_title(re.compile(expected_title))
+        expect(framework_page).to_have_title(re.compile(expected_title))
     except AssertionError as e:
         # Go back to japps page
         page.goto(url)

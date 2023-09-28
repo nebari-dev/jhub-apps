@@ -1,4 +1,6 @@
 import os
+import re
+import uuid
 
 import requests
 
@@ -35,8 +37,20 @@ class HubClient:
             if name == servername:
                 return server
 
+    def normalize_server_name(self, servername):
+        # Convert text to lowercase
+        text = servername.lower()
+        # Remove all special characters except spaces and hyphen
+        text = re.sub(r"[^a-z0-9\s-]", "", text)
+        # Replace spaces with hyphens
+        text = text.replace(" ", "-")
+        return text
+
     def create_server(self, username, servername, edit=True, params=None):
         server = self.get_server(username, servername)
+        if not edit:
+            servername = self.normalize_server_name(servername)
+            servername = f"{servername}-{uuid.uuid4().hex[:7]}"
         if server:
             if edit:
                 self.delete_server(username, server["name"])

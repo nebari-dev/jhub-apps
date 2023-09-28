@@ -57,6 +57,47 @@ css = """
 pn.extension(raw_css=[css])
 
 
+css = """
+.custom-font {
+    font-family: Mukta, sans-serif;
+    font-size: 1.3em;
+}
+.bk-input {
+    font-family: Mukta, sans-serif;
+    font-size: 1.1em;
+}
+.bk-btn {
+    font-family: Mukta, sans-serif;
+    font-size: 1.4em;
+}
+.bk-btn:hover {
+    background: #034c76 !important;
+    color: white !important;
+}
+.bk-btn-danger:hover {
+    background: #dc3545 !important;
+    color: white !important;
+}
+.custom-heading {
+    text-align: center;
+    word-wrap: break-word;
+}
+
+h2 {
+    word-wrap: break-word;
+}
+.center-row-image {
+    display: flex;
+    justify-content: center;
+}
+.bk-Column {
+    padding-right: 12px;
+    padding-bottom: 12px;
+}
+"""
+pn.extension(raw_css=[css])
+
+
 @dataclass
 class InputFormWidget:
     name_input: Any
@@ -292,6 +333,26 @@ def get_server_apps_component(username):
     create_app_button.js_on_click(code=app_button_code)
     return create_app_button, apps_grid
 
+def heading_markdown(heading):
+    return pn.pane.Markdown(
+        f"""
+        <style>
+            .custom-background {{
+                padding: 0px 6px;
+                background-color: lightblue;
+                 font-family: Mukta, sans-serif;
+            }}
+        </style>
+        <div class="custom-background">
+
+        # {heading}
+
+        </div>
+        """,
+        margin=0,
+        sizing_mode="stretch_width",
+    )
+
 
 def get_services_component(username):
     services = get_services(username)
@@ -307,28 +368,6 @@ def get_services_component(username):
     create_service_button.js_on_click(code=service_button_code)
     services_grid = pn.GridBox(*service_items, ncols=7, sizing_mode="stretch_width")
     return create_service_button, services_grid
-
-
-def heading_markdown(heading):
-    return pn.pane.Markdown(
-        f"""
-        <style>
-            .custom-background {{
-                padding: 0px 6px;
-                background-color: lightblue;
-                 font-family: Mukta, sans-serif;
-            }}
-        </style>
-
-        <div class="custom-background">
-
-        # {heading}
-
-        </div>
-        """,
-        margin=0,
-        sizing_mode="stretch_width",
-    )
 
 
 def create_apps_grid(username):
@@ -359,17 +398,25 @@ def create_apps_grid(username):
 
 def get_input_form_widget():
     frameworks_display = {f.display_name: f.name for f in FRAMEWORKS_MAPPING.values()}
-    heading = pn.pane.Markdown("## Create Apps", sizing_mode="stretch_width")
+    heading = heading_markdown("Create Apps")
     input_form_widget = InputFormWidget(
-        name_input=pn.widgets.TextInput(name="Name", id="app_name_input"),
-        filepath_input=pn.widgets.TextInput(name="Filepath"),
+        name_input=pn.widgets.TextInput(
+            name="Name", id="app_name_input", css_classes=["custom-font"]
+        ),
+        filepath_input=pn.widgets.TextInput(
+            name="Filepath", css_classes=["custom-font"]
+        ),
         thumbnail=pn.widgets.FileInput(name="Thumbnail"),
-        description_input=pn.widgets.TextAreaInput(name="Description"),
+        description_input=pn.widgets.TextAreaInput(
+            name="Description", css_classes=["custom-font"]
+        ),
         spinner=pn.indicators.LoadingSpinner(
             size=30, value=True, color="secondary", bgcolor="dark", visible=True
         ),
         button_widget=pn.widgets.Button(name=CREATE_APP_BTN_TXT, button_type="primary"),
-        framework=pn.widgets.Select(name="Framework", options=frameworks_display),
+        framework=pn.widgets.Select(
+            name="Framework", options=frameworks_display, css_classes=["custom-font"]
+        ),
     )
     input_form = pn.Column(
         heading,
@@ -466,7 +513,18 @@ def _create_server(event, input_form_widget, input_form, username):
         dashboard_creation_action = "updated"
     text_with_link = pn.pane.Markdown(
         f"""
-    ## 🚀 App {dashboard_creation_action}: [👉🔗]({dashboard_link})
+        <style>
+            .custom-response {{
+                padding: 0px 6px;
+                background-color: #dfdfed;
+                font-family: Mukta, sans-serif;
+            }}
+        </style>
+        <div class="custom-response">
+
+        ## 🚀 App {dashboard_creation_action}: [👉🔗]({dashboard_link})
+
+        </div>
     """
     )
     input_form.append(text_with_link)
