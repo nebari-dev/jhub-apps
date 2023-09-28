@@ -406,7 +406,7 @@ def get_input_form_widget():
         filepath_input=pn.widgets.TextInput(
             name="Filepath", css_classes=["custom-font"]
         ),
-        thumbnail=pn.widgets.FileInput(name="Thumbnail"),
+        thumbnail=pn.widgets.FileInput(name="Thumbnail", css_classes=["custom-font"]),
         description_input=pn.widgets.TextAreaInput(
             name="Description", css_classes=["custom-font"]
         ),
@@ -422,7 +422,7 @@ def get_input_form_widget():
         heading,
         input_form_widget.name_input,
         input_form_widget.filepath_input,
-        pn.pane.Markdown("App Thumbnail"),
+        pn.pane.Markdown("App Thumbnail", css_classes=["custom-font"]),
         input_form_widget.thumbnail,
         input_form_widget.description_input,
         input_form_widget.framework,
