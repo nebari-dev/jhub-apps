@@ -43,13 +43,21 @@ def authenticated(f):
     return decorated
 
 
-@app.route(prefix)
+@app.route(f"{prefix}/")
+@app.route(f"{prefix}/<path:subpath>")
 @authenticated
-def index(user):
-    "Non-authenticated function that returns {'Hello': 'World'}"
-    script = server_document("/services/launcher", arguments={"username": user["name"]})
+def index(user, subpath=None):
+    request_args = dict(request.args)
+    subpath = subpath if subpath else ""
+    script = server_document(
+        f"/services/launcher/{subpath}",
+        arguments={"username": user["name"], **request_args},
+    )
     return render_template(
-        "launcher_base.html", **{"request": request, "script": script}
+        "launcher_base.html",
+        jhub_app_title=os.environ.get("JHUB_APP_TITLE"),
+        jhub_app_icon=os.environ.get("JHUB_APP_ICON"),
+        **{"request": request, "script": script},
     )
 
 

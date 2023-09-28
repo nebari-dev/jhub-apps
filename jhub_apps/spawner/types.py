@@ -1,3 +1,4 @@
+import typing
 from dataclasses import dataclass
 from enum import Enum
 
@@ -7,6 +8,17 @@ class FrameworkConf:
     name: str
     display_name: str
     logo: str
+
+
+@dataclass
+class UserOptions:
+    jhub_app: bool
+    display_name: str
+    description: str
+    thumbnail: str
+    filepath: str
+    framework: str
+    env: typing.Optional[dict] = None
 
 
 class Framework(Enum):

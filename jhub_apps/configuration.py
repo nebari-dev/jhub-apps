@@ -1,6 +1,7 @@
 from secrets import token_bytes
 from base64 import b64encode
 
+from jhub_apps import JAppsConfig
 from jhub_apps.spawner.spawner_creation import subclass_spawner
 import os
 
@@ -17,10 +18,16 @@ def install_jhub_apps(c, spawner_to_subclass):
     bind_url = c.JupyterHub.bind_url
 
     if not isinstance(c.JAppsConfig.python_exec, str):
-        c.JAppsConfig.python_exec = "python"
+        c.JAppsConfig.python_exec = JAppsConfig.python_exec.default_value
 
     if not isinstance(c.JAppsConfig.apps_auth_type, str):
-        c.JAppsConfig.apps_auth_type = "oauth"
+        c.JAppsConfig.apps_auth_type = JAppsConfig.apps_auth_type.default_value
+
+    if not isinstance(c.JAppsConfig.app_title, str):
+        c.JAppsConfig.app_title = JAppsConfig.app_title.default_value
+
+    if not isinstance(c.JAppsConfig.app_icon, str):
+        c.JAppsConfig.app_icon = JAppsConfig.app_icon.default_value
 
     if not isinstance(bind_url, str):
         raise ValueError(f"c.JupyterHub.bind_url is not set: {c.JupyterHub.bind_url}")
@@ -39,7 +46,11 @@ def install_jhub_apps(c, spawner_to_subclass):
                     "run",
                     "--port=10202",
                 ],
-                "environment": {"FLASK_APP": "jhub_apps.service.app"},
+                "environment": {
+                    "FLASK_APP": "jhub_apps.service.app",
+                    "JHUB_APP_TITLE": c.JAppsConfig.app_title,
+                    "JHUB_APP_ICON": c.JAppsConfig.app_icon,
+                },
             },
             {
                 "name": "launcher",

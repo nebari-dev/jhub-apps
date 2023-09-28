@@ -1,7 +1,17 @@
 """We can use this to test the bokeh_root_cmd"""
 import panel as pn
 
-pn.extension(sizing_mode="stretch_width")
+
+css = """
+body {
+    font-family: Mukta, sans-serif;
+}
+
+.center-text {
+    text-align: center;
+}
+"""
+pn.extension(sizing_mode="stretch_width", raw_css=[css])
 
 
 def test_panel_app():

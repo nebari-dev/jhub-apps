@@ -1,13 +1,64 @@
+import os
+import typing
+import uuid
 from dataclasses import dataclass
 from typing import Any
 
 import panel as pn
 
 from jhub_apps.launcher.hub_client import HubClient
-from jhub_apps.spawner.types import FRAMEWORKS_MAPPING, FrameworkConf
+from jhub_apps.spawner.types import FRAMEWORKS_MAPPING, FrameworkConf, UserOptions
 
 EDIT_APP_BTN_TXT = "Edit App"
 CREATE_APP_BTN_TXT = "Create App"
+
+THUMBNAILS_PATH = os.path.expanduser("~/jupyterhub-thumbnails")
+
+if not os.path.exists(THUMBNAILS_PATH):
+    os.mkdir(THUMBNAILS_PATH)
+
+
+css = """
+.custom-font {
+    font-family: Mukta, sans-serif;
+}
+
+.bk-btn {
+    font-family: Mukta, sans-serif;
+    font-size: 1.4em;
+}
+
+.bk-btn:hover {
+    background: #034c76 !important;
+    color: white !important;
+}
+
+.bk-btn-danger:hover {
+    background: #dc3545 !important;
+    color: white !important;
+}
+
+.app-id-text {
+    color: grey !important;
+    font-size: 0.8em
+}
+
+.custom-heading {
+    text-align: center;
+}
+
+.center-row-image {
+    display: flex;
+    justify-content: center;
+}
+
+.bk-Column {
+    padding-right: 12px;
+    padding-bottom: 12px;
+}
+
+"""
+pn.extension(raw_css=[css])
 
 
 css = """
@@ -15,6 +66,11 @@ css = """
     font-family: Mukta, sans-serif;
     font-size: 1.3em;
 }
+
+.loading-apps {
+    padding: 2em
+}
+
 .bk-input {
     font-family: Mukta, sans-serif;
     font-size: 1.1em;
@@ -55,6 +111,7 @@ pn.extension(raw_css=[css])
 class InputFormWidget:
     name_input: Any
     filepath_input: Any
+    thumbnail: Any
     description_input: Any
     spinner: Any
     button_widget: Any
@@ -70,8 +127,10 @@ class App:
     filepath: str
     description: str
     framework: str
+    thumbnail: str
     url: str
     logo: str
+    display_name: typing.Optional[str] = None
 
 
 def _get_server_apps(username):
@@ -98,16 +157,17 @@ def _get_server_apps(username):
             framework=user_options["framework"],
             url=server["url"],
             logo=framework_conf.logo,
+            thumbnail=user_options.get("thumbnail"),
+            display_name=user_options.get("display_name", server_name),
         )
         apps.append(app)
     return apps
 
 
-class ListItem(pn.Column):  # Change the base class to pn.Column
-    def __init__(self, app: App, input_form_widget: InputFormWidget, **params):
+class ListItem(pn.Column):
+    def __init__(self, app: App, username, **params):
         self.app = app
-        self.input_form_widget = input_form_widget
-        self.username = params.get("username")
+        self.username = username
 
         # Define Panel buttons
         self.view_button = pn.widgets.Button(name="Launch", button_type="primary")
@@ -120,38 +180,47 @@ class ListItem(pn.Column):  # Change the base class to pn.Column
 
         # Set up event listeners for the buttons
         code = f"""window.open('{self.app.url}', '_blank');"""
+        edit_code = f"""window.open('/services/japps/create-app/?name={self.app.name}', '_blank');"""
         self.view_button.js_on_click(code=code)
-        self.edit_button.on_click(self.on_edit)
+        self.edit_button.js_on_click(code=edit_code)
         self.delete_button.on_click(self.on_delete)
 
         # Using a Row to group the image, description, and buttons horizontally
-        self.content = pn.Row(
-            pn.pane.Image(
-                self.app.logo,
-                link_url=self.app.url,
-                width=80,
-                height=80,
-                align=("center", "center"),
+        buttons = pn.Column(
+            self.view_button,
+            pn.Row(
+                self.edit_button,
+                self.delete_button,
+            ),
+        )
+        self.content = pn.Column(
+            pn.Row(
+                pn.pane.Image(
+                    self.app.thumbnail or self.app.logo,
+                    link_url=self.app.url,
+                    width=130,
+                    height=130,
+                    align=("center", "center"),
+                    # sizing_mode="stretch_width",
+                ),
+                css_classes=["center-row-image"],
             ),
             pn.pane.Markdown(
                 f"""
-                <style>
-                    .custom-background {{
-                        font-family: Mukta, sans-serif;
-                    }}
-                </style>
-                <div class="custom-background">
+                <div class="custom-font">
+                {self.app.display_name}
 
-                ## {self.app.name}
+                <div class="app-id-text">
+                ID: {self.app.name}
+                </div>
 
                 {self.app.description or "No description found for app"}
                 </div>
                 """,
                 margin=(0, 20, 0, 10),
             ),
-            self.view_button,
-            self.edit_button,
-            self.delete_button,
+            # self.view_button,
+            buttons,
             css_classes=["list-item"],  # Apply the .list-item CSS styling
         )
 
@@ -172,14 +241,6 @@ class ListItem(pn.Column):  # Change the base class to pn.Column
             self.content, **params
         )  # Initializing the pn.Column base class
 
-    def on_edit(self, event):
-        print(f"Edit button clicked! {self.app.name} {event}")
-        self.input_form_widget.name_input.value = self.app.name
-        self.input_form_widget.button_widget.name = EDIT_APP_BTN_TXT
-        self.input_form_widget.description_input.value = self.app.description
-        self.input_form_widget.filepath_input.value = self.app.filepath
-        self.input_form_widget.framework.value = self.app.framework
-
     def on_delete(self, event):
         print(f"Delete button clicked! {self.app.name} {event}")
         hclient = HubClient()
@@ -191,6 +252,24 @@ class ListItem(pn.Column):  # Change the base class to pn.Column
         hclient.delete_server(username=self.username, server_name=self.app.name)
         spinner.visible = False
         self.content.visible = False
+
+
+def get_server_apps_component(username):
+    list_items = []
+    apps = _get_server_apps(username)
+    for app in apps:
+        list_item = ListItem(app=app, username=username)
+        list_items.append(list_item)
+
+    # Wrap everything in a Column with the list-container class
+    apps_grid = pn.GridBox(*list_items, ncols=4)
+    create_app_button = pn.widgets.Button(
+        name=CREATE_APP_BTN_TXT, button_type="primary"
+    )
+
+    app_button_code = f"window.location.href = '/services/japps/create-app'"
+    create_app_button.js_on_click(code=app_button_code)
+    return create_app_button, apps_grid
 
 
 def heading_markdown(heading):
@@ -214,20 +293,16 @@ def heading_markdown(heading):
     )
 
 
-def create_list_apps(input_form_widget, username):
+def create_apps_grid(username):
     print("Create Dashboards Layout")
-    list_items = []
-    apps = _get_server_apps(username)
-    for app in apps:
-        list_item = ListItem(
-            app=app, input_form_widget=input_form_widget, username=username
-        )
-        list_items.append(list_item)
-
-    # Wrap everything in a Column with the list-container class
+    create_app_button, apps_grid = get_server_apps_component(username)
     layout = pn.Column(
+        pn.Row(
+            create_app_button,
+            sizing_mode="fixed",
+        ),
         heading_markdown("Your Apps"),
-        *list_items,
+        apps_grid,
         css_classes=["list-container"],
         width=800,
         sizing_mode="stretch_width",
@@ -246,6 +321,7 @@ def get_input_form_widget():
         filepath_input=pn.widgets.TextInput(
             name="Filepath", css_classes=["custom-font"]
         ),
+        thumbnail=pn.widgets.FileInput(name="Thumbnail", css_classes=["custom-font"]),
         description_input=pn.widgets.TextAreaInput(
             name="Description", css_classes=["custom-font"]
         ),
@@ -261,6 +337,8 @@ def get_input_form_widget():
         heading,
         input_form_widget.name_input,
         input_form_widget.filepath_input,
+        pn.pane.Markdown("App Thumbnail", css_classes=["custom-font"]),
+        input_form_widget.thumbnail,
         input_form_widget.description_input,
         input_form_widget.framework,
         input_form_widget.button_widget,
@@ -274,28 +352,44 @@ def _create_server(event, input_form_widget, input_form, username):
         # Remove the Markdown text, which says dashboard created
         input_form.pop(-1)
     input_form.append(input_form_widget.spinner)
-    name = input_form_widget.name_input.value
+    display_name = input_form_widget.name_input.value
     filepath = input_form_widget.filepath_input.value
     description = input_form_widget.description_input.value
     framework = input_form_widget.framework.value
     print(
-        f"Name: {name}, Filepath: {filepath}, Description: {description}, framework: {framework}"
+        f"Name: {display_name}, Filepath: {filepath}, Description: {description}, framework: {framework}"
     )
-    hclient = HubClient()
-    params = {
-        "name": input_form_widget.name_input.value,
-        "filepath": input_form_widget.filepath_input.value,
-        "description": input_form_widget.description_input.value,
-        "framework": input_form_widget.framework.value,
-    }
+
     edit = False
+    servername = display_name
     if input_form_widget.button_widget.name.startswith("Edit"):
         edit = True
+        servername = input_form_widget.name_input.id
+
+    thumbnail = input_form_widget.thumbnail
+    thumbnail_local_filepath = thumbnail.value
+    if thumbnail.value and thumbnail.filename:
+        thumbnail_file_split = thumbnail.filename.split(".")
+        extension = thumbnail_file_split[-1]
+        filename_wo_extension = "".join(thumbnail_file_split[:-1])
+        filename_to_save = f"{filename_wo_extension}-{uuid.uuid4().hex}.{extension}"
+        thumbnail_local_filepath = os.path.join(THUMBNAILS_PATH, filename_to_save)
+        thumbnail.save(thumbnail_local_filepath)
+
+    hclient = HubClient()
+    user_options = UserOptions(
+        display_name=display_name,
+        jhub_app=True,
+        description=description,
+        thumbnail=thumbnail_local_filepath,
+        filepath=filepath,
+        framework=framework,
+    )
     try:
-        response = hclient.create_server(
-            username, name.lower(), edit=edit, params=params
+        response_status_code, servername = hclient.create_server(
+            username, servername or display_name, edit=edit, user_options=user_options
         )
-        print(f"Creation Response: {response}")
+        print(f"Creation Response status code: {response_status_code}")
     except Exception as e:
         print(f"Exception: {e}")
         error_content = e
@@ -308,7 +402,7 @@ def _create_server(event, input_form_widget, input_form, username):
         input_form.append(text_with_link)
         return
     input_form.pop(-1)
-    dashboard_link = f"/user/{username}/{name}"
+    dashboard_link = f"/user/{username}/{servername}"
     dashboard_creation_action = "created"
     if edit:
         dashboard_creation_action = "updated"
@@ -345,7 +439,51 @@ def get_username():
         return username[0].decode()
 
 
-def create_app():
+def create_app_form_page():
+    input_form_widget, input_form = get_input_form_widget()
+    input_form_widget: InputFormWidget
+    app_name_arg = pn.state.session_args.get("name")
+
+    username = get_username()
+    if app_name_arg:
+        app_name = app_name_arg[0].decode()
+        hclient = HubClient()
+        server = hclient.get_server(username=username, servername=app_name)
+        input_form_widget.name_input.id = server.get("name")
+        input_form_widget.name_input.value = server.get("user_options").get(
+            "display_name", server.get("name")
+        )
+        input_form_widget.description_input.value = server.get("user_options").get(
+            "description"
+        )
+        input_form_widget.filepath_input.value = server.get("user_options").get(
+            "filepath"
+        )
+        input_form_widget.thumbnail.value = server.get("user_options").get("thumbnail")
+        input_form_widget.button_widget.name = "Edit App"
+
+    if not username:
+        return pn.pane.Markdown("# No user found!")
+
+    def button_callback(event):
+        _create_server(event, input_form_widget, input_form, username)
+
+    input_form_widget.button_widget.on_click(button_callback)
+
+    your_apps_button = pn.widgets.Button(name="Apps", button_type="primary")
+    code = f"window.location.href = '/services/japps/'"
+    your_apps_button.js_on_click(code=code)
+
+    return pn.Column(
+        pn.Row(
+            your_apps_button,
+            sizing_mode="fixed",
+        ),
+        input_form,
+    )
+
+
+def apps_grid_view():
     print("*" * 100)
     print("CREATING APP")
     username = get_username()
@@ -353,14 +491,23 @@ def create_app():
     print("*" * 100)
     if not username:
         return pn.pane.Markdown("# No user found!")
-    input_form_widget, input_form = get_input_form_widget()
-    created_apps = create_list_apps(input_form_widget, username)
-    apps_page = create_apps_page(input_form, created_apps)
 
-    def button_callback(event):
-        _create_server(event, input_form_widget, input_form, username)
-        apps_page.pop(-1)
-        apps_page.append(create_list_apps(input_form_widget, username))
+    loading_message = pn.pane.Markdown(
+        """
+        ## Loading apps ...
+        """,
+        sizing_mode="stretch_width",
+        css_classes=["custom-heading", "custom-font", "loading-apps"],
+    )
+    apps_grid = pn.Column(loading_message, loading=True)
+    layout = pn.Row(
+        apps_grid,
+    )
 
-    input_form_widget.button_widget.on_click(button_callback)
-    return apps_page
+    def load():
+        apps_grid.append(create_apps_grid(username))
+        apps_grid.loading = False
+        loading_message.visible = False
+
+    pn.state.onload(load)
+    return layout
