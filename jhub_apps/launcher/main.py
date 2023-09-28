@@ -5,7 +5,6 @@ import panel as pn
 from jhub_apps.launcher.panel_app import (
     apps_grid_view,
     create_app_form_page,
-    create_service_form_page,
 )
 
 
@@ -14,7 +13,6 @@ def app(origin_host):
         {
             "/": apps_grid_view,
             "/create-app": create_app_form_page,
-            "/create-service": create_service_form_page,
         },
         port=5000,
         allow_websocket_origin=[origin_host],
