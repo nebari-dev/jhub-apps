@@ -338,7 +338,6 @@ def heading_markdown(heading):
 
 def create_apps_grid(username):
     print("Create Dashboards Layout")
-    _, shared_apps_grid = get_server_apps_component(username="aktech")
     create_app_button, apps_grid = get_server_apps_component(username)
 
     layout = pn.Column(
@@ -348,8 +347,6 @@ def create_apps_grid(username):
         ),
         heading_markdown("Your Apps"),
         apps_grid,
-        heading_markdown("Shared Apps"),
-        shared_apps_grid,
         css_classes=["list-container"],
         width=800,
         sizing_mode="stretch_width",
