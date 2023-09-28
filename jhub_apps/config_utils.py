@@ -19,6 +19,6 @@ class JAppsConfig(SingletonConfigurable):
     ).tag(config=True)
 
     app_icon = Unicode(
-        "https://jupyter.org/assets/logos/rectanglelogo-greytext-orangebody-greymoons.svg",
+        "https://jupyter.org/assets/homepage/main-logo.svg",
         help="Icon to display on the Home Page of JHub Apps Launcher",
     ).tag(config=True)
