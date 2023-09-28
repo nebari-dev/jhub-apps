@@ -22,6 +22,12 @@ def install_jhub_apps(c, spawner_to_subclass):
     if not isinstance(c.JAppsConfig.apps_auth_type, str):
         c.JAppsConfig.apps_auth_type = "oauth"
 
+    if not isinstance(c.JAppsConfig.app_title, str):
+        c.JAppsConfig.app_title = "JHub Apps Launcher"
+
+    if not isinstance(c.JAppsConfig.app_icon, str):
+        c.JAppsConfig.app_icon = "https://jupyter.org/assets/homepage/main-logo.svg"
+
     if not isinstance(bind_url, str):
         raise ValueError(f"c.JupyterHub.bind_url is not set: {c.JupyterHub.bind_url}")
     if not c.JupyterHub.services:
