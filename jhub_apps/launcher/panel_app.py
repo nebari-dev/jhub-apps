@@ -179,8 +179,9 @@ class ListItem(pn.Column):
 
         # Set up event listeners for the buttons
         code = f"""window.open('{self.app.url}', '_blank');"""
+        edit_code = f"""window.open('/services/japps/create-app/?name={self.app.name}', '_blank');"""
         self.view_button.js_on_click(code=code)
-        self.edit_button.on_click(self.on_edit)
+        self.edit_button.js_on_click(code=edit_code)
         self.delete_button.on_click(self.on_delete)
 
         # Using a Row to group the image, description, and buttons horizontally
@@ -239,14 +240,6 @@ class ListItem(pn.Column):
         super().__init__(
             self.content, **params
         )  # Initializing the pn.Column base class
-
-    def on_edit(self, event):
-        print(f"Edit button clicked! {self.app.name} {event}")
-        self.input_form_widget.name_input.value = self.app.name
-        self.input_form_widget.button_widget.name = EDIT_APP_BTN_TXT
-        self.input_form_widget.description_input.value = self.app.description
-        self.input_form_widget.filepath_input.value = self.app.filepath
-        self.input_form_widget.framework.value = self.app.framework
 
     def on_delete(self, event):
         print(f"Delete button clicked! {self.app.name} {event}")
@@ -332,6 +325,7 @@ def get_server_apps_component(username):
     app_button_code = f"window.location.href = '/services/japps/create-app'"
     create_app_button.js_on_click(code=app_button_code)
     return create_app_button, apps_grid
+
 
 def heading_markdown(heading):
     return pn.pane.Markdown(
@@ -546,7 +540,23 @@ def get_username():
 
 def create_app_form_page():
     input_form_widget, input_form = get_input_form_widget()
+    app_name_arg = pn.state.session_args.get("name")
+
     username = get_username()
+    if app_name_arg:
+        app_name = app_name_arg[0].decode()
+        hclient = HubClient()
+        server = hclient.get_server(username=username, servername=app_name)
+        input_form_widget.name_input.value = server.get("name")
+        input_form_widget.description_input.value = server.get("user_options").get(
+            "description"
+        )
+        input_form_widget.filepath_input.value = server.get("user_options").get(
+            "filepath"
+        )
+        input_form_widget.thumbnail.value = server.get("user_options").get("thumbnail")
+        input_form_widget.button_widget.name = "Edit App"
+
     if not username:
         return pn.pane.Markdown("# No user found!")
 

@@ -47,9 +47,11 @@ def authenticated(f):
 @app.route(f"{prefix}/<path:subpath>")
 @authenticated
 def index(user, subpath=None):
+    request_args = dict(request.args)
     subpath = subpath if subpath else ""
     script = server_document(
-        f"/services/launcher/{subpath}", arguments={"username": user["name"]}
+        f"/services/launcher/{subpath}",
+        arguments={"username": user["name"], **request_args},
     )
     return render_template(
         "launcher_base.html", **{"request": request, "script": script}
