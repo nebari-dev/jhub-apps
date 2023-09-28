@@ -54,7 +54,10 @@ def index(user, subpath=None):
         arguments={"username": user["name"], **request_args},
     )
     return render_template(
-        "launcher_base.html", **{"request": request, "script": script}
+        "launcher_base.html",
+        jhub_app_title=os.environ.get("JHUB_APP_TITLE"),
+        jhub_app_icon=os.environ.get("JHUB_APP_ICON"),
+        **{"request": request, "script": script},
     )
 
 
