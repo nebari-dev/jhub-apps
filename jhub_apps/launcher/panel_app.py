@@ -470,9 +470,15 @@ def _create_server(event, input_form_widget, input_form, username):
         f"Name: {display_name}, Filepath: {filepath}, Description: {description}, framework: {framework}"
     )
 
-    thumbnail_local_filepath = None
+    edit = False
+    servername = display_name
+    if input_form_widget.button_widget.name.startswith("Edit"):
+        edit = True
+        servername = input_form_widget.name_input.id
+
     thumbnail = input_form_widget.thumbnail
-    if thumbnail.value is not None:
+    thumbnail_local_filepath = thumbnail.value
+    if thumbnail.value and thumbnail.filename:
         thumbnail_file_split = thumbnail.filename.split(".")
         extension = thumbnail_file_split[-1]
         filename_wo_extension = "".join(thumbnail_file_split[:-1])
@@ -489,18 +495,9 @@ def _create_server(event, input_form_widget, input_form, username):
         filepath=filepath,
         framework=framework,
     )
-    edit = False
-    servername = display_name
-    if input_form_widget.button_widget.name.startswith("Edit"):
-        edit = True
-        servername = input_form_widget.name_input.id
-
     try:
         response_status_code, servername = hclient.create_server(
-            username,
-            servername or display_name,
-            edit=edit,
-            user_options=user_options
+            username, servername or display_name, edit=edit, user_options=user_options
         )
         print(f"Creation Response status code: {response_status_code}")
     except Exception as e:
@@ -563,7 +560,9 @@ def create_app_form_page():
         hclient = HubClient()
         server = hclient.get_server(username=username, servername=app_name)
         input_form_widget.name_input.id = server.get("name")
-        input_form_widget.name_input.value = server.get("user_options").get("display_name", server.get("name"))
+        input_form_widget.name_input.value = server.get("user_options").get(
+            "display_name", server.get("name")
+        )
         input_form_widget.description_input.value = server.get("user_options").get(
             "description"
         )
