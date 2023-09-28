@@ -46,7 +46,7 @@ def test_japps_service(page: Page):
     ],
 )
 def test_panel_dashboard_creation(page: Page, framework, expected_title):
-    url = f"{BASE_URL}/services/japps/"
+    url = f"{BASE_URL}/services/japps/create-app"
     page.goto(url)
     _fill_username_password(page)
     # Fill the Create App Form
@@ -59,17 +59,16 @@ def test_panel_dashboard_creation(page: Page, framework, expected_title):
     # Wait for a couple of seconds so that panel can read form input
     time.sleep(2)
     # Click on Create Dashboard
-    page.click(".bk-btn.bk-btn-primary")
+    page.get_by_role("button", name="Create App").click()
     # Wait for the dashboard to be created
     time.sleep(5)
-    # Click on Launch Dashboard
-    launch_button = page.locator('button:text("Launch")')
-
-    assert launch_button.first.is_visible()
+    app_page_url = f"{BASE_URL}/services/japps/"
+    page.goto(app_page_url)
 
     with page.expect_popup() as framework_page_info:
-        launch_button.click()
+        page.get_by_role("button", name="Launch").click()
     framework_page = framework_page_info.value
+
     try:
         expect(framework_page).to_have_title(re.compile(expected_title))
     except AssertionError as e:
@@ -81,6 +80,6 @@ def test_panel_dashboard_creation(page: Page, framework, expected_title):
 
     # Delete dashboard anyways
     # Go back to japps page
-    page.goto(url)
+    page.goto(app_page_url)
     # Delete Dashboard
     page.click("text=Delete")
