@@ -5,6 +5,7 @@ from jhub_apps.spawner.command import (
     Command,
     EXAMPLES_FILE,
     DEFAULT_CMD,
+    GENERIC_ARGS,
 )
 from jhub_apps.spawner.types import Framework
 
@@ -39,8 +40,7 @@ def subclass_spawner(base_spawner):
                 custom_cmd = self.user_options.get("custom_command")
                 if framework == Framework.generic.value:
                     assert custom_cmd
-                    command: Command = COMMANDS.get(framework)
-                    command.args.extend(custom_cmd.split())
+                    command = Command(args=GENERIC_ARGS + custom_cmd.split())
                 else:
                     command: Command = COMMANDS.get(framework)
                 command_args = command.get_substituted_args(

@@ -481,6 +481,10 @@ def create_app_form_page():
             "filepath"
         )
         input_form_widget.thumbnail.value = server.get("user_options").get("thumbnail")
+        input_form_widget.framework.value = server.get("user_options").get("framework")
+        input_form_widget.custom_command.value = server.get("user_options").get(
+            "custom_command"
+        )
         input_form_widget.button_widget.name = "Edit App"
 
     if not username:
