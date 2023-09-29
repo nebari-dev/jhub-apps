@@ -13,6 +13,8 @@ command. Currently, the following frameworks are supported:
 - [x] Plotly Dash
 - [x] Voila
 - [x] Gradio
+- [x] JupyterLab
+- [x] Generic Python Command
 
 ![JHub Apps Demo](https://raw.githubusercontent.com/nebari-dev/jhub-apps/main/demo.gif)
 

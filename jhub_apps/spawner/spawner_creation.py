@@ -5,6 +5,7 @@ from jhub_apps.spawner.command import (
     Command,
     EXAMPLES_FILE,
     DEFAULT_CMD,
+    GENERIC_ARGS,
 )
 from jhub_apps.spawner.types import Framework
 
@@ -24,7 +25,10 @@ def subclass_spawner(base_spawner):
                 jh_service_prefix = env.get("JUPYTERHUB_SERVICE_PREFIX")
                 framework = self.user_options.get("framework")
                 app_filepath = None
-                if framework != Framework.jupyterlab.value:
+                if framework not in [
+                    Framework.jupyterlab.value,
+                    Framework.generic.value,
+                ]:
                     app_filepath = filepath or EXAMPLES_DIR / EXAMPLES_FILE.get(
                         framework
                     )
@@ -32,7 +36,13 @@ def subclass_spawner(base_spawner):
                 if not filepath:
                     # Saving the examples file path when not provided
                     self.user_options["filepath"] = str(app_filepath)
-                command: Command = COMMANDS.get(framework)
+
+                custom_cmd = self.user_options.get("custom_command")
+                if framework == Framework.generic.value:
+                    assert custom_cmd
+                    command = Command(args=GENERIC_ARGS + custom_cmd.split())
+                else:
+                    command: Command = COMMANDS.get(framework)
                 command_args = command.get_substituted_args(
                     python_exec=self.config.JAppsConfig.python_exec,
                     filepath=app_filepath,
