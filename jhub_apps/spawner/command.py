@@ -140,4 +140,12 @@ COMMANDS = {
         ]
     ),
     Framework.jupyterlab.value: Command(args=[]),
+    Framework.generic.value: Command(
+        args=[
+            "--destport=0",
+            "--ready-check-path=/ready-check",
+            TString("$python_exec"),
+            "{-}m",
+        ]
+    ),
 }

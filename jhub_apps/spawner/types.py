@@ -18,6 +18,7 @@ class UserOptions:
     thumbnail: str
     filepath: str
     framework: str
+    custom_command: typing.Optional[str] = None
     env: typing.Optional[dict] = None
 
 
@@ -29,6 +30,7 @@ class Framework(Enum):
     voila = "voila"
     gradio = "gradio"
     jupyterlab = "jupyterlab"
+    generic = "generic"
 
     @classmethod
     def values(cls):
@@ -69,6 +71,11 @@ FRAMEWORKS = [
     FrameworkConf(
         name=Framework.jupyterlab.value,
         display_name="JupyterLab",
+        logo="https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Jupyter_logo.svg/1200px-Jupyter_logo.svg.png",
+    ),
+    FrameworkConf(
+        name=Framework.generic.value,
+        display_name="Generic",
         logo="https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Jupyter_logo.svg/1200px-Jupyter_logo.svg.png",
     ),
 ]

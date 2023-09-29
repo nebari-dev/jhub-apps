@@ -7,7 +7,12 @@ from typing import Any
 import panel as pn
 
 from jhub_apps.launcher.hub_client import HubClient
-from jhub_apps.spawner.types import FRAMEWORKS_MAPPING, FrameworkConf, UserOptions
+from jhub_apps.spawner.types import (
+    FRAMEWORKS_MAPPING,
+    FrameworkConf,
+    UserOptions,
+    Framework,
+)
 
 EDIT_APP_BTN_TXT = "Edit App"
 CREATE_APP_BTN_TXT = "Create App"
@@ -113,6 +118,7 @@ class InputFormWidget:
     filepath_input: Any
     thumbnail: Any
     description_input: Any
+    custom_command: Any
     spinner: Any
     button_widget: Any
     framework: Any
@@ -325,6 +331,9 @@ def get_input_form_widget():
         description_input=pn.widgets.TextAreaInput(
             name="Description", css_classes=["custom-font"]
         ),
+        custom_command=pn.widgets.TextInput(
+            name="Custom Command", css_classes=["custom-font"], visible=False
+        ),
         spinner=pn.indicators.LoadingSpinner(
             size=30, value=True, color="secondary", bgcolor="dark", visible=True
         ),
@@ -333,7 +342,17 @@ def get_input_form_widget():
             name="Framework", options=frameworks_display, css_classes=["custom-font"]
         ),
     )
+
+    def framework_handler(selected_framework):
+        if selected_framework == Framework.generic.value:
+            input_form_widget.custom_command.visible = True
+        else:
+            input_form_widget.custom_command.visible = False
+
+    binding = pn.bind(framework_handler, input_form_widget.framework)
+
     input_form = pn.Column(
+        binding,
         heading,
         input_form_widget.name_input,
         input_form_widget.filepath_input,
@@ -341,6 +360,7 @@ def get_input_form_widget():
         input_form_widget.thumbnail,
         input_form_widget.description_input,
         input_form_widget.framework,
+        input_form_widget.custom_command,
         input_form_widget.button_widget,
         width=400,
     )
@@ -384,6 +404,7 @@ def _create_server(event, input_form_widget, input_form, username):
         thumbnail=thumbnail_local_filepath,
         filepath=filepath,
         framework=framework,
+        custom_command=input_form_widget.custom_command.value,
     )
     try:
         response_status_code, servername = hclient.create_server(
