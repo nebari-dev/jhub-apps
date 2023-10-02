@@ -27,7 +27,7 @@ def subclass_spawner(base_spawner):
                 app_filepath = None
                 if framework not in [
                     Framework.jupyterlab.value,
-                    Framework.generic.value,
+                    Framework.custom.value,
                 ]:
                     app_filepath = filepath or EXAMPLES_DIR / EXAMPLES_FILE.get(
                         framework
@@ -38,7 +38,7 @@ def subclass_spawner(base_spawner):
                     self.user_options["filepath"] = str(app_filepath)
 
                 custom_cmd = self.user_options.get("custom_command")
-                if framework == Framework.generic.value:
+                if framework == Framework.custom.value:
                     assert custom_cmd
                     command = Command(args=GENERIC_ARGS + custom_cmd.split())
                 else:
