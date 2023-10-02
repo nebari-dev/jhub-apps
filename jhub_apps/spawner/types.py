@@ -30,7 +30,7 @@ class Framework(Enum):
     voila = "voila"
     gradio = "gradio"
     jupyterlab = "jupyterlab"
-    generic = "generic"
+    custom = "custom"
 
     @classmethod
     def values(cls):
@@ -74,8 +74,8 @@ FRAMEWORKS = [
         logo="https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Jupyter_logo.svg/1200px-Jupyter_logo.svg.png",
     ),
     FrameworkConf(
-        name=Framework.generic.value,
-        display_name="Generic",
+        name=Framework.custom.value,
+        display_name="Custom Command",
         logo="https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Jupyter_logo.svg/1200px-Jupyter_logo.svg.png",
     ),
 ]

@@ -156,6 +156,9 @@ def _get_server_apps(username):
         framework_conf: FrameworkConf = FRAMEWORKS_MAPPING.get(
             user_options["framework"]
         )
+        if not framework_conf:
+            print(f"Warning: Framework conf not found for: {user_options['framework']}")
+            continue
         app = App(
             name=server_name,
             filepath=user_options["filepath"],
@@ -344,7 +347,7 @@ def get_input_form_widget():
     )
 
     def framework_handler(selected_framework):
-        if selected_framework == Framework.generic.value:
+        if selected_framework == Framework.custom.value:
             input_form_widget.custom_command.visible = True
         else:
             input_form_widget.custom_command.visible = False
