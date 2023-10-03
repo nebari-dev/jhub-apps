@@ -15,7 +15,6 @@ jobs:
       matrix:
         python-version:
           - "3.9"
-          - "3.12"
         test_type:
           - tests
           - tests_e2e
@@ -30,6 +29,7 @@ jobs:
         create-args: >-
           python=${{ matrix.python-version }}
           numpy
+          -c conda-forge
 
     - name: Install JHub Apps
       run: |
