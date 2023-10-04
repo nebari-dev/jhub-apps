@@ -412,7 +412,7 @@ def _create_server(event, input_form_widget, input_form, username):
         thumbnail=thumbnail_local_filepath,
         filepath=filepath,
         framework=framework,
-        conda_env = input_form_widget.conda_input.value,
+        conda_env=input_form_widget.conda_input.value,
         custom_command=input_form_widget.custom_command.value,
     )
     try:

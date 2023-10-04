@@ -86,8 +86,6 @@ def subclass_spawner(base_spawner):
                     authtype=self.config.JAppsConfig.apps_auth_type,
                 )
 
-
-                
             if framework == Framework.jupyterlab.value:
                 self.cmd = [
                     python_path,
