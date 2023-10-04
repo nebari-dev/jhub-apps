@@ -75,22 +75,35 @@ def subclass_spawner(base_spawner):
 
         async def start(self):
             framework = self.user_options.get("framework")
+            python_path = self._get_python_path(self.user_options.get("conda_env"))
+
             if (
                 self.user_options.get("jhub_app")
                 and framework != Framework.jupyterlab.value
             ):
                 self.cmd = DEFAULT_CMD.get_substituted_args(
-                    python_exec=self.config.JAppsConfig.python_exec,
+                    python_exec=python_path,
                     authtype=self.config.JAppsConfig.apps_auth_type,
                 )
+
+
+                
             if framework == Framework.jupyterlab.value:
                 self.cmd = [
-                    self.config.JAppsConfig.python_exec,
+                    python_path,
                     "-m",
                     "jupyterhub.singleuser",
                 ]
             print(f"Final Spawner Command: {self.cmd}")
             return await super().start()
+
+        def _get_python_path(self, conda_path_string):
+            if conda_path_string != "":
+                python_path = f"{conda_path_string}/bin/python3"
+            else:
+                python_path = self.config.JAppsConfig.python_exec
+
+            return python_path
 
         def _expand_user_vars(self, string):
             """

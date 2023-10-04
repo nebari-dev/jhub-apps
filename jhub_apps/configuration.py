@@ -37,7 +37,7 @@ def install_jhub_apps(c, spawner_to_subclass):
         [
             {
                 "name": "japps",
-                "url": "http://127.0.0.1:10202",
+                "url": "http://0.0.0.0:10202",
                 # TODO: Run flask app behind gunicorn
                 "command": [
                     c.JAppsConfig.python_exec,
@@ -54,12 +54,13 @@ def install_jhub_apps(c, spawner_to_subclass):
             },
             {
                 "name": "launcher",
-                "url": "http://127.0.0.1:5000",
+                "url": "http://0.0.0.0:5000",
                 "command": [
                     c.JAppsConfig.python_exec,
                     "-m",
                     "jhub_apps.launcher.main",
-                    f"--origin-host={get_origin_host(c.JupyterHub.bind_url)}",
+                    # f"--origin-host={get_origin_host(c.JupyterHub.bind_url)}",
+                    f"--origin-host=*",
                 ],
                 # Remove this get, set environment properly
                 "api_token": os.environ.get(

@@ -118,6 +118,7 @@ class InputFormWidget:
     filepath_input: Any
     thumbnail: Any
     description_input: Any
+    conda_input: Any
     custom_command: Any
     spinner: Any
     button_widget: Any
@@ -334,6 +335,9 @@ def get_input_form_widget():
         description_input=pn.widgets.TextAreaInput(
             name="Description", css_classes=["custom-font"]
         ),
+        conda_input=pn.widgets.TextInput(
+            name="Conda Environment Path", css_classes=["custom-font"]
+        ),
         custom_command=pn.widgets.TextInput(
             name="Custom Command", css_classes=["custom-font"], visible=False
         ),
@@ -363,6 +367,7 @@ def get_input_form_widget():
         input_form_widget.thumbnail,
         input_form_widget.description_input,
         input_form_widget.framework,
+        input_form_widget.conda_input,
         input_form_widget.custom_command,
         input_form_widget.button_widget,
         width=400,
@@ -407,6 +412,7 @@ def _create_server(event, input_form_widget, input_form, username):
         thumbnail=thumbnail_local_filepath,
         filepath=filepath,
         framework=framework,
+        conda_env = input_form_widget.conda_input.value,
         custom_command=input_form_widget.custom_command.value,
     )
     try:
