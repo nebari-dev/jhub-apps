@@ -93,6 +93,7 @@ def subclass_spawner(base_spawner):
                     "jupyterhub.singleuser",
                 ]
             print(f"Final Spawner Command: {self.cmd}")
+            print(f"Final python path: {python_path}")
             return await super().start()
 
         def _get_python_path(self, conda_path_string):
