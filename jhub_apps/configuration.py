@@ -45,6 +45,7 @@ def install_jhub_apps(c, spawner_to_subclass):
                     "flask",
                     "run",
                     "--port=10202",
+                    "--host=0.0.0.0",
                 ],
                 "environment": {
                     "FLASK_APP": "jhub_apps.service.app",
