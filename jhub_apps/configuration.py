@@ -29,6 +29,11 @@ def install_jhub_apps(c, spawner_to_subclass):
     if not isinstance(c.JAppsConfig.app_icon, str):
         c.JAppsConfig.app_icon = JAppsConfig.app_icon.default_value
 
+    if c.JAppsConfig.allowed_hosts == "":
+        allowed_hosts = get_origin_host(c.JupyterHub.bind_url)
+    else:
+        allowed_hosts = c.JAppsConfig.allowed_host
+
     if not isinstance(bind_url, str):
         raise ValueError(f"c.JupyterHub.bind_url is not set: {c.JupyterHub.bind_url}")
     if not c.JupyterHub.services:
@@ -60,8 +65,7 @@ def install_jhub_apps(c, spawner_to_subclass):
                     c.JAppsConfig.python_exec,
                     "-m",
                     "jhub_apps.launcher.main",
-                    # f"--origin-host={get_origin_host(c.JupyterHub.bind_url)}",
-                    f"--origin-host=*",
+                    f"--origin-host={allowed_hosts}",
                 ],
                 # Remove this get, set environment properly
                 "api_token": os.environ.get(

@@ -13,6 +13,11 @@ class JAppsConfig(SingletonConfigurable):
         "python", help="Python executable to use for running all the commands"
     ).tag(config=True)
 
+    allowed_hosts = Unicode(
+        "",
+        help="Hosts that are allowed to access launched apps. Defualts to hub_url"
+    ).tag(config=True)
+
     app_title = Unicode(
         "JHub Apps Launcher",
         help="Title to display on the Home Page of JHub Apps Launcher",
