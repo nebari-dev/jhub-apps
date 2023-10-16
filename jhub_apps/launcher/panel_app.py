@@ -17,10 +17,14 @@ from jhub_apps.spawner.types import (
 EDIT_APP_BTN_TXT = "Edit App"
 CREATE_APP_BTN_TXT = "Create App"
 
+# This is a temporary solution for storing thumbnails
+# TODO: Fix this to work properly on non-local environments.
 THUMBNAILS_PATH = os.path.expanduser("~/jupyterhub-thumbnails")
-
 if not os.path.exists(THUMBNAILS_PATH):
-    os.mkdir(THUMBNAILS_PATH)
+    try:
+        os.mkdir(THUMBNAILS_PATH)
+    except FileNotFoundError as e:
+        THUMBNAILS_PATH = os.getcwd()
 
 
 css = """
