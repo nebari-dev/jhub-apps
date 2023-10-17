@@ -69,10 +69,7 @@ def install_jhub_apps(c, spawner_to_subclass):
         ]
     )
 
-    if not c.JupyterHub.load_roles:
-        c.JupyterHub.load_roles = []
-
-    c.JupyterHub.load_roles = [
+    services_roles = [
         {
             "name": "japps-service-role",  # name the role
             "services": [
@@ -97,4 +94,12 @@ def install_jhub_apps(c, spawner_to_subclass):
             "scopes": ["self", "access:services"],
         },
     ]
+
+    if not c.JupyterHub.load_roles:
+        c.JupyterHub.load_roles = []
+
+    if isinstance(c.JupyterHub.load_roles, list):
+        c.JupyterHub.load_roles = c.JupyterHub.load_roles + services_roles
+    else:
+        c.JupyterHub.load_roles = services_roles
     return c
