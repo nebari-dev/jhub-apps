@@ -1,4 +1,5 @@
 import os
+import logging
 from base64 import b64encode
 from secrets import token_bytes
 
@@ -6,12 +7,34 @@ from jhub_apps import JAppsConfig
 from jhub_apps.spawner.spawner_creation import subclass_spawner
 from jhub_apps.spawner.utils import get_origin_host
 
+logging.basicConfig(
+    format="%(asctime)s %(levelname)9s %(lineno)4s %(module)s: %(message)s",
+    level=logging.INFO
+)
+
+logger = logging.getLogger(__name__)
+
 
 def _create_token_for_service():
     return b64encode(token_bytes(32)).decode()
 
 
+def get_jhub_config():
+    from jupyterhub.app import JupyterHub
+    hub = JupyterHub()
+    logger.info(f"GETTING JHUB CONFIG FROM FILE:")
+    hub.load_config_file(hub.config_file)
+    config = hub.config
+    logger.info("$"*100)
+    logger.info(f"JHUB CONFIG FROM FILE: {config}")
+    logger.info(f"JApps CONFIG: {config.JAppsConfig}")
+    logger.info("$"*100)
+    return config
+
+
 def install_jhub_apps(c, spawner_to_subclass):
+    logger.info("Installing JApps")
+    get_jhub_config()
     c.JupyterHub.spawner_class = subclass_spawner(spawner_to_subclass)
     c.JupyterHub.allow_named_servers = True
     bind_url = c.JupyterHub.bind_url
@@ -32,11 +55,12 @@ def install_jhub_apps(c, spawner_to_subclass):
         raise ValueError(f"c.JupyterHub.bind_url is not set: {c.JupyterHub.bind_url}")
     if not c.JupyterHub.services:
         c.JupyterHub.services = []
+    logger.info("Adding JApps Services")
     c.JupyterHub.services.extend(
         [
             {
                 "name": "japps",
-                "url": "http://127.0.0.1:10202",
+                "url": "http://hub:10202",
                 # TODO: Run flask app behind gunicorn
                 "command": [
                     c.JAppsConfig.python_exec,
@@ -44,6 +68,7 @@ def install_jhub_apps(c, spawner_to_subclass):
                     "flask",
                     "run",
                     "--port=10202",
+                    "--host=0.0.0.0",
                 ],
                 "environment": {
                     "FLASK_APP": "jhub_apps.service.app",
@@ -54,7 +79,7 @@ def install_jhub_apps(c, spawner_to_subclass):
             },
             {
                 "name": "launcher",
-                "url": "http://127.0.0.1:5000",
+                "url": "http://hub:5000",
                 "command": [
                     c.JAppsConfig.python_exec,
                     "-m",
@@ -103,4 +128,5 @@ def install_jhub_apps(c, spawner_to_subclass):
         c.JupyterHub.load_roles = c.JupyterHub.load_roles + services_roles
     else:
         c.JupyterHub.load_roles = services_roles
+    logger.info("Installing JApps configuration complete")
     return c
