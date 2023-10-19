@@ -16,9 +16,11 @@ def subclass_spawner(base_spawner):
         def get_args(self):
             """Return arguments to pass to the notebook server"""
             argv = super().get_args()
+            print(f"JHubSpawner: argv: {argv}")
             if self.user_options.get("argv"):
                 argv.extend(self.user_options["argv"])
 
+            print(f"JHubSpawner: user_options: {self.user_options}")
             if self.user_options.get("jhub_app"):
                 filepath = self.user_options["filepath"]
                 env = self.get_env()
@@ -57,6 +59,7 @@ def subclass_spawner(base_spawner):
 
         def get_env(self):
             env = super().get_env()
+            print(f"JHubSpawner: get_env: {env}")
             if self.user_options.get("env"):
                 env.update(self.user_options["env"])
 
@@ -76,6 +79,8 @@ def subclass_spawner(base_spawner):
 
         async def start(self):
             framework = self.user_options.get("framework")
+            print(f"JHubSpawner: start, user_options: {self.user_options}")
+            print(f"JHubSpawner: start: {self.cmd}, framework: {framework}")
             if (
                 self.user_options.get("jhub_app")
                 and framework != Framework.jupyterlab.value

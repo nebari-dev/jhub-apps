@@ -1,4 +1,6 @@
+import logging
 import os
+import sys
 import typing
 import uuid
 from dataclasses import dataclass
@@ -18,17 +20,30 @@ from jhub_apps.spawner.types import (
     Framework,
 )
 
+
+logging.basicConfig(
+    stream=sys.stdout,
+    format="%(asctime)s %(levelname)9s %(lineno)4s %(module)s: %(message)s",
+    level=logging.INFO
+)
+logger = logging.getLogger(__name__)
+
+pn.state.log("**** pn.state.log working ****")
+
 EDIT_APP_BTN_TXT = "Edit App"
 CREATE_APP_BTN_TXT = "Create App"
 
 # This is a temporary solution for storing thumbnails
 # TODO: Fix this to work properly on non-local environments.
 THUMBNAILS_PATH = os.path.expanduser("~/jupyterhub-thumbnails")
+logger.info("Creating Thumbnails Path")
 if not os.path.exists(THUMBNAILS_PATH):
     try:
         os.mkdir(THUMBNAILS_PATH)
     except FileNotFoundError:
         THUMBNAILS_PATH = os.getcwd()
+    except PermissionError as e:
+        logger.info(f"Unable to create {THUMBNAILS_PATH}")
 
 
 css = """
@@ -161,13 +176,13 @@ def _get_server_apps(username):
     for server_name, server in servers.items():
         user_options = server["user_options"]
         if not user_options or not user_options.get("jhub_app"):
-            print(f"Skipping displaying server: {server_name}")
+            logger.info(f"Skipping displaying server: {server_name}")
             continue
         framework_conf: FrameworkConf = FRAMEWORKS_MAPPING.get(
             user_options["framework"]
         )
         if not framework_conf:
-            print(f"Warning: Framework conf not found for: {user_options['framework']}")
+            logger.info(f"Warning: Framework conf not found for: {user_options['framework']}")
             continue
         app = App(
             name=server_name,
@@ -261,7 +276,7 @@ class ListItem(pn.Column):
         )  # Initializing the pn.Column base class
 
     def on_delete(self, event):
-        print(f"Delete button clicked! {self.app.name} {event}")
+        logger.info(f"Delete button clicked! {self.app.name} {event}")
         hclient = HubClient()
         self.delete_button.visible = False
         spinner = pn.indicators.LoadingSpinner(
@@ -313,7 +328,7 @@ def heading_markdown(heading):
 
 
 def create_apps_grid(username):
-    print("Create Dashboards Layout")
+    logger.info("Create Dashboards Layout")
     create_app_button, apps_grid = get_server_apps_component(username)
     layout = pn.Column(
         pn.Row(
@@ -333,7 +348,6 @@ def create_apps_grid(username):
 def get_input_form_widget():
     frameworks_display = {f.display_name: f.name for f in FRAMEWORKS_MAPPING.values()}
     heading = heading_markdown("Create Apps")
-
     config = get_jupyterhub_config()
     conda_envs = get_conda_envs(config)
     spawner_profiles = get_spawner_profiles(config)
@@ -387,6 +401,7 @@ def get_input_form_widget():
         input_form_widget.thumbnail,
         input_form_widget.description_input,
         input_form_widget.framework,
+        input_form_widget.conda_env,
         input_form_widget.custom_command,
         input_form_widget.conda_envs,
         width=400,
@@ -406,7 +421,7 @@ def _create_server(event, input_form_widget, input_form, username):
     filepath = input_form_widget.filepath_input.value
     description = input_form_widget.description_input.value
     framework = input_form_widget.framework.value
-    print(
+    logger.info(
         f"Name: {display_name}, Filepath: {filepath}, Description: {description}, framework: {framework}"
     )
 
@@ -443,9 +458,9 @@ def _create_server(event, input_form_widget, input_form, username):
         response_status_code, servername = hclient.create_server(
             username, servername or display_name, edit=edit, user_options=user_options
         )
-        print(f"Creation Response status code: {response_status_code}")
+        logger.info(f"Creation Response status code: {response_status_code}")
     except Exception as e:
-        print(f"Exception: {e}")
+        logger.info(f"Exception: {e}")
         error_content = e
         if hasattr(e, "response"):
             error_content = e.response.json()
@@ -478,7 +493,7 @@ def _create_server(event, input_form_widget, input_form, username):
     )
     input_form.append(text_with_link)
     input_form_widget.button_widget.name = CREATE_APP_BTN_TXT
-    print(event)
+    logger.info(event)
 
 
 def create_apps_page(input_form, created_apps):
@@ -584,11 +599,17 @@ def create_app_form_page():
 
 
 def apps_grid_view():
+    logger.info("*" * 100)
+    logger.info("CREATING APP")
     print("*" * 100)
     print("CREATING APP")
+    logger.info("∞"*100)
+    logger.info("LOGGER ACTIVATED")
+    logger.info("∞"*100)
+
     username = get_username()
-    print(f"User: {username}")
-    print("*" * 100)
+    logger.info(f"User: {username}")
+    logger.info("*" * 100)
     if not username:
         return pn.pane.Markdown("# No user found!")
 

@@ -1,3 +1,4 @@
+import logging
 import os
 import secrets
 from functools import wraps
@@ -20,6 +21,13 @@ app = Flask(
     static_url_path=prefix + "/static",
 )
 
+logging_format = (
+    "%(asctime)s %(levelname)9s %(lineno)4s %(module)s: %(message)s"
+)
+logging.basicConfig(
+    level=logging.INFO, format=logging_format
+)
+app.logger.info("Flask logging activated")
 # encryption key for session cookies
 app.secret_key = secrets.token_bytes(32)
 
@@ -52,6 +60,7 @@ def authenticated(f):
 @app.route(f"{prefix}/<path:subpath>")
 @authenticated
 def index(user, subpath=None):
+    app.logger.info("Calling Flask service index")
     request_args = dict(request.args)
     subpath = subpath if subpath else ""
     script = server_document(
