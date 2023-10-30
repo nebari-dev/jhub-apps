@@ -31,6 +31,8 @@ pip install -e .
 jupyterhub -f jupyterhub_config.py
 ```
 
+Now go to http://127.0.0.1:8000/services/japps/ to access JHub Apps Launcher
+
 ## Running Tests
 
 ### Unit Tests
