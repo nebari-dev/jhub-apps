@@ -329,7 +329,7 @@ def get_input_form_widget():
     heading = heading_markdown("Create Apps")
     input_form_widget = InputFormWidget(
         name_input=pn.widgets.TextInput(
-            name="Name", id="app_name_input", css_classes=["custom-font"]
+            name="Name", css_classes=["custom-font"]
         ),
         filepath_input=pn.widgets.TextInput(
             name="Filepath", css_classes=["custom-font"]
