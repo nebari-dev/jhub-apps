@@ -4,7 +4,7 @@ from jhub_apps.configuration import install_jhub_apps
 
 c = get_config()  # noqa
 
-from jupyterhub.auth import DummyAuthenticator
+from jupyterhub.auth import DummyAuthenticator  # noqa: E402
 
 c.JupyterHub.authenticator_class = DummyAuthenticator
 c.JupyterHub.log_level = 10

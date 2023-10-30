@@ -23,7 +23,7 @@ THUMBNAILS_PATH = os.path.expanduser("~/jupyterhub-thumbnails")
 if not os.path.exists(THUMBNAILS_PATH):
     try:
         os.mkdir(THUMBNAILS_PATH)
-    except FileNotFoundError as e:
+    except FileNotFoundError:
         THUMBNAILS_PATH = os.getcwd()
 
 
@@ -147,7 +147,7 @@ def _get_server_apps(username):
     hclient = HubClient()
     try:
         user = hclient.get_user(username)
-    except Exception as e:
+    except Exception:
         print("No user found")
         return []
     servers = user["servers"]
@@ -280,7 +280,7 @@ def get_server_apps_component(username):
         name=CREATE_APP_BTN_TXT, button_type="primary"
     )
 
-    app_button_code = f"window.location.href = '/services/japps/create-app'"
+    app_button_code = "window.location.href = '/services/japps/create-app'"
     create_app_button.js_on_click(code=app_button_code)
     return create_app_button, apps_grid
 
@@ -501,7 +501,7 @@ def create_app_form_page():
     input_form_widget.button_widget.on_click(button_callback)
 
     your_apps_button = pn.widgets.Button(name="Apps", button_type="primary")
-    code = f"window.location.href = '/services/japps/'"
+    code = "window.location.href = '/services/japps/'"
     your_apps_button.js_on_click(code=code)
 
     return pn.Column(

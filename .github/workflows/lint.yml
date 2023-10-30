@@ -17,6 +17,15 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: Lint with black
-      uses: psf/black@stable
+    - name: Setup Python
+      uses: actions/setup-python@v4.7.1
+      with:
+        python-version: '3.12'
 
+    - name: Install ruff
+      run: |
+        pip install ruff
+
+    - name: Lint with ruff
+      run: |
+        ruff check .

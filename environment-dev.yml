@@ -9,7 +9,7 @@ dependencies:
   - bokeh-root-cmd
   - jhsingle-native-proxy
   - pytest
-  - black
+  - ruff
   - panel
   - bokeh
   - voila

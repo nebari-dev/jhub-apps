@@ -57,8 +57,8 @@ admin = os.environ.get("JUPYTERHUB_ADMIN")
 if admin:
     c.Authenticator.admin_users = [admin]
 
-from jhub_apps.configuration import install_jhub_apps
-from dockerspawner import DockerSpawner
+from jhub_apps.configuration import install_jhub_apps  # noqa: E402
+from dockerspawner import DockerSpawner  # noqa: E402
 
 c.DockerSpawner.image = "jhub:latest"
 c.JupyterHub.bind_url = "http://0.0.0.0:8000"
