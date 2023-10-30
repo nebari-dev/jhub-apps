@@ -328,9 +328,7 @@ def get_input_form_widget():
     frameworks_display = {f.display_name: f.name for f in FRAMEWORKS_MAPPING.values()}
     heading = heading_markdown("Create Apps")
     input_form_widget = InputFormWidget(
-        name_input=pn.widgets.TextInput(
-            name="Name", css_classes=["custom-font"]
-        ),
+        name_input=pn.widgets.TextInput(name="Name", css_classes=["custom-font"]),
         filepath_input=pn.widgets.TextInput(
             name="Filepath", css_classes=["custom-font"]
         ),
