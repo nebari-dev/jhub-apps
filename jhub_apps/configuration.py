@@ -31,6 +31,7 @@ def install_jhub_apps(c, spawner_to_subclass):
 
     if not isinstance(bind_url, str):
         raise ValueError(f"c.JupyterHub.bind_url is not set: {c.JupyterHub.bind_url}")
+
     if not c.JupyterHub.services:
         c.JupyterHub.services = []
     c.JupyterHub.services.extend(

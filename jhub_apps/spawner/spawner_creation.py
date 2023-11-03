@@ -15,6 +15,9 @@ def subclass_spawner(base_spawner):
     class JHubSpawner(base_spawner):
         def get_args(self):
             """Return arguments to pass to the notebook server"""
+            if self.user_options.get("jhub_internal"):
+                self.user_options["conda_environments"] = self.config.JAppsConfig.conda_envs()
+                return
             argv = super().get_args()
             if self.user_options.get("argv"):
                 argv.extend(self.user_options["argv"])

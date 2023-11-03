@@ -126,6 +126,7 @@ class InputFormWidget:
     spinner: Any
     button_widget: Any
     framework: Any
+    conda_env: Any
 
 
 pn.config.sizing_mode = "stretch_width"
@@ -326,6 +327,12 @@ def create_apps_grid(username):
 
 def get_input_form_widget():
     frameworks_display = {f.display_name: f.name for f in FRAMEWORKS_MAPPING.values()}
+
+    hc = HubClient()
+    environments = hc.get_environments(username=get_username())
+    conda_environments = {
+        env: env for env in environments
+    }
     heading = heading_markdown("Create Apps")
     input_form_widget = InputFormWidget(
         name_input=pn.widgets.TextInput(name="Name", css_classes=["custom-font"]),
@@ -346,6 +353,9 @@ def get_input_form_widget():
         framework=pn.widgets.Select(
             name="Framework", options=frameworks_display, css_classes=["custom-font"]
         ),
+        conda_env=pn.widgets.Select(
+            name="Conda Environment", options=conda_environments, css_classes=["custom-font"]
+        ),
     )
 
     def framework_handler(selected_framework):
@@ -365,6 +375,7 @@ def get_input_form_widget():
         input_form_widget.thumbnail,
         input_form_widget.description_input,
         input_form_widget.framework,
+        input_form_widget.conda_env,
         input_form_widget.custom_command,
         input_form_widget.button_widget,
         width=400,

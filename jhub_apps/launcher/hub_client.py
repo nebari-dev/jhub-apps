@@ -48,6 +48,23 @@ class HubClient:
         text = text.replace(" ", "-")
         return text
 
+    def get_environments(
+            self, username,
+    ):
+        servername = "internal"
+        server = self.get_server(username, servername)
+        if server:
+            self.delete_server(username, server["name"])
+        url = f"/users/{username}/servers/{servername}"
+        data = {
+            "name": "internal",
+            "jhub_internal": True,
+            "jhub_true": True
+        }
+        requests.post(API_URL + url, headers=self._headers(), json=data)
+        server = self.get_server(username, servername)
+        return server['user_options']['conda_environments']
+
     def create_server(
         self, username, servername, edit=True, user_options: UserOptions = None
     ):
