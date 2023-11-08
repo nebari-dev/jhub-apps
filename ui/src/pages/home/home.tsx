@@ -2,11 +2,9 @@ import React from 'react';
 
 export const Home = (): React.ReactElement => {
   return (
-    <div className="grid-container">
-      <div className="grid-row">
-        <div className="grid-col">
-          <h1>Home</h1>
-        </div>
+    <div className="container">
+      <div className="grid">
+        <h1 className="text-3xl font-bold">Home</h1>
       </div>
     </div>
   );
