@@ -8,7 +8,7 @@ const queryClient = new QueryClient();
 export const App = (): React.ReactElement => (
   <QueryClientProvider client={queryClient}>
     <div>
-      <main className="m-6">
+      <main className="my-6">
         <Routes>
           <Route path="/" element={<Home />} />
         </Routes>

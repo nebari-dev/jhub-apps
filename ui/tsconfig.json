@@ -24,7 +24,7 @@
 
     /* Paths */
     "paths": {
-      "@src/components/*": ["src/components/*"],
+      "@src/components": ["src/components"],
       "@src/data/*": ["src/data/*"],
       "@src/hooks/*": ["src/hooks/*"],
       "@src/pages/*": ["src/pages/*"],

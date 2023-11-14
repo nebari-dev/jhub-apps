@@ -11,7 +11,7 @@ describe('Button', () => {
     expect(button.tagName).toBe('BUTTON');
     expect(button).toHaveAttribute('type', 'button');
     expect(button).toHaveClass(
-      'rounded border-2 py-2 px-4 mr-2 font-bold btn-primary',
+      'rounded border-2 py-2 px-4 font-bold btn-primary',
     );
   });
 
@@ -33,7 +33,7 @@ describe('Button', () => {
     expect(button.tagName).toBe('BUTTON');
     expect(button).toHaveAttribute('type', 'submit');
     expect(button).toHaveClass(
-      'rounded border-2 py-2 px-4 mr-2 font-bold btn-secondary',
+      'rounded border-2 py-2 px-4 font-bold btn-secondary',
     );
   });
 

@@ -3,6 +3,11 @@
 @tailwind utilities;
 
 @layer components {
+  .container {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
   .btn-primary {
     background-color: theme('colors.primary');
     color: theme('colors.white');
@@ -19,6 +24,11 @@
     border-color: theme('colors.primary-darker');
   }
 
+  .btn-primary:focus,
+  .btn-secondary:focus {
+    outline: 0.25rem solid theme('colors.primary-light');
+  }
+
   .btn-secondary {
     background-color: theme('colors.white');
     color: theme('colors.primary');
@@ -33,5 +43,55 @@
   .btn-secondary:active {
     color: theme('colors.primary-darker');
     border-color: theme('colors.primary-darker');
+  }
+
+  .text-input {
+    border: 1px solid theme('colors.gray-darkest');
+    border-radius: 0;
+  }
+
+  .text-input:focus {
+    outline: 0.25rem solid theme('colors.primary-light');
+  }
+
+  .card {
+    max-width: 280px;
+    border: 2px solid theme('colors.gray-lighter');
+    border-radius: 0.25rem;
+  }
+
+  .card-header {
+    padding: 1.5rem 1.5rem 0.5rem;
+  }
+
+  .card-header-media {
+    min-height: 1px;
+  }
+
+  .card-header-img {
+    height: 150px;
+    background-color: theme('colors.gray-lighter');
+    overflow: hidden;
+  }
+
+  .card-body {
+    padding: 0.5rem 1.5rem;
+  }
+
+  .card-footer {
+    padding: 0.5rem 1.5rem 1.5rem;
+  }
+
+  .tag {
+    background-color: theme('colors.gray-lighter');
+    color: theme('colors.gray-darkest');
+    font-size: 0.93rem;
+    border-radius: 0.25rem;
+    padding: 0.25rem 0.5rem;
+  }
+
+  .spacer {
+    position: relative;
+    top: 12px;
   }
 }

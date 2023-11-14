@@ -108,7 +108,7 @@ const config: JestConfigWithTsJest = {
     '^.+.(svg|css|styl|less|sass|scss|png|jpg|ttf|woff|woff2)$':
       'jest-transform-stub',
     // Paths from tsconfig.json
-    '^@src/components/(.*)$': '<rootDir>/src/components/$1',
+    '^@src/components': '<rootDir>/src/components',
     '^@src/data/(.*)$': '<rootDir>/src/data/$1',
     '^@src/features/(.*)$': '<rootDir>/src/features/$1',
     '^@src/hooks/(.*)$': '<rootDir>/src/hooks/$1',
