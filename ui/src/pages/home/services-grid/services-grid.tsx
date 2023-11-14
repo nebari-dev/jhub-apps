@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
-import { currentJhData, currentNotification } from 'src/store';
+import { currentJhData, currentNotification } from '../../../store';
 
 export const ServicesGrid = (): React.ReactElement => {
   const [jHData] = useRecoilState<JhData>(currentJhData);

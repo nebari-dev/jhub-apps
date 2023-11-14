@@ -1,14 +1,19 @@
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, render } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
 import { Home } from './home';
 
 describe('Home', () => {
+  const queryClient = new QueryClient();
+
   const componentWrapper = (
     <RecoilRoot>
-      <BrowserRouter>
-        <Home />
-      </BrowserRouter>
+      <QueryClientProvider client={queryClient}>
+        <BrowserRouter>
+          <Home />
+        </BrowserRouter>
+      </QueryClientProvider>
     </RecoilRoot>
   );
 

@@ -1,7 +1,7 @@
 import { Alert, Button, TextInput } from '@src/components';
 import React from 'react';
 import { useRecoilState } from 'recoil';
-import { currentNotification } from 'src/store';
+import { currentNotification } from '../../store';
 import { AppsGrid } from './apps-grid/apps-grid';
 import { ServicesGrid } from './services-grid/services-grid';
 

@@ -34,6 +34,6 @@ export const getApps = (userState: UserState, appType: string) => {
   }
 };
 
-const getFriendlyFrameworkName = (framework: string) => {
+export const getFriendlyFrameworkName = (framework: string) => {
   return framework.charAt(0).toUpperCase() + framework.slice(1);
 };

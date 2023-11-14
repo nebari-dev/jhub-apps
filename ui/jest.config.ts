@@ -29,6 +29,8 @@ const config: JestConfigWithTsJest = {
     '!src/store.ts',
     '!**/*.d.ts',
     '!**/types.ts',
+    '!**/data/**',
+    '!**/constants.ts',
   ],
 
   // The directory where Jest should output its coverage files
@@ -158,7 +160,7 @@ const config: JestConfigWithTsJest = {
   // runner: "jest-runner",
 
   // The paths to modules that run some code to configure or set up the testing environment before each test
-  // setupFiles: [],
+  setupFiles: ['<rootDir>/jest.setup.ts'],
 
   // A list of paths to modules that run some code to configure or set up the testing framework before each test
   // setupFilesAfterEnv: [],

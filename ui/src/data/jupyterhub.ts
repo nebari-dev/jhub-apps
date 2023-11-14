@@ -87,3 +87,41 @@ export const apps: JhApp[] = [
     shared: true,
   },
 ];
+
+export const userData = {
+  last_activity: '2023-11-14T19:48:13.969796Z',
+  auth_state: null,
+  groups: [],
+  server: '/user/test/',
+  admin: true,
+  roles: ['admin', 'user'],
+  pending: null,
+  name: 'test',
+  created: '2023-11-01T17:54:28.957281Z',
+  kind: 'user',
+  servers: {
+    'test-app': {
+      name: 'test-app',
+      last_activity: '2023-11-14T15:08:24.602062Z',
+      started: null,
+      pending: null,
+      ready: false,
+      stopped: true,
+      url: '/user/test/test-app/',
+      user_options: {
+        name: 'test-app',
+        jhub_app: true,
+        display_name: 'Test App',
+        description:
+          'Lorem ipsum dolor sit amet consectetur. Sit vestibulum facilisis auctor pulvinar ac. Cras.',
+        thumbnail: null,
+        filepath: '',
+        framework: '',
+        custom_command: '',
+        env: null,
+      },
+      progress_url: '/hub/api/users/test/servers/test-ap/progress',
+      state: {},
+    },
+  },
+};

@@ -6,7 +6,7 @@ import { getApps } from '@src/utils/jupyterhub';
 import { useQuery } from '@tanstack/react-query';
 import React, { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
-import { currentJhData, currentNotification } from 'src/store';
+import { currentJhData, currentNotification } from '../../../store';
 interface AppsGridProps {
   appType?: 'My' | 'Shared';
 }
@@ -44,6 +44,7 @@ export const AppsGrid = ({
 
   useEffect(() => {
     if (!isLoading && userData) {
+      console;
       setApps(() => getApps(userData, appType));
     }
   }, [isLoading, userData, appType]);
