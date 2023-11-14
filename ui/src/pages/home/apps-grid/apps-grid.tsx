@@ -1,8 +1,12 @@
 import { AppCard } from '@src/components';
-import { apps } from '@src/data/app.ts';
-import { JupyterHubApp } from '@src/types/app';
+import { JhApp, JhData } from '@src/types/jupyterhub';
+import { UserState } from '@src/types/user';
+import axios from '@src/utils/axios';
+import { getApps } from '@src/utils/jupyterhub';
+import { useQuery } from '@tanstack/react-query';
 import React, { useEffect, useState } from 'react';
-
+import { useRecoilState } from 'recoil';
+import { currentJhData } from 'src/store';
 interface AppsGridProps {
   appType?: 'My' | 'Shared';
 }
@@ -10,15 +14,43 @@ interface AppsGridProps {
 export const AppsGrid = ({
   appType = 'My',
 }: AppsGridProps): React.ReactElement => {
-  const [currentApps, setCurrentApps] = useState<JupyterHubApp[]>(apps);
+  const [jHData] = useRecoilState<JhData>(currentJhData);
+  const [apps, setApps] = useState<JhApp[]>([]);
+
+  const {
+    isLoading,
+    error,
+    data: userData,
+  } = useQuery<UserState, { message: string }>({
+    queryKey: ['user-state'],
+    queryFn: () =>
+      axios
+        .get(`/users/${jHData.user}`, {
+          params: {
+            include_stopped_servers: 'True',
+          },
+        })
+        .then((response) => {
+          return response.data;
+        })
+        .then((data) => {
+          return data;
+        }),
+    enabled: !!jHData.user,
+  });
 
   useEffect(() => {
-    if (appType === 'My') {
-      setCurrentApps(apps.filter((app: JupyterHubApp) => app.shared === false));
-    } else if (appType === 'Shared') {
-      setCurrentApps(apps.filter((app: JupyterHubApp) => app.shared === true));
+    if (!isLoading && userData) {
+      setApps(() => getApps(userData, appType));
     }
-  }, [appType]);
+  }, [isLoading, userData, appType]);
+
+  useEffect(() => {
+    if (error) {
+      console.log(error);
+    }
+  }, [error]);
+
   return (
     <>
       <div className="container grid grid-cols-12 flex flex-align-center pb-12">
@@ -29,21 +61,20 @@ export const AppsGrid = ({
           <hr className="spacer"></hr>
         </div>
         <div className="col-span-1 flex justify-end">
-          <h4 className="whitespace-nowrap font-bold">
-            {currentApps.length} apps
-          </h4>
+          <h4 className="whitespace-nowrap font-bold">{apps.length} apps</h4>
         </div>
       </div>
       <div className="container grid pb-12">
         <div className="flex flex flex-row flex-wrap gap-4">
-          {currentApps.map((app: JupyterHubApp) => (
+          {apps.map((app: JhApp) => (
             <AppCard
               id={app.id}
               key={`app-${app.id}`}
               title={app.name}
               description={app.description}
-              imgUrl={app.imgUrl}
-              appType={app.appType}
+              thumbnail={app.thumbnail}
+              framework={app.framework}
+              url={app.url}
             />
           ))}
         </div>

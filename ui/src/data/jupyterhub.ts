@@ -1,13 +1,42 @@
-import { JupyterHubApp } from '../types/app';
-export const apps: JupyterHubApp[] = [
+import { JhApp, JhService } from '../types/jupyterhub';
+export const services: JhService[] = [
+  {
+    name: 'JupyterLab',
+    url: 'http://127.0.0.1:8000/user/jbouder/lab',
+    external: true,
+  },
+  {
+    name: 'Argo Workflows',
+    url: '/hub/argo',
+    external: false,
+  },
+  {
+    name: 'User Management',
+    url: '/auth/admin/nebari/console/',
+    external: false,
+  },
+  {
+    name: 'Environments',
+    url: '/hub/conda-store',
+    external: false,
+  },
+  {
+    name: 'Monitoring',
+    url: '/hub/monitoring',
+    external: false,
+  },
+];
+
+export const apps: JhApp[] = [
   {
     id: '1',
     name: 'Awesome App 1',
     description:
       'Lorem ipsum dolor sit amet consectetur. Sit vestibulum facilisis auctor pulvinar ac. Cras.',
-    appType: 'Gradio',
-    imgUrl:
+    framework: 'Gradio',
+    thumbnail:
       'https://designsystem.digital.gov/img/introducing-uswds-2-0/built-to-grow--alt.jpg',
+    url: '/hub/app1',
     shared: false,
   },
   {
@@ -15,9 +44,10 @@ export const apps: JupyterHubApp[] = [
     name: 'Awesome App 2',
     description:
       'Lorem ipsum dolor sit amet consectetur. Sit vestibulum facilisis auctor pulvinar ac. Cras.',
-    appType: 'Panel',
-    imgUrl:
+    framework: 'Panel',
+    thumbnail:
       'https://designsystem.digital.gov/img/introducing-uswds-2-0/built-to-grow--alt.jpg',
+    url: '/hub/app2',
     shared: false,
   },
   {
@@ -25,7 +55,8 @@ export const apps: JupyterHubApp[] = [
     name: 'Awesome App 3',
     description:
       'Lorem ipsum dolor sit amet consectetur. Sit vestibulum facilisis auctor pulvinar ac. Cras.',
-    appType: 'Some Framework',
+    framework: 'Some Framework',
+    url: '/hub/app3',
     shared: false,
   },
   {
@@ -33,7 +64,8 @@ export const apps: JupyterHubApp[] = [
     name: 'Awesome App 4',
     description:
       'Lorem ipsum dolor sit amet consectetur. Sit vestibulum facilisis auctor pulvinar ac. Cras.',
-    appType: 'Some Framework',
+    framework: 'Some Framework',
+    url: '/hub/app4',
     shared: false,
   },
   {
@@ -41,7 +73,8 @@ export const apps: JupyterHubApp[] = [
     name: 'Awesome App 5',
     description:
       'Lorem ipsum dolor sit amet consectetur. Sit vestibulum facilisis auctor pulvinar ac. Cras.',
-    appType: 'Some Framework',
+    framework: 'Some Framework',
+    url: '/hub/app5',
     shared: false,
   },
   {
@@ -49,7 +82,8 @@ export const apps: JupyterHubApp[] = [
     name: 'Awesome App 6',
     description:
       'Lorem ipsum dolor sit amet consectetur. Sit vestibulum facilisis auctor pulvinar ac. Cras.',
-    appType: 'Some Framework',
+    framework: 'Some Framework',
+    url: '/hub/app6',
     shared: true,
   },
 ];

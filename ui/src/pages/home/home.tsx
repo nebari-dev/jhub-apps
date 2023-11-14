@@ -19,7 +19,14 @@ export const Home = (): React.ReactElement => {
           />
         </div>
         <div className="col-span-2 flex justify-end">
-          <Button id="create-app">Create App</Button>
+          <Button
+            id="create-app"
+            onClick={() => {
+              window.location.assign('/services/japps/create-app');
+            }}
+          >
+            Create App
+          </Button>
         </div>
       </div>
       <ServicesGrid />
