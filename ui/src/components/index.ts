@@ -1,3 +1,4 @@
+export { default as Alert } from './alert/alert';
 export { default as AppCard } from './app-card/app-card';
 export { default as Button } from './button/button';
 export { default as Tag } from './tag/tag';

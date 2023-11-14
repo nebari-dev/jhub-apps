@@ -94,6 +94,45 @@
     padding: 0.25rem 0.5rem;
   }
 
+  .alert {
+    border-left: 0.5rem solid theme('colors.gray-lighter');
+    color: #1b1b1b;
+  }
+
+  .alert-body {
+    padding-left: 4rem;
+    padding-right: 4rem;
+    color: #1b1b1b;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0.5rem;
+    font-size: 1rem;
+  }
+
+  .alert-text {
+    color: #1b1b1b;
+  }
+
+  .alert-success {
+    border-left-color: theme('colors.success');
+    background-color: theme('colors.success-light');
+  }
+
+  .alert-warning {
+    border-left-color: theme('colors.warning');
+    background-color: theme('colors.warning-light');
+  }
+
+  .alert-error {
+    border-left-color: theme('colors.error');
+    background-color: theme('colors.error-light');
+  }
+
+  .alert-info {
+    border-left-color: theme('colors.info');
+    background-color: theme('colors.info-light');
+  }
+
   .spacer {
     position: relative;
     top: 12px;

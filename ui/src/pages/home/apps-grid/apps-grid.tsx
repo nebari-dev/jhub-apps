@@ -6,7 +6,7 @@ import { getApps } from '@src/utils/jupyterhub';
 import { useQuery } from '@tanstack/react-query';
 import React, { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
-import { currentJhData } from 'src/store';
+import { currentJhData, currentNotification } from 'src/store';
 interface AppsGridProps {
   appType?: 'My' | 'Shared';
 }
@@ -15,6 +15,9 @@ export const AppsGrid = ({
   appType = 'My',
 }: AppsGridProps): React.ReactElement => {
   const [jHData] = useRecoilState<JhData>(currentJhData);
+  const [, setCurrentNotification] = useRecoilState<string | undefined>(
+    currentNotification,
+  );
   const [apps, setApps] = useState<JhApp[]>([]);
 
   const {
@@ -47,9 +50,11 @@ export const AppsGrid = ({
 
   useEffect(() => {
     if (error) {
-      console.log(error);
+      setCurrentNotification(error.message);
+    } else {
+      setCurrentNotification(undefined);
     }
-  }, [error]);
+  }, [error, setCurrentNotification]);
 
   return (
     <>

@@ -19,4 +19,9 @@ const currentJhData = atom<JhData>({
   },
 });
 
-export { currentJhData, currentUser };
+const currentNotification = atom<string | undefined>({
+  key: 'currentNotification',
+  default: undefined,
+});
+
+export { currentJhData, currentNotification, currentUser };

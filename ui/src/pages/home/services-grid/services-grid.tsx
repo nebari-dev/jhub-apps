@@ -4,10 +4,13 @@ import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
-import { currentJhData } from 'src/store';
+import { currentJhData, currentNotification } from 'src/store';
 
 export const ServicesGrid = (): React.ReactElement => {
   const [jHData] = useRecoilState<JhData>(currentJhData);
+  const [, setCurrentNotification] = useRecoilState<string | undefined>(
+    currentNotification,
+  );
   const [services, setServices] = useState<JhService[]>([]);
 
   const { isLoading, error, data } = useQuery<JhService[], { message: string }>(
@@ -43,9 +46,11 @@ export const ServicesGrid = (): React.ReactElement => {
 
   useEffect(() => {
     if (error) {
-      console.log(error);
+      setCurrentNotification(error.message);
+    } else {
+      setCurrentNotification(undefined);
     }
-  }, [error]);
+  }, [error, setCurrentNotification]);
 
   return (
     <>
