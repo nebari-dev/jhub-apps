@@ -8,6 +8,10 @@
     margin-right: auto;
   }
 
+  .container:before {
+    content: unset;
+  }
+
   .btn-primary {
     background-color: theme('colors.primary');
     color: theme('colors.white');

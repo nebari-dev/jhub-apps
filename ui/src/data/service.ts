@@ -25,9 +25,4 @@ export const services: JupyterHubService[] = [
     url: '/hub/monitoring',
     external: false,
   },
-  {
-    name: 'Admin',
-    url: '/hub/admin',
-    external: false,
-  },
 ];

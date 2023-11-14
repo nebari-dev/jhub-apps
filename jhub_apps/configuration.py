@@ -1,10 +1,9 @@
-from secrets import token_bytes
+import os
 from base64 import b64encode
+from secrets import token_bytes
 
 from jhub_apps import JAppsConfig
 from jhub_apps.spawner.spawner_creation import subclass_spawner
-import os
-
 from jhub_apps.spawner.utils import get_origin_host
 
 
@@ -51,6 +50,7 @@ def install_jhub_apps(c, spawner_to_subclass):
                     "JHUB_APP_TITLE": c.JAppsConfig.app_title,
                     "JHUB_APP_ICON": c.JAppsConfig.app_icon,
                 },
+                "display": False,
             },
             {
                 "name": "launcher",
@@ -65,6 +65,7 @@ def install_jhub_apps(c, spawner_to_subclass):
                 "api_token": os.environ.get(
                     "JHUB_APP_LAUNCHER_TOKEN", _create_token_for_service()
                 ),
+                "display": False,
             },
         ]
     )

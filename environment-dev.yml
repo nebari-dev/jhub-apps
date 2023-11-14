@@ -15,6 +15,7 @@ dependencies:
   - voila
   - dash
   - streamlit
+  - tornado>=5.1
   - traitlets
   - pip:
-    - gradio
+      - gradio

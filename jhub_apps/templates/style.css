@@ -1,0 +1,319 @@
+/* Copyright (c) Nebari Development Team. */
+/* Distributed under the terms of the Modified BSD License. */
+
+@font-face {
+    font-family: "Atkinson Hyperlegible";
+    src: url("/hub/assets/AtkinsonHyperlegible-Regular.ttf");
+}
+@font-face {
+    font-family: "Atkinson Hyperlegible Bold";
+    src: url("/hub/assets/AtkinsonHyperlegible-Bold.ttf");
+}
+
+@font-face {
+    font-family: "Poppins Bold";
+    src: url("/hub/assets/Poppins-Bold.ttf");
+}
+
+:root {
+    /* Typography */
+    --base-font-family: "Atkinson Hyperlegible", "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+    --headings-font-family: "Poppins Bold", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+
+    --font-size-base: 100%;
+    --line-height-base: 1.65;
+    --headings-line-height: 1.25;
+    --h1-font-size: 2rem;
+    --h2-font-size: 1.5rem;
+    --h3-font-size: 1.25rem;
+    --h4-font-size: 1rem;
+    --h5-font-size: 0.875rem;
+    --h6-font-size: 0.85rem;
+
+    /*  Colors */
+    --heading-color: {{ h1_color | default("#0f1015") }};
+    --text-color: {{ text_color | default("#1c1d26") }};
+    --link-text-color: {{ text_color | default("#20b1a8") }};
+    --primary-color: {{ primary_color | default("#9e17b7") }};
+    --primary-color-dark: #79158a;
+    --secondary-color: {{ secondary_color | default("#2bd1c5") }};
+    --secondary-color-dark: #20b1a8;
+    --accent-color: {{ accent_color | default("#eda61d") }};
+    --accent-color-dark: #a16d14;
+    --navbar-background-color: {{ navbar_color | default("#1c1d26") }};
+    --navbar-text-color: {{ navbar_text_color | default("#f1f1f6") }};
+    --navbar-hover-color: {{ navbar_hover_color | default("#db96f3") }};
+    --link-hover-color: {{ accent_color | default("#20b1a8") }};
+    --light-text-color: #f1f1f6;
+    --danger-color: #e60f66;
+    --danger-color-dark: #b81a53;
+
+    /* Miscellaneous */
+    --button-hover-shadow: 0 3px 0 var(--text-color);
+    --focus-width: 2px;
+    --focus-shadow: 5px 5px 7px rgba(0, 0, 0, 0.1);
+    --outline-offset: 0.25rem;
+    --outline-reset: 1px solid transparent;
+    --text-decoration-thickness: 2px;
+}
+
+/* Global text styling */
+html {
+    color: var(--text-color);
+    font: var(--font-size-base)/var(--ifm-line-height-base) var(--font-family-base);}
+
+h1,
+h2,
+h3,
+h4{
+    color: var(--heading-color);
+    font-family: var(--headings-font-family);
+    line-height: var(--headings-line-height);
+}
+
+h1 {
+    margin-top: 30px;
+    margin-bottom: 30px;
+    font-size: var(--h1-font-size);
+}
+
+h2 {
+    font-size: var(--h2-font-size);
+    margin-bottom: 20px;
+    color:  {{ h2_color | default("#0f1015") }};
+}
+
+.container {
+    margin-left: 0;
+    margin-right: 0;
+    width: 100%;
+}
+
+label {
+    font-family: var(--base-font-family);
+}
+
+a{
+    color: var(--link-text-color);
+    text-decoration: underline;
+    text-decoration-color: CurrentColor;
+    text-underline-offset: 1px;
+}
+
+/* Navbar  */
+.nav{
+    margin-left:10px;
+}
+
+.navbar.navbar-default {
+    background: var(--navbar-background-color);
+    box-shadow: 0px 1.5px 3px 0px rgba(72, 74, 94, 0.16);
+    border: None;
+}
+
+.navbar.navbar-default .navbar-nav>li>a,
+.navbar.navbar-default .navbar-text {
+    color: var(--navbar-text-color);
+    text-decoration: none;
+}
+
+/* Authenticator form */
+#login-main .auth-form-header {
+    background: var(--accent-color) !important;
+    color: {{ accent_text_color | default("#1c1d26") }} ;
+    font-family: var(--base-font-family);
+}
+
+#login-main .service-login {
+    vertical-align: top !important;
+    padding-top: 60px;
+}
+
+/* Focus states */
+
+.navbar.navbar-default .navbar-nav>li>a:focus,
+.navbar.navbar-default .navbar-nav>.open>a:focus,
+a:focus {
+    color: var(--text-color);
+    background-color: var(--accent-color);
+    box-shadow: 0 -2px var(--accent-color), 0 2px var(--text-color);
+    text-decoration: none;
+    outline: none;
+    outline-offset: none;
+}
+
+#login-main input[type=submit]:focus{
+    border-color: var(--text-color);
+    box-shadow: inset 0 0 0 1px var(--accent-color);
+    color: var(--text-color);
+}
+
+.btn.active.focus, .btn.active:focus,
+.btn.focus, .btn:active.focus,
+.btn:active:focus, .btn:focus,
+#login-main input[type=submit]:focus,
+#dashboard-save input[type="submit"]:focus {
+    /* Default. Will be removed in Forced Color Modes */
+	box-shadow: var(--focus-shadow);
+	/* Fallback. Will be visible with custom system colors in Forced Color Modes */
+	outline: var(--outline-reset);
+    border-color: var(--text-color);
+    box-shadow: inset 0 0 0 var(--focus-width) var(--text-color);
+}
+
+.btn-jupyter:focus{
+    /* need to overwrite here otherwise there is not enough contrast */
+    color: var(--text-color);
+}
+
+#jupyterhub-logo a:focus,
+.navbar-btn:focus{
+    outline: var(--focus-width) solid var(--accent-color);
+    outline-offset: var(--outline-offset);
+    /* ensure the full div is not in the accent colour */
+    background-color: var(--navbar-color);
+    box-shadow: var(--focus-shadow);
+    color: var(--navbar-text-color);
+}
+
+.form-control:focus,
+#login-main .form-control:focus,
+.dashboard-edit-form textarea:focus,
+input[type="text"]:focus {
+    border-color: var(--text-color);
+    box-shadow: inset 0 0 0 1px var(--text-color);
+    outline: 0;
+    outline-offset: 0;
+    outline: var(--focus-width) solid var(--accent-color);
+    /* Ensure outline appears outside of the element */
+    outline-offset: 0;
+    /* Double the border by adding its width again. Use `box-shadow` for this instead of changing `border-width`  */
+    box-shadow: inset 0 0 0 var(--focus-width);
+}
+
+/* Hover states */
+a:hover{
+    color: var(--link-hover-color);
+    text-decoration: underline;
+    text-decoration-thickness: var(--text-decoration-thickness);
+}
+
+.navbar.navbar-default .navbar-nav>li>a:hover {
+    color: var(--text-color);
+    background-color: var(--navbar-hover-color);
+    text-decoration: underline;
+}
+
+.navbar.navbar-default .navbar-nav>.open>a,
+.navbar.navbar-default .navbar-nav>.open>a:hover{
+    background-color: {{ navbar_hover_color | default("#00a3b0") }};
+}
+
+
+.btn:hover{
+    box-shadow: var(--button-hover-shadow);
+}
+
+.btn-jupyter:hover {
+    color: var(--text-color);
+    outline-color: var(--accent-color-dark);
+}
+
+.btn-danger:hover {
+    background-color: var(--danger-color-dark)!important;
+    border-color: var(--danger-color-dark)!important;
+}
+
+.btn-primary:hover,
+#help-floater:hover {
+    background-color: var(--primary-color-dark)!important;
+    border-color: var(--primary-color-dark)!important;
+}
+
+.btn-success:hover {
+    color: var(--text-color);
+    background-color: var(--secondary-color-dark)!important;
+    border-color: var(--secondary-color-dark)!important;
+}
+
+/* Buttons */
+/* Making buttons font larger, the defaults are too small */
+.btn{
+    font-family: var(--base-font-family);
+}
+
+.btn-xs{
+    font-size: 0.8rem;
+}
+
+.btn{
+    font-size: 1rem;
+    text-decoration: none;
+}
+
+.btn-lg{
+    font-size: 1.25rem;
+}
+
+.btn-jupyter {
+    color: var(--text-color);
+    background-color: var(--accent-color) !important;
+    border-color: var(--accent-color) !important;}
+
+.btn-danger{
+    color: var(--light-text-color);
+    background-color: var(--danger-color) !important;
+    border-color: var(--danger-color) !important;
+}
+
+.btn-primary,
+#dashboard-save input[type="submit"]{
+    color: var(--light-text-color);
+    background-color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+}
+
+.btn-success{
+    color: var(--text-color);
+    background-color: var(--secondary-color) !important;
+    border-color: var(--secondary-color) !important;
+}
+
+.version {
+    position: fixed;
+    bottom: 20px; /* Place the button at the bottom of the page */
+    left: 30px; /* Place the button 30px from the left */
+    z-index: 99; /* Make sure it does not overlap */
+    width: auto;
+    padding: 5px;
+    background: none;
+    color: var(--primary-color);
+    text-align: center;
+    font-size: 1rem; /* Increase font size */
+    font-family: var(--base-font-family);
+    word-wrap: break-word;
+}
+
+/* cdsdashboards */
+#help-floater{
+    color: var(--light-text-color);
+    background: var(--primary-color);
+    font-family: var(--base-font-family);
+}
+
+ul.dashboard-selectable-tabs li{
+    color: var(--text-color);
+    font-family: var(--base-font-family);
+    text-decoration: underline;
+}
+
+ul.dashboard-selectable-tabs li.active{
+    color: var(--text-color);
+    font-family:var(--base-font-family);
+    background-color: var(--accent-color) !important;
+}
+
+#login-main .login_error,
+.error{
+    color: var(--danger-color-dark);
+}

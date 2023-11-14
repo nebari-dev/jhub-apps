@@ -10,6 +10,7 @@ export const App = (): React.ReactElement => (
     <div>
       <main className="my-6">
         <Routes>
+          <Route path="/home" element={<Home />} />
           <Route path="/" element={<Home />} />
         </Routes>
       </main>

@@ -7,6 +7,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
+    "buildCopy": "tsc && vite build && mv dist/assets/index-*.js dist/assets/index.js && mv dist/assets/index-*.css dist/assets/index.css && cp -r dist/assets/* ../jhub_apps/assets",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "format": "npx prettier src --write",
