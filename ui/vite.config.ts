@@ -11,9 +11,116 @@ export default defineConfig({
     open: true,
     port: 8080,
     proxy: {
-      '/hub/api': {
-        target: 'http://127.0.0.1:8000',
-        changeOrigin: true,
+      '/api': {
+        target: 'http://localhost:8080',
+        bypass(req, res, options) {
+          if (req.url.startsWith('/api/users')) {
+            res.end(
+              JSON.stringify({
+                name: 'test-app',
+                servers: {
+                  'test-app': {
+                    name: 'test-app',
+                    url: '/user/test/test-app/',
+                    user_options: {
+                      name: 'test-app',
+                      jhub_app: true,
+                      display_name: 'Test App',
+                      description:
+                        'Lorem ipsum dolor sit amet consectetur. Sit vestibulum facilisis auctor pulvinar ac. Cras.',
+                      thumbnail: null,
+                      framework: 'Panel',
+                    },
+                  },
+                  'test-app-2': {
+                    name: 'test-app-2',
+                    url: '/user/test/test-app-2/',
+                    user_options: {
+                      name: 'test-app-2',
+                      jhub_app: true,
+                      display_name: 'Test App 2',
+                      description:
+                        'Lorem ipsum dolor sit amet consectetur. Sit vestibulum facilisis auctor pulvinar ac. Cras.',
+                      thumbnail: null,
+                      framework: 'Streamlit',
+                    },
+                  },
+                  'test-app-3': {
+                    name: 'test-app-3',
+                    url: '/user/test/test-app-3/',
+                    user_options: {
+                      name: 'test-app-3',
+                      jhub_app: true,
+                      display_name: 'Test App 3',
+                      description:
+                        'Lorem ipsum dolor sit amet consectetur. Sit vestibulum facilisis auctor pulvinar ac. Cras.',
+                      thumbnail: null,
+                      framework: 'JupyterLab',
+                    },
+                  },
+                  'test-app-4': {
+                    name: 'test-app-4',
+                    url: '/user/test/test-app-4/',
+                    user_options: {
+                      name: 'test-app-4',
+                      jhub_app: true,
+                      display_name: 'Test App 4',
+                      description:
+                        'Lorem ipsum dolor sit amet consectetur. Sit vestibulum facilisis auctor pulvinar ac. Cras.',
+                      thumbnail: null,
+                      framework: 'Streamlit',
+                    },
+                  },
+                },
+              }),
+            );
+          } else if (req.url.startsWith('/api/services')) {
+            res.end(
+              JSON.stringify({
+                JuypterLab: {
+                  display: true,
+                  info: {
+                    name: 'JupyterLab',
+                    url: '/user/[USER]/lab',
+                    external: true,
+                  },
+                },
+                Argo: {
+                  display: true,
+                  info: {
+                    name: 'Argo Workflows',
+                    url: '/hub/argo',
+                    external: true,
+                  },
+                },
+                Users: {
+                  display: true,
+                  info: {
+                    name: 'User Management',
+                    url: '/auth/admin/nebari/console/',
+                    external: true,
+                  },
+                },
+                Environments: {
+                  display: true,
+                  info: {
+                    name: 'Environments',
+                    url: '/hub/conda-store',
+                    external: true,
+                  },
+                },
+                Monitoring: {
+                  display: true,
+                  info: {
+                    name: 'Monitoring',
+                    url: '/hub/monitoring',
+                    external: true,
+                  },
+                },
+              }),
+            );
+          }
+        },
       },
     },
   },

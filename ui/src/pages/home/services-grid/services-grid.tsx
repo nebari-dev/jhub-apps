@@ -20,7 +20,6 @@ export const ServicesGrid = (): React.ReactElement => {
   >({
     queryKey: ['service-data'],
     queryFn: () =>
-      // TODO: Replace with default axios instance when API is available
       axios
         .get('/services')
         .then((response) => {

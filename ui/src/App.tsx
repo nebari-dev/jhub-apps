@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Route, Routes } from 'react-router';
 import { useRecoilState } from 'recoil';
 import { Home } from './pages/home/home';
@@ -11,7 +11,10 @@ const queryClient = new QueryClient();
 
 export const App = (): React.ReactElement => {
   const [, setJhData] = useRecoilState<JhData>(currentJhData);
-  setJhData(getJhData());
+  useEffect(() => {
+    setJhData(getJhData());
+  }, [setJhData]);
+
   return (
     <QueryClientProvider client={queryClient}>
       <div>
