@@ -1,9 +1,26 @@
-import { JhApp } from '@src/types/jupyterhub';
+import { JhApp, JhService, JhServiceFull } from '@src/types/jupyterhub';
 import { JhData } from '@src/types/jupyterhub.ts';
 import { UserState } from '@src/types/user';
 
 export const getJhData = (): JhData => {
   return window.jhdata;
+};
+
+export const getServices = (services: JhServiceFull[], user: string) => {
+  const jhServices: JhService[] = [];
+  for (const key in services) {
+    if (Object.hasOwnProperty.call(services, key)) {
+      const service = services[key];
+      if (service.display === true) {
+        jhServices.push({
+          name: service.info.name,
+          url: service.info.url?.replace('[USER]', user),
+          external: service.info.external,
+        });
+      }
+    }
+  }
+  return jhServices;
 };
 
 export const getApps = (userState: UserState, appType: string) => {

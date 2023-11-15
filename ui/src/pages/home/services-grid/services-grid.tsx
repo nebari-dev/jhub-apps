@@ -1,7 +1,8 @@
 import { Button } from '@src/components';
-import { JhData, JhService } from '@src/types/jupyterhub';
+import { JhData, JhService, JhServiceFull } from '@src/types/jupyterhub';
+import axios from '@src/utils/axios';
+import { getServices } from '@src/utils/jupyterhub';
 import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { currentJhData, currentNotification } from '../../../store';
@@ -13,22 +14,23 @@ export const ServicesGrid = (): React.ReactElement => {
   );
   const [services, setServices] = useState<JhService[]>([]);
 
-  const { isLoading, error, data } = useQuery<JhService[], { message: string }>(
-    {
-      queryKey: ['service-data'],
-      queryFn: () =>
-        // TODO: Replace with default axios instance when API is available
-        axios
-          .get(`/hub/assets/services.json`)
-          .then((response) => {
-            return response.data;
-          })
-          .then((data) => {
-            return data;
-          }),
-      enabled: !!jHData.user,
-    },
-  );
+  const { isLoading, error, data } = useQuery<
+    JhServiceFull[],
+    { message: string }
+  >({
+    queryKey: ['service-data'],
+    queryFn: () =>
+      // TODO: Replace with default axios instance when API is available
+      axios
+        .get('/services')
+        .then((response) => {
+          return response.data;
+        })
+        .then((data) => {
+          return data;
+        }),
+    enabled: !!jHData.user,
+  });
 
   const handleButtonClick = (url: string, isExternal: boolean): void => {
     if (isExternal) {
@@ -40,9 +42,9 @@ export const ServicesGrid = (): React.ReactElement => {
 
   useEffect(() => {
     if (!isLoading && data) {
-      setServices(data);
+      setServices(() => getServices(data, jHData.user));
     }
-  }, [isLoading, data]);
+  }, [isLoading, data, jHData.user]);
 
   useEffect(() => {
     if (error) {

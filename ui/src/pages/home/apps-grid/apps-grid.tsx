@@ -44,7 +44,6 @@ export const AppsGrid = ({
 
   useEffect(() => {
     if (!isLoading && userData) {
-      console;
       setApps(() => getApps(userData, appType));
     }
   }, [isLoading, userData, appType]);

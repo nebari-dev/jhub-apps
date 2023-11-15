@@ -23,3 +23,16 @@ export interface JhService {
   url: string;
   external: boolean;
 }
+
+export interface JhServiceFull {
+  prefix: string;
+  kind: string;
+  info: any;
+  admin: boolean;
+  display: boolean;
+  roles: string[];
+  pid: number;
+  url: string;
+  name: string;
+  command: string[];
+}
