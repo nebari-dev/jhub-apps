@@ -40,7 +40,7 @@ export const Button = ({
   ...props
 }: ButtonProps & JSX.IntrinsicElements['button']): React.ReactElement => {
   const classes = classnames(
-    'rounded border-2 py-2 px-4 font-bold whitespace-nowrap',
+    'btn rounded border-2 font-bold whitespace-nowrap',
     {
       'btn-primary': variant === 'primary',
       'btn-secondary': variant === 'secondary',

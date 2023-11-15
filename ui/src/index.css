@@ -12,6 +12,10 @@
     content: unset;
   }
 
+  .btn {
+    padding: 0.4rem 1rem 0.4rem 1rem;
+  }
+
   .btn-primary {
     background-color: theme('colors.primary');
     color: theme('colors.white');
@@ -30,7 +34,8 @@
 
   .btn-primary:focus,
   .btn-secondary:focus {
-    outline: 0.25rem solid theme('colors.primary-light');
+    outline: 0.2rem solid theme('colors.primary-light');
+    outline-offset: 0.15rem;
   }
 
   .btn-secondary {
@@ -55,7 +60,7 @@
   }
 
   .text-input:focus {
-    outline: 0.25rem solid theme('colors.primary-light');
+    outline: 0.2rem solid theme('colors.primary-light');
   }
 
   .card {
@@ -136,5 +141,33 @@
   .spacer {
     position: relative;
     top: 12px;
+  }
+
+  @media only screen and (max-width: 640px) {
+    .container {
+      padding-left: 15px;
+      padding-right: 15px;
+    }
+
+    .btn {
+      width: 100%;
+    }
+
+    .card {
+      max-width: unset;
+    }
+
+    .card-header-media {
+      display: none;
+    }
+
+    #create-app {
+      min-width: 150px;
+    }
+
+    hr {
+      width: 250px;
+      margin: auto auto;
+    }
   }
 }

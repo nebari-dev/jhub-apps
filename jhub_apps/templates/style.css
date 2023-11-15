@@ -35,9 +35,9 @@
     --text-color: {{ text_color | default("#1c1d26") }};
     --link-text-color: {{ text_color | default("#20b1a8") }};
     --primary-color: {{ primary_color | default("#9e17b7") }};
-    --primary-color-dark: #79158a;
-    --secondary-color: {{ secondary_color | default("#2bd1c5") }};
-    --secondary-color-dark: #20b1a8;
+    --primary-color-dark: {{ primary_color_dark | default("#79158a") }};
+    --secondary-color: {{ secondary_color | default("#20b1a8") }};
+    --secondary-color-dark: {{ secondary_color_dark | default("#07837b") }};
     --accent-color: {{ accent_color | default("#eda61d") }};
     --accent-color-dark: #a16d14;
     --navbar-background-color: {{ navbar_color | default("#1c1d26") }};
@@ -84,8 +84,10 @@ h2 {
 }
 
 .container {
-    margin-left: 0;
-    margin-right: 0;
+    margin-left: 20px;
+    margin-right: 20px;
+    padding-left: 20px;
+    padding-right: 20px;
     width: 100%;
 }
 
@@ -93,15 +95,122 @@ label {
     font-family: var(--base-font-family);
 }
 
-a{
+.text-input:focus {
+    outline-color: var(--primary-color) !important;
+}
+
+a {
     color: var(--link-text-color);
     text-decoration: underline;
     text-decoration-color: CurrentColor;
     text-underline-offset: 1px;
 }
 
+a:hover {
+    color: var(--link-text-color);
+    text-decoration: underline;
+    text-decoration-thickness: var(--text-decoration-thickness);
+}
+
+a:focus {
+    background-color: unset;
+    box-shadow: none;
+}
+
+/* Buttons */
+.btn {
+    font-family: var(--base-font-family);
+}
+
+.btn-xs {
+    font-size: 0.8rem;
+}
+
+.btn {
+    font-size: 1rem;
+    text-decoration: none;
+}
+
+.btn-lg {
+    font-size: 1.25rem;
+}
+
+.btn-primary {
+    color: var(--light-text-color);
+    background-color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-color-dark)!important;
+    border-color: var(--primary-color-dark)!important;
+}
+
+.btn-primary:focus {
+    outline-color: var(--primary-color) !important;
+}
+
+.btn-secondary {
+    color: var(--secondary-color) !important;
+    background-color: #ffffff !important;
+    border-color: var(--secondary-color) !important;
+}
+
+.btn-secondary:hover {
+    color: var(--secondary-color-dark) !important;
+    background-color: #ffffff !important;
+    border-color: var(--secondary-color-dark) !important;
+}
+
+.btn-secondary:focus {
+    outline-color: var(--secondary-color) !important;
+}
+
+.btn-success {
+    color: var(--text-color);
+    background-color: var(--secondary-color) !important;
+    border-color: var(--secondary-color) !important;
+}
+
+.btn-success:hover {
+    color: var(--text-color);
+    background-color: var(--secondary-color-dark)!important;
+    border-color: var(--secondary-color-dark)!important;
+}
+
+.btn-danger {
+    color: var(--light-text-color);
+    background-color: var(--danger-color) !important;
+    border-color: var(--danger-color) !important;
+}
+
+.btn-danger:hover {
+    background-color: var(--danger-color-dark)!important;
+    border-color: var(--danger-color-dark)!important;
+}
+
+.btn-jupyter {
+    color: var(--light-text-color);
+    background-color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+}
+
+.btn-jupyter:hover {
+    background-color: var(--primary-color-dark) !important;
+    border-color: var(--primary-color-dark) !important;
+}
+
+.btn-jupyter:focus {
+    outline-color: var(--primary-color) !important;
+}
+
+#help-floater:hover {
+    background-color: var(--primary-color-dark)!important;
+    border-color: var(--primary-color-dark)!important;
+}
+
 /* Navbar  */
-.nav{
+.nav {
     margin-left:10px;
 }
 
@@ -117,20 +226,6 @@ a{
     text-decoration: none;
 }
 
-/* Authenticator form */
-#login-main .auth-form-header {
-    background: var(--accent-color) !important;
-    color: {{ accent_text_color | default("#1c1d26") }} ;
-    font-family: var(--base-font-family);
-}
-
-#login-main .service-login {
-    vertical-align: top !important;
-    padding-top: 60px;
-}
-
-/* Focus states */
-
 .navbar.navbar-default .navbar-nav>li>a:focus,
 .navbar.navbar-default .navbar-nav>.open>a:focus,
 a:focus {
@@ -142,30 +237,6 @@ a:focus {
     outline-offset: none;
 }
 
-#login-main input[type=submit]:focus{
-    border-color: var(--text-color);
-    box-shadow: inset 0 0 0 1px var(--accent-color);
-    color: var(--text-color);
-}
-
-.btn.active.focus, .btn.active:focus,
-.btn.focus, .btn:active.focus,
-.btn:active:focus, .btn:focus,
-#login-main input[type=submit]:focus,
-#dashboard-save input[type="submit"]:focus {
-    /* Default. Will be removed in Forced Color Modes */
-	box-shadow: var(--focus-shadow);
-	/* Fallback. Will be visible with custom system colors in Forced Color Modes */
-	outline: var(--outline-reset);
-    border-color: var(--text-color);
-    box-shadow: inset 0 0 0 var(--focus-width) var(--text-color);
-}
-
-.btn-jupyter:focus{
-    /* need to overwrite here otherwise there is not enough contrast */
-    color: var(--text-color);
-}
-
 #jupyterhub-logo a:focus,
 .navbar-btn:focus{
     outline: var(--focus-width) solid var(--accent-color);
@@ -174,28 +245,6 @@ a:focus {
     background-color: var(--navbar-color);
     box-shadow: var(--focus-shadow);
     color: var(--navbar-text-color);
-}
-
-.form-control:focus,
-#login-main .form-control:focus,
-.dashboard-edit-form textarea:focus,
-input[type="text"]:focus {
-    border-color: var(--text-color);
-    box-shadow: inset 0 0 0 1px var(--text-color);
-    outline: 0;
-    outline-offset: 0;
-    outline: var(--focus-width) solid var(--accent-color);
-    /* Ensure outline appears outside of the element */
-    outline-offset: 0;
-    /* Double the border by adding its width again. Use `box-shadow` for this instead of changing `border-width`  */
-    box-shadow: inset 0 0 0 var(--focus-width);
-}
-
-/* Hover states */
-a:hover{
-    color: var(--link-hover-color);
-    text-decoration: underline;
-    text-decoration-thickness: var(--text-decoration-thickness);
 }
 
 .navbar.navbar-default .navbar-nav>li>a:hover {
@@ -209,76 +258,34 @@ a:hover{
     background-color: {{ navbar_hover_color | default("#00a3b0") }};
 }
 
-
-.btn:hover{
-    box-shadow: var(--button-hover-shadow);
-}
-
-.btn-jupyter:hover {
+/* Authenticator form */
+#login-main input[type=submit]:focus{
+    border-color: var(--text-color);
     color: var(--text-color);
-    outline-color: var(--accent-color-dark);
 }
 
-.btn-danger:hover {
-    background-color: var(--danger-color-dark)!important;
-    border-color: var(--danger-color-dark)!important;
-}
-
-.btn-primary:hover,
-#help-floater:hover {
-    background-color: var(--primary-color-dark)!important;
-    border-color: var(--primary-color-dark)!important;
-}
-
-.btn-success:hover {
-    color: var(--text-color);
-    background-color: var(--secondary-color-dark)!important;
-    border-color: var(--secondary-color-dark)!important;
-}
-
-/* Buttons */
-/* Making buttons font larger, the defaults are too small */
-.btn{
+#login-main .auth-form-header {
+    background: var(--accent-color) !important;
+    color: {{ accent_text_color | default("#1c1d26") }} ;
     font-family: var(--base-font-family);
 }
 
-.btn-xs{
-    font-size: 0.8rem;
+#login-main .service-login {
+    vertical-align: top !important;
+    padding-top: 60px;
 }
 
-.btn{
-    font-size: 1rem;
-    text-decoration: none;
+#login-main .login_error,
+.error{
+    color: var(--danger-color-dark);
 }
 
-.btn-lg{
-    font-size: 1.25rem;
+#login-main .form-control:focus, #login-main .form-control:active {
+    box-shadow: unset;
+    border-color: var(--text-color);
 }
 
-.btn-jupyter {
-    color: var(--text-color);
-    background-color: var(--accent-color) !important;
-    border-color: var(--accent-color) !important;}
-
-.btn-danger{
-    color: var(--light-text-color);
-    background-color: var(--danger-color) !important;
-    border-color: var(--danger-color) !important;
-}
-
-.btn-primary,
-#dashboard-save input[type="submit"]{
-    color: var(--light-text-color);
-    background-color: var(--primary-color) !important;
-    border-color: var(--primary-color) !important;
-}
-
-.btn-success{
-    color: var(--text-color);
-    background-color: var(--secondary-color) !important;
-    border-color: var(--secondary-color) !important;
-}
-
+/* Misc */
 .version {
     position: fixed;
     bottom: 20px; /* Place the button at the bottom of the page */
@@ -292,28 +299,4 @@ a:hover{
     font-size: 1rem; /* Increase font size */
     font-family: var(--base-font-family);
     word-wrap: break-word;
-}
-
-/* cdsdashboards */
-#help-floater{
-    color: var(--light-text-color);
-    background: var(--primary-color);
-    font-family: var(--base-font-family);
-}
-
-ul.dashboard-selectable-tabs li{
-    color: var(--text-color);
-    font-family: var(--base-font-family);
-    text-decoration: underline;
-}
-
-ul.dashboard-selectable-tabs li.active{
-    color: var(--text-color);
-    font-family:var(--base-font-family);
-    background-color: var(--accent-color) !important;
-}
-
-#login-main .login_error,
-.error{
-    color: var(--danger-color-dark);
 }
