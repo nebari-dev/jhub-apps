@@ -16,6 +16,8 @@ hub_url = "http://127.0.0.1:8000"
 c.JupyterHub.bind_url = hub_url
 c = install_jhub_apps(c, spawner_to_subclass=SimpleLocalProcessSpawner)
 
+c.JupyterHub.default_url = "/hub/home"
+
 # Link static files along with templates
 c.JupyterHub.extra_handlers = theme_extra_handlers
 c.JupyterHub.template_paths = theme_template_paths
