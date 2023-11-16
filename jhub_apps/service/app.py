@@ -4,8 +4,7 @@ from functools import wraps
 from pathlib import Path
 
 from bokeh.embed import server_document
-from flask import Flask, make_response, redirect, request, session, render_template
-
+from flask import Flask, make_response, redirect, render_template, request, session
 from jupyterhub.services.auth import HubOAuth
 
 prefix = os.environ.get("JUPYTERHUB_SERVICE_PREFIX", "/")
@@ -13,7 +12,13 @@ prefix = os.environ.get("JUPYTERHUB_SERVICE_PREFIX", "/")
 auth = HubOAuth(api_token=os.environ["JUPYTERHUB_API_TOKEN"], cache_max_age=60)
 
 TEMPLATES_DIR = Path(__file__).parent.parent / "templates"
-app = Flask(__name__, template_folder=TEMPLATES_DIR)
+STATIC_DIR = Path(__file__).parent.parent / "static"
+app = Flask(
+    __name__,
+    template_folder=TEMPLATES_DIR,
+    static_folder=STATIC_DIR,
+    static_url_path=prefix + "/static",
+)
 
 # encryption key for session cookies
 app.secret_key = secrets.token_bytes(32)
@@ -59,6 +64,12 @@ def index(user, subpath=None):
         jhub_app_icon=os.environ.get("JHUB_APP_ICON"),
         **{"request": request, "script": script},
     )
+
+
+@app.route(f"{prefix}/<path:path>")
+def serve_static_file(path):
+    # Serve static files from the static folder directly.
+    return app.send_static_file(path)
 
 
 @app.route(prefix + "oauth_callback")

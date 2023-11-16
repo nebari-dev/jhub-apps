@@ -1,6 +1,6 @@
 from jupyterhub.spawner import SimpleLocalProcessSpawner
 
-from jhub_apps import theme_extra_handlers, theme_template_paths
+from jhub_apps import theme_template_paths
 from jhub_apps.configuration import install_jhub_apps
 
 c = get_config()  # noqa
@@ -18,8 +18,6 @@ c = install_jhub_apps(c, spawner_to_subclass=SimpleLocalProcessSpawner)
 
 c.JupyterHub.default_url = "/hub/home"
 
-# Link static files along with templates
-c.JupyterHub.extra_handlers = theme_extra_handlers
 c.JupyterHub.template_paths = theme_template_paths
 c.JupyterHub.services.extend(
     [
@@ -97,7 +95,7 @@ c.JupyterHub.template_vars = {
     "hub_title": "Welcome to Nebari",
     "hub_subtitle": "your open source data science platform",
     "welcome": "Running in dev mode",
-    "logo": "/hub/assets/Nebari-Logo-Horizontal-Lockup-White-text.svg",
+    "logo": "/services/japps/static/img/Nebari-Logo-Horizontal-Lockup-White-text.svg",
     "primary_color": "#cb39ed",
     "primary_color_dark": "#79158a",
     "secondary_color": "#20b1a8",
