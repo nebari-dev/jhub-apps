@@ -10,9 +10,7 @@ describe('Button', () => {
     expect(button).toBeInTheDocument();
     expect(button.tagName).toBe('BUTTON');
     expect(button).toHaveAttribute('type', 'button');
-    expect(button).toHaveClass(
-      'rounded border-2 py-2 px-4 font-bold btn-primary',
-    );
+    expect(button).toHaveClass('rounded border-2 font-bold btn-primary');
   });
 
   test('renders a button element with custom props', () => {
@@ -32,9 +30,7 @@ describe('Button', () => {
     expect(button).toBeInTheDocument();
     expect(button.tagName).toBe('BUTTON');
     expect(button).toHaveAttribute('type', 'submit');
-    expect(button).toHaveClass(
-      'rounded border-2 py-2 px-4 font-bold btn-secondary',
-    );
+    expect(button).toHaveClass('rounded border-2 font-bold btn-secondary');
   });
 
   test('calls the onClick callback when clicked', () => {

@@ -1,4 +1,4 @@
-import { JhApp, JhService } from '../types/jupyterhub';
+import { JhApp, JhService, JhServiceFull } from '../types/jupyterhub';
 export const services: JhService[] = [
   {
     name: 'JupyterLab',
@@ -24,6 +24,41 @@ export const services: JhService[] = [
     name: 'Monitoring',
     url: '/hub/monitoring',
     external: false,
+  },
+];
+
+export const servicesFull: JhServiceFull[] = [
+  {
+    display: true,
+    info: {
+      name: 'Service 1',
+      url: 'http://service1.com/[USER]',
+      external: true,
+    },
+    prefix: '/services',
+    kind: '',
+    admin: true,
+    roles: [],
+    pid: 0,
+    url: '',
+    name: 'service1',
+    command: [],
+  },
+  {
+    display: false,
+    info: {
+      name: 'Service 2',
+      url: 'http://service2.com/[USER]',
+      external: false,
+    },
+    prefix: '/services',
+    kind: '',
+    admin: false,
+    roles: [],
+    pid: 0,
+    url: '',
+    name: 'service1',
+    command: [],
   },
 ];
 

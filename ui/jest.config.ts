@@ -29,6 +29,7 @@ const config: JestConfigWithTsJest = {
     '!src/store.ts',
     '!**/*.d.ts',
     '!**/types.ts',
+    '!**/index.ts',
     '!**/data/**',
     '!**/constants.ts',
   ],

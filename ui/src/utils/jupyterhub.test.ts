@@ -1,5 +1,12 @@
+import { servicesFull } from '@src/data/jupyterhub';
+import { JhServiceFull } from '@src/types/jupyterhub';
 import { UserState } from '@src/types/user';
-import { getApps, getFriendlyFrameworkName, getJhData } from './jupyterhub';
+import {
+  getApps,
+  getFriendlyFrameworkName,
+  getJhData,
+  getServices,
+} from './jupyterhub';
 
 describe('JupyterHub utils', () => {
   const userState: UserState = {
@@ -51,6 +58,24 @@ describe('JupyterHub utils', () => {
     window.jhdata = mockJhdata;
     const result = getJhData();
     expect(result).toEqual(mockJhdata);
+  });
+
+  test('returns an array of JhService for given services', () => {
+    const user = 'testUser';
+    const result = getServices(servicesFull, user);
+    expect(result.length).toEqual(1);
+    expect(result[0]).toEqual({
+      name: 'Service 1',
+      url: 'http://service1.com/testUser',
+      external: true,
+    });
+  });
+
+  test('returns an empty array of JhService for no services', () => {
+    const services: JhServiceFull[] = [];
+    const user = 'testUser';
+    const result = getServices(services, user);
+    expect(result.length).toEqual(0);
   });
 
   test('returns an array of JhApp for shared apps', () => {
