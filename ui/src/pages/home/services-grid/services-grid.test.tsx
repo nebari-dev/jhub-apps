@@ -20,4 +20,15 @@ describe('ServicesGrid', () => {
     expect(baseElement).toBeTruthy();
     expect(header).toHaveTextContent('Services');
   });
+
+  test('renders a message when no services', () => {
+    const { baseElement } = render(
+      <RecoilRoot>
+        <QueryClientProvider client={queryClient}>
+          <ServicesGrid />
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+    expect(baseElement).toHaveTextContent('No services available');
+  });
 });

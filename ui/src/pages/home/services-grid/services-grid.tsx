@@ -69,21 +69,25 @@ export const ServicesGrid = (): React.ReactElement => {
         </div>
       </div>
       <div className="container grid pb-12">
-        <div className="flex flex flex-row flex-wrap gap-4">
-          {services.map((service, index) => (
-            <Button
-              id={`service-${index}`}
-              key={`service-${index}`}
-              variant="secondary"
-              style={{ minWidth: '180px' }}
-              onClick={() => {
-                handleButtonClick(service.url, service.external);
-              }}
-            >
-              {service.name}
-            </Button>
-          ))}
-        </div>
+        {services.length > 0 ? (
+          <div className="flex flex flex-row flex-wrap gap-4">
+            {services.map((service, index) => (
+              <Button
+                id={`service-${index}`}
+                key={`service-${index}`}
+                variant="secondary"
+                style={{ minWidth: '180px' }}
+                onClick={() => {
+                  handleButtonClick(service.url, service.external);
+                }}
+              >
+                {service.name}
+              </Button>
+            ))}
+          </div>
+        ) : (
+          <div>No services available</div>
+        )}
       </div>
     </>
   );

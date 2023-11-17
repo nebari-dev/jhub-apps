@@ -70,19 +70,23 @@ export const AppsGrid = ({
         </div>
       </div>
       <div className="container grid pb-12">
-        <div className="flex flex flex-row flex-wrap gap-4">
-          {apps.map((app: JhApp) => (
-            <AppCard
-              id={app.id}
-              key={`app-${app.id}`}
-              title={app.name}
-              description={app.description}
-              thumbnail={app.thumbnail}
-              framework={app.framework}
-              url={app.url}
-            />
-          ))}
-        </div>
+        {apps.length > 0 ? (
+          <div className="flex flex flex-row flex-wrap gap-4">
+            {apps.map((app: JhApp) => (
+              <AppCard
+                id={app.id}
+                key={`app-${app.id}`}
+                title={app.name}
+                description={app.description}
+                thumbnail={app.thumbnail}
+                framework={app.framework}
+                url={app.url}
+              />
+            ))}
+          </div>
+        ) : (
+          <div>No apps available</div>
+        )}
       </div>
     </>
   );

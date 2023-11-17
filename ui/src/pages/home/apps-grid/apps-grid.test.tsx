@@ -34,4 +34,15 @@ describe('AppsGrid', () => {
     expect(baseElement).toBeTruthy();
     expect(header).toHaveTextContent('Shared Apps');
   });
+
+  test('renders a message when no apps', () => {
+    const { baseElement } = render(
+      <RecoilRoot>
+        <QueryClientProvider client={queryClient}>
+          <AppsGrid />
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+    expect(baseElement).toHaveTextContent('No apps available');
+  });
 });
