@@ -1,12 +1,15 @@
-# Welcome to the Nebari Hub UI!
+# Welcome to the JupyterHub UI!
 
 ## Table of Contents
 
 1. [Running the Project Locally](#running-the-project-locally)
-2. [Running Unit Tests](#running-unit-tests)
-3. [Running Code Quality Checks](#running-code-quality-checks)
+2. [Applying UI Changes to JupyterHub](#applying-ui-changes-to-jupyterhub)
+3. [Running Unit Tests](#running-unit-tests)
+4. [Running Code Quality Checks](#running-code-quality-checks)
 
 ## Running the Project Locally
+
+_Note: the below commands must be ran from the `ui` directory_
 
 1. To install dependencies, run the following:
 
@@ -14,18 +17,28 @@
 npm install
 ```
 
-2. To run locally with SSO, add a file called `.env.local` to the `ui` directory. Copy and paste the template below and replace the placeholder values with your own (optional):
-
-```
-SSO_AUTHORITY=[SOME_KEYCLOAK_REALM_URL] # Ex: http://localhost:8088/realms/dev
-SSO_CLIENT_ID=[SOME_CLIENT_ID] # Ex: dev-client
-```
-
-3. To start the app, run the following:
+2. To start the app, run the following:
 
 ```sh
 npm run dev
 ```
+
+3. To load the UI, navigate to the following:
+
+```
+http://localhost:8080/hub/home
+```
+
+## Applying UI Changes to JupyterHub
+
+1. To run a production build and apply changes, run the following:
+
+```sh
+npm run buildCopy
+```
+
+2. Restart JupyterHub to verify changes
+   _Note: a hard refresh may be necessary to see ui changes_
 
 ## Running Unit Tests
 

@@ -1,3 +1,4 @@
+// Note: This is only used for local development
 window.jhdata = {
   base_url: '/hub/',
   prefix: '/',

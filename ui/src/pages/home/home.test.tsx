@@ -49,6 +49,7 @@ describe('Home', () => {
 
   test('should render notification when present', async () => {
     const mockNotification = 'Test notification';
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
     const recoilStateSpy = jest.spyOn(require('recoil'), 'useRecoilState');
     recoilStateSpy.mockReturnValue([mockNotification, jest.fn()]);
 

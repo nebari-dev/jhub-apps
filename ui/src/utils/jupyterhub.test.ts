@@ -39,7 +39,6 @@ describe('JupyterHub utils', () => {
 
   test('returns empty jhdata from window object', () => {
     const mockJhdata = {};
-    // @ts-ignore
     window.jhdata = mockJhdata;
     const result = getJhData();
     expect(result).toEqual(mockJhdata);
@@ -54,7 +53,6 @@ describe('JupyterHub utils', () => {
       options_form: false,
       xsrf_token: '2|12345|12345|12345',
     };
-    // @ts-ignore
     window.jhdata = mockJhdata;
     const result = getJhData();
     expect(result).toEqual(mockJhdata);

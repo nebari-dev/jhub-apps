@@ -8,11 +8,11 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 export default defineConfig({
   plugins: [react(), tsconfigPaths(), eslint(), EnvironmentPlugin('all')],
   server: {
-    open: true,
     port: 8080,
     proxy: {
       '/api': {
         target: 'http://localhost:8080',
+        // Bypass any JuptyerHub API calls and mock with static data
         bypass(req, res, options) {
           if (req.url.startsWith('/api/users')) {
             res.end(

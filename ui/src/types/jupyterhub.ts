@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export interface JhData {
   admin_access: boolean;
   base_url: string;
