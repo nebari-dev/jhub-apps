@@ -143,10 +143,24 @@
     top: 12px;
   }
 
+  @media only screen and (max-width: 768px) {
+    h1 {
+      padding-bottom: 24px;
+    }
+
+    #create-app {
+      width: 120px;
+    }
+  }
+
   @media only screen and (max-width: 640px) {
     .container {
       padding-left: 15px;
       padding-right: 15px;
+    }
+
+    h1 {
+      padding-bottom: 24px;
     }
 
     .btn {
@@ -162,7 +176,7 @@
     }
 
     #create-app {
-      min-width: 150px;
+      width: 120px;
     }
 
     hr {
