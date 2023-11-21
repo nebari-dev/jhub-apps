@@ -1,0 +1,9 @@
+<!-- Copyright (c) Nebari Development Team.-->
+<!-- Distributed under the terms of the Modified BSD License. -->
+
+{% extends "templates/login.html" %} {% set announcement = '' %} {% block main %}
+<div class="container text-center main">
+    <h1>{{ hub_title or 'Nebari' }}</h1>
+</div>
+
+{{ super() }} {% endblock main%}

@@ -1,0 +1,68 @@
+<!-- Copyright (c) Nebari Development Team.-->
+<!-- Distributed under the terms of the Modified BSD License. -->
+
+{% extends "templates/page.html" %} {% block nav_bar_left_items %}
+
+<!-- Default nav bar items -->
+<li>
+  <a href="{{base_url}}home">Home</a>
+</li>
+<li><a href="{{base_url}}token">Token</a></li>
+
+<!-- Access to admin dashboard -->
+{% if user.admin %}
+<li><a href="{{base_url}}admin">Admin</a></li>
+{% endif %}
+<!-- {% if services %}
+<li class="dropdown">
+  <a
+    href="#"
+    class="dropdown-toggle"
+    data-toggle="dropdown"
+    role="button"
+    aria-haspopup="true"
+    aria-expanded="false"
+    >Services<span class="caret"></span
+  ></a>
+  <ul class="dropdown-menu">
+    {% for service in services %}
+    <li>
+      <a class="dropdown-item" href="{{service.prefix}}">{{service.name}}</a>
+    </li>
+    {% endfor %}
+  </ul>
+</li>
+{% endif %} -->
+
+<!-- Custom integrations-->
+<!-- <li><a href="/auth/admin/nebari/console/">User Management</a></li> -->
+<!-- <li><a href="/argo">Argo Workflows</a></li> -->
+<!-- <li><a href="/conda-store">Environment Management</a></li> -->
+<!-- <li><a href="/monitoring">Monitoring</a></li> -->
+
+{% endblock nav_bar_left_items %} {% block footer %} {% if display_version %}
+<div class="version">{{ version or 'v0.0.1'}}</div>
+{% endif %} {% endblock footer%} {% block stylesheet %} <link rel="stylesheet"
+href="{{ static_url("css/style.min.css") }}" type="text/css"/>
+<style>
+  {% include 'style.css' %}
+</style>
+
+{% set jsurls = nebari_theme_extra_js_urls | default([]) %} {% for jsurl in
+jsurls %}
+<script type="text/javascript" src="{{ jsurl }}" defer></script>
+{% endfor %} {% endblock stylesheet %}
+
+<!-- {# requires jupyerhub > 0.9.4 https://github.com/jupyterhub/jupyterhub/pull/2296 #}  -->
+{% block logo %}
+<span id="jupyterhub-logo" class="pull-left">
+  <!-- ignore: H006 since we inherit from Hub -->
+  <a href="{{logo_url or base_url}}"
+    ><img
+      src="{{ logo }}"
+      alt="JupyterHub logo - Nebari Home"
+      class="jpy-logo"
+      title="Home"
+  /></a>
+</span>
+{% endblock logo%}
