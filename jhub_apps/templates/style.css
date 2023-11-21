@@ -229,27 +229,6 @@ a:focus {
     text-decoration: none;
 }
 
-.navbar.navbar-default .navbar-nav>li>a:focus,
-.navbar.navbar-default .navbar-nav>.open>a:focus,
-a:focus {
-    color: var(--text-color);
-    background-color: var(--accent-color);
-    box-shadow: 0 -2px var(--accent-color), 0 2px var(--text-color);
-    text-decoration: none;
-    outline: none;
-    outline-offset: none;
-}
-
-#jupyterhub-logo a:focus,
-.navbar-btn:focus{
-    outline: var(--focus-width) solid var(--accent-color);
-    outline-offset: var(--outline-offset);
-    /* ensure the full div is not in the accent colour */
-    background-color: var(--navbar-color);
-    box-shadow: var(--focus-shadow);
-    color: var(--navbar-text-color);
-}
-
 .navbar.navbar-default .navbar-nav>li>a:hover {
     color: var(--text-color);
     background-color: var(--navbar-hover-color);
@@ -287,6 +266,57 @@ a:focus {
     box-shadow: unset;
     border-color: var(--text-color);
 }
+
+/* Style for the profile menu */
+.profile-menu {
+    display: inline-block;
+    position: relative;
+    color: var(--navbar-text-color);
+  }
+
+  .profile {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    margin: 10px 0;
+  }
+
+  .username {
+    font-weight: bold;
+  }
+
+  .menu {
+    list-style: none;
+    position: absolute;
+    top: 42px;
+    right: -15px;
+    background-color: #fff;
+    border: 1px solid #f0f0f0;
+    border-radius: 4px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 8px 0;
+    min-width: 180px;
+    display: none;
+  }
+
+  .menu li {
+    padding: 8px 16px;
+  }
+
+  .menu li:hover {
+    background-color: #f0f0f0;
+  }
+
+  .menu li a {
+    text-decoration: none;
+    color: #333;
+    display: block;
+  }
+
+  /* Show menu on hover */
+  .profile-menu:hover .menu {
+    display: block;
+  }
 
 /* Misc */
 .version {
