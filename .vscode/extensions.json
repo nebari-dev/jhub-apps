@@ -1,7 +1,6 @@
 {
   "recommendations": [
     "mgmcdermott.vscode-language-babel",
-    "editorconfig.editorconfig",
     "irongeek.vscode-env",
     "dbaeumer.vscode-eslint",
     "esbenp.prettier-vscode",
