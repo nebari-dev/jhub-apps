@@ -22,3 +22,8 @@ class JAppsConfig(SingletonConfigurable):
         "https://jupyter.org/assets/homepage/main-logo.svg",
         help="Icon to display on the Home Page of JHub Apps Launcher",
     ).tag(config=True)
+
+    jupyterhub_config_path = Unicode(
+        "jupyterhub_config.py",
+        help="Path to JupyterHub config file.",
+    ).tag(config=True)

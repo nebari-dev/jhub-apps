@@ -126,6 +126,7 @@ class InputFormWidget:
     spinner: Any
     button_widget: Any
     framework: Any
+    conda_env: Any
 
 
 pn.config.sizing_mode = "stretch_width"
@@ -327,6 +328,16 @@ def create_apps_grid(username):
 def get_input_form_widget():
     frameworks_display = {f.display_name: f.name for f in FRAMEWORKS_MAPPING.values()}
     heading = heading_markdown("Create Apps")
+
+    config = get_jupyterhub_config()
+    conda_envs = get_conda_envs(config)
+
+    envs = {env: env for env in conda_envs}
+    pn.state.log(f"conda_ENVS: {conda_envs}")
+    pn.state.log(f"config: {config}")
+    print(f"via logger config: {config}")
+    print(f"via logger: conda_ENVS: {conda_envs}")
+
     input_form_widget = InputFormWidget(
         name_input=pn.widgets.TextInput(name="Name", css_classes=["custom-font"]),
         filepath_input=pn.widgets.TextInput(
@@ -345,6 +356,9 @@ def get_input_form_widget():
         button_widget=pn.widgets.Button(name=CREATE_APP_BTN_TXT, button_type="primary"),
         framework=pn.widgets.Select(
             name="Framework", options=frameworks_display, css_classes=["custom-font"]
+        ),
+        conda_env=pn.widgets.Select(
+            name="Conda Environment", options=envs, css_classes=["custom-font"]
         ),
     )
 
@@ -366,6 +380,7 @@ def get_input_form_widget():
         input_form_widget.description_input,
         input_form_widget.framework,
         input_form_widget.custom_command,
+        input_form_widget.conda_env,
         input_form_widget.button_widget,
         width=400,
     )
@@ -463,6 +478,33 @@ def get_username():
     username = pn.state.session_args.get("username")
     if username:
         return username[0].decode()
+
+
+def get_jupyterhub_config():
+    from jupyterhub.app import JupyterHub
+
+    hub = JupyterHub()
+    jhub_config_file_path = os.environ["JHUB_JUPYTERHUB_CONFIG"]
+    print(f"GETTING JHUB CONFIG FROM FILE: {jhub_config_file_path}")
+    hub.load_config_file(jhub_config_file_path)
+    config = hub.config
+    print("$"*100)
+    print(f"JHUB CONFIG FROM FILE: {config}")
+    print(f"JApps CONFIG: {config.JAppsConfig}")
+    print("$"*100)
+    return config
+
+
+def get_conda_envs(config):
+    from traitlets.config import LazyConfigValue
+    if isinstance(config.JAppsConfig.conda_envs, list):
+        return config.JAppsConfig.conda_envs
+    elif isinstance(config.JAppsConfig.conda_envs, LazyConfigValue):
+        return []
+    elif hasattr(config.JAppsConfig.conda_envs, "__call__"):
+        return config.JAppsConfig.conda_envs()
+    else:
+        raise ValueError(f"Invalid value for config.JAppsConfig.conda_envs: {config.JAppsConfig.conda_envs}")
 
 
 def create_app_form_page():
