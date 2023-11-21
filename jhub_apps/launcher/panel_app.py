@@ -126,7 +126,7 @@ class InputFormWidget:
     spinner: Any
     button_widget: Any
     framework: Any
-    conda_env: Any
+    conda_envs: Any
 
 
 pn.config.sizing_mode = "stretch_width"
@@ -357,7 +357,7 @@ def get_input_form_widget():
         framework=pn.widgets.Select(
             name="Framework", options=frameworks_display, css_classes=["custom-font"]
         ),
-        conda_env=pn.widgets.Select(
+        conda_envs=pn.widgets.Select(
             name="Conda Environment", options=envs, css_classes=["custom-font"]
         ),
     )
@@ -380,7 +380,7 @@ def get_input_form_widget():
         input_form_widget.description_input,
         input_form_widget.framework,
         input_form_widget.custom_command,
-        input_form_widget.conda_env,
+        input_form_widget.conda_envs,
         input_form_widget.button_widget,
         width=400,
     )
@@ -501,7 +501,7 @@ def get_conda_envs(config):
         return config.JAppsConfig.conda_envs
     elif isinstance(config.JAppsConfig.conda_envs, LazyConfigValue):
         return []
-    elif hasattr(config.JAppsConfig.conda_envs, "__call__"):
+    elif callable(config.JAppsConfig.conda_envs):
         return config.JAppsConfig.conda_envs()
     else:
         raise ValueError(f"Invalid value for config.JAppsConfig.conda_envs: {config.JAppsConfig.conda_envs}")
