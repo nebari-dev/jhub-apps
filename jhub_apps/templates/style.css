@@ -10,11 +10,11 @@
     --line-height-base: 1.65;
     --headings-line-height: 1.25;
     --h1-font-size: 2rem;
-    --h2-font-size: 1.5rem;
-    --h3-font-size: 1.25rem;
-    --h4-font-size: 1rem;
-    --h5-font-size: 0.875rem;
-    --h6-font-size: 0.85rem;
+    --h2-font-size: 1.25rem;
+    --h3-font-size: 1rem;
+    --h4-font-size: 0.875rem;
+    --h5-font-size: 0.85rem;
+    --h6-font-size: 0.825rem;
 
     /*  Colors */
     --heading-color: {{ h1_color | default("#0f1015") }};
@@ -25,7 +25,7 @@
     --secondary-color: {{ secondary_color | default("#20b1a8") }};
     --secondary-color-dark: {{ secondary_color_dark | default("#07837b") }};
     --accent-color: {{ accent_color | default("#eda61d") }};
-    --accent-color-dark: #a16d14;
+    --accent-color-dark: {{ accent_color_dark | default("#a16d14") }};
     --navbar-background-color: {{ navbar_color | default("#1c1d26") }};
     --navbar-text-color: {{ navbar_text_color | default("#f1f1f6") }};
     --navbar-hover-color: {{ navbar_hover_color | default("#db96f3") }};

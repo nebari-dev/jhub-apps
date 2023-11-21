@@ -57,15 +57,15 @@ export const ServicesGrid = (): React.ReactElement => {
     <>
       <div className="container grid grid-cols-12 flex flex-align-center pb-12">
         <div className="col-span-1">
-          <h3 className="whitespace-nowrap font-bold">Services</h3>
+          <h2 className="whitespace-nowrap font-bold">Services</h2>
         </div>
         <div className="col-span-10">
           <hr className="spacer"></hr>
         </div>
         <div className="col-span-1 flex justify-end">
-          <h3 className="whitespace-nowrap font-bold">
+          <h2 className="whitespace-nowrap font-bold">
             {services.length} services
-          </h3>
+          </h2>
         </div>
       </div>
       <div className="container grid pb-12">

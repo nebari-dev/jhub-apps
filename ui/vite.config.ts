@@ -65,8 +65,7 @@ export default defineConfig({
                       name: 'test-app-4',
                       jhub_app: true,
                       display_name: 'Test App 4',
-                      description:
-                        'Lorem ipsum dolor sit amet consectetur. Sit vestibulum facilisis auctor pulvinar ac. Cras.',
+                      description: 'Cras.',
                       thumbnail: null,
                       framework: 'Streamlit',
                     },
