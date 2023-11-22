@@ -11,7 +11,7 @@ describe('AppsGrid', () => {
     const { baseElement } = render(
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
-          <AppsGrid />
+          <AppsGrid filter="" />
         </QueryClientProvider>
       </RecoilRoot>,
     );
@@ -25,7 +25,7 @@ describe('AppsGrid', () => {
     const { baseElement } = render(
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
-          <AppsGrid appType="Shared" />
+          <AppsGrid appType="Shared" filter="" />
         </QueryClientProvider>
       </RecoilRoot>,
     );
@@ -34,12 +34,11 @@ describe('AppsGrid', () => {
     expect(baseElement).toBeTruthy();
     expect(header).toHaveTextContent('Shared Apps');
   });
-
-  test('renders a message when no apps', () => {
+  test('renders a message when no apps and filter', () => {
     const { baseElement } = render(
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
-          <AppsGrid />
+          <AppsGrid filter="test" />
         </QueryClientProvider>
       </RecoilRoot>,
     );

@@ -1,5 +1,5 @@
 import { Alert, Button, TextInput } from '@src/components';
-import React from 'react';
+import React, { SyntheticEvent, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { currentNotification } from '../../store';
 import { AppsGrid } from './apps-grid/apps-grid';
@@ -9,6 +9,13 @@ export const Home = (): React.ReactElement => {
   const [notification] = useRecoilState<string | undefined>(
     currentNotification,
   );
+
+  const [searchValue, setSearchValue] = useState('');
+
+  const handleSearch = (event: SyntheticEvent) => {
+    const target = event.target as HTMLInputElement;
+    setSearchValue(target.value);
+  };
 
   return (
     <>
@@ -22,6 +29,7 @@ export const Home = (): React.ReactElement => {
             placeholder="Search..."
             aria-label="Search for an app"
             className="w-full mt-0"
+            onChange={handleSearch}
           />
         </div>
         <div className="md:col-span-2 xs:col-span-4 flex justify-end">
@@ -45,8 +53,8 @@ export const Home = (): React.ReactElement => {
         </div>
       )}
       <ServicesGrid />
-      <AppsGrid appType="My" />
-      <AppsGrid appType="Shared" />
+      <AppsGrid appType="My" filter={searchValue} />
+      <AppsGrid appType="Shared" filter={searchValue} />
     </>
   );
 };

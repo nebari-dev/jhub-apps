@@ -40,7 +40,7 @@ export default defineConfig({
                       jhub_app: true,
                       display_name: 'Test App 2',
                       description:
-                        'Lorem ipsum dolor sit amet consectetur. Sit vestibulum facilisis auctor pulvinar ac. Cras.',
+                        'Lorem ipsum dolor sit amet consectetur. Sit vestibulum facilisis auctor pulvinar ac. Bras.',
                       thumbnail: null,
                       framework: 'Streamlit',
                     },
@@ -53,7 +53,7 @@ export default defineConfig({
                       jhub_app: true,
                       display_name: 'Test App 3',
                       description:
-                        'Lorem ipsum dolor sit amet consectetur. Sit vestibulum facilisis auctor pulvinar ac. Cras.',
+                        'Lorem ipsum dolor sit amet consectetur. Sit vestibulum facilisis auctor pulvinar ac. Dras.',
                       thumbnail: null,
                       framework: 'JupyterLab',
                     },

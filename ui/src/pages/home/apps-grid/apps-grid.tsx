@@ -9,10 +9,12 @@ import { useRecoilState } from 'recoil';
 import { currentJhData, currentNotification } from '../../../store';
 interface AppsGridProps {
   appType?: 'My' | 'Shared';
+  filter: string;
 }
 
 export const AppsGrid = ({
   appType = 'My',
+  filter,
 }: AppsGridProps): React.ReactElement => {
   const [jHData] = useRecoilState<JhData>(currentJhData);
   const [, setCurrentNotification] = useRecoilState<string | undefined>(
@@ -44,9 +46,17 @@ export const AppsGrid = ({
 
   useEffect(() => {
     if (!isLoading && userData) {
-      setApps(() => getApps(userData, appType));
+      const filterToLower = filter.toLowerCase();
+      setApps(() =>
+        getApps(userData, appType).filter(
+          (app) =>
+            app.name.toLowerCase().includes(filterToLower) ||
+            app.description?.toLowerCase().includes(filterToLower) ||
+            app.framework?.toLowerCase().includes(filterToLower),
+        ),
+      );
     }
-  }, [isLoading, userData, appType]);
+  }, [isLoading, userData, appType, filter]);
 
   useEffect(() => {
     if (error) {
