@@ -19,22 +19,8 @@ def _create_token_for_service():
     return b64encode(token_bytes(32)).decode()
 
 
-def get_jhub_config():
-    from jupyterhub.app import JupyterHub
-    hub = JupyterHub()
-    logger.info(f"GETTING JHUB CONFIG FROM FILE:")
-    hub.load_config_file(hub.config_file)
-    config = hub.config
-    logger.info("$"*100)
-    logger.info(f"JHUB CONFIG FROM FILE: {config}")
-    logger.info(f"JApps CONFIG: {config.JAppsConfig}")
-    logger.info("$"*100)
-    return config
-
-
 def install_jhub_apps(c, spawner_to_subclass):
     logger.info("Installing JApps")
-    get_jhub_config()
     c.JupyterHub.spawner_class = subclass_spawner(spawner_to_subclass)
     c.JupyterHub.allow_named_servers = True
     bind_url = c.JupyterHub.bind_url
