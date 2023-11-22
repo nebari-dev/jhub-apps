@@ -83,6 +83,7 @@ def install_jhub_apps(c, spawner_to_subclass):
                     "JHUB_APP_LAUNCHER_TOKEN", _create_token_for_service()
                 ),
                 "environment": {
+                    **os.environ,
                     "JHUB_JUPYTERHUB_CONFIG": c.JAppsConfig.jupyterhub_config_path,
                 },
                 "display": False,
