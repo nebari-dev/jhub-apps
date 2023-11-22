@@ -15,7 +15,7 @@ describe('AppsGrid', () => {
         </QueryClientProvider>
       </RecoilRoot>,
     );
-    const header = baseElement.querySelector('h3');
+    const header = baseElement.querySelector('h2');
 
     expect(baseElement).toBeTruthy();
     expect(header).toHaveTextContent('My Apps');
@@ -29,7 +29,7 @@ describe('AppsGrid', () => {
         </QueryClientProvider>
       </RecoilRoot>,
     );
-    const header = baseElement.querySelector('h3');
+    const header = baseElement.querySelector('h2');
 
     expect(baseElement).toBeTruthy();
     expect(header).toHaveTextContent('Shared Apps');

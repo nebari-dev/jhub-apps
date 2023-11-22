@@ -15,7 +15,7 @@ describe('ServicesGrid', () => {
         </QueryClientProvider>
       </RecoilRoot>,
     );
-    const header = baseElement.querySelector('h3');
+    const header = baseElement.querySelector('h2');
 
     expect(baseElement).toBeTruthy();
     expect(header).toHaveTextContent('Services');

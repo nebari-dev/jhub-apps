@@ -12,7 +12,7 @@ describe('AppCard', () => {
         url="/some-url"
       />,
     );
-    const header = baseElement.querySelector('h4');
+    const header = baseElement.querySelector('h3');
     expect(header).toHaveTextContent('Card 1');
   });
 
@@ -26,7 +26,7 @@ describe('AppCard', () => {
         thumbnail="/some-thumbnail.png"
       />,
     );
-    const header = baseElement.querySelector('h4');
+    const header = baseElement.querySelector('h3');
     expect(header).toHaveTextContent('Card 1');
     const img = baseElement.querySelector('img');
     expect(img).toHaveAttribute('src', '/some-thumbnail.png');
