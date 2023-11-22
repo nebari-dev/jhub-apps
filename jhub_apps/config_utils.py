@@ -1,4 +1,4 @@
-from traitlets import Unicode
+from traitlets import Unicode, Union, List, Callable
 from traitlets.config import SingletonConfigurable, Enum
 
 
@@ -23,6 +23,17 @@ class JAppsConfig(SingletonConfigurable):
         help="Icon to display on the Home Page of JHub Apps Launcher",
     ).tag(config=True)
 
+    conda_envs = Union(
+        [List(trait=Unicode, default_value=[], minlen=0), Callable()],
+        help="""
+        A list of conda environment names for the app creator to display as dropdown to select.
+        Default value is the empty list. Also accepts conda_envs to be a callable function
+        which is evaluated for each render of the create app page.
+        """,
+    ).tag(config=True)
+
+    # This is to make sure that JupyterHub config is accessible inside services
+    # There is no way to get JupyterHub config inside services otherwise.
     jupyterhub_config_path = Unicode(
         "jupyterhub_config.py",
         help="Path to JupyterHub config file.",

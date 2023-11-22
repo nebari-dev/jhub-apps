@@ -495,6 +495,7 @@ def get_jupyterhub_config():
 
 
 def get_conda_envs(config):
+    """This will extract conda environment from the JupyterHub config"""
     if isinstance(config.JAppsConfig.conda_envs, list):
         return config.JAppsConfig.conda_envs
     elif isinstance(config.JAppsConfig.conda_envs, LazyConfigValue):
