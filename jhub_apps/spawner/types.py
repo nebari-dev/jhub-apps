@@ -19,7 +19,7 @@ class UserOptions:
     filepath: str
     framework: str
     custom_command: typing.Optional[str] = None
-    env: typing.Optional[dict] = None
+    conda_env: typing.Optional[dict] = None
 
 
 class Framework(Enum):
