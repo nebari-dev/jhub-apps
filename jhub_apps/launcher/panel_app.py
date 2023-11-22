@@ -6,7 +6,11 @@ from typing import Any
 
 import panel as pn
 
+from jupyterhub.app import JupyterHub
+
 from jhub_apps.launcher.hub_client import HubClient
+from traitlets.config import LazyConfigValue
+
 from jhub_apps.spawner.types import (
     FRAMEWORKS_MAPPING,
     FrameworkConf,
@@ -480,21 +484,17 @@ def get_username():
 
 
 def get_jupyterhub_config():
-    from jupyterhub.app import JupyterHub
-
     hub = JupyterHub()
     jhub_config_file_path = os.environ["JHUB_JUPYTERHUB_CONFIG"]
-    print(f"GETTING JHUB CONFIG FROM FILE: {jhub_config_file_path}")
+    print(f"Getting JHub config from file: {jhub_config_file_path}")
     hub.load_config_file(jhub_config_file_path)
     config = hub.config
-    print(f"JHUB CONFIG FROM FILE: {config}")
-    print(f"JApps CONFIG: {config.JAppsConfig}")
+    print(f"JHub config from file: {config}")
+    print(f"JApps config: {config.JAppsConfig}")
     return config
 
 
 def get_conda_envs(config):
-    from traitlets.config import LazyConfigValue
-
     if isinstance(config.JAppsConfig.conda_envs, list):
         return config.JAppsConfig.conda_envs
     elif isinstance(config.JAppsConfig.conda_envs, LazyConfigValue):
