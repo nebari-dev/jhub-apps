@@ -419,6 +419,7 @@ def _create_server(event, input_form_widget, input_form, username):
         thumbnail.save(thumbnail_local_filepath)
 
     hclient = HubClient()
+    selected_conda_env = input_form_widget.conda_envs.value or ""
     user_options = UserOptions(
         display_name=display_name,
         jhub_app=True,
@@ -427,7 +428,7 @@ def _create_server(event, input_form_widget, input_form, username):
         filepath=filepath,
         framework=framework,
         custom_command=input_form_widget.custom_command.value,
-        conda_env=input_form_widget.conda_envs.value,
+        conda_env=selected_conda_env,
     )
     try:
         response_status_code, servername = hclient.create_server(
