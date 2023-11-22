@@ -69,4 +69,8 @@ c.SystemdSpawner.unit_name_template = 'jupyter-{USERNAME}{JHUBSERVERNAME}'
 c.JAppsConfig.apps_auth_type = "oauth" # or none (if you don't want authentication on apps)
 c.JAppsConfig.python_exec = "python3"
 c = install_jhub_apps(c, UserCreatingSpawner)
+# Either a static list of conda environments to show in the
+# create panel apps form or a callable to fetch conda enviornments
+# dynamically, e.g. from conda-store API
+c.JAppsConfig.conda_envs = []
 ```

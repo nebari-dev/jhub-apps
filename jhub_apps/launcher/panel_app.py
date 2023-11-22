@@ -425,7 +425,7 @@ def _create_server(event, input_form_widget, input_form, username):
         filepath=filepath,
         framework=framework,
         custom_command=input_form_widget.custom_command.value,
-        conda_env=input_form_widget.conda_envs.value
+        conda_env=input_form_widget.conda_envs.value,
     )
     try:
         response_status_code, servername = hclient.create_server(
@@ -496,6 +496,7 @@ def get_jupyterhub_config():
 
 def get_conda_envs(config):
     from traitlets.config import LazyConfigValue
+
     if isinstance(config.JAppsConfig.conda_envs, list):
         return config.JAppsConfig.conda_envs
     elif isinstance(config.JAppsConfig.conda_envs, LazyConfigValue):
@@ -503,7 +504,9 @@ def get_conda_envs(config):
     elif callable(config.JAppsConfig.conda_envs):
         return config.JAppsConfig.conda_envs()
     else:
-        raise ValueError(f"Invalid value for config.JAppsConfig.conda_envs: {config.JAppsConfig.conda_envs}")
+        raise ValueError(
+            f"Invalid value for config.JAppsConfig.conda_envs: {config.JAppsConfig.conda_envs}"
+        )
 
 
 def create_app_form_page():
