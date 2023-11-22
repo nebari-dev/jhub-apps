@@ -1,0 +1,305 @@
+/* Copyright (c) Nebari Development Team. */
+/* Distributed under the terms of the Modified BSD License. */
+
+:root {
+    /* Typography */
+    --base-font-family: "Atkinson Hyperlegible", "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+    --headings-font-family: "Poppins Bold", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+
+    --font-size-base: 100%;
+    --line-height-base: 1.65;
+    --headings-line-height: 1.25;
+    --h1-font-size: 2rem;
+    --h2-font-size: 1.5rem;
+    --h3-font-size: 1.25rem;
+    --h4-font-size: 1rem;
+    --h5-font-size: 0.875rem;
+    --h6-font-size: 0.85rem;
+
+    /*  Colors */
+    --heading-color: {{ h1_color | default("#0f1015") }};
+    --text-color: {{ text_color | default("#1c1d26") }};
+    --link-text-color: {{ text_color | default("#20b1a8") }};
+    --primary-color: {{ primary_color | default("#9e17b7") }};
+    --primary-color-dark: {{ primary_color_dark | default("#79158a") }};
+    --secondary-color: {{ secondary_color | default("#20b1a8") }};
+    --secondary-color-dark: {{ secondary_color_dark | default("#07837b") }};
+    --accent-color: {{ accent_color | default("#eda61d") }};
+    --accent-color-dark: #a16d14;
+    --navbar-background-color: {{ navbar_color | default("#1c1d26") }};
+    --navbar-text-color: {{ navbar_text_color | default("#f1f1f6") }};
+    --navbar-hover-color: {{ navbar_hover_color | default("#db96f3") }};
+    --link-hover-color: {{ accent_color | default("#20b1a8") }};
+    --light-text-color: #f1f1f6;
+    --danger-color: #e60f66;
+    --danger-color-dark: #b81a53;
+
+    /* Miscellaneous */
+    --button-hover-shadow: 0 3px 0 var(--text-color);
+    --focus-width: 2px;
+    --focus-shadow: 5px 5px 7px rgba(0, 0, 0, 0.1);
+    --outline-offset: 0.25rem;
+    --outline-reset: 1px solid transparent;
+    --text-decoration-thickness: 2px;
+}
+
+/* Global text styling */
+html {
+    color: var(--text-color);
+    font: var(--font-size-base)/var(--ifm-line-height-base) var(--font-family-base);}
+
+h1,
+h2,
+h3,
+h4{
+    color: var(--heading-color);
+    font-family: var(--headings-font-family);
+    line-height: var(--headings-line-height);
+}
+
+h1 {
+    margin-top: 30px;
+    margin-bottom: 30px;
+    font-size: var(--h1-font-size) !important;
+}
+
+h2 {
+    font-size: var(--h2-font-size) !important;
+    margin-bottom: 20px;
+    color:  {{ h2_color | default("#0f1015") }};
+}
+
+h3 {
+    font-size: var(--h3-font-size) !important;
+}
+
+h4 {
+    font-size: var(--h4-font-size) !important;
+}
+
+h5 {
+    font-size: var(--h5-font-size) !important;
+}
+
+h6 {
+    font-size: var(--h6-font-size) !important;
+}
+
+.container {
+    margin-left: 20px;
+    margin-right: 20px;
+    padding-left: 20px;
+    padding-right: 20px;
+    width: 100%;
+}
+
+label {
+    font-family: var(--base-font-family);
+}
+
+.text-input:focus {
+    outline-color: var(--primary-color) !important;
+}
+
+a {
+    color: var(--link-text-color);
+    text-decoration: underline;
+    text-decoration-color: CurrentColor;
+    text-underline-offset: 1px;
+}
+
+a:hover {
+    color: var(--link-text-color);
+    text-decoration: underline;
+    text-decoration-thickness: var(--text-decoration-thickness);
+}
+
+a:focus {
+    background-color: unset;
+    box-shadow: none;
+}
+
+/* Buttons */
+.btn {
+    font-family: var(--base-font-family) !important;
+    font-weight: 400 !important;
+}
+
+.btn-xs {
+    font-size: 0.8rem;
+}
+
+.btn {
+    font-size: 1rem;
+    text-decoration: none;
+}
+
+.btn-lg {
+    font-size: 1.25rem;
+}
+
+.btn-primary {
+    color: var(--light-text-color);
+    background-color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-color-dark)!important;
+    border-color: var(--primary-color-dark)!important;
+}
+
+.btn-primary:focus {
+    outline-color: var(--primary-color) !important;
+}
+
+.btn-secondary {
+    color: var(--secondary-color) !important;
+    background-color: #ffffff !important;
+    border-color: var(--secondary-color) !important;
+}
+
+.btn-secondary:hover {
+    color: var(--secondary-color-dark) !important;
+    background-color: #ffffff !important;
+    border-color: var(--secondary-color-dark) !important;
+}
+
+.btn-secondary:focus {
+    outline-color: var(--secondary-color) !important;
+}
+
+.btn-success {
+    color: var(--text-color);
+    background-color: var(--secondary-color) !important;
+    border-color: var(--secondary-color) !important;
+}
+
+.btn-success:hover {
+    color: var(--text-color);
+    background-color: var(--secondary-color-dark)!important;
+    border-color: var(--secondary-color-dark)!important;
+}
+
+.btn-danger {
+    color: var(--light-text-color);
+    background-color: var(--danger-color) !important;
+    border-color: var(--danger-color) !important;
+}
+
+.btn-danger:hover {
+    background-color: var(--danger-color-dark)!important;
+    border-color: var(--danger-color-dark)!important;
+}
+
+.btn-jupyter {
+    color: var(--light-text-color);
+    background-color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+}
+
+.btn-jupyter:hover {
+    background-color: var(--primary-color-dark) !important;
+    border-color: var(--primary-color-dark) !important;
+}
+
+.btn-jupyter:focus {
+    outline-color: var(--primary-color) !important;
+}
+
+#help-floater:hover {
+    background-color: var(--primary-color-dark)!important;
+    border-color: var(--primary-color-dark)!important;
+}
+
+/* Navbar  */
+.nav {
+    margin-left:10px;
+}
+
+.navbar.navbar-default {
+    background: var(--navbar-background-color);
+    box-shadow: 0px 1.5px 3px 0px rgba(72, 74, 94, 0.16);
+    border: None;
+}
+
+.navbar.navbar-default .navbar-nav>li>a,
+.navbar.navbar-default .navbar-text {
+    color: var(--navbar-text-color);
+    text-decoration: none;
+}
+
+.navbar.navbar-default .navbar-nav>li>a:focus,
+.navbar.navbar-default .navbar-nav>.open>a:focus,
+a:focus {
+    color: var(--text-color);
+    background-color: var(--accent-color);
+    box-shadow: 0 -2px var(--accent-color), 0 2px var(--text-color);
+    text-decoration: none;
+    outline: none;
+    outline-offset: none;
+}
+
+#jupyterhub-logo a:focus,
+.navbar-btn:focus{
+    outline: var(--focus-width) solid var(--accent-color);
+    outline-offset: var(--outline-offset);
+    /* ensure the full div is not in the accent colour */
+    background-color: var(--navbar-color);
+    box-shadow: var(--focus-shadow);
+    color: var(--navbar-text-color);
+}
+
+.navbar.navbar-default .navbar-nav>li>a:hover {
+    color: var(--text-color);
+    background-color: var(--navbar-hover-color);
+    text-decoration: underline;
+}
+
+.navbar.navbar-default .navbar-nav>.open>a,
+.navbar.navbar-default .navbar-nav>.open>a:hover{
+    background-color: {{ navbar_hover_color | default("#00a3b0") }};
+}
+
+/* Authenticator form */
+#login-main input[type=submit]:focus{
+    border-color: var(--text-color);
+    color: var(--text-color);
+}
+
+#login-main .auth-form-header {
+    background: var(--accent-color) !important;
+    color: {{ accent_text_color | default("#1c1d26") }} ;
+    font-family: var(--base-font-family);
+}
+
+#login-main .service-login {
+    vertical-align: top !important;
+    padding-top: 60px;
+}
+
+#login-main .login_error,
+.error{
+    color: var(--danger-color-dark);
+}
+
+#login-main .form-control:focus, #login-main .form-control:active {
+    box-shadow: unset;
+    border-color: var(--text-color);
+}
+
+/* Misc */
+.version {
+    position: fixed;
+    bottom: 20px; /* Place the button at the bottom of the page */
+    left: 30px; /* Place the button 30px from the left */
+    z-index: 99; /* Make sure it does not overlap */
+    width: auto;
+    padding: 5px;
+    background: none;
+    color: var(--primary-color);
+    text-align: center;
+    font-size: 1rem; /* Increase font size */
+    font-family: var(--base-font-family);
+    word-wrap: break-word;
+}
