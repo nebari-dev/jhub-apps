@@ -34,6 +34,7 @@ export default {
       'error-light': '#f4e3db',
       info: '#00bde3',
       'info-light': '#e7f6f8',
+      'text-dark': '#1b1b1b',
     },
     fontFamily: {
       sans: ['Graphik', 'sans-serif'],

@@ -73,6 +73,15 @@
     padding: 1.5rem 1.5rem 0.5rem;
   }
 
+  .card-header-menu {
+    width: 100%;
+    display: flex;
+    justify-content: right;
+    position: relative;
+    top: 5px;
+    right: 5px;
+  }
+
   .card-header-media {
     min-height: 1px;
   }
@@ -108,7 +117,7 @@
   .alert-body {
     padding-left: 4rem;
     padding-right: 4rem;
-    color: #1b1b1b;
+    color: theme('colors.text-dark');
     margin-left: auto;
     margin-right: auto;
     padding: 0.5rem;
@@ -116,7 +125,7 @@
   }
 
   .alert-text {
-    color: #1b1b1b;
+    color: theme('colors.text-dark');
   }
 
   .alert-success {
@@ -137,6 +146,59 @@
   .alert-info {
     border-left-color: theme('colors.info');
     background-color: theme('colors.info-light');
+  }
+
+  /* Style for the profile menu */
+  .context-menu-container {
+    display: inline-block;
+    position: absolute;
+    color: theme('colors.text-dark');
+    width: 24px;
+    height: 24px;
+    border: 1px solid theme('colors.gray-lighter');
+    border-radius: 50%;
+    background-color: theme('colors.white');
+    cursor: pointer;
+  }
+
+  .context-menu-container:focus .context-menu {
+    display: block;
+  }
+
+  .context-menu {
+    list-style: none;
+    position: absolute;
+    top: 28px;
+    right: 0;
+    background-color: theme('colors.white');
+    border: theme('colors.gray-lighter');
+    border-radius: 4px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 0;
+    min-width: 120px;
+    display: none;
+  }
+
+  .context-menu li {
+    padding: 6px 12px;
+    cursor: pointer;
+  }
+
+  .context-menu li:hover {
+    background-color: theme('colors.gray-lightest');
+  }
+
+  .context-menu li a {
+    text-decoration: none;
+    color: theme('colors.text-dark');
+    display: block;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+  }
+
+  .context-menu li a.disabled {
+    cursor: not-allowed;
+    color: theme('colors.gray-light') !important;
   }
 
   .spacer {
