@@ -131,6 +131,7 @@ class InputFormWidget:
     button_widget: Any
     framework: Any
     conda_envs: Any
+    spawner_profiles: typing.Optional[Any] = None
 
 
 pn.config.sizing_mode = "stretch_width"
@@ -335,6 +336,8 @@ def get_input_form_widget():
 
     config = get_jupyterhub_config()
     conda_envs = get_conda_envs(config)
+    spawner_profiles = get_spawner_profiles(config)
+    profiles = [p["display_name"] for p in spawner_profiles]
 
     envs = {env: env for env in conda_envs}
     pn.state.log(f"Conda Environments: {conda_envs}")
@@ -362,6 +365,9 @@ def get_input_form_widget():
         conda_envs=pn.widgets.Select(
             name="Conda Environment", options=envs, css_classes=["custom-font"]
         ),
+        spawner_profiles=pn.widgets.Select(
+            name="Spawner Profile", options=profiles, css_classes=["custom-font"]
+        ),
     )
 
     def framework_handler(selected_framework):
@@ -383,9 +389,11 @@ def get_input_form_widget():
         input_form_widget.framework,
         input_form_widget.custom_command,
         input_form_widget.conda_envs,
-        input_form_widget.button_widget,
         width=400,
     )
+    if profiles:
+        input_form.append(input_form_widget.spawner_profiles)
+    input_form.append(input_form_widget.button_widget)
     return input_form_widget, input_form
 
 
@@ -429,6 +437,7 @@ def _create_server(event, input_form_widget, input_form, username):
         framework=framework,
         custom_command=input_form_widget.custom_command.value,
         conda_env=selected_conda_env,
+        profile=input_form_widget.spawner_profiles.value
     )
     try:
         response_status_code, servername = hclient.create_server(
@@ -506,6 +515,23 @@ def get_conda_envs(config):
     else:
         raise ValueError(
             f"Invalid value for config.JAppsConfig.conda_envs: {config.JAppsConfig.conda_envs}"
+        )
+
+
+def get_spawner_profiles(config):
+    """This will extract conda environment from the JupyterHub config
+    if the Spawner is KubeSpawner
+    """
+    profile_list = config.KubeSpawner.profile_list
+    if isinstance(profile_list, list):
+        return config.KubeSpawner.profile_list
+    elif isinstance(profile_list, LazyConfigValue):
+        return []
+    elif callable(profile_list):
+        return profile_list()
+    else:
+        raise ValueError(
+            f"Invalid value for config.KubeSpawner.profile_list: {profile_list}"
         )
 
 

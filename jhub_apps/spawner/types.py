@@ -20,6 +20,7 @@ class UserOptions:
     framework: str
     custom_command: typing.Optional[str] = None
     conda_env: typing.Optional[dict] = None
+    profile: typing.Optional[str] = None
 
 
 class Framework(Enum):
