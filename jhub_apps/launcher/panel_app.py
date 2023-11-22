@@ -333,10 +333,8 @@ def get_input_form_widget():
     conda_envs = get_conda_envs(config)
 
     envs = {env: env for env in conda_envs}
-    pn.state.log(f"conda_ENVS: {conda_envs}")
-    pn.state.log(f"config: {config}")
-    print(f"via logger config: {config}")
-    print(f"via logger: conda_ENVS: {conda_envs}")
+    pn.state.log(f"Conda Environments: {conda_envs}")
+    pn.state.log(f"JupyterHub config: {config}")
 
     input_form_widget = InputFormWidget(
         name_input=pn.widgets.TextInput(name="Name", css_classes=["custom-font"]),
