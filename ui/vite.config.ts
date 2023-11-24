@@ -30,6 +30,7 @@ export default defineConfig({
                         'Lorem ipsum dolor sit amet consectetur. Sit vestibulum facilisis auctor pulvinar ac. Cras.',
                       thumbnail: null,
                       framework: 'Panel',
+                      ready: true,
                     },
                   },
                   'test-app-2': {
@@ -43,6 +44,7 @@ export default defineConfig({
                         'Lorem ipsum dolor sit amet consectetur. Sit vestibulum facilisis auctor pulvinar ac. Bras.',
                       thumbnail: null,
                       framework: 'Streamlit',
+                      ready: false,
                     },
                   },
                   'test-app-3': {
@@ -56,6 +58,7 @@ export default defineConfig({
                         'Lorem ipsum dolor sit amet consectetur. Sit vestibulum facilisis auctor pulvinar ac. Dras.',
                       thumbnail: null,
                       framework: 'JupyterLab',
+                      ready: false,
                     },
                   },
                   'test-app-4': {
@@ -68,6 +71,7 @@ export default defineConfig({
                       description: 'Cras.',
                       thumbnail: null,
                       framework: 'Streamlit',
+                      ready: false,
                     },
                   },
                 },

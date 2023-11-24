@@ -39,6 +39,7 @@ export const getApps = (userState: UserState, appType: string) => {
           url: server.url,
           thumbnail: app.imgUrl,
           shared: false,
+          ready: app.ready,
         });
       }
     }

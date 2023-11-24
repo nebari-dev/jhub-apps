@@ -9,6 +9,7 @@ interface AppCardProps {
   framework: string;
   thumbnail?: string;
   url: string;
+  ready: boolean;
 }
 
 export const AppCard = ({
@@ -18,6 +19,7 @@ export const AppCard = ({
   thumbnail,
   framework,
   url,
+  ready = false,
 }: AppCardProps): React.ReactElement => {
   const handleStart = () => {
     window.location.assign(url);
@@ -40,12 +42,13 @@ export const AppCard = ({
       id: 'start',
       title: 'Start',
       onClick: () => handleStart(),
+      disabled: ready,
     },
     {
       id: 'stop',
       title: 'Stop',
       onClick: () => handleStop(),
-      disabled: true,
+      disabled: !ready,
     },
     {
       id: 'edit',
