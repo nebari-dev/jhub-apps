@@ -69,6 +69,10 @@
     border-radius: 0.25rem;
   }
 
+  .card:focus {
+    outline: 0.2rem solid theme('colors.primary-light');
+  }
+
   .card-header {
     padding: 1.5rem 1.5rem 0.5rem;
   }
@@ -148,9 +152,13 @@
     background-color: theme('colors.info-light');
   }
 
-  /* Style for the profile menu */
+  .card:hover .context-menu-container,
+  .card:focus .context-menu-container {
+    display: block;
+  }
+
   .context-menu-container {
-    display: inline-block;
+    display: none;
     position: absolute;
     color: theme('colors.text-dark');
     width: 24px;
@@ -166,6 +174,7 @@
   }
 
   .context-menu {
+    display: none;
     list-style: none;
     position: absolute;
     top: 28px;
@@ -176,7 +185,6 @@
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     padding: 0;
     min-width: 120px;
-    display: none;
   }
 
   .context-menu li {

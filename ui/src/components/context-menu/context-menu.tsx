@@ -21,6 +21,7 @@ export const ContextMenu = ({
   items,
 }: ContextMenuProps): React.ReactElement => {
   const menuRef = React.useRef<HTMLDivElement>(null);
+
   return (
     <div className="context-menu-container" id={id} tabIndex={0} ref={menuRef}>
       <EllipsisHorizontalIcon />

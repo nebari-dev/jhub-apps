@@ -60,7 +60,7 @@ export const AppCard = ({
   ];
 
   return (
-    <div className="card" id={`card-${id}`}>
+    <div className="card" id={`card-${id}`} tabIndex={0}>
       <div className="card-header-media">
         <div className="card-header-menu">
           <ContextMenu id={`card-menu-${id}`} items={menuItems} />
