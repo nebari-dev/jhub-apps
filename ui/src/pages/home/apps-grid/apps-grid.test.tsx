@@ -11,11 +11,11 @@ describe('AppsGrid', () => {
     const { baseElement } = render(
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
-          <AppsGrid />
+          <AppsGrid filter="" />
         </QueryClientProvider>
       </RecoilRoot>,
     );
-    const header = baseElement.querySelector('h3');
+    const header = baseElement.querySelector('h2');
 
     expect(baseElement).toBeTruthy();
     expect(header).toHaveTextContent('My Apps');
@@ -25,21 +25,20 @@ describe('AppsGrid', () => {
     const { baseElement } = render(
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
-          <AppsGrid appType="Shared" />
+          <AppsGrid appType="Shared" filter="" />
         </QueryClientProvider>
       </RecoilRoot>,
     );
-    const header = baseElement.querySelector('h3');
+    const header = baseElement.querySelector('h2');
 
     expect(baseElement).toBeTruthy();
     expect(header).toHaveTextContent('Shared Apps');
   });
-
-  test('renders a message when no apps', () => {
+  test('renders a message when no apps and filter', () => {
     const { baseElement } = render(
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
-          <AppsGrid />
+          <AppsGrid filter="test" />
         </QueryClientProvider>
       </RecoilRoot>,
     );

@@ -64,7 +64,7 @@
   }
 
   .card {
-    max-width: 280px;
+    width: 280px;
     border: 2px solid theme('colors.gray-lighter');
     border-radius: 0.25rem;
   }
@@ -84,6 +84,7 @@
   }
 
   .card-body {
+    min-height: 75px;
     padding: 0.5rem 1.5rem;
   }
 
@@ -168,7 +169,7 @@
     }
 
     .card {
-      max-width: unset;
+      width: 100%;
     }
 
     .card-header-media {

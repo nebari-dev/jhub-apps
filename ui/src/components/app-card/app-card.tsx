@@ -26,9 +26,9 @@ export const AppCard = ({
         </div>
       </div>
       <div className="card-header">
-        <h4 className="font-bold">
+        <h3 className="font-bold">
           <a href={url}>{title}</a>
-        </h4>
+        </h3>
       </div>
       <div className="card-body">
         <p className="text-sm">{description}</p>

@@ -68,4 +68,13 @@ describe('Home', () => {
       expect(getByText('My Apps')).toBeTruthy();
     });
   });
+
+  test('should update search value on input change', async () => {
+    const { getByPlaceholderText } = render(componentWrapper);
+    await act(async () => {
+      const searchInput = getByPlaceholderText('Search...') as HTMLInputElement;
+      fireEvent.change(searchInput, { target: { value: 'Test' } });
+      expect(searchInput.value).toBe('Test');
+    });
+  });
 });

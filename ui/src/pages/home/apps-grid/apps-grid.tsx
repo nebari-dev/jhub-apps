@@ -9,10 +9,12 @@ import { useRecoilState } from 'recoil';
 import { currentJhData, currentNotification } from '../../../store';
 interface AppsGridProps {
   appType?: 'My' | 'Shared';
+  filter: string;
 }
 
 export const AppsGrid = ({
   appType = 'My',
+  filter,
 }: AppsGridProps): React.ReactElement => {
   const [jHData] = useRecoilState<JhData>(currentJhData);
   const [, setCurrentNotification] = useRecoilState<string | undefined>(
@@ -44,9 +46,17 @@ export const AppsGrid = ({
 
   useEffect(() => {
     if (!isLoading && userData) {
-      setApps(() => getApps(userData, appType));
+      const filterToLower = filter.toLowerCase();
+      setApps(() =>
+        getApps(userData, appType).filter(
+          (app) =>
+            app.name.toLowerCase().includes(filterToLower) ||
+            app.description?.toLowerCase().includes(filterToLower) ||
+            app.framework?.toLowerCase().includes(filterToLower),
+        ),
+      );
     }
-  }, [isLoading, userData, appType]);
+  }, [isLoading, userData, appType, filter]);
 
   useEffect(() => {
     if (error) {
@@ -60,13 +70,13 @@ export const AppsGrid = ({
     <>
       <div className="container grid grid-cols-12 flex flex-align-center pb-12">
         <div className="col-span-1">
-          <h3 className="whitespace-nowrap font-bold">{appType} Apps</h3>
+          <h2 className="whitespace-nowrap font-bold">{appType} Apps</h2>
         </div>
         <div className="col-span-10">
           <hr className="spacer"></hr>
         </div>
         <div className="col-span-1 flex justify-end">
-          <h3 className="whitespace-nowrap font-bold">{apps.length} apps</h3>
+          <h2 className="whitespace-nowrap font-bold">{apps.length} apps</h2>
         </div>
       </div>
       <div className="container grid pb-12">
