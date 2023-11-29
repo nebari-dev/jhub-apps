@@ -46,7 +46,7 @@ def install_jhub_apps(c, spawner_to_subclass):
                     "--port=10202",
                 ],
                 "environment": {
-                    "FLASK_APP": "jhub_apps.service.app",
+                    "FLASK_APP": "jhub_apps.service.main:app",
                     "JHUB_APP_TITLE": c.JAppsConfig.app_title,
                     "JHUB_APP_ICON": c.JAppsConfig.app_icon,
                 },

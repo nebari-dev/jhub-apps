@@ -7,8 +7,8 @@ import requests
 
 from jhub_apps.spawner.types import UserOptions
 
-API_URL = os.environ["JUPYTERHUB_API_URL"]
-JUPYTERHUB_API_TOKEN = os.environ["JUPYTERHUB_API_TOKEN"]
+API_URL = os.environ.get("JUPYTERHUB_API_URL")
+JUPYTERHUB_API_TOKEN = os.environ.get("JUPYTERHUB_API_TOKEN")
 
 
 class HubClient:
