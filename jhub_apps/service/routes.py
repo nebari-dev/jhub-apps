@@ -2,7 +2,7 @@ import os
 from functools import wraps
 
 from bokeh.embed import server_document
-from flask import make_response, redirect, render_template, request, session, Blueprint
+from flask import make_response, redirect, render_template, request, session, Blueprint, abort
 from jupyterhub.services.auth import HubOAuth
 
 from jhub_apps.launcher.hub_client import HubClient
@@ -42,15 +42,40 @@ def authenticated(f):
     return decorated
 
 
-# @api.route(prefix + "server/<path:subpath>")
 @api.route(f"{prefix}/server")
 @api.route(f"{prefix}/server/<path:subpath>")
 @authenticated
 def servers(user, subpath=None):
     hub_client = HubClient()
-    user = hub_client.get_user(user["name"])
-    assert user
-    return {"servers": user["servers"]}
+    if request.method == "GET":
+        user = hub_client.get_user(user["name"])
+        assert user
+        return {"servers": user["servers"]}
+
+    elif request.method == "POST":
+        return hub_client.create_server(
+            username=user["name"],
+            edit=False,
+            servername=request.args.get("servername"),
+            user_options=request.args.get("user_options"),
+        )
+
+    elif request.method == "PUT":
+        return hub_client.create_server(
+            username=user["name"],
+            servername=request.args.get("servername"),
+            edit=True,
+            user_options=request.args.get("user_options"),
+        )
+
+    elif request.method == "DELETE":
+        return hub_client.delete_server(
+            user["name"],
+            server_name=request.args.get("servername"),
+        )
+
+    else:
+        abort(405)
 
 
 @api.route(f"{prefix}/")
