@@ -23,4 +23,3 @@ def create_app():
     # encryption key for session cookies
     app.secret_key = secrets.token_bytes(32)
     return app
-

@@ -13,8 +13,7 @@ api = Blueprint("api", __name__)
 
 def get_hub_oauth():
     return HubOAuth(
-        api_token=os.environ.get("JUPYTERHUB_API_TOKEN", str()),
-        cache_max_age=60
+        api_token=os.environ.get("JUPYTERHUB_API_TOKEN", str()), cache_max_age=60
     )
 
 
@@ -49,12 +48,12 @@ def authenticated(f):
 @authenticated
 def servers(user, subpath=None):
     hub_client = HubClient()
-    user = hub_client.get_user(user['name'])
-    import ipdb as pdb; pdb.set_trace()
+    user = hub_client.get_user(user["name"])
+    import ipdb as pdb
+
+    pdb.set_trace()
     assert user
-    return {
-        "servers": user["servers"]
-    }
+    return {"servers": user["servers"]}
 
 
 @api.route(f"{prefix}/")
