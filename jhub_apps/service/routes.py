@@ -49,9 +49,6 @@ def authenticated(f):
 def servers(user, subpath=None):
     hub_client = HubClient()
     user = hub_client.get_user(user["name"])
-    import ipdb as pdb
-
-    pdb.set_trace()
     assert user
     return {"servers": user["servers"]}
 
