@@ -97,7 +97,7 @@ label {
     font-family: var(--base-font-family);
 }
 
-.text-input:focus {
+.text-input:focus, .card:focus, .card:active {
     outline-color: var(--primary-color) !important;
 }
 
@@ -210,6 +210,10 @@ a:focus {
 #help-floater:hover {
     background-color: var(--primary-color-dark)!important;
     border-color: var(--primary-color-dark)!important;
+}
+
+.modal-footer .btn+.btn {
+    margin-left: 8px;
 }
 
 /* Navbar  */

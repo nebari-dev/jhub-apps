@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
+import Button from '../button/button';
 import ContextMenu, { ContextMenuItem } from '../context-menu/context-menu';
+import Modal from '../modal/modal';
 import Tag from '../tag/tag';
 
 interface AppCardProps {
@@ -21,6 +23,7 @@ export const AppCard = ({
   url,
   ready = false,
 }: AppCardProps): React.ReactElement => {
+  const [isOpen, setIsOpen] = useState(false);
   const handleStart = () => {
     window.location.assign(url);
   };
@@ -33,8 +36,14 @@ export const AppCard = ({
     window.location.assign(`/services/japps/create-app/?name=${id}`);
   };
 
+  const handleDeletePrompt = () => {
+    setIsOpen(true);
+  };
+
   const handleDelete = () => {
-    window.location.assign('/services/japps');
+    // window.location.assign('/services/japps');
+    console.log(`Deleting app with id: ${id}`);
+    setIsOpen(false);
   };
 
   const menuItems: ContextMenuItem[] = [
@@ -58,15 +67,45 @@ export const AppCard = ({
     {
       id: 'delete',
       title: 'Delete',
-      onClick: () => handleDelete(),
+      onClick: () => handleDeletePrompt(),
     },
   ];
+
+  const body = (
+    <p className="w-[400px]">
+      Are you sure you want to delete <b>{title}</b>? This action permanent and
+      cannot be reversed.
+    </p>
+  );
+
+  const footer = (
+    <div className="modal-btn-group">
+      <Button
+        id="cancel-btn"
+        variant="secondary"
+        onClick={() => setIsOpen(false)}
+      >
+        Cancel
+      </Button>
+      <Button id="delete-btn" variant="primary" onClick={() => handleDelete()}>
+        Delete
+      </Button>
+    </div>
+  );
 
   return (
     <div className="card" id={`card-${id}`} tabIndex={0}>
       <div className="card-header-media">
         <div className="card-header-menu">
           <ContextMenu id={`card-menu-${id}`} items={menuItems} />
+          {isOpen && (
+            <Modal
+              title={`Delete ${title}`}
+              setIsOpen={setIsOpen}
+              body={body}
+              footer={footer}
+            />
+          )}
         </div>
         <div className="card-header-img">
           {thumbnail ? <img src={thumbnail} alt="App thumb" /> : undefined}
