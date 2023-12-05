@@ -50,6 +50,7 @@ def subclass_spawner(base_spawner):
                     base_url=self.config.JupyterHub.bind_url,
                     jh_service_prefix=jh_service_prefix,
                     voila_base_url=f"{jh_service_prefix}",
+                    conda_env=self.user_options.get("conda_env", ""),
                 )
                 argv.extend(command_args)
             return argv

@@ -12,11 +12,12 @@ c.JupyterHub.authenticator_class = DummyAuthenticator
 c.JupyterHub.log_level = 10
 
 hub_url = "http://127.0.0.1:8000"
-
 c.JupyterHub.bind_url = hub_url
-c = install_jhub_apps(c, spawner_to_subclass=SimpleLocalProcessSpawner)
-
+c.JAppsConfig.jupyterhub_config_path = "jupyterhub_config.py"
+c.JAppsConfig.conda_envs = []
 c.JupyterHub.default_url = "/hub/home"
+
+c = install_jhub_apps(c, spawner_to_subclass=SimpleLocalProcessSpawner)
 
 c.JupyterHub.template_paths = theme_template_paths
 c.JupyterHub.services.extend(

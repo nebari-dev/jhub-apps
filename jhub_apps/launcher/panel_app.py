@@ -6,7 +6,11 @@ from typing import Any
 
 import panel as pn
 
+from jupyterhub.app import JupyterHub
+
 from jhub_apps.launcher.hub_client import HubClient
+from traitlets.config import LazyConfigValue
+
 from jhub_apps.spawner.types import (
     FRAMEWORKS_MAPPING,
     FrameworkConf,
@@ -126,6 +130,8 @@ class InputFormWidget:
     spinner: Any
     button_widget: Any
     framework: Any
+    conda_envs: Any
+    spawner_profiles: typing.Optional[Any] = None
 
 
 pn.config.sizing_mode = "stretch_width"
@@ -327,6 +333,16 @@ def create_apps_grid(username):
 def get_input_form_widget():
     frameworks_display = {f.display_name: f.name for f in FRAMEWORKS_MAPPING.values()}
     heading = heading_markdown("Create Apps")
+
+    config = get_jupyterhub_config()
+    conda_envs = get_conda_envs(config)
+    spawner_profiles = get_spawner_profiles(config)
+    profiles = [p["display_name"] for p in spawner_profiles]
+
+    envs = {env: env for env in conda_envs}
+    pn.state.log(f"Conda Environments: {conda_envs}")
+    pn.state.log(f"JupyterHub config: {config}")
+
     input_form_widget = InputFormWidget(
         name_input=pn.widgets.TextInput(name="Name", css_classes=["custom-font"]),
         filepath_input=pn.widgets.TextInput(
@@ -345,6 +361,12 @@ def get_input_form_widget():
         button_widget=pn.widgets.Button(name=CREATE_APP_BTN_TXT, button_type="primary"),
         framework=pn.widgets.Select(
             name="Framework", options=frameworks_display, css_classes=["custom-font"]
+        ),
+        conda_envs=pn.widgets.Select(
+            name="Conda Environment", options=envs, css_classes=["custom-font"]
+        ),
+        spawner_profiles=pn.widgets.Select(
+            name="Spawner Profile", options=profiles, css_classes=["custom-font"]
         ),
     )
 
@@ -366,9 +388,12 @@ def get_input_form_widget():
         input_form_widget.description_input,
         input_form_widget.framework,
         input_form_widget.custom_command,
-        input_form_widget.button_widget,
+        input_form_widget.conda_envs,
         width=400,
     )
+    if profiles:
+        input_form.append(input_form_widget.spawner_profiles)
+    input_form.append(input_form_widget.button_widget)
     return input_form_widget, input_form
 
 
@@ -402,6 +427,7 @@ def _create_server(event, input_form_widget, input_form, username):
         thumbnail.save(thumbnail_local_filepath)
 
     hclient = HubClient()
+    selected_conda_env = input_form_widget.conda_envs.value or ""
     user_options = UserOptions(
         display_name=display_name,
         jhub_app=True,
@@ -410,6 +436,8 @@ def _create_server(event, input_form_widget, input_form, username):
         filepath=filepath,
         framework=framework,
         custom_command=input_form_widget.custom_command.value,
+        conda_env=selected_conda_env,
+        profile=input_form_widget.spawner_profiles.value
     )
     try:
         response_status_code, servername = hclient.create_server(
@@ -463,6 +491,48 @@ def get_username():
     username = pn.state.session_args.get("username")
     if username:
         return username[0].decode()
+
+
+def get_jupyterhub_config():
+    hub = JupyterHub()
+    jhub_config_file_path = os.environ["JHUB_JUPYTERHUB_CONFIG"]
+    print(f"Getting JHub config from file: {jhub_config_file_path}")
+    hub.load_config_file(jhub_config_file_path)
+    config = hub.config
+    print(f"JHub config from file: {config}")
+    print(f"JApps config: {config.JAppsConfig}")
+    return config
+
+
+def get_conda_envs(config):
+    """This will extract conda environment from the JupyterHub config"""
+    if isinstance(config.JAppsConfig.conda_envs, list):
+        return config.JAppsConfig.conda_envs
+    elif isinstance(config.JAppsConfig.conda_envs, LazyConfigValue):
+        return []
+    elif callable(config.JAppsConfig.conda_envs):
+        return config.JAppsConfig.conda_envs()
+    else:
+        raise ValueError(
+            f"Invalid value for config.JAppsConfig.conda_envs: {config.JAppsConfig.conda_envs}"
+        )
+
+
+def get_spawner_profiles(config):
+    """This will extract conda environment from the JupyterHub config
+    if the Spawner is KubeSpawner
+    """
+    profile_list = config.KubeSpawner.profile_list
+    if isinstance(profile_list, list):
+        return config.KubeSpawner.profile_list
+    elif isinstance(profile_list, LazyConfigValue):
+        return []
+    elif callable(profile_list):
+        return profile_list()
+    else:
+        raise ValueError(
+            f"Invalid value for config.KubeSpawner.profile_list: {profile_list}"
+        )
 
 
 def create_app_form_page():
