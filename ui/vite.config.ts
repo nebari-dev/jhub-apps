@@ -28,8 +28,10 @@ export default defineConfig({
                       display_name: 'Test App',
                       description:
                         'Lorem ipsum dolor sit amet consectetur. Sit vestibulum facilisis auctor pulvinar ac. Cras.',
-                      thumbnail: null,
+                      imgUrl:
+                        'https://designsystem.digital.gov/img/introducing-uswds-2-0/built-to-grow--alt.jpg',
                       framework: 'Panel',
+                      ready: true,
                     },
                   },
                   'test-app-2': {
@@ -41,8 +43,10 @@ export default defineConfig({
                       display_name: 'Test App 2',
                       description:
                         'Lorem ipsum dolor sit amet consectetur. Sit vestibulum facilisis auctor pulvinar ac. Bras.',
-                      thumbnail: null,
+                      imgUrl:
+                        'https://designsystem.digital.gov/img/introducing-uswds-2-0/built-to-grow--alt.jpg',
                       framework: 'Streamlit',
+                      ready: false,
                     },
                   },
                   'test-app-3': {
@@ -54,8 +58,9 @@ export default defineConfig({
                       display_name: 'Test App 3',
                       description:
                         'Lorem ipsum dolor sit amet consectetur. Sit vestibulum facilisis auctor pulvinar ac. Dras.',
-                      thumbnail: null,
+                      imgUrl: null,
                       framework: 'JupyterLab',
+                      ready: false,
                     },
                   },
                   'test-app-4': {
@@ -66,8 +71,9 @@ export default defineConfig({
                       jhub_app: true,
                       display_name: 'Test App 4',
                       description: 'Cras.',
-                      thumbnail: null,
+                      imgUrl: null,
                       framework: 'Streamlit',
+                      ready: false,
                     },
                   },
                 },

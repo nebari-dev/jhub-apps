@@ -10,6 +10,7 @@ describe('AppCard', () => {
         title="Card 1"
         framework="Some Framework"
         url="/some-url"
+        ready={false}
       />,
     );
     const header = baseElement.querySelector('h3');
@@ -24,6 +25,7 @@ describe('AppCard', () => {
         framework="Some Framework"
         url="/some-url"
         thumbnail="/some-thumbnail.png"
+        ready={true}
       />,
     );
     const header = baseElement.querySelector('h3');

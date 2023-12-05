@@ -91,6 +91,7 @@ export const AppsGrid = ({
                 thumbnail={app.thumbnail}
                 framework={app.framework}
                 url={app.url}
+                ready={app.ready}
               />
             ))}
           </div>

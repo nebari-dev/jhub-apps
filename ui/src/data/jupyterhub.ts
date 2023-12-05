@@ -73,6 +73,7 @@ export const apps: JhApp[] = [
       'https://designsystem.digital.gov/img/introducing-uswds-2-0/built-to-grow--alt.jpg',
     url: '/hub/app1',
     shared: false,
+    ready: true,
   },
   {
     id: '2',
@@ -84,6 +85,7 @@ export const apps: JhApp[] = [
       'https://designsystem.digital.gov/img/introducing-uswds-2-0/built-to-grow--alt.jpg',
     url: '/hub/app2',
     shared: false,
+    ready: false,
   },
   {
     id: '3',
@@ -93,6 +95,7 @@ export const apps: JhApp[] = [
     framework: 'Some Framework',
     url: '/hub/app3',
     shared: false,
+    ready: false,
   },
   {
     id: '4',
@@ -102,6 +105,7 @@ export const apps: JhApp[] = [
     framework: 'Some Framework',
     url: '/hub/app4',
     shared: false,
+    ready: false,
   },
   {
     id: '5',
@@ -111,6 +115,7 @@ export const apps: JhApp[] = [
     framework: 'Some Framework',
     url: '/hub/app5',
     shared: false,
+    ready: false,
   },
   {
     id: '6',
@@ -120,6 +125,7 @@ export const apps: JhApp[] = [
     framework: 'Some Framework',
     url: '/hub/app6',
     shared: true,
+    ready: false,
   },
 ];
 

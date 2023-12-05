@@ -56,7 +56,7 @@
 
   .text-input {
     border: 1px solid theme('colors.gray-darkest');
-    border-radius: 0;
+    border-radius: 0.25rem;
   }
 
   .text-input:focus {
@@ -69,8 +69,21 @@
     border-radius: 0.25rem;
   }
 
+  .card:focus {
+    outline: 0.2rem solid theme('colors.primary-light');
+  }
+
   .card-header {
     padding: 1.5rem 1.5rem 0.5rem;
+  }
+
+  .card-header-menu {
+    width: 100%;
+    display: flex;
+    justify-content: right;
+    position: relative;
+    top: 5px;
+    right: 5px;
   }
 
   .card-header-media {
@@ -92,6 +105,88 @@
     padding: 0.5rem 1.5rem 1.5rem;
   }
 
+  .modal-overlay {
+    background-color: rgba(0, 0, 0, 0.5);
+    width: 100vw;
+    height: 100vh;
+    z-index: 0;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    position: fixed;
+  }
+
+  .modal-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .modal-main {
+    min-width: 280px;
+    min-height: 160px;
+    background-color: theme('colors.white');
+    z-index: 1000;
+    border-radius: 4px;
+    box-shadow: 0 5px 20px 0 rgba(0, 0, 0, 0.04);
+  }
+
+  .modal-heading {
+    background-color: theme('colors.white');
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+  }
+
+  .modal-title {
+    margin: 0;
+    padding: 10px 16px;
+    color: theme('colors.text-dark');
+    font-weight: 700;
+    font-size: 1rem;
+    border-bottom: 1px solid theme('colors.gray-lighter');
+  }
+
+  .modal-close-btn {
+    color: theme('colors.text-dark');
+    font-weight: 700;
+    width: 12px;
+    height: 12px;
+    margin: 8px;
+    border: none;
+    background-color: theme('colors.white');
+    box-shadow: 0 5px 20px 0 rgba(0, 0, 0, 0.06);
+    position: absolute;
+    right: 8px;
+    top: 8px;
+    align-self: flex-end;
+  }
+
+  .modal-close-btn:active {
+    border: 2px solid theme('colors.primary-darker');
+  }
+
+  .modal-body {
+    min-height: 120px;
+    color: theme('colors.text-dark');
+    padding: 16px 16px;
+    font-size: 0.93rem;
+  }
+
+  .modal-footer {
+    border-top: 1px solid theme('colors.gray-lighter');
+    padding: 10px 16px;
+  }
+
+  .modal-btn-group {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .modal-btn-group button {
+    margin-left: 8px;
+  }
+
   .tag {
     background-color: theme('colors.gray-lighter');
     color: theme('colors.gray-darkest');
@@ -108,7 +203,7 @@
   .alert-body {
     padding-left: 4rem;
     padding-right: 4rem;
-    color: #1b1b1b;
+    color: theme('colors.text-dark');
     margin-left: auto;
     margin-right: auto;
     padding: 0.5rem;
@@ -116,7 +211,7 @@
   }
 
   .alert-text {
-    color: #1b1b1b;
+    color: theme('colors.text-dark');
   }
 
   .alert-success {
@@ -137,6 +232,63 @@
   .alert-info {
     border-left-color: theme('colors.info');
     background-color: theme('colors.info-light');
+  }
+
+  .card:hover .context-menu-container,
+  .card:focus .context-menu-container {
+    display: block;
+  }
+
+  .context-menu-container {
+    display: none;
+    position: absolute;
+    color: theme('colors.text-dark');
+    width: 24px;
+    height: 24px;
+    border: 1px solid theme('colors.gray-lighter');
+    border-radius: 50%;
+    background-color: theme('colors.white');
+    cursor: pointer;
+  }
+
+  .context-menu-container:focus .context-menu {
+    display: block;
+  }
+
+  .context-menu {
+    display: none;
+    list-style: none;
+    position: absolute;
+    top: 28px;
+    right: 0;
+    background-color: theme('colors.white');
+    border: theme('colors.gray-lighter');
+    border-radius: 4px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 0;
+    min-width: 120px;
+  }
+
+  .context-menu li {
+    padding: 6px 12px;
+    cursor: pointer;
+  }
+
+  .context-menu li:hover {
+    background-color: theme('colors.gray-lightest');
+  }
+
+  .context-menu li a {
+    text-decoration: none;
+    color: theme('colors.text-dark');
+    display: block;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+  }
+
+  .context-menu li a.disabled {
+    cursor: not-allowed;
+    color: theme('colors.gray-light') !important;
   }
 
   .spacer {
