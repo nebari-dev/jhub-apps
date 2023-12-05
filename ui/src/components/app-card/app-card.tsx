@@ -73,7 +73,7 @@ export const AppCard = ({
 
   const body = (
     <p className="w-[400px]">
-      Are you sure you want to delete <b>{title}</b>? This action permanent and
+      Are you sure you want to delete <b>{title}</b>? This action is permanent and
       cannot be reversed.
     </p>
   );
