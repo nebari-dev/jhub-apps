@@ -29,6 +29,11 @@ def install_jhub_apps(c, spawner_to_subclass):
     if not isinstance(c.JAppsConfig.app_icon, str):
         c.JAppsConfig.app_icon = JAppsConfig.app_icon.default_value
 
+    if not isinstance(c.JAppsConfig.jupyterhub_config_path, str):
+        c.JAppsConfig.jupyterhub_config_path = (
+            JAppsConfig.jupyterhub_config_path.default_value
+        )
+
     if not isinstance(bind_url, str):
         raise ValueError(f"c.JupyterHub.bind_url is not set: {c.JupyterHub.bind_url}")
     if not c.JupyterHub.services:
@@ -72,6 +77,7 @@ def install_jhub_apps(c, spawner_to_subclass):
                     "PUBLIC_HOST": public_host,
                     "JHUB_APP_TITLE": c.JAppsConfig.app_title,
                     "JHUB_APP_ICON": c.JAppsConfig.app_icon,
+                    "JHUB_JUPYTERHUB_CONFIG": c.JAppsConfig.jupyterhub_config_path,
                 },
                 "oauth_redirect_uri": oauth_redirect_uri,
                 "display": False,
@@ -89,6 +95,9 @@ def install_jhub_apps(c, spawner_to_subclass):
                 "api_token": os.environ.get(
                     "JHUB_APP_LAUNCHER_TOKEN", _create_token_for_service()
                 ),
+                "environment": {
+                    "JHUB_JUPYTERHUB_CONFIG": c.JAppsConfig.jupyterhub_config_path,
+                },
                 "display": False,
             },
         ]

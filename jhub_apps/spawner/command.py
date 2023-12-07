@@ -58,6 +58,7 @@ DEFAULT_CMD = Command(
 GENERIC_ARGS = [
     "--destport=0",
     "--ready-check-path=/ready-check",
+    TString("--conda-env=$conda_env"),
     TString("$python_exec"),
     "{-}m",
 ]
@@ -66,6 +67,7 @@ COMMANDS = {
     Framework.gradio.value: Command(
         args=[
             "--destport=0",
+            TString("--conda-env=$conda_env"),
             TString("$python_exec"),
             TString("$filepath"),
             "{--}server-port={port}",
@@ -76,6 +78,7 @@ COMMANDS = {
     Framework.voila.value: Command(
         args=[
             "--destport=0",
+            TString("--conda-env=$conda_env"),
             TString("$python_exec"),
             "{-}m",
             "voila",
@@ -95,6 +98,7 @@ COMMANDS = {
     Framework.streamlit.value: Command(
         args=[
             "--destport=0",
+            TString("--conda-env=$conda_env"),
             TString("$python_exec"),
             "{-}m",
             "streamlit",
@@ -109,6 +113,7 @@ COMMANDS = {
     Framework.plotlydash.value: Command(
         args=[
             "--destport=0",
+            TString("--conda-env=$conda_env"),
             TString("$python_exec"),
             "{-}m",
             "plotlydash_tornado_cmd.main",
@@ -119,6 +124,7 @@ COMMANDS = {
     Framework.bokeh.value: Command(
         args=[
             "--destport=0",
+            TString("--conda-env=$conda_env"),
             TString("$python_exec"),
             "{-}m",
             "bokeh_root_cmd.main",
@@ -133,6 +139,7 @@ COMMANDS = {
     Framework.panel.value: Command(
         args=[
             "--destport=0",
+            TString("--conda-env=$conda_env"),
             TString("$python_exec"),
             "{-}m",
             "bokeh_root_cmd.main",

@@ -16,6 +16,7 @@ export interface JhApp {
   url: string;
   thumbnail?: string;
   shared: boolean;
+  ready: boolean;
 }
 
 export interface JhService {
