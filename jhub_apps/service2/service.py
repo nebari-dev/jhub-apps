@@ -23,7 +23,6 @@ async def get_token(code: str = Form(...)):
     "Callback function for OAuth2AuthorizationCodeBearer scheme"
     # The only thing we need in this form post is the code
     # Everything else we can hardcode / pull from env
-    import ipdb as pdb; pdb.set_trace()
     async with get_client() as client:
         redirect_uri = (
             os.environ["PUBLIC_HOST"] + os.environ["JUPYTERHUB_OAUTH_CALLBACK_URL"],
@@ -50,7 +49,7 @@ async def index(
     request_args = dict(request.query_params)
     script = server_document(
         f"/services/launcher/{subpath}",
-        arguments={"username": user["name"], **request_args},
+        arguments={"username": user.name, **request_args},
     )
     return templates.TemplateResponse(
         "launcher_base.html",

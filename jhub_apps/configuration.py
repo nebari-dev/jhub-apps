@@ -41,8 +41,8 @@ def install_jhub_apps(c, spawner_to_subclass):
 
     if "PUBLIC_HOST" not in os.environ:
         msg = (
-            "env PUBLIC_HOST is not set, defaulting to http://127.0.0.1:8000.  "
-            "This can cause problems with OAuth.  "
+            "env PUBLIC_HOST is not set, defaulting to http://127.0.0.1:8000. "
+            "This can cause problems with OAuth. "
             "Set PUBLIC_HOST to your public (browser accessible) host."
         )
         warnings.warn(msg)

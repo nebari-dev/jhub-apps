@@ -21,10 +21,11 @@ class User(BaseModel):
     name: str
     admin: bool
     groups: Optional[List[str]]
-    server: Optional[str]
-    pending: Optional[str]
-    last_activity: datetime
-    servers: Optional[Dict[str, Server]]
+    kind: str
+    server: Optional[str] = None
+    pending: Optional[str] = None
+    last_activity: Optional[datetime] = None
+    servers: Optional[Dict[str, Server]] = None
     scopes: List[str]
 
 

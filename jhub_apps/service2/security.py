@@ -36,8 +36,8 @@ else:
 ### For consideration: optimize performance with a cache instead of
 ### always hitting the Hub api?
 async def get_current_user(
-        auth_param: str = Security(auth_by_param, use_cache=False),
-        auth_header: str = Security(auth_by_header, use_cache=False),
+        auth_param: str = Security(auth_by_param),
+        auth_header: str = Security(auth_by_header),
 ):
     token = auth_param or auth_header
     if token is None:
