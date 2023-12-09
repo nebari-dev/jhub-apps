@@ -4,7 +4,6 @@ import uuid
 
 import requests
 
-from jhub_apps.service2.models import UserOptions
 
 API_URL = os.environ.get("JUPYTERHUB_API_URL")
 JUPYTERHUB_API_TOKEN = os.environ.get("JUPYTERHUB_API_TOKEN")
@@ -48,7 +47,7 @@ class HubClient:
         return text
 
     def create_server(
-        self, username, servername, edit=True, user_options: UserOptions = None
+        self, username, servername, edit=True, user_options = None
     ):
         server = self.get_server(username, servername)
         if not edit:

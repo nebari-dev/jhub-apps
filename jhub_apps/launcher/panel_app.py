@@ -8,9 +8,9 @@ import panel as pn
 
 from jupyterhub.app import JupyterHub
 
-from jhub_apps.launcher.hub_client import HubClient
 from traitlets.config import LazyConfigValue
 
+from jhub_apps.hub_client.hub_client import HubClient
 from jhub_apps.spawner.types import (
     FRAMEWORKS_MAPPING,
     FrameworkConf,

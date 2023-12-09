@@ -10,9 +10,10 @@ from bokeh.embed import server_document
 from fastapi import FastAPI, Request
 from fastapi.templating import Jinja2Templates
 
-from ..launcher.hub_client import HubClient
+from ..hub_client.hub_client import HubClient
 
 app = FastAPI()
+
 templates = Jinja2Templates(directory="jhub_apps/templates")
 
 # APIRouter prefix cannot end in /
