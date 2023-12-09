@@ -1,3 +1,4 @@
+import typing
 from datetime import datetime
 from typing import Any, Dict, List, Optional
 
@@ -44,3 +45,20 @@ class HubResponse(BaseModel):
 
 class HubApiError(BaseModel):
     detail: HubResponse
+
+
+class UserOptions(BaseModel):
+    jhub_app: bool
+    display_name: str
+    description: str
+    thumbnail: str
+    filepath: str
+    framework: str
+    custom_command: typing.Optional[str] = None
+    conda_env: typing.Optional[dict] = None
+    profile: typing.Optional[str] = None
+
+
+class ServerCreation(BaseModel):
+    servername: str
+    user_options: UserOptions

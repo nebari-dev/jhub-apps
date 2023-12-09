@@ -3,12 +3,14 @@ import os
 from fastapi import APIRouter, Depends, Form
 
 from .client import get_client
-from .models import AuthorizationError, HubApiError, User
+from .models import AuthorizationError, HubApiError, User, ServerCreation
 from .security import get_current_user
 
 from bokeh.embed import server_document
 from fastapi import FastAPI, Request
 from fastapi.templating import Jinja2Templates
+
+from ..launcher.hub_client import HubClient
 
 app = FastAPI()
 templates = Jinja2Templates(directory="jhub_apps/templates")
@@ -59,6 +61,58 @@ async def index(
             "jhub_api_title": os.environ.get("JHUB_APP_TITLE"),
             "jhub_api_icon": os.environ.get("JHUB_APP_ICON"),
         }
+    )
+
+@router.get("/server/{subpath}")
+async def get_server(
+        request: Request,
+        user: User = Depends(get_current_user),
+        subpath=None
+):
+    hub_client = HubClient()
+    user = hub_client.get_user(user.name)
+    assert user
+    return {"servers": user["servers"]}
+
+
+@router.post("/server/")
+async def create_server(
+        # request: Request,
+        server: ServerCreation,
+        user: User = Depends(get_current_user),
+):
+    hub_client = HubClient()
+    return hub_client.create_server(
+        username=user.name,
+        servername=server.servername,
+        user_options=server.user_options,
+    )
+
+@router.put("/server/")
+async def update_server(
+        request: Request,
+        user: User = Depends(get_current_user),
+        subpath=None
+):
+    hub_client = HubClient()
+    return hub_client.create_server(
+        username=user.name,
+        servername=request.args.get("servername"),
+        edit=True,
+        user_options=request.args.get("user_options"),
+    )
+
+
+@router.delete("/server/")
+async def delete_server(
+        request: Request,
+        user: User = Depends(get_current_user),
+        subpath=None
+):
+    hub_client = HubClient()
+    return hub_client.delete_server(
+        user.name,
+        server_name=request.args.get("servername"),
     )
 
 
