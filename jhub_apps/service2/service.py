@@ -1,6 +1,6 @@
 import os
 
-from fastapi import APIRouter, Depends, Form
+from fastapi import APIRouter, Depends, Form, status
 
 from .client import get_client
 from .models import AuthorizationError, HubApiError, User, ServerCreation
@@ -64,16 +64,19 @@ async def index(
         }
     )
 
-@router.get("/server/{subpath}")
+@router.get("/server/{server_name}")
 async def get_server(
-        request: Request,
         user: User = Depends(get_current_user),
-        subpath=None
+        server_name=None
 ):
     hub_client = HubClient()
     user = hub_client.get_user(user.name)
     assert user
-    return {"servers": user["servers"]}
+    user_servers = user["servers"]
+    for s_name, server_details in user_servers.items():
+        if s_name == server_name:
+            return server_details
+    return status.HTTP_404_NOT_FOUND
 
 
 @router.post("/server/")
@@ -89,31 +92,30 @@ async def create_server(
         user_options=server.user_options,
     )
 
-@router.put("/server/")
+@router.put("/server/{server_name}")
 async def update_server(
-        request: Request,
+        server: ServerCreation,
         user: User = Depends(get_current_user),
-        subpath=None
+        server_name=None
 ):
     hub_client = HubClient()
     return hub_client.create_server(
         username=user.name,
-        servername=request.args.get("servername"),
+        servername=server_name,
         edit=True,
-        user_options=request.args.get("user_options"),
+        user_options=server.user_options,
     )
 
 
-@router.delete("/server/")
+@router.delete("/server/{server_name}")
 async def delete_server(
-        request: Request,
         user: User = Depends(get_current_user),
-        subpath=None
+        server_name=None
 ):
     hub_client = HubClient()
     return hub_client.delete_server(
         user.name,
-        server_name=request.args.get("servername"),
+        server_name=server_name,
     )
 
 

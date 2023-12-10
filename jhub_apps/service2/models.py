@@ -51,12 +51,12 @@ class UserOptions(BaseModel):
     jhub_app: bool
     display_name: str
     description: str
-    thumbnail: str
-    filepath: str
-    framework: str
-    custom_command: typing.Optional[str] = None
-    conda_env: typing.Optional[dict] = None
-    profile: typing.Optional[str] = None
+    thumbnail: typing.Optional[str] = str()
+    filepath: typing.Optional[str] = str()
+    framework: str = "panel"
+    custom_command: typing.Optional[str] = str()
+    conda_env: typing.Optional[str] = str()
+    profile: typing.Optional[str] = str()
 
 
 class ServerCreation(BaseModel):
