@@ -1,25 +1,32 @@
 import os
-import secrets
 from pathlib import Path
 
-from flask import Flask
+from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
 
-from jhub_apps.service.routes import api
+from .service import router
 
-prefix = os.environ.get("JUPYTERHUB_SERVICE_PREFIX", "/")
+### When managed by Jupyterhub, the actual endpoints
+### will be served out prefixed by /services/:name.
+### One way to handle this with FastAPI is to use an APIRouter.
+### All routes are defined in service.py
 
-TEMPLATES_DIR = Path(__file__).parent.parent / "templates"
 STATIC_DIR = Path(__file__).parent.parent / "static"
 
-
-def create_app():
-    app = Flask(
-        __name__,
-        template_folder=TEMPLATES_DIR,
-        static_folder=STATIC_DIR,
-        static_url_path=prefix + "/static",
-    )
-    app.register_blueprint(api)
-    # encryption key for session cookies
-    app.secret_key = secrets.token_bytes(32)
-    return app
+app = FastAPI(
+    title="JApps Service",
+    version="0.1",
+    ### Serve out Swagger from the service prefix (<hub>/services/:name/docs)
+    openapi_url=router.prefix + "/openapi.json",
+    docs_url=router.prefix + "/docs",
+    redoc_url=router.prefix + "/redoc",
+    ### Add our service client id to the /docs Authorize form automatically
+    swagger_ui_init_oauth={"clientId": os.environ["JUPYTERHUB_CLIENT_ID"]},
+    swagger_ui_parameters={"persistAuthorization": True},
+    ### Default /docs/oauth2 redirect will cause Hub
+    ### to raise oauth2 redirect uri mismatch errors
+    swagger_ui_oauth2_redirect_url=os.environ["JUPYTERHUB_OAUTH_CALLBACK_URL"],
+)
+static_files = StaticFiles(directory=STATIC_DIR)
+app.mount(f"{router.prefix}/static", static_files, name="static")
+app.include_router(router)

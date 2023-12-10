@@ -69,7 +69,7 @@ def install_jhub_apps(c, spawner_to_subclass):
                     c.JAppsConfig.python_exec,
                     "-m",
                     "uvicorn",
-                    "jhub_apps.service2.app:app",
+                    "jhub_apps.service.app:app",
                     "--port",
                     "10202"
                 ],
