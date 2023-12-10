@@ -46,9 +46,7 @@ class HubClient:
         text = text.replace(" ", "-")
         return text
 
-    def create_server(
-        self, username, servername, edit=True, user_options = None
-    ):
+    def create_server(self, username, servername, edit=True, user_options=None):
         server = self.get_server(username, servername)
         if not edit:
             servername = self.normalize_server_name(servername)

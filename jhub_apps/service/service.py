@@ -44,11 +44,7 @@ async def get_token(code: str = Form(...)):
 
 @router.get("/")
 @router.get("/{subpath}")
-async def index(
-        request: Request,
-        user: User = Depends(get_current_user),
-        subpath=None
-):
+async def index(request: Request, user: User = Depends(get_current_user), subpath=None):
     request_args = dict(request.query_params)
     script = server_document(
         f"/services/launcher/{subpath}",
@@ -61,14 +57,12 @@ async def index(
             "script": script,
             "jhub_api_title": os.environ.get("JHUB_APP_TITLE"),
             "jhub_api_icon": os.environ.get("JHUB_APP_ICON"),
-        }
+        },
     )
 
+
 @router.get("/server/{server_name}")
-async def get_server(
-        user: User = Depends(get_current_user),
-        server_name=None
-):
+async def get_server(user: User = Depends(get_current_user), server_name=None):
     hub_client = HubClient()
     user = hub_client.get_user(user.name)
     assert user
@@ -81,9 +75,9 @@ async def get_server(
 
 @router.post("/server/")
 async def create_server(
-        # request: Request,
-        server: ServerCreation,
-        user: User = Depends(get_current_user),
+    # request: Request,
+    server: ServerCreation,
+    user: User = Depends(get_current_user),
 ):
     hub_client = HubClient()
     return hub_client.create_server(
@@ -92,11 +86,10 @@ async def create_server(
         user_options=server.user_options,
     )
 
+
 @router.put("/server/{server_name}")
 async def update_server(
-        server: ServerCreation,
-        user: User = Depends(get_current_user),
-        server_name=None
+    server: ServerCreation, user: User = Depends(get_current_user), server_name=None
 ):
     hub_client = HubClient()
     return hub_client.create_server(
@@ -108,10 +101,7 @@ async def update_server(
 
 
 @router.delete("/server/{server_name}")
-async def delete_server(
-        user: User = Depends(get_current_user),
-        server_name=None
-):
+async def delete_server(user: User = Depends(get_current_user), server_name=None):
     hub_client = HubClient()
     return hub_client.delete_server(
         user.name,

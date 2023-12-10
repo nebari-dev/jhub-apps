@@ -15,6 +15,7 @@ def client():
     os.environ["JUPYTERHUB_OAUTH_CALLBACK_URL"] = "/"
     from jhub_apps.service import app
     from jhub_apps.service.security import get_current_user
+
     async def mock_get_user_name():
         return MOCK_USER
 

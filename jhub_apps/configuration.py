@@ -51,7 +51,9 @@ def install_jhub_apps(c, spawner_to_subclass):
         public_host = os.environ["PUBLIC_HOST"].rstrip("/")
 
     fast_api_service_name = "japps"
-    oauth_redirect_uri = f"{public_host}/services/{fast_api_service_name}/oauth_callback"
+    oauth_redirect_uri = (
+        f"{public_host}/services/{fast_api_service_name}/oauth_callback"
+    )
     c.JupyterHub.services.extend(
         [
             {
@@ -71,7 +73,7 @@ def install_jhub_apps(c, spawner_to_subclass):
                     "uvicorn",
                     "jhub_apps.service.app:app",
                     "--port",
-                    "10202"
+                    "10202",
                 ],
                 "environment": {
                     "PUBLIC_HOST": public_host,
