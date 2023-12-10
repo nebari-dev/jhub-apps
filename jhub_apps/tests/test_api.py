@@ -3,14 +3,7 @@ from unittest.mock import patch
 from jhub_apps.hub_client.hub_client import HubClient
 from jhub_apps.tests.constants import MOCK_USER
 
-
-@patch.object(HubClient, "create_server")
-def test_api(create_server, client):
-    from jhub_apps.service.models import UserOptions
-    create_server_response = {
-        "user": "aktech"
-    }
-    create_server.return_value = create_server_response
+def mock_user_options():
     user_options = {
         "jhub_app": True,
         "display_name": "Panel App",
@@ -22,6 +15,17 @@ def test_api(create_server, client):
         "conda_env": "",
         "profile": "",
     }
+    return user_options
+
+
+@patch.object(HubClient, "create_server")
+def test_api_create_server(create_server, client):
+    from jhub_apps.service.models import UserOptions
+    create_server_response = {
+        "user": "aktech"
+    }
+    create_server.return_value = create_server_response
+    user_options = mock_user_options()
     body = {
         "servername": "panel-app",
         "user_options": user_options
@@ -34,3 +38,16 @@ def test_api(create_server, client):
     )
     assert response.json() == create_server_response
 
+
+@patch.object(HubClient, "delete_server")
+def test_api_delete_server(delete_server, client):
+    create_server_response = {
+        "user": "aktech"
+    }
+    delete_server.return_value = create_server_response
+    response = client.delete("/server/panel-app")
+    delete_server.assert_called_once_with(
+        MOCK_USER.name,
+        server_name='panel-app',
+    )
+    assert response.json() == create_server_response
