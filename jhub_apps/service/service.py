@@ -20,6 +20,8 @@ templates = Jinja2Templates(directory="jhub_apps/templates")
 service_prefix = os.getenv("JUPYTERHUB_SERVICE_PREFIX", "").rstrip("/")
 router = APIRouter(prefix=service_prefix)
 
+# TODO: Add response models for all endpoints
+
 
 @router.post("/get_token", include_in_schema=False)
 async def get_token(code: str = Form(...)):
@@ -40,25 +42,6 @@ async def get_token(code: str = Form(...)):
         resp = await client.post("/oauth2/token", data=data)
     ### resp.json() is {'access_token': <token>, 'token_type': 'Bearer'}
     return resp.json()
-
-
-@router.get("/")
-@router.get("/{subpath}")
-async def index(request: Request, user: User = Depends(get_current_user), subpath=None):
-    request_args = dict(request.query_params)
-    script = server_document(
-        f"/services/launcher/{subpath}",
-        arguments={"username": user.name, **request_args},
-    )
-    return templates.TemplateResponse(
-        "launcher_base.html",
-        {
-            "request": request,
-            "script": script,
-            "jhub_api_title": os.environ.get("JHUB_APP_TITLE"),
-            "jhub_api_icon": os.environ.get("JHUB_APP_ICON"),
-        },
-    )
 
 
 @router.get("/server/{server_name}")
@@ -109,28 +92,20 @@ async def delete_server(user: User = Depends(get_current_user), server_name=None
     )
 
 
-# response_model and responses dict translate to OpenAPI (Swagger) hints
-# compare and contrast what the /me endpoint looks like in Swagger vs /debug
 @router.get(
-    "/me",
+    "/user",
     response_model=User,
     responses={401: {"model": AuthorizationError}, 400: {"model": HubApiError}},
 )
 async def me(user: User = Depends(get_current_user)):
-    "Authenticated function that returns the User model"
+    """Authenticated function that returns the User model"""
     return user
 
 
-@router.get("/debug")
-async def debug(request: Request, user: User = Depends(get_current_user)):
-    """
-    Authenticated function that returns a few pieces of debug
-     * Environ of the service process
-     * Request headers
-     * User model
-    """
-    return {
-        "env": dict(os.environ),
-        "headers": dict(request.headers),
-        "user": user,
-    }
+@router.get(
+    "/status",
+)
+async def status():
+    """Check API Status"""
+    # TODO: Add version
+    return {"status": "ok"}

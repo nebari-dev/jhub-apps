@@ -74,3 +74,10 @@ def test_api_update_server(create_server, client):
         user_options=UserOptions(**user_options),
     )
     assert response.json() == create_server_response
+
+
+def test_api_status(client):
+    response = client.get(
+        "/status",
+    )
+    assert response.json() == {"status": "ok"}

@@ -38,18 +38,7 @@ def install_jhub_apps(c, spawner_to_subclass):
         raise ValueError(f"c.JupyterHub.bind_url is not set: {c.JupyterHub.bind_url}")
     if not c.JupyterHub.services:
         c.JupyterHub.services = []
-
-    if "PUBLIC_HOST" not in os.environ:
-        msg = (
-            "env PUBLIC_HOST is not set, defaulting to http://127.0.0.1:8000. "
-            "This can cause problems with OAuth. "
-            "Set PUBLIC_HOST to your public (browser accessible) host."
-        )
-        warnings.warn(msg)
-        public_host = "http://127.0.0.1:8000"
-    else:
-        public_host = os.environ["PUBLIC_HOST"].rstrip("/")
-
+    public_host = c.JupyterHub.bind_url
     fast_api_service_name = "japps"
     oauth_redirect_uri = (
         f"{public_host}/services/{fast_api_service_name}/oauth_callback"
@@ -59,14 +48,6 @@ def install_jhub_apps(c, spawner_to_subclass):
             {
                 "name": fast_api_service_name,
                 "url": "http://127.0.0.1:10202",
-                # TODO: Run flask app behind gunicorn
-                # "command": [
-                #     c.JAppsConfig.python_exec,
-                #     "-m",
-                #     "flask",
-                #     "run",
-                #     "--port=10202",
-                # ],
                 "command": [
                     c.JAppsConfig.python_exec,
                     "-m",
@@ -76,7 +57,7 @@ def install_jhub_apps(c, spawner_to_subclass):
                     "10202",
                 ],
                 "environment": {
-                    "PUBLIC_HOST": public_host,
+                    "PUBLIC_HOST": c.JupyterHub.bind_url,
                     "JHUB_APP_TITLE": c.JAppsConfig.app_title,
                     "JHUB_APP_ICON": c.JAppsConfig.app_icon,
                     "JHUB_JUPYTERHUB_CONFIG": c.JAppsConfig.jupyterhub_config_path,
