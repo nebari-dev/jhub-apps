@@ -43,9 +43,10 @@ async def get_token(code: str = Form(...)):
     return resp.json()
 
 
-@router.get("/server/")
-@router.get("/server/{server_name}")
+@router.get("/server/", description="Get all servers")
+@router.get("/server/{server_name}", description="Get a server by server name")
 async def get_server(user: User = Depends(get_current_user), server_name=None):
+    """Get servers for the authenticated user"""
     hub_client = HubClient()
     user = hub_client.get_user(user.name)
     assert user
@@ -59,7 +60,6 @@ async def get_server(user: User = Depends(get_current_user), server_name=None):
     else:
         # Get all servers
         return user_servers
-
 
 
 @router.post("/server/")
