@@ -1,93 +1,32 @@
 import os
-import secrets
-from functools import wraps
 from pathlib import Path
 
-from bokeh.embed import server_document
-from flask import Flask, make_response, redirect, render_template, request, session
-from jupyterhub.services.auth import HubOAuth
+from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
 
-prefix = os.environ.get("JUPYTERHUB_SERVICE_PREFIX", "/")
+from .service import router
 
-auth = HubOAuth(api_token=os.environ["JUPYTERHUB_API_TOKEN"], cache_max_age=60)
+### When managed by Jupyterhub, the actual endpoints
+### will be served out prefixed by /services/:name.
+### One way to handle this with FastAPI is to use an APIRouter.
+### All routes are defined in service.py
 
-TEMPLATES_DIR = Path(__file__).parent.parent / "templates"
 STATIC_DIR = Path(__file__).parent.parent / "static"
-app = Flask(
-    __name__,
-    template_folder=TEMPLATES_DIR,
-    static_folder=STATIC_DIR,
-    static_url_path=prefix + "/static",
+
+app = FastAPI(
+    title="JApps Service",
+    version="0.1",
+    ### Serve out Swagger from the service prefix (<hub>/services/:name/docs)
+    openapi_url=router.prefix + "/openapi.json",
+    docs_url=router.prefix + "/docs",
+    redoc_url=router.prefix + "/redoc",
+    ### Add our service client id to the /docs Authorize form automatically
+    swagger_ui_init_oauth={"clientId": os.environ["JUPYTERHUB_CLIENT_ID"]},
+    swagger_ui_parameters={"persistAuthorization": True},
+    ### Default /docs/oauth2 redirect will cause Hub
+    ### to raise oauth2 redirect uri mismatch errors
+    swagger_ui_oauth2_redirect_url=os.environ["JUPYTERHUB_OAUTH_CALLBACK_URL"],
 )
-
-# encryption key for session cookies
-app.secret_key = secrets.token_bytes(32)
-
-
-def authenticated(f):
-    """Decorator for authenticating with the Hub via OAuth"""
-
-    @wraps(f)
-    def decorated(*args, **kwargs):
-        token = session.get("token")
-
-        if token:
-            user = auth.user_for_token(token)
-        else:
-            user = None
-
-        if user:
-            return f(user, *args, **kwargs)
-        else:
-            # redirect to login url on failed auth
-            state = auth.generate_state(next_url=request.path)
-            response = make_response(redirect(auth.login_url + "&state=%s" % state))
-            response.set_cookie(auth.state_cookie_name, state)
-            return response
-
-    return decorated
-
-
-@app.route(f"{prefix}/")
-@app.route(f"{prefix}/<path:subpath>")
-@authenticated
-def index(user, subpath=None):
-    request_args = dict(request.args)
-    subpath = subpath if subpath else ""
-    script = server_document(
-        f"/services/launcher/{subpath}",
-        arguments={"username": user["name"], **request_args},
-    )
-    return render_template(
-        "launcher_base.html",
-        jhub_app_title=os.environ.get("JHUB_APP_TITLE"),
-        jhub_app_icon=os.environ.get("JHUB_APP_ICON"),
-        **{"request": request, "script": script},
-    )
-
-
-@app.route(f"{prefix}/<path:path>")
-def serve_static_file(path):
-    # Serve static files from the static folder directly.
-    return app.send_static_file(path)
-
-
-@app.route(prefix + "oauth_callback")
-def oauth_callback():
-    code = request.args.get("code", None)
-    if code is None:
-        return 403
-
-    # validate state field
-    arg_state = request.args.get("state", None)
-    cookie_state = request.cookies.get(auth.state_cookie_name)
-    if arg_state is None or arg_state != cookie_state:
-        # state doesn't match
-        return 403
-
-    token = auth.token_for_code(code)
-    # store token in session cookie
-    session["token"] = token
-    next_url = auth.get_next_url(cookie_state) or prefix
-    response = make_response(redirect(next_url))
-    return response
+static_files = StaticFiles(directory=STATIC_DIR)
+app.mount(f"{router.prefix}/static", static_files, name="static")
+app.include_router(router)

@@ -37,25 +37,31 @@ def install_jhub_apps(c, spawner_to_subclass):
         raise ValueError(f"c.JupyterHub.bind_url is not set: {c.JupyterHub.bind_url}")
     if not c.JupyterHub.services:
         c.JupyterHub.services = []
+    public_host = c.JupyterHub.bind_url
+    fast_api_service_name = "japps"
+    oauth_redirect_uri = (
+        f"{public_host}/services/{fast_api_service_name}/oauth_callback"
+    )
     c.JupyterHub.services.extend(
         [
             {
-                "name": "japps",
+                "name": fast_api_service_name,
                 "url": "http://127.0.0.1:10202",
-                # TODO: Run flask app behind gunicorn
                 "command": [
                     c.JAppsConfig.python_exec,
                     "-m",
-                    "flask",
-                    "run",
-                    "--port=10202",
+                    "uvicorn",
+                    "jhub_apps.service.app:app",
+                    "--port",
+                    "10202",
                 ],
                 "environment": {
-                    "FLASK_APP": "jhub_apps.service.app",
+                    "PUBLIC_HOST": c.JupyterHub.bind_url,
                     "JHUB_APP_TITLE": c.JAppsConfig.app_title,
                     "JHUB_APP_ICON": c.JAppsConfig.app_icon,
                     "JHUB_JUPYTERHUB_CONFIG": c.JAppsConfig.jupyterhub_config_path,
                 },
+                "oauth_redirect_uri": oauth_redirect_uri,
                 "display": False,
             },
             {
