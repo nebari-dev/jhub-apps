@@ -21,11 +21,13 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
     formState: { errors },
   } = useForm<AppFormInput>({
     defaultValues: {
-      name: '',
+      display_name: '',
       filepath: '',
       thumbnail: '',
       description: '',
       framework: '',
+      conda_env: '',
+      custom_command: '',
     },
   });
 
@@ -40,18 +42,18 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
   return (
     <form id="app-form" onSubmit={handleSubmit(onSubmit)} className="form">
       <FormGroup>
-        <Label htmlFor="name">Name</Label>
+        <Label htmlFor="display_name">Display Name</Label>
         <Controller
-          name="name"
+          name="display_name"
           control={control}
           rules={REQUIRED_FORM_FIELDS_RULES}
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
           render={({ field: { ref: _, ...field } }) => (
-            <TextInput {...field} id="name" autoFocus />
+            <TextInput {...field} id="display_name" autoFocus />
           )}
         />
-        {errors.name?.message && (
-          <ErrorMessages errors={[errors.name.message]} />
+        {errors.display_name?.message && (
+          <ErrorMessages errors={[errors.display_name.message]} />
         )}
       </FormGroup>
       <FormGroup>
@@ -63,18 +65,6 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
           render={({ field: { ref: _, ...field } }) => (
             <TextArea {...field} id="description" />
-          )}
-        />
-      </FormGroup>
-      <FormGroup>
-        <Label htmlFor="filepath">Filepath</Label>
-        <Controller
-          name="filepath"
-          control={control}
-          rules={REQUIRED_FORM_FIELDS_RULES}
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          render={({ field: { ref: _, ...field } }) => (
-            <TextInput {...field} id="filepath" />
           )}
         />
       </FormGroup>
@@ -105,6 +95,42 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
         {errors.framework?.message && (
           <ErrorMessages errors={[errors.framework.message]} />
         )}
+      </FormGroup>
+      <FormGroup>
+        <Label htmlFor="filepath">Filepath</Label>
+        <Controller
+          name="filepath"
+          control={control}
+          rules={REQUIRED_FORM_FIELDS_RULES}
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          render={({ field: { ref: _, ...field } }) => (
+            <TextInput {...field} id="filepath" />
+          )}
+        />
+      </FormGroup>
+      <FormGroup>
+        <Label htmlFor="conda_env">Conda Environment</Label>
+        <Controller
+          name="conda_env"
+          control={control}
+          rules={REQUIRED_FORM_FIELDS_RULES}
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          render={({ field: { ref: _, ...field } }) => (
+            <TextInput {...field} id="conda_env" />
+          )}
+        />
+      </FormGroup>
+      <FormGroup>
+        <Label htmlFor="custom_command">Custom Command</Label>
+        <Controller
+          name="custom_command"
+          control={control}
+          rules={REQUIRED_FORM_FIELDS_RULES}
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          render={({ field: { ref: _, ...field } }) => (
+            <TextInput {...field} id="custom_command" />
+          )}
+        />
       </FormGroup>
     </form>
   );

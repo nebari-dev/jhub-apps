@@ -4,9 +4,13 @@ export interface FormInput {
 }
 
 export interface AppFormInput {
-  name: string;
+  display_name: string;
+  framework: string;
+  jhub_app: boolean;
   filepath?: string;
   thumbnail?: string;
   description?: string;
-  framework: string;
+  conda_env?: string;
+  custom_command?: string;
+  profile?: string;
 }

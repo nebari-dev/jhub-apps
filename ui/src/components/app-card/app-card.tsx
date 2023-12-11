@@ -1,3 +1,6 @@
+import { AppDelete } from '@src/types/app';
+import axios from '@src/utils/axios';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import React, { useState } from 'react';
 import { AppForm } from '..';
 import Button from '../button/button';
@@ -26,6 +29,8 @@ export const AppCard = ({
 }: AppCardProps): React.ReactElement => {
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
+  const queryClient = useQueryClient();
+
   const handleStart = () => {
     window.location.assign(url);
   };
@@ -42,10 +47,26 @@ export const AppCard = ({
     setIsDeleteOpen(true);
   };
 
+  const deleteProjectRequest = async ({ id }: AppDelete) => {
+    const response = await axios.delete(`/server/${id}`);
+    return response;
+  };
+
+  const { mutate: deleteProjectQuery } = useMutation({
+    mutationFn: deleteProjectRequest,
+    retry: 1,
+  });
+
   const handleDelete = () => {
-    // window.location.assign('/services/japps');
-    console.log(`Deleting app with id: ${id}`);
-    setIsDeleteOpen(false);
+    deleteProjectQuery(
+      { id },
+      {
+        onSuccess: async () => {
+          setIsDeleteOpen(false);
+          queryClient.invalidateQueries(['app-state']);
+        },
+      },
+    );
   };
 
   const handleUpdate = () => {

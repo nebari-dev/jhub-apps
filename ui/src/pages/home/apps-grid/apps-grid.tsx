@@ -27,7 +27,7 @@ export const AppsGrid = ({
     error,
     data: serverData,
   } = useQuery<UserState, { message: string }>({
-    queryKey: ['server-state'],
+    queryKey: ['app-state'],
     queryFn: () =>
       axios
         .get(`/server/`)
