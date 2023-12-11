@@ -115,6 +115,10 @@
     outline: 0.2rem solid theme('colors.primary-light');
   }
 
+  .text-red {
+    color: theme('colors.error');
+  }
+
   .card {
     width: 280px;
     border: 2px solid theme('colors.gray-lighter');

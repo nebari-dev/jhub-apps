@@ -18,26 +18,6 @@ export const Home = (): React.ReactElement => {
     setSearchValue(target.value);
   };
 
-  const handleCancel = () => {
-    setIsOpen(false);
-  };
-
-  const handleCreate = () => {
-    console.log('creating');
-    setIsOpen(false);
-  };
-
-  const footer = (
-    <div className="modal-btn-group">
-      <Button id="cancel-btn" variant="secondary" onClick={handleCancel}>
-        Cancel
-      </Button>
-      <Button id="create-btn" variant="primary" onClick={handleCreate}>
-        Create App
-      </Button>
-    </div>
-  );
-
   return (
     <>
       <div className="container grid grid-cols-12 pb-12">
@@ -66,8 +46,12 @@ export const Home = (): React.ReactElement => {
             <Modal
               title="Create New App"
               setIsOpen={setIsOpen}
-              body={<AppForm />}
-              footer={footer}
+              body={
+                <AppForm
+                  onCancel={() => setIsOpen(false)}
+                  onSubmit={() => setIsOpen(false)}
+                />
+              }
             />
           )}
         </div>

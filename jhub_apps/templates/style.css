@@ -119,6 +119,12 @@ a:focus {
     box-shadow: none;
 }
 
+.form-group .label {
+    color: var(--link-text-color) !important;
+    font-size: 90% !important;
+    padding: 0 !important;
+}
+
 /* Buttons */
 .btn {
     font-family: var(--base-font-family) !important;

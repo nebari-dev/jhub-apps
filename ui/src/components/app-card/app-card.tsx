@@ -1,4 +1,4 @@
-import { AppDelete } from '@src/types/app';
+import { AppDeleteProps } from '@src/types/form';
 import axios from '@src/utils/axios';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import React, { useState } from 'react';
@@ -47,18 +47,18 @@ export const AppCard = ({
     setIsDeleteOpen(true);
   };
 
-  const deleteProjectRequest = async ({ id }: AppDelete) => {
+  const deleteRequest = async ({ id }: AppDeleteProps) => {
     const response = await axios.delete(`/server/${id}`);
     return response;
   };
 
-  const { mutate: deleteProjectQuery } = useMutation({
-    mutationFn: deleteProjectRequest,
+  const { mutate: deleteQuery } = useMutation({
+    mutationFn: deleteRequest,
     retry: 1,
   });
 
   const handleDelete = () => {
-    deleteProjectQuery(
+    deleteQuery(
       { id },
       {
         onSuccess: async () => {

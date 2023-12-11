@@ -1,7 +1,11 @@
-import { AppFormInput } from '@src/types/form';
+import { AppCreateProps, AppFormInput } from '@src/types/form';
+import axios from '@src/utils/axios';
 import { REQUIRED_FORM_FIELDS_RULES } from '@src/utils/constants';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import {
+  Button,
+  ButtonGroup,
   ErrorMessages,
   FormGroup,
   Label,
@@ -12,9 +16,16 @@ import {
 
 export interface AppFormProps {
   id?: string;
+  onCancel?: () => void;
+  onSubmit?: () => void;
 }
 
-export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
+export const AppForm = ({
+  id,
+  onCancel,
+  onSubmit,
+}: AppFormProps): React.ReactElement => {
+  const queryClient = useQueryClient();
   const {
     control,
     handleSubmit,
@@ -22,27 +33,98 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
   } = useForm<AppFormInput>({
     defaultValues: {
       display_name: '',
-      filepath: '',
-      thumbnail: '',
       description: '',
       framework: '',
+      thumbnail: '',
+      filepath: '',
       conda_env: '',
       custom_command: '',
+      profile: '',
     },
   });
 
-  if (id) {
-    console.log(id);
-  }
+  const onFormSubmit: SubmitHandler<AppFormInput> = ({
+    display_name,
+    description,
+    framework,
+    thumbnail,
+    filepath,
+    conda_env,
+    custom_command,
+    profile,
+  }) => {
+    const payload = {
+      servername: display_name,
+      user_options: {
+        jhub_app: true,
+        display_name,
+        description: description ? description : '',
+        framework,
+        thumbnail: thumbnail ? thumbnail : '',
+        filepath: filepath ? filepath : '',
+        conda_env: conda_env ? conda_env : '',
+        custom_command: custom_command ? custom_command : '',
+        profile: profile ? profile : '',
+      },
+    };
 
-  const onSubmit: SubmitHandler<AppFormInput> = () => {
-    // navigate('/');
+    console.log('here');
+    if (id) {
+      updateQuery(payload, {
+        onSuccess: async () => {
+          queryClient.invalidateQueries(['app-state']);
+          if (onSubmit) {
+            onSubmit();
+          }
+        },
+      });
+    } else {
+      createQuery(payload, {
+        onSuccess: async () => {
+          queryClient.invalidateQueries(['app-state']);
+          if (onSubmit) {
+            onSubmit();
+          }
+        },
+      });
+    }
   };
 
+  const createRequest = async ({
+    servername,
+    user_options,
+  }: AppCreateProps) => {
+    const response = await axios.post('/server', { servername, user_options });
+    return response.data;
+  };
+
+  const updateRequest = async ({
+    servername,
+    user_options,
+  }: AppCreateProps) => {
+    const response = await axios.put(`/server/${servername}`, {
+      servername,
+      user_options,
+    });
+    return response.data;
+  };
+
+  const { mutate: createQuery } = useMutation({
+    mutationFn: createRequest,
+    retry: 1,
+  });
+
+  const { mutate: updateQuery } = useMutation({
+    mutationFn: updateRequest,
+    retry: 1,
+  });
+
   return (
-    <form id="app-form" onSubmit={handleSubmit(onSubmit)} className="form">
+    <form id="app-form" onSubmit={handleSubmit(onFormSubmit)} className="form">
       <FormGroup>
-        <Label htmlFor="display_name">Display Name</Label>
+        <Label htmlFor="display_name" required>
+          Display Name
+        </Label>
         <Controller
           name="display_name"
           control={control}
@@ -61,7 +143,6 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
         <Controller
           name="description"
           control={control}
-          rules={REQUIRED_FORM_FIELDS_RULES}
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
           render={({ field: { ref: _, ...field } }) => (
             <TextArea {...field} id="description" />
@@ -69,7 +150,9 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
         />
       </FormGroup>
       <FormGroup>
-        <Label htmlFor="framework">Framework</Label>
+        <Label htmlFor="framework" required>
+          Framework
+        </Label>
         <Controller
           name="framework"
           control={control}
@@ -80,14 +163,15 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
               {...field}
               id="framework"
               options={[
-                { value: 'Panel', label: 'Panel' },
-                { value: 'Bokeh', label: 'Bokeh' },
-                { value: 'Streamlit', label: 'Streamlit' },
-                { value: 'Voila', label: 'Voila' },
-                { value: 'PlotlyDash', label: 'PlotlyDash' },
-                { value: 'Gradio', label: 'Gradio' },
-                { value: 'JupyterLab', label: 'JupyterLab' },
-                { value: 'Custom Command', label: 'Custom Command' },
+                { value: '', label: 'Select...' },
+                { value: 'panel', label: 'Panel' },
+                { value: 'bokeh', label: 'Bokeh' },
+                { value: 'streamlit', label: 'Streamlit' },
+                { value: 'voila', label: 'Voila' },
+                { value: 'plotlydash', label: 'PlotlyDash' },
+                { value: 'gradio', label: 'Gradio' },
+                { value: 'jupyterlab', label: 'JupyterLab' },
+                { value: 'custom', label: 'Custom Command' },
               ]}
             ></Select>
           )}
@@ -101,7 +185,6 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
         <Controller
           name="filepath"
           control={control}
-          rules={REQUIRED_FORM_FIELDS_RULES}
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
           render={({ field: { ref: _, ...field } }) => (
             <TextInput {...field} id="filepath" />
@@ -113,7 +196,6 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
         <Controller
           name="conda_env"
           control={control}
-          rules={REQUIRED_FORM_FIELDS_RULES}
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
           render={({ field: { ref: _, ...field } }) => (
             <TextInput {...field} id="conda_env" />
@@ -125,13 +207,25 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
         <Controller
           name="custom_command"
           control={control}
-          rules={REQUIRED_FORM_FIELDS_RULES}
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
           render={({ field: { ref: _, ...field } }) => (
             <TextInput {...field} id="custom_command" />
           )}
         />
       </FormGroup>
+      <ButtonGroup>
+        <Button
+          id="cancel"
+          type="button"
+          variant="secondary"
+          onClick={onCancel}
+        >
+          Cancel
+        </Button>
+        <Button id="submit" type="submit">
+          Submit
+        </Button>
+      </ButtonGroup>
     </form>
   );
 };
