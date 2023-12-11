@@ -30,6 +30,7 @@ export const AppForm = ({
 }: AppFormProps): React.ReactElement => {
   const queryClient = useQueryClient();
   const [submitting, setSubmitting] = useState(false);
+  const [name, setName] = useState('');
   // Get the app data if we're editing an existing app
   const { data } = useQuery<AppQueryGetProps, { message: string }>({
     queryKey: ['app-form', id],
@@ -69,9 +70,10 @@ export const AppForm = ({
     profile,
   }) => {
     const payload = {
-      servername: display_name,
+      servername: name || display_name,
       user_options: {
         jhub_app: true,
+        name: name || display_name,
         display_name,
         description: description || '',
         framework,
@@ -142,10 +144,11 @@ export const AppForm = ({
   });
 
   useEffect(() => {
-    if (data?.user_options) {
+    if (data?.name && data?.user_options) {
+      setName(data.name);
       reset({ ...data.user_options });
     }
-  }, [data?.user_options, reset]);
+  }, [data?.name, data?.user_options, reset]);
 
   return (
     <form id="app-form" onSubmit={handleSubmit(onFormSubmit)} className="form">
