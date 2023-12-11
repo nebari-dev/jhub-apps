@@ -197,7 +197,7 @@
 
   .modal-title {
     margin: 0;
-    padding: 10px 16px;
+    padding: 10px 24px;
     color: theme('colors.text-dark');
     font-weight: 700;
     font-size: 1rem;
@@ -226,13 +226,13 @@
   .modal-body {
     min-height: 120px;
     color: theme('colors.text-dark');
-    padding: 16px 16px;
+    padding: 16px 24px;
     font-size: 0.93rem;
   }
 
   .modal-footer {
     border-top: 1px solid theme('colors.gray-lighter');
-    padding: 10px 16px;
+    padding: 10px 24px;
   }
 
   .modal-btn-group {
