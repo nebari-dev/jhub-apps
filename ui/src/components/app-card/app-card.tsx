@@ -2,7 +2,7 @@ import { AppDeleteProps } from '@src/types/form';
 import axios from '@src/utils/axios';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import React, { useState } from 'react';
-import { AppForm } from '..';
+import { AppForm, ButtonGroup } from '..';
 import Button from '../button/button';
 import ContextMenu, { ContextMenuItem } from '../context-menu/context-menu';
 import Modal from '../modal/modal';
@@ -31,22 +31,6 @@ export const AppCard = ({
   const [isEditOpen, setIsEditOpen] = useState(false);
   const queryClient = useQueryClient();
 
-  const handleStart = () => {
-    window.location.assign(url);
-  };
-
-  const handleStop = () => {
-    console.log(`Stopping app with id: ${id}`);
-  };
-
-  const handleEdit = () => {
-    setIsEditOpen(true);
-  };
-
-  const handleDeletePrompt = () => {
-    setIsDeleteOpen(true);
-  };
-
   const deleteRequest = async ({ id }: AppDeleteProps) => {
     const response = await axios.delete(`/server/${id}`);
     return response;
@@ -69,72 +53,54 @@ export const AppCard = ({
     );
   };
 
-  const handleUpdate = () => {
-    // window.location.assign('/services/japps');
-    console.log(`Editing app with id: ${id}`);
-    setIsEditOpen(false);
-  };
-
   const menuItems: ContextMenuItem[] = [
     {
       id: 'start',
       title: 'Start',
-      onClick: () => handleStart(),
+      onClick: () => window.location.assign(url),
       disabled: ready,
     },
     {
       id: 'stop',
       title: 'Stop',
-      onClick: () => handleStop(),
+      onClick: () => console.log(`Stopping app with id: ${id}`),
       disabled: !ready,
     },
     {
       id: 'edit',
       title: 'Edit',
-      onClick: () => handleEdit(),
+      onClick: () => setIsEditOpen(true),
     },
     {
       id: 'delete',
       title: 'Delete',
-      onClick: () => handleDeletePrompt(),
+      onClick: () => setIsDeleteOpen(true),
     },
   ];
 
   const deleteModalBody = (
-    <p className="w-[400px]">
-      Are you sure you want to delete <b>{title}</b>? This action is permanent
-      and cannot be reversed.
-    </p>
-  );
-
-  const deleteModalFooter = (
-    <div className="modal-btn-group">
-      <Button
-        id="cancel-btn"
-        variant="secondary"
-        onClick={() => setIsDeleteOpen(false)}
-      >
-        Cancel
-      </Button>
-      <Button id="delete-btn" variant="primary" onClick={() => handleDelete()}>
-        Delete
-      </Button>
-    </div>
-  );
-
-  const editModalFooter = (
-    <div className="modal-btn-group">
-      <Button
-        id="cancel-btn"
-        variant="secondary"
-        onClick={() => setIsEditOpen(false)}
-      >
-        Cancel
-      </Button>
-      <Button id="save-btn" variant="primary" onClick={handleUpdate}>
-        Save
-      </Button>
-    </div>
+    <>
+      <p className="w-[400px] mb-6">
+        Are you sure you want to delete <b>{title}</b>? This action is permanent
+        and cannot be reversed.
+      </p>
+      <ButtonGroup>
+        <Button
+          id="cancel-btn"
+          variant="secondary"
+          onClick={() => setIsDeleteOpen(false)}
+        >
+          Cancel
+        </Button>
+        <Button
+          id="delete-btn"
+          variant="primary"
+          onClick={() => handleDelete()}
+        >
+          Delete
+        </Button>
+      </ButtonGroup>
+    </>
   );
 
   return (
@@ -147,15 +113,19 @@ export const AppCard = ({
               title={`Delete ${title}`}
               setIsOpen={setIsDeleteOpen}
               body={deleteModalBody}
-              footer={deleteModalFooter}
             />
           )}
           {isEditOpen && (
             <Modal
               title={`Edit ${title}`}
               setIsOpen={setIsEditOpen}
-              body={<AppForm id={id} />}
-              footer={editModalFooter}
+              body={
+                <AppForm
+                  id={id}
+                  onCancel={() => setIsEditOpen(false)}
+                  onSubmit={() => setIsEditOpen(false)}
+                />
+              }
             />
           )}
         </div>

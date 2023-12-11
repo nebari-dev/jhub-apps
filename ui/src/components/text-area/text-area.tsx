@@ -28,7 +28,7 @@ export const TextArea = ({
 }: TextAreaProps & JSX.IntrinsicElements['textarea']): React.ReactElement => {
   return (
     <textarea
-      className={classNames('text-area', className)}
+      className={classNames('text-area p-2', className)}
       id={id}
       rows={rows}
       onChange={onChange}

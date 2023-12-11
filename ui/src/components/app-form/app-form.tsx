@@ -1,7 +1,9 @@
 import { AppCreateProps, AppFormInput } from '@src/types/form';
 import axios from '@src/utils/axios';
 import { REQUIRED_FORM_FIELDS_RULES } from '@src/utils/constants';
+import { getJhData } from '@src/utils/jupyterhub';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useState } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import {
   Button,
@@ -25,6 +27,7 @@ export const AppForm = ({
   onCancel,
   onSubmit,
 }: AppFormProps): React.ReactElement => {
+  const [submitting, setSubmitting] = useState(false);
   const queryClient = useQueryClient();
   const {
     control,
@@ -68,7 +71,8 @@ export const AppForm = ({
       },
     };
 
-    console.log('here');
+    setSubmitting(true);
+
     if (id) {
       updateQuery(payload, {
         onSuccess: async () => {
@@ -77,14 +81,21 @@ export const AppForm = ({
             onSubmit();
           }
         },
+        onSettled: async () => {
+          setSubmitting(false);
+        },
       });
     } else {
       createQuery(payload, {
-        onSuccess: async () => {
-          queryClient.invalidateQueries(['app-state']);
-          if (onSubmit) {
-            onSubmit();
+        onSuccess: async (data) => {
+          const username = getJhData().user;
+          if (username && data?.length > 1) {
+            const server = data[1];
+            window.location.assign(`/user/${username}/${server}`);
           }
+        },
+        onSettled: async () => {
+          setSubmitting(false);
         },
       });
     }
@@ -222,7 +233,7 @@ export const AppForm = ({
         >
           Cancel
         </Button>
-        <Button id="submit" type="submit">
+        <Button id="submit" type="submit" disabled={submitting}>
           Submit
         </Button>
       </ButtonGroup>

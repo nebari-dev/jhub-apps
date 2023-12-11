@@ -46,12 +46,7 @@ export const Home = (): React.ReactElement => {
             <Modal
               title="Create New App"
               setIsOpen={setIsOpen}
-              body={
-                <AppForm
-                  onCancel={() => setIsOpen(false)}
-                  onSubmit={() => setIsOpen(false)}
-                />
-              }
+              body={<AppForm onCancel={() => setIsOpen(false)} />}
             />
           )}
         </div>
