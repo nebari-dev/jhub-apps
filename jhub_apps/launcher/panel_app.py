@@ -8,9 +8,9 @@ import panel as pn
 
 from jupyterhub.app import JupyterHub
 
-from jhub_apps.launcher.hub_client import HubClient
 from traitlets.config import LazyConfigValue
 
+from jhub_apps.hub_client.hub_client import HubClient
 from jhub_apps.spawner.types import (
     FRAMEWORKS_MAPPING,
     FrameworkConf,
@@ -437,7 +437,7 @@ def _create_server(event, input_form_widget, input_form, username):
         framework=framework,
         custom_command=input_form_widget.custom_command.value,
         conda_env=selected_conda_env,
-        profile=input_form_widget.spawner_profiles.value
+        profile=input_form_widget.spawner_profiles.value,
     )
     try:
         response_status_code, servername = hclient.create_server(
