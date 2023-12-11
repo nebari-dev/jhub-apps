@@ -6,8 +6,7 @@ from .client import get_client
 from .models import AuthorizationError, HubApiError, User, ServerCreation
 from .security import get_current_user
 
-from bokeh.embed import server_document
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
 from fastapi.templating import Jinja2Templates
 
 from ..hub_client.hub_client import HubClient
