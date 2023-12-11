@@ -104,7 +104,7 @@ async def me(user: User = Depends(get_current_user)):
 @router.get(
     "/status",
 )
-async def status():
+async def status_endpoint():
     """Check API Status"""
     # TODO: Add version
     return {"status": "ok"}
