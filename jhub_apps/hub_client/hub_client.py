@@ -57,8 +57,6 @@ class HubClient:
             else:
                 raise ValueError(f"Server: {servername} already exists")
         url = f"/users/{username}/servers/{servername}"
-        # params = dataclasses.asdict(user_options)
-        # params = user_options.dict()
         params = user_options.model_dump()
         data = {"name": servername, **params}
         r = requests.post(API_URL + url, headers=self._headers(), json=data)
