@@ -43,16 +43,23 @@ async def get_token(code: str = Form(...)):
     return resp.json()
 
 
+@router.get("/server/")
 @router.get("/server/{server_name}")
 async def get_server(user: User = Depends(get_current_user), server_name=None):
     hub_client = HubClient()
     user = hub_client.get_user(user.name)
     assert user
     user_servers = user["servers"]
-    for s_name, server_details in user_servers.items():
-        if s_name == server_name:
-            return server_details
-    return status.HTTP_404_NOT_FOUND
+    if server_name:
+        # Get a particular server
+        for s_name, server_details in user_servers.items():
+            if s_name == server_name:
+                return server_details
+        return status.HTTP_404_NOT_FOUND
+    else:
+        # Get all servers
+        return user_servers
+
 
 
 @router.post("/server/")
