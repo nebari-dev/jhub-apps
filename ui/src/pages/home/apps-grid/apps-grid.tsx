@@ -25,16 +25,12 @@ export const AppsGrid = ({
   const {
     isLoading,
     error,
-    data: userData,
+    data: serverData,
   } = useQuery<UserState, { message: string }>({
-    queryKey: ['user-state'],
+    queryKey: ['server-state'],
     queryFn: () =>
       axios
-        .get(`/users/${jHData.user}`, {
-          params: {
-            include_stopped_servers: 'True',
-          },
-        })
+        .get(`/server/`)
         .then((response) => {
           return response.data;
         })
@@ -45,10 +41,10 @@ export const AppsGrid = ({
   });
 
   useEffect(() => {
-    if (!isLoading && userData) {
+    if (!isLoading && serverData) {
       const filterToLower = filter.toLowerCase();
       setApps(() =>
-        getApps(userData, appType).filter(
+        getApps(serverData, appType).filter(
           (app) =>
             app.name.toLowerCase().includes(filterToLower) ||
             app.description?.toLowerCase().includes(filterToLower) ||
@@ -56,7 +52,7 @@ export const AppsGrid = ({
         ),
       );
     }
-  }, [isLoading, userData, appType, filter]);
+  }, [isLoading, serverData, appType, filter]);
 
   useEffect(() => {
     if (error) {

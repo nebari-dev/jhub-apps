@@ -14,117 +14,117 @@ export default defineConfig({
         target: 'http://localhost:8080',
         // Bypass any JuptyerHub API calls and mock with static data
         bypass(req, res, options) {
-          if (req.url.startsWith('/api/users')) {
-            res.end(
-              JSON.stringify({
+          res.end(
+            JSON.stringify({
+              JuypterLab: {
+                display: true,
+                info: {
+                  name: 'JupyterLab',
+                  url: '/user/[USER]/lab',
+                  external: true,
+                },
+              },
+              Argo: {
+                display: true,
+                info: {
+                  name: 'Argo Workflows',
+                  url: '/hub/argo',
+                  external: true,
+                },
+              },
+              Users: {
+                display: true,
+                info: {
+                  name: 'User Management',
+                  url: '/auth/admin/nebari/console/',
+                  external: true,
+                },
+              },
+              Environments: {
+                display: true,
+                info: {
+                  name: 'Environments',
+                  url: '/hub/conda-store',
+                  external: true,
+                },
+              },
+              Monitoring: {
+                display: true,
+                info: {
+                  name: 'Monitoring',
+                  url: '/hub/monitoring',
+                  external: true,
+                },
+              },
+            }),
+          );
+        },
+      },
+      '/services/japps/server/': {
+        target: 'http://localhost:8080',
+        // Bypass any JuptyerHub API calls and mock with static data
+        bypass(req, res, options) {
+          res.end(
+            JSON.stringify({
+              'test-app': {
                 name: 'test-app',
-                servers: {
-                  'test-app': {
-                    name: 'test-app',
-                    url: '/user/test/test-app/',
-                    user_options: {
-                      name: 'test-app',
-                      jhub_app: true,
-                      display_name: 'Test App',
-                      description:
-                        'Lorem ipsum dolor sit amet consectetur. Sit vestibulum facilisis auctor pulvinar ac. Cras.',
-                      imgUrl:
-                        'https://designsystem.digital.gov/img/introducing-uswds-2-0/built-to-grow--alt.jpg',
-                      framework: 'Panel',
-                      ready: true,
-                    },
-                  },
-                  'test-app-2': {
-                    name: 'test-app-2',
-                    url: '/user/test/test-app-2/',
-                    user_options: {
-                      name: 'test-app-2',
-                      jhub_app: true,
-                      display_name: 'Test App 2',
-                      description:
-                        'Lorem ipsum dolor sit amet consectetur. Sit vestibulum facilisis auctor pulvinar ac. Bras.',
-                      imgUrl:
-                        'https://designsystem.digital.gov/img/introducing-uswds-2-0/built-to-grow--alt.jpg',
-                      framework: 'Streamlit',
-                      ready: false,
-                    },
-                  },
-                  'test-app-3': {
-                    name: 'test-app-3',
-                    url: '/user/test/test-app-3/',
-                    user_options: {
-                      name: 'test-app-3',
-                      jhub_app: true,
-                      display_name: 'Test App 3',
-                      description:
-                        'Lorem ipsum dolor sit amet consectetur. Sit vestibulum facilisis auctor pulvinar ac. Dras.',
-                      imgUrl: null,
-                      framework: 'JupyterLab',
-                      ready: false,
-                    },
-                  },
-                  'test-app-4': {
-                    name: 'test-app-4',
-                    url: '/user/test/test-app-4/',
-                    user_options: {
-                      name: 'test-app-4',
-                      jhub_app: true,
-                      display_name: 'Test App 4',
-                      description: 'Cras.',
-                      imgUrl: null,
-                      framework: 'Streamlit',
-                      ready: false,
-                    },
-                  },
+                url: '/user/test/test-app/',
+                user_options: {
+                  name: 'test-app',
+                  jhub_app: true,
+                  display_name: 'Test App',
+                  description:
+                    'Lorem ipsum dolor sit amet consectetur. Sit vestibulum facilisis auctor pulvinar ac. Cras.',
+                  imgUrl:
+                    'https://designsystem.digital.gov/img/introducing-uswds-2-0/built-to-grow--alt.jpg',
+                  framework: 'Panel',
+                  ready: true,
                 },
-              }),
-            );
-          } else if (req.url.startsWith('/api/services')) {
-            res.end(
-              JSON.stringify({
-                JuypterLab: {
-                  display: true,
-                  info: {
-                    name: 'JupyterLab',
-                    url: '/user/[USER]/lab',
-                    external: true,
-                  },
+              },
+              'test-app-2': {
+                name: 'test-app-2',
+                url: '/user/test/test-app-2/',
+                user_options: {
+                  name: 'test-app-2',
+                  jhub_app: true,
+                  display_name: 'Test App 2',
+                  description:
+                    'Lorem ipsum dolor sit amet consectetur. Sit vestibulum facilisis auctor pulvinar ac. Bras.',
+                  imgUrl:
+                    'https://designsystem.digital.gov/img/introducing-uswds-2-0/built-to-grow--alt.jpg',
+                  framework: 'Streamlit',
+                  ready: false,
                 },
-                Argo: {
-                  display: true,
-                  info: {
-                    name: 'Argo Workflows',
-                    url: '/hub/argo',
-                    external: true,
-                  },
+              },
+              'test-app-3': {
+                name: 'test-app-3',
+                url: '/user/test/test-app-3/',
+                user_options: {
+                  name: 'test-app-3',
+                  jhub_app: true,
+                  display_name: 'Test App 3',
+                  description:
+                    'Lorem ipsum dolor sit amet consectetur. Sit vestibulum facilisis auctor pulvinar ac. Dras.',
+                  imgUrl: null,
+                  framework: 'JupyterLab',
+                  ready: false,
                 },
-                Users: {
-                  display: true,
-                  info: {
-                    name: 'User Management',
-                    url: '/auth/admin/nebari/console/',
-                    external: true,
-                  },
+              },
+              'test-app-4': {
+                name: 'test-app-4',
+                url: '/user/test/test-app-4/',
+                user_options: {
+                  name: 'test-app-4',
+                  jhub_app: true,
+                  display_name: 'Test App 4',
+                  description: 'Cras.',
+                  imgUrl: null,
+                  framework: 'Streamlit',
+                  ready: false,
                 },
-                Environments: {
-                  display: true,
-                  info: {
-                    name: 'Environments',
-                    url: '/hub/conda-store',
-                    external: true,
-                  },
-                },
-                Monitoring: {
-                  display: true,
-                  info: {
-                    name: 'Monitoring',
-                    url: '/hub/monitoring',
-                    external: true,
-                  },
-                },
-              }),
-            );
-          }
+              },
+            }),
+          );
         },
       },
     },
