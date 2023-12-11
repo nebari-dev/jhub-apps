@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { AppForm } from '..';
 import Button from '../button/button';
 import ContextMenu, { ContextMenuItem } from '../context-menu/context-menu';
 import Modal from '../modal/modal';
@@ -23,7 +24,8 @@ export const AppCard = ({
   url,
   ready = false,
 }: AppCardProps): React.ReactElement => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState(false);
   const handleStart = () => {
     window.location.assign(url);
   };
@@ -33,17 +35,23 @@ export const AppCard = ({
   };
 
   const handleEdit = () => {
-    window.location.assign(`/services/japps/create-app/?name=${id}`);
+    setIsEditOpen(true);
   };
 
   const handleDeletePrompt = () => {
-    setIsOpen(true);
+    setIsDeleteOpen(true);
   };
 
   const handleDelete = () => {
     // window.location.assign('/services/japps');
     console.log(`Deleting app with id: ${id}`);
-    setIsOpen(false);
+    setIsDeleteOpen(false);
+  };
+
+  const handleUpdate = () => {
+    // window.location.assign('/services/japps');
+    console.log(`Editing app with id: ${id}`);
+    setIsEditOpen(false);
   };
 
   const menuItems: ContextMenuItem[] = [
@@ -71,19 +79,19 @@ export const AppCard = ({
     },
   ];
 
-  const body = (
+  const deleteModalBody = (
     <p className="w-[400px]">
-      Are you sure you want to delete <b>{title}</b>? This action is permanent and
-      cannot be reversed.
+      Are you sure you want to delete <b>{title}</b>? This action is permanent
+      and cannot be reversed.
     </p>
   );
 
-  const footer = (
+  const deleteModalFooter = (
     <div className="modal-btn-group">
       <Button
         id="cancel-btn"
         variant="secondary"
-        onClick={() => setIsOpen(false)}
+        onClick={() => setIsDeleteOpen(false)}
       >
         Cancel
       </Button>
@@ -93,17 +101,40 @@ export const AppCard = ({
     </div>
   );
 
+  const editModalFooter = (
+    <div className="modal-btn-group">
+      <Button
+        id="cancel-btn"
+        variant="secondary"
+        onClick={() => setIsEditOpen(false)}
+      >
+        Cancel
+      </Button>
+      <Button id="save-btn" variant="primary" onClick={handleUpdate}>
+        Save
+      </Button>
+    </div>
+  );
+
   return (
     <div className="card" id={`card-${id}`} tabIndex={0}>
       <div className="card-header-media">
         <div className="card-header-menu">
           <ContextMenu id={`card-menu-${id}`} items={menuItems} />
-          {isOpen && (
+          {isDeleteOpen && (
             <Modal
               title={`Delete ${title}`}
-              setIsOpen={setIsOpen}
-              body={body}
-              footer={footer}
+              setIsOpen={setIsDeleteOpen}
+              body={deleteModalBody}
+              footer={deleteModalFooter}
+            />
+          )}
+          {isEditOpen && (
+            <Modal
+              title={`Edit ${title}`}
+              setIsOpen={setIsEditOpen}
+              body={<AppForm id={id} />}
+              footer={editModalFooter}
             />
           )}
         </div>

@@ -1,4 +1,4 @@
-import { Alert, Button, TextInput } from '@src/components';
+import { Alert, AppForm, Button, Modal, TextInput } from '@src/components';
 import React, { SyntheticEvent, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { currentNotification } from '../../store';
@@ -6,6 +6,7 @@ import { AppsGrid } from './apps-grid/apps-grid';
 import { ServicesGrid } from './services-grid/services-grid';
 
 export const Home = (): React.ReactElement => {
+  const [isOpen, setIsOpen] = useState(false);
   const [notification] = useRecoilState<string | undefined>(
     currentNotification,
   );
@@ -16,6 +17,26 @@ export const Home = (): React.ReactElement => {
     const target = event.target as HTMLInputElement;
     setSearchValue(target.value);
   };
+
+  const handleCancel = () => {
+    setIsOpen(false);
+  };
+
+  const handleCreate = () => {
+    console.log('creating');
+    setIsOpen(false);
+  };
+
+  const footer = (
+    <div className="modal-btn-group">
+      <Button id="cancel-btn" variant="secondary" onClick={handleCancel}>
+        Cancel
+      </Button>
+      <Button id="create-btn" variant="primary" onClick={handleCreate}>
+        Create App
+      </Button>
+    </div>
+  );
 
   return (
     <>
@@ -36,11 +57,19 @@ export const Home = (): React.ReactElement => {
           <Button
             id="create-app"
             onClick={() => {
-              window.location.assign('/services/japps/create-app');
+              setIsOpen(true);
             }}
           >
             Create App
           </Button>
+          {isOpen && (
+            <Modal
+              title="Create New App"
+              setIsOpen={setIsOpen}
+              body={<AppForm />}
+              footer={footer}
+            />
+          )}
         </div>
       </div>
       {notification && (

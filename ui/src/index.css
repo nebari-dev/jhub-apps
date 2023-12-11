@@ -12,6 +12,22 @@
     content: unset;
   }
 
+  .form {
+    min-width: 400px;
+  }
+
+  .form .btn {
+    margin-top: 1.5rem;
+  }
+
+  .form .text-input {
+    max-width: none;
+  }
+
+  .form-group {
+    margin-top: 1rem;
+  }
+
   .btn {
     padding: 0.4rem 1rem 0.4rem 1rem;
   }
@@ -54,12 +70,48 @@
     border-color: theme('colors.primary-darker');
   }
 
-  .text-input {
-    border: 1px solid theme('colors.gray-darkest');
-    border-radius: 0.25rem;
+  .button-group {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
   }
 
-  .text-input:focus {
+  .button-group-item {
+    margin: 0.25rem;
+  }
+
+  .label {
+    max-width: 30rem;
+  }
+
+  .text-input,
+  .text-area,
+  .select {
+    width: 100%;
+    margin-top: 0.5rem;
+  }
+
+  .text-input,
+  .text-area {
+    border: 1px solid theme('colors.gray-darkest');
+    border-radius: 0;
+  }
+
+  .text-input:focus,
+  .text-area:focus {
+    outline: 0.2rem solid theme('colors.primary-light');
+  }
+
+  .text-area {
+    min-height: 6rem;
+  }
+
+  .select {
+    border: 1px solid theme('colors.gray-darkest');
+    border-radius: 0;
+  }
+
+  .select:focus {
     outline: 0.2rem solid theme('colors.primary-light');
   }
 
@@ -121,6 +173,7 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+    z-index: 1001;
   }
 
   .modal-main {
