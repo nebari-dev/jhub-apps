@@ -1,0 +1,33 @@
+export interface UserOptions {
+  jhub_app: boolean;
+  display_name: string;
+  description: string;
+  thumbnail: string;
+  filepath: string;
+  framework: string;
+  custom_command: string;
+  conda_env: string;
+  profile: string;
+}
+
+export interface AppQueryUpdateProps {
+  servername: string;
+  user_options: UserOptions;
+}
+
+export interface AppQueryDeleteProps {
+  id: string;
+}
+
+export interface AppQueryGetProps {
+  name: string;
+  last_activity: string;
+  started: null;
+  pending: null;
+  ready: boolean;
+  stopped: boolean;
+  url: string;
+  user_options: UserOptions;
+  progress_url: string;
+  state: Record<string, unknown>;
+}

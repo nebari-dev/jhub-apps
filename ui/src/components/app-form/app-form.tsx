@@ -1,9 +1,10 @@
-import { AppCreateProps, AppFormInput } from '@src/types/form';
+import { AppQueryGetProps, AppQueryUpdateProps } from '@src/types/api';
+import { AppFormInput } from '@src/types/form';
 import axios from '@src/utils/axios';
 import { REQUIRED_FORM_FIELDS_RULES } from '@src/utils/constants';
 import { getJhData } from '@src/utils/jupyterhub';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useEffect, useState } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import {
   Button,
@@ -27,11 +28,22 @@ export const AppForm = ({
   onCancel,
   onSubmit,
 }: AppFormProps): React.ReactElement => {
-  const [submitting, setSubmitting] = useState(false);
   const queryClient = useQueryClient();
+  const [submitting, setSubmitting] = useState(false);
+  // Get the app data if we're editing an existing app
+  const { data } = useQuery<AppQueryGetProps, { message: string }>({
+    queryKey: ['app-form', id],
+    queryFn: () =>
+      axios.get(`/server/${id}`).then((response) => {
+        return response.data;
+      }),
+    enabled: !!id,
+  });
+
   const {
     control,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<AppFormInput>({
     defaultValues: {
@@ -61,18 +73,17 @@ export const AppForm = ({
       user_options: {
         jhub_app: true,
         display_name,
-        description: description ? description : '',
+        description: description || '',
         framework,
-        thumbnail: thumbnail ? thumbnail : '',
-        filepath: filepath ? filepath : '',
-        conda_env: conda_env ? conda_env : '',
-        custom_command: custom_command ? custom_command : '',
-        profile: profile ? profile : '',
+        thumbnail: thumbnail || '',
+        filepath: filepath || '',
+        conda_env: conda_env || '',
+        custom_command: custom_command || '',
+        profile: profile || '',
       },
     };
 
     setSubmitting(true);
-
     if (id) {
       updateQuery(payload, {
         onSuccess: async () => {
@@ -104,7 +115,7 @@ export const AppForm = ({
   const createRequest = async ({
     servername,
     user_options,
-  }: AppCreateProps) => {
+  }: AppQueryUpdateProps) => {
     const response = await axios.post('/server', { servername, user_options });
     return response.data;
   };
@@ -112,7 +123,7 @@ export const AppForm = ({
   const updateRequest = async ({
     servername,
     user_options,
-  }: AppCreateProps) => {
+  }: AppQueryUpdateProps) => {
     const response = await axios.put(`/server/${servername}`, {
       servername,
       user_options,
@@ -129,6 +140,12 @@ export const AppForm = ({
     mutationFn: updateRequest,
     retry: 1,
   });
+
+  useEffect(() => {
+    if (data?.user_options) {
+      reset({ ...data.user_options });
+    }
+  }, [data?.user_options, reset]);
 
   return (
     <form id="app-form" onSubmit={handleSubmit(onFormSubmit)} className="form">

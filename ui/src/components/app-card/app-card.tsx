@@ -1,4 +1,4 @@
-import { AppDeleteProps } from '@src/types/form';
+import { AppQueryDeleteProps } from '@src/types/api';
 import axios from '@src/utils/axios';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import React, { useState } from 'react';
@@ -31,7 +31,7 @@ export const AppCard = ({
   const [isEditOpen, setIsEditOpen] = useState(false);
   const queryClient = useQueryClient();
 
-  const deleteRequest = async ({ id }: AppDeleteProps) => {
+  const deleteRequest = async ({ id }: AppQueryDeleteProps) => {
     const response = await axios.delete(`/server/${id}`);
     return response;
   };
@@ -59,22 +59,26 @@ export const AppCard = ({
       title: 'Start',
       onClick: () => window.location.assign(url),
       disabled: ready,
+      visible: false,
     },
     {
       id: 'stop',
       title: 'Stop',
       onClick: () => console.log(`Stopping app with id: ${id}`),
       disabled: !ready,
+      visible: false,
     },
     {
       id: 'edit',
       title: 'Edit',
       onClick: () => setIsEditOpen(true),
+      visible: true,
     },
     {
       id: 'delete',
       title: 'Delete',
       onClick: () => setIsDeleteOpen(true),
+      visible: true,
     },
   ];
 
