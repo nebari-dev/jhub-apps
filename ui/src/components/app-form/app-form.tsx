@@ -7,7 +7,6 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { useRecoilState } from 'recoil';
-import { currentNotification } from 'src/store';
 import {
   Button,
   ButtonGroup,
@@ -18,6 +17,7 @@ import {
   TextArea,
   TextInput,
 } from '..';
+import { currentNotification } from '../../store';
 
 export interface AppFormProps {
   id?: string;

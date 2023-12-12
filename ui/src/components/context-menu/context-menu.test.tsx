@@ -17,10 +17,12 @@ describe('ContextMenu', () => {
           {
             id: 'item-1',
             title: 'Item 1',
+            visible: true,
           },
           {
             id: 'item-2',
             title: 'Item 2',
+            visible: true,
           },
         ]}
       />,
