@@ -263,14 +263,14 @@ export const AppForm = ({
       </FormGroup>
       <ButtonGroup>
         <Button
-          id="cancel"
+          id="cancel-btn"
           type="button"
           variant="secondary"
           onClick={onCancel}
         >
           Cancel
         </Button>
-        <Button id="submit" type="submit" disabled={submitting}>
+        <Button id="submit-btn" type="submit" disabled={submitting}>
           Submit
         </Button>
       </ButtonGroup>

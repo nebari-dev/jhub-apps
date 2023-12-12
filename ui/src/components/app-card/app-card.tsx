@@ -17,7 +17,7 @@ interface AppCardProps {
   framework: string;
   thumbnail?: string;
   url: string;
-  ready: boolean;
+  ready?: boolean;
 }
 
 export const AppCard = ({
