@@ -6,6 +6,8 @@ import { getJhData } from '@src/utils/jupyterhub';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
+import { useRecoilState } from 'recoil';
+import { currentNotification } from 'src/store';
 import {
   Button,
   ButtonGroup,
@@ -30,9 +32,12 @@ export const AppForm = ({
 }: AppFormProps): React.ReactElement => {
   const queryClient = useQueryClient();
   const [submitting, setSubmitting] = useState(false);
+  const [, setNotification] = useRecoilState<string | undefined>(
+    currentNotification,
+  );
   const [name, setName] = useState('');
   // Get the app data if we're editing an existing app
-  const { data } = useQuery<AppQueryGetProps, { message: string }>({
+  const { data, error } = useQuery<AppQueryGetProps, { message: string }>({
     queryKey: ['app-form', id],
     queryFn: () =>
       axios.get(`/server/${id}`).then((response) => {
@@ -89,26 +94,32 @@ export const AppForm = ({
     if (id) {
       updateQuery(payload, {
         onSuccess: async () => {
+          setSubmitting(false);
           queryClient.invalidateQueries(['app-state']);
           if (onSubmit) {
             onSubmit();
           }
         },
-        onSettled: async () => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        onError: async (error: any) => {
           setSubmitting(false);
+          setNotification(error.message);
         },
       });
     } else {
       createQuery(payload, {
         onSuccess: async (data) => {
+          setSubmitting(false);
           const username = getJhData().user;
           if (username && data?.length > 1) {
             const server = data[1];
             window.location.assign(`/user/${username}/${server}`);
           }
         },
-        onSettled: async () => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        onError: async (error: any) => {
           setSubmitting(false);
+          setNotification(error.message);
         },
       });
     }
@@ -149,6 +160,12 @@ export const AppForm = ({
       reset({ ...data.user_options });
     }
   }, [data?.name, data?.user_options, reset]);
+
+  useEffect(() => {
+    if (error) {
+      setNotification(error.message);
+    }
+  }, [error, setNotification]);
 
   return (
     <form id="app-form" onSubmit={handleSubmit(onFormSubmit)} className="form">

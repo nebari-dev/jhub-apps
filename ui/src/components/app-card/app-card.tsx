@@ -2,6 +2,8 @@ import { AppQueryDeleteProps } from '@src/types/api';
 import axios from '@src/utils/axios';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import React, { useState } from 'react';
+import { useRecoilState } from 'recoil';
+import { currentNotification } from 'src/store';
 import { AppForm, ButtonGroup } from '..';
 import Button from '../button/button';
 import ContextMenu, { ContextMenuItem } from '../context-menu/context-menu';
@@ -27,9 +29,13 @@ export const AppCard = ({
   url,
   ready = false,
 }: AppCardProps): React.ReactElement => {
+  const queryClient = useQueryClient();
+  const [submitting, setSubmitting] = useState(false);
+  const [, setNotification] = useRecoilState<string | undefined>(
+    currentNotification,
+  );
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
-  const queryClient = useQueryClient();
 
   const deleteRequest = async ({ id }: AppQueryDeleteProps) => {
     const response = await axios.delete(`/server/${id}`);
@@ -42,12 +48,19 @@ export const AppCard = ({
   });
 
   const handleDelete = () => {
+    setSubmitting(true);
     deleteQuery(
       { id },
       {
         onSuccess: async () => {
+          setSubmitting(false);
           setIsDeleteOpen(false);
           queryClient.invalidateQueries(['app-state']);
+        },
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        onError: async (error: any) => {
+          setSubmitting(false);
+          setNotification(error.message);
         },
       },
     );
@@ -100,6 +113,7 @@ export const AppCard = ({
           id="delete-btn"
           variant="primary"
           onClick={() => handleDelete()}
+          disabled={submitting}
         >
           Delete
         </Button>
