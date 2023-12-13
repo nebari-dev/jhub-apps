@@ -15,7 +15,6 @@ export interface SelectProps {
    * An array of select options to display
    */
   options: SelectOption[];
-
   /**
    * Custom callback for when input is changed
    */

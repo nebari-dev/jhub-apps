@@ -3,7 +3,12 @@ import { render } from '@testing-library/react';
 import { FormGroup } from '..';
 
 describe('FormGroup', () => {
-  test('renders successfully', () => {
+  test('renders default form group successfully', () => {
+    const { baseElement } = render(<FormGroup>Some form</FormGroup>);
+    expect(baseElement.querySelector('.form-group')).toBeTruthy();
+  });
+
+  test('renders with id', () => {
     const { baseElement } = render(<FormGroup id="group">Some form</FormGroup>);
     expect(baseElement.querySelector('#group')).toBeTruthy();
   });
