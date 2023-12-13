@@ -3,12 +3,15 @@ import axios from '@src/utils/axios';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import React, { useState } from 'react';
 import { useRecoilState } from 'recoil';
-import { AppForm, ButtonGroup } from '..';
-import { currentNotification } from '../../store';
-import Button from '../button/button';
-import ContextMenu, { ContextMenuItem } from '../context-menu/context-menu';
-import Modal from '../modal/modal';
-import Tag from '../tag/tag';
+import { ButtonGroup } from '../../../components';
+import Button from '../../../components/button/button';
+import ContextMenu, {
+  ContextMenuItem,
+} from '../../../components/context-menu/context-menu';
+import Modal from '../../../components/modal/modal';
+import Tag from '../../../components/tag/tag';
+import { currentNotification } from '../../../store';
+import AppForm from '../app-form/app-form';
 
 interface AppCardProps {
   id: string;

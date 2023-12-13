@@ -1,7 +1,8 @@
-import { Alert, AppForm, Button, Modal, TextInput } from '@src/components';
+import { Alert, Button, Modal, TextInput } from '@src/components';
 import React, { SyntheticEvent, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { currentNotification } from '../../store';
+import AppForm from './app-form/app-form';
 import { AppsGrid } from './apps-grid/apps-grid';
 import { ServicesGrid } from './services-grid/services-grid';
 

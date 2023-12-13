@@ -16,8 +16,8 @@ import {
   Select,
   TextArea,
   TextInput,
-} from '..';
-import { currentNotification } from '../../store';
+} from '../../../components';
+import { currentNotification } from '../../../store';
 
 export interface AppFormProps {
   id?: string;

@@ -1,4 +1,3 @@
-import { AppCard } from '@src/components';
 import { JhApp, JhData } from '@src/types/jupyterhub';
 import { UserState } from '@src/types/user';
 import axios from '@src/utils/axios';
@@ -7,6 +6,7 @@ import { useQuery } from '@tanstack/react-query';
 import React, { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { currentJhData, currentNotification } from '../../../store';
+import AppCard from '../app-card/app-card';
 interface AppsGridProps {
   appType?: 'My' | 'Shared';
   filter: string;

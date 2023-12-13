@@ -4,7 +4,7 @@ import { act, fireEvent, render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import MockAdapter from 'axios-mock-adapter';
 import { RecoilRoot } from 'recoil';
-import { AppForm } from '..';
+import AppForm from './app-form';
 
 describe('AppForm', () => {
   const queryClient = new QueryClient();
