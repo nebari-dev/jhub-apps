@@ -1,4 +1,5 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import '@testing-library/jest-dom';
 import { act, fireEvent, render } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
@@ -33,17 +34,20 @@ describe('Home', () => {
   });
 
   test('should render create app button and respond to click events', async () => {
-    const { getByText } = render(componentWrapper);
+    const { baseElement, getByText } = render(componentWrapper);
     await act(async () => {
       const button = getByText('Create App');
       expect(button).toBeTruthy();
+      fireEvent.click(button);
+    });
+    const modalHeader = baseElement.querySelector('h5');
+    expect(modalHeader).toHaveTextContent('Create New App');
 
-      // const assignSpy = jest
-      //   .spyOn(window.location, 'assign')
-      //   .mockImplementation(() => {});
-      // fireEvent.click(button);
-      // expect(assignSpy).toHaveBeenCalledWith('/services/japps/create-app');
-      // assignSpy.mockRestore();
+    const cancelBtn = baseElement.querySelector(
+      '#cancel-btn',
+    ) as HTMLButtonElement;
+    await act(async () => {
+      cancelBtn.click();
     });
   });
 

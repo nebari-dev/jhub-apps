@@ -63,4 +63,16 @@ describe('AppsGrid', () => {
     );
     expect(baseElement).toHaveTextContent('No apps available');
   });
+
+  test('renders with data error', async () => {
+    mock.onGet().reply(500, { error: 'Some error' });
+    const { baseElement } = render(
+      <RecoilRoot>
+        <QueryClientProvider client={queryClient}>
+          <AppsGrid filter="test" />
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+    expect(baseElement).toHaveTextContent('No apps available');
+  });
 });

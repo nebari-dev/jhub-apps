@@ -127,6 +127,45 @@ describe('AppCard', () => {
     });
   });
 
+  test('simulates editing an app with an error', async () => {
+    mock.onGet().reply(200);
+    mock.onPut().reply(500, { error: 'Some error' });
+    const { baseElement } = render(
+      <RecoilRoot>
+        <QueryClientProvider client={queryClient}>
+          <AppCard
+            id="card-1"
+            title="Card 1"
+            framework="Some Framework"
+            url="/some-url"
+            ready={true}
+          />
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+
+    const menu = baseElement.querySelectorAll(
+      '.context-menu-container',
+    )[0] as HTMLDivElement;
+    await act(async () => {
+      menu.click();
+    });
+
+    const btn = baseElement.querySelectorAll(
+      '.context-menu li a',
+    )[0] as HTMLAnchorElement;
+    await act(async () => {
+      btn.click();
+    });
+
+    const submitBtn = baseElement.querySelector(
+      '#submit-btn',
+    ) as HTMLButtonElement;
+    await act(async () => {
+      submitBtn.click();
+    });
+  });
+
   test('simulates deleting an app', async () => {
     mock.onDelete().reply(200);
     const { baseElement } = render(
@@ -168,6 +207,44 @@ describe('AppCard', () => {
       menu.click();
     });
 
+    await act(async () => {
+      btn.click();
+    });
+
+    const deleteBtn = baseElement.querySelector(
+      '#delete-btn',
+    ) as HTMLButtonElement;
+    await act(async () => {
+      deleteBtn.click();
+    });
+  });
+
+  test('simulates deleting an app with an error', async () => {
+    mock.onDelete().reply(500, { error: 'Some error' });
+    const { baseElement } = render(
+      <RecoilRoot>
+        <QueryClientProvider client={queryClient}>
+          <AppCard
+            id="card-1"
+            title="Card 1"
+            framework="Some Framework"
+            url="/some-url"
+            ready={true}
+          />
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+
+    const menu = baseElement.querySelectorAll(
+      '.context-menu-container',
+    )[0] as HTMLDivElement;
+    await act(async () => {
+      menu.click();
+    });
+
+    const btn = baseElement.querySelectorAll(
+      '.context-menu li a',
+    )[1] as HTMLAnchorElement;
     await act(async () => {
       btn.click();
     });

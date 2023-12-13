@@ -55,8 +55,70 @@ describe('AppForm', () => {
     }
   });
 
+  test('simulates creating an app with an error', async () => {
+    mock.onPost().reply(500, { message: 'Some error' });
+    const { baseElement } = render(
+      <RecoilRoot>
+        <QueryClientProvider client={queryClient}>
+          <AppForm />
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+
+    const displayNameField = baseElement.querySelector(
+      '#display_name',
+    ) as HTMLInputElement;
+    const descriptionField = baseElement.querySelector(
+      '#display_name',
+    ) as HTMLInputElement;
+    const frameworkField = baseElement.querySelector(
+      '#framework',
+    ) as HTMLSelectElement;
+    if (displayNameField && descriptionField && frameworkField) {
+      await userEvent.type(displayNameField, 'App 1');
+      await userEvent.type(descriptionField, 'Some App');
+      fireEvent.change(frameworkField, { target: { value: 'panel' } });
+
+      const btn = baseElement.querySelector('#submit-btn') as HTMLButtonElement;
+      await act(async () => {
+        btn.click();
+      });
+    }
+  });
+
   test('simulates editing an app', async () => {
     mock.onPut().reply(200);
+    const { baseElement } = render(
+      <RecoilRoot>
+        <QueryClientProvider client={queryClient}>
+          <AppForm id="app-1" />
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+
+    const displayNameField = baseElement.querySelector(
+      '#display_name',
+    ) as HTMLInputElement;
+    const descriptionField = baseElement.querySelector(
+      '#display_name',
+    ) as HTMLInputElement;
+    const frameworkField = baseElement.querySelector(
+      '#framework',
+    ) as HTMLSelectElement;
+    if (displayNameField && descriptionField && frameworkField) {
+      await userEvent.type(displayNameField, 'App 1');
+      await userEvent.type(descriptionField, 'Some App');
+      fireEvent.change(frameworkField, { target: { value: 'panel' } });
+
+      const btn = baseElement.querySelector('#submit-btn') as HTMLButtonElement;
+      await act(async () => {
+        btn.click();
+      });
+    }
+  });
+
+  test('simulates editing an app with an error', async () => {
+    mock.onPut().reply(500, { message: 'Some error' });
     const { baseElement } = render(
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
