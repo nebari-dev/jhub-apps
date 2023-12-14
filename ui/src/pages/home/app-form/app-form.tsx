@@ -1,4 +1,8 @@
-import { AppQueryGetProps, AppQueryUpdateProps } from '@src/types/api';
+import {
+  AppFrameworkProps,
+  AppQueryGetProps,
+  AppQueryUpdateProps,
+} from '@src/types/api';
 import { AppFormInput } from '@src/types/form';
 import axios from '@src/utils/axios';
 import { REQUIRED_FORM_FIELDS_RULES } from '@src/utils/constants';
@@ -44,6 +48,17 @@ export const AppForm = ({
         return response.data;
       }),
     enabled: !!id,
+  });
+
+  const { data: frameworks } = useQuery<
+    AppFrameworkProps[],
+    { message: string }
+  >({
+    queryKey: ['app-frameworks', id],
+    queryFn: () =>
+      axios.get('/frameworks').then((response) => {
+        return response.data;
+      }),
   });
 
   const {
@@ -210,17 +225,12 @@ export const AppForm = ({
             <Select
               {...field}
               id="framework"
-              options={[
-                { value: '', label: 'Select...' },
-                { value: 'panel', label: 'Panel' },
-                { value: 'bokeh', label: 'Bokeh' },
-                { value: 'streamlit', label: 'Streamlit' },
-                { value: 'voila', label: 'Voila' },
-                { value: 'plotlydash', label: 'PlotlyDash' },
-                { value: 'gradio', label: 'Gradio' },
-                { value: 'jupyterlab', label: 'JupyterLab' },
-                { value: 'custom', label: 'Custom Command' },
-              ]}
+              options={
+                frameworks?.map((framework: AppFrameworkProps) => ({
+                  value: framework.name,
+                  label: framework.display_name,
+                })) || []
+              }
             ></Select>
           )}
         />
