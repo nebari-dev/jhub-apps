@@ -3,7 +3,7 @@ import { fireEvent, render } from '@testing-library/react';
 import { Modal } from './modal';
 
 describe('Modal', () => {
-  test('renders a default modal successfully', () => {
+  test('renders default modal successfully', () => {
     const { baseElement } = render(
       <Modal title="Modal 1" setIsOpen={jest.fn()} body={<></>} />,
     );

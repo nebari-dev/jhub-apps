@@ -5,6 +5,7 @@ export interface ContextMenuItem {
   id: string;
   title: string;
   disabled?: boolean;
+  visible?: boolean;
   onClick?: (param: SyntheticEvent) => void;
 }
 
@@ -26,21 +27,23 @@ export const ContextMenu = ({
     <div className="context-menu-container" id={id} tabIndex={0} ref={menuRef}>
       <EllipsisHorizontalIcon />
       <ul className={`context-menu`}>
-        {items.map((item) => (
-          <li key={`context-menu-item-${item.id}`}>
-            <a
-              className={item.disabled ? 'disabled' : ''}
-              onClick={(e) => {
-                if (item.onClick && !item.disabled) {
-                  item.onClick(e);
-                  menuRef.current?.blur();
-                }
-              }}
-            >
-              {item.title}
-            </a>
-          </li>
-        ))}
+        {items
+          .filter((item) => item.visible)
+          .map((item) => (
+            <li key={`context-menu-item-${item.id}`}>
+              <a
+                className={item.disabled ? 'disabled' : ''}
+                onClick={(e) => {
+                  if (item.onClick && !item.disabled) {
+                    item.onClick(e);
+                    menuRef.current?.blur();
+                  }
+                }}
+              >
+                {item.title}
+              </a>
+            </li>
+          ))}
       </ul>
     </div>
   );

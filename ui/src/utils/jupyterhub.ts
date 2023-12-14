@@ -1,6 +1,5 @@
 import { JhApp, JhService, JhServiceFull } from '@src/types/jupyterhub';
 import { JhData } from '@src/types/jupyterhub.ts';
-import { UserState } from '@src/types/user';
 
 export const getJhData = (): JhData => {
   return window.jhdata;
@@ -23,8 +22,8 @@ export const getServices = (services: JhServiceFull[], user: string) => {
   return jhServices;
 };
 
-export const getApps = (userState: UserState, appType: string) => {
-  const servers = userState.servers;
+/* eslint-disable @typescript-eslint/no-explicit-any */
+export const getApps = (servers: any, appType: string) => {
   const apps: JhApp[] = [];
   for (const key in servers) {
     if (Object.hasOwnProperty.call(servers, key)) {
@@ -37,7 +36,7 @@ export const getApps = (userState: UserState, appType: string) => {
           description: app.description,
           framework: getFriendlyFrameworkName(app.framework),
           url: server.url,
-          thumbnail: app.imgUrl,
+          thumbnail: app.thumbnail,
           shared: false,
           ready: app.ready,
         });
