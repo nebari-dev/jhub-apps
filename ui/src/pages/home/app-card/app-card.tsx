@@ -30,7 +30,6 @@ export const AppCard = ({
   thumbnail,
   framework,
   url,
-  ready = false,
 }: AppCardProps): React.ReactElement => {
   const queryClient = useQueryClient();
   const [submitting, setSubmitting] = useState(false);
@@ -70,20 +69,6 @@ export const AppCard = ({
   };
 
   const menuItems: ContextMenuItem[] = [
-    {
-      id: 'start',
-      title: 'Start',
-      onClick: () => window.location.assign(url),
-      disabled: ready,
-      visible: false,
-    },
-    {
-      id: 'stop',
-      title: 'Stop',
-      onClick: () => console.log(`Stopping app with id: ${id}`),
-      disabled: !ready,
-      visible: false,
-    },
     {
       id: 'edit',
       title: 'Edit',
