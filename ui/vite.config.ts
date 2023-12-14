@@ -60,6 +60,36 @@ export default defineConfig({
           );
         },
       },
+      '/services/japps/server/test-app': {
+        target: 'http://localhost:8080',
+        // Bypass any JuptyerHub API calls and mock with static data
+        bypass(req, res, options) {
+          res.end(
+            JSON.stringify({
+              name: 'test-app',
+              last_activity: '',
+              started: null,
+              pending: null,
+              ready: true,
+              stopped: false,
+              url: 'http://',
+              user_options: {
+                jhub_app: true,
+                display_name: 'App 1',
+                description: 'App Description',
+                thumbnail: '',
+                filepath: '',
+                framework: 'panel',
+                custom_command: '',
+                conda_env: '',
+                profile: '',
+              },
+              progress_url: '',
+              state: {},
+            }),
+          );
+        },
+      },
       '/services/japps/server/': {
         target: 'http://localhost:8080',
         // Bypass any JuptyerHub API calls and mock with static data
@@ -124,6 +154,19 @@ export default defineConfig({
                 },
               },
             }),
+          );
+        },
+      },
+      '/services/japps/frameworks': {
+        target: 'http://localhost:8080',
+        // Bypass any JuptyerHub API calls and mock with static data
+        bypass(req, res, options) {
+          res.end(
+            JSON.stringify([
+              { name: 'panel', display_name: 'Panel', logo: '' },
+              { name: 'bokeh', display_name: 'Bokeh', logo: '' },
+              { name: 'jupyterlab', display_name: 'JupyterLab', logo: '' },
+            ]),
           );
         },
       },
