@@ -1,15 +1,17 @@
+import dataclasses
 import os
 
 from fastapi import APIRouter, Depends, Form, status
 
-from .client import get_client
-from .models import AuthorizationError, HubApiError, User, ServerCreation
-from .security import get_current_user
+from jhub_apps.service.client import get_client
+from jhub_apps.service.models import AuthorizationError, HubApiError, User, ServerCreation
+from jhub_apps.service.security import get_current_user
 
 from fastapi import FastAPI
 from fastapi.templating import Jinja2Templates
 
-from ..hub_client.hub_client import HubClient
+from jhub_apps.hub_client.hub_client import HubClient
+from jhub_apps.spawner.types import FRAMEWORKS
 
 app = FastAPI()
 
@@ -106,6 +108,14 @@ async def delete_server(user: User = Depends(get_current_user), server_name=None
 async def me(user: User = Depends(get_current_user)):
     """Authenticated function that returns the User model"""
     return user
+
+
+@router.get("/frameworks/", description="Get all frameworks")
+async def get_frameworks(user: User = Depends(get_current_user)):
+    frameworks = []
+    for framework in FRAMEWORKS:
+        frameworks.append(dataclasses.asdict(framework))
+    return frameworks
 
 
 @router.get(
