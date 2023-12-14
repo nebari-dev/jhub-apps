@@ -226,10 +226,15 @@ export const AppForm = ({
               {...field}
               id="framework"
               options={
-                frameworks?.map((framework: AppFrameworkProps) => ({
-                  value: framework.name,
-                  label: framework.display_name,
-                })) || []
+                frameworks
+                  ? [
+                      { value: '', label: 'Select...' },
+                      ...frameworks.map((framework: AppFrameworkProps) => ({
+                        value: framework.name,
+                        label: framework.display_name,
+                      })),
+                    ]
+                  : []
               }
             ></Select>
           )}
