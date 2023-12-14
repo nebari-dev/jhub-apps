@@ -1,6 +1,8 @@
+import dataclasses
 from unittest.mock import patch
 
 from jhub_apps.hub_client.hub_client import HubClient
+from jhub_apps.spawner.types import FRAMEWORKS
 from jhub_apps.tests.constants import MOCK_USER
 
 
@@ -74,6 +76,16 @@ def test_api_update_server(create_server, client):
         user_options=UserOptions(**user_options),
     )
     assert response.json() == create_server_response
+
+
+def test_api_frameworks(client):
+    response = client.get(
+        "/frameworks",
+    )
+    frameworks = []
+    for framework in FRAMEWORKS:
+        frameworks.append(dataclasses.asdict(framework))
+    assert response.json() == frameworks
 
 
 def test_api_status(client):
