@@ -11,6 +11,7 @@ from fastapi import FastAPI
 from fastapi.templating import Jinja2Templates
 
 from jhub_apps.hub_client.hub_client import HubClient
+from jhub_apps.service.utils import get_conda_envs, get_jupyterhub_config, get_spawner_profiles
 from jhub_apps.spawner.types import FRAMEWORKS
 
 app = FastAPI()
@@ -116,6 +117,20 @@ async def get_frameworks(user: User = Depends(get_current_user)):
     for framework in FRAMEWORKS:
         frameworks.append(dataclasses.asdict(framework))
     return frameworks
+
+
+@router.get("/conda-environments/", description="Get all conda environments")
+async def conda_environments(user: User = Depends(get_current_user)):
+    config = get_jupyterhub_config()
+    conda_envs = get_conda_envs(config)
+    return conda_envs
+
+
+@router.get("/spawner-profiles/", description="Get all spawner profiles")
+async def spawner_profiles(user: User = Depends(get_current_user)):
+    config = get_jupyterhub_config()
+    spawner_profiles_ = get_spawner_profiles(config)
+    return spawner_profiles_
 
 
 @router.get(
