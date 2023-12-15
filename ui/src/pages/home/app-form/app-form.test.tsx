@@ -1,3 +1,4 @@
+import { app, frameworks } from '@src/data/api';
 import axios from '@src/utils/axios';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, fireEvent, render } from '@testing-library/react';
@@ -25,6 +26,7 @@ describe('AppForm', () => {
   });
 
   test('simulates creating an app', async () => {
+    mock.onGet(new RegExp('/frameworks')).reply(200, frameworks);
     mock.onPost().reply(200);
     const { baseElement } = render(
       <RecoilRoot>
@@ -56,6 +58,7 @@ describe('AppForm', () => {
   });
 
   test('simulates creating an app with an error', async () => {
+    mock.onGet(new RegExp('/frameworks')).reply(200, frameworks);
     mock.onPost().reply(500, { message: 'Some error' });
     const { baseElement } = render(
       <RecoilRoot>
@@ -87,6 +90,8 @@ describe('AppForm', () => {
   });
 
   test('simulates editing an app', async () => {
+    mock.onGet(new RegExp('/frameworks')).reply(200, frameworks);
+    mock.onGet(new RegExp('/server/app-1')).reply(200, app);
     mock.onPut().reply(200);
     const { baseElement } = render(
       <RecoilRoot>
@@ -118,6 +123,8 @@ describe('AppForm', () => {
   });
 
   test('simulates editing an app with an error', async () => {
+    mock.onGet(new RegExp('/frameworks')).reply(200, frameworks);
+    mock.onGet(new RegExp('/server/app-1')).reply(200, app);
     mock.onPut().reply(500, { message: 'Some error' });
     const { baseElement } = render(
       <RecoilRoot>

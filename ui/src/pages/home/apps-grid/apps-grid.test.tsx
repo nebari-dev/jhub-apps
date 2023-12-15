@@ -1,3 +1,4 @@
+import { userState } from '@src/data/api';
 import axios from '@src/utils/axios';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import '@testing-library/jest-dom';
@@ -42,6 +43,7 @@ describe('AppsGrid', () => {
   });
 
   test('renders a message when no apps and filter', () => {
+    mock.onGet(new RegExp('/server/')).reply(200, []);
     const { baseElement } = render(
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
@@ -52,8 +54,20 @@ describe('AppsGrid', () => {
     expect(baseElement).toHaveTextContent('No apps available');
   });
 
+  test('renders with mocked data', async () => {
+    mock.onGet(new RegExp('/server/')).reply(200, userState.servers);
+    const { baseElement } = render(
+      <RecoilRoot>
+        <QueryClientProvider client={queryClient}>
+          <AppsGrid filter="" />
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+    expect(baseElement).toHaveTextContent('No apps available');
+  });
+
   test('renders with filtered mocked data', async () => {
-    mock.onGet().reply(200, []);
+    mock.onGet(new RegExp('/server')).reply(200, userState.servers);
     const { baseElement } = render(
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
@@ -65,7 +79,7 @@ describe('AppsGrid', () => {
   });
 
   test('renders with data error', async () => {
-    mock.onGet().reply(500, { error: 'Some error' });
+    mock.onGet().reply(500, { message: 'Some error' });
     const { baseElement } = render(
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>

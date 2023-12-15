@@ -1,4 +1,8 @@
-import { AppQueryGetProps, AppQueryUpdateProps } from '@src/types/api';
+import {
+  AppFrameworkProps,
+  AppQueryGetProps,
+  AppQueryUpdateProps,
+} from '@src/types/api';
 import { AppFormInput } from '@src/types/form';
 import axios from '@src/utils/axios';
 import { REQUIRED_FORM_FIELDS_RULES } from '@src/utils/constants';
@@ -46,10 +50,22 @@ export const AppForm = ({
     enabled: !!id,
   });
 
+  const { data: frameworks } = useQuery<
+    AppFrameworkProps[],
+    { message: string }
+  >({
+    queryKey: ['app-frameworks', id],
+    queryFn: () =>
+      axios.get('/frameworks').then((response) => {
+        return response.data;
+      }),
+  });
+
   const {
     control,
     handleSubmit,
     reset,
+    watch,
     formState: { errors },
   } = useForm<AppFormInput>({
     defaultValues: {
@@ -63,6 +79,7 @@ export const AppForm = ({
       profile: '',
     },
   });
+  const currentFramework = watch('framework');
 
   const onFormSubmit: SubmitHandler<AppFormInput> = ({
     display_name,
@@ -169,7 +186,13 @@ export const AppForm = ({
 
   return (
     <form id="app-form" onSubmit={handleSubmit(onFormSubmit)} className="form">
-      <FormGroup>
+      <FormGroup
+        errors={
+          errors.display_name?.message
+            ? [errors.display_name.message]
+            : undefined
+        }
+      >
         <Label htmlFor="display_name" required>
           Display Name
         </Label>
@@ -197,7 +220,11 @@ export const AppForm = ({
           )}
         />
       </FormGroup>
-      <FormGroup>
+      <FormGroup
+        errors={
+          errors.framework?.message ? [errors.framework.message] : undefined
+        }
+      >
         <Label htmlFor="framework" required>
           Framework
         </Label>
@@ -210,17 +237,17 @@ export const AppForm = ({
             <Select
               {...field}
               id="framework"
-              options={[
-                { value: '', label: 'Select...' },
-                { value: 'panel', label: 'Panel' },
-                { value: 'bokeh', label: 'Bokeh' },
-                { value: 'streamlit', label: 'Streamlit' },
-                { value: 'voila', label: 'Voila' },
-                { value: 'plotlydash', label: 'PlotlyDash' },
-                { value: 'gradio', label: 'Gradio' },
-                { value: 'jupyterlab', label: 'JupyterLab' },
-                { value: 'custom', label: 'Custom Command' },
-              ]}
+              options={
+                frameworks
+                  ? [
+                      { value: '', label: 'Select...' },
+                      ...frameworks.map((framework: AppFrameworkProps) => ({
+                        value: framework.name,
+                        label: framework.display_name,
+                      })),
+                    ]
+                  : []
+              }
             ></Select>
           )}
         />
@@ -250,17 +277,33 @@ export const AppForm = ({
           )}
         />
       </FormGroup>
-      <FormGroup>
-        <Label htmlFor="custom_command">Custom Command</Label>
-        <Controller
-          name="custom_command"
-          control={control}
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          render={({ field: { ref: _, ...field } }) => (
-            <TextInput {...field} id="custom_command" />
+      {currentFramework === 'custom' ? (
+        <FormGroup
+          errors={
+            errors.custom_command?.message
+              ? [errors.custom_command.message]
+              : undefined
+          }
+        >
+          <Label htmlFor="custom_command" required>
+            Custom Command
+          </Label>
+          <Controller
+            name="custom_command"
+            control={control}
+            rules={REQUIRED_FORM_FIELDS_RULES}
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            render={({ field: { ref: _, ...field } }) => (
+              <TextInput {...field} id="custom_command" />
+            )}
+          />
+          {errors.custom_command?.message && (
+            <ErrorMessages errors={[errors.custom_command.message]} />
           )}
-        />
-      </FormGroup>
+        </FormGroup>
+      ) : (
+        <></>
+      )}
       <ButtonGroup>
         <Button
           id="cancel-btn"

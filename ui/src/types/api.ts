@@ -31,3 +31,9 @@ export interface AppQueryGetProps {
   progress_url: string;
   state: Record<string, unknown>;
 }
+
+export interface AppFrameworkProps {
+  name: string;
+  display_name: string;
+  logo: string;
+}
