@@ -166,6 +166,7 @@ export default defineConfig({
               { name: 'panel', display_name: 'Panel', logo: '' },
               { name: 'bokeh', display_name: 'Bokeh', logo: '' },
               { name: 'jupyterlab', display_name: 'JupyterLab', logo: '' },
+              { name: 'custom', display_name: 'Custom Command', logo: '' },
             ]),
           );
         },

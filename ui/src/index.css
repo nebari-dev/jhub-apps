@@ -28,6 +28,15 @@
     margin-top: 1rem;
   }
 
+  .form-group-error {
+    margin-left: -1.25rem;
+    border-left-width: 0.25rem;
+    border-left-color: theme('colors.error');
+    border-left-style: solid;
+    padding-left: 1rem;
+    position: relative;
+  }
+
   .btn {
     padding: 0.4rem 1rem 0.4rem 1rem;
   }

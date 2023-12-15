@@ -65,6 +65,7 @@ export const AppForm = ({
     control,
     handleSubmit,
     reset,
+    watch,
     formState: { errors },
   } = useForm<AppFormInput>({
     defaultValues: {
@@ -78,6 +79,7 @@ export const AppForm = ({
       profile: '',
     },
   });
+  const currentFramework = watch('framework');
 
   const onFormSubmit: SubmitHandler<AppFormInput> = ({
     display_name,
@@ -184,7 +186,13 @@ export const AppForm = ({
 
   return (
     <form id="app-form" onSubmit={handleSubmit(onFormSubmit)} className="form">
-      <FormGroup>
+      <FormGroup
+        errors={
+          errors.display_name?.message
+            ? [errors.display_name.message]
+            : undefined
+        }
+      >
         <Label htmlFor="display_name" required>
           Display Name
         </Label>
@@ -212,7 +220,11 @@ export const AppForm = ({
           )}
         />
       </FormGroup>
-      <FormGroup>
+      <FormGroup
+        errors={
+          errors.framework?.message ? [errors.framework.message] : undefined
+        }
+      >
         <Label htmlFor="framework" required>
           Framework
         </Label>
@@ -265,17 +277,33 @@ export const AppForm = ({
           )}
         />
       </FormGroup>
-      <FormGroup>
-        <Label htmlFor="custom_command">Custom Command</Label>
-        <Controller
-          name="custom_command"
-          control={control}
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          render={({ field: { ref: _, ...field } }) => (
-            <TextInput {...field} id="custom_command" />
+      {currentFramework === 'custom' ? (
+        <FormGroup
+          errors={
+            errors.custom_command?.message
+              ? [errors.custom_command.message]
+              : undefined
+          }
+        >
+          <Label htmlFor="custom_command" required>
+            Custom Command
+          </Label>
+          <Controller
+            name="custom_command"
+            control={control}
+            rules={REQUIRED_FORM_FIELDS_RULES}
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            render={({ field: { ref: _, ...field } }) => (
+              <TextInput {...field} id="custom_command" />
+            )}
+          />
+          {errors.custom_command?.message && (
+            <ErrorMessages errors={[errors.custom_command.message]} />
           )}
-        />
-      </FormGroup>
+        </FormGroup>
+      ) : (
+        <></>
+      )}
       <ButtonGroup>
         <Button
           id="cancel-btn"
