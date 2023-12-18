@@ -171,6 +171,26 @@ export default defineConfig({
           );
         },
       },
+      '/services/japps/conda-environments': {
+        target: 'http://localhost:8080',
+        // Bypass any JuptyerHub API calls and mock with static data
+        bypass(req, res, options) {
+          res.end(JSON.stringify(['env1', 'env2', 'env3', 'env4', 'env5']));
+        },
+      },
+      '/services/japps/spawner-profiles': {
+        target: 'http://localhost:8080',
+        // Bypass any JuptyerHub API calls and mock with static data
+        bypass(req, res, options) {
+          res.end(
+            JSON.stringify([
+              { name: 'small', display_name: 'Small Instance' },
+              { name: 'medium', display_name: 'Medium Instance' },
+              { name: 'large', display_name: 'Large Instance' },
+            ]),
+          );
+        },
+      },
     },
   },
 });

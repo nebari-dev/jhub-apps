@@ -1,5 +1,6 @@
 import {
   AppFrameworkProps,
+  AppProfileProps,
   AppQueryGetProps,
   AppQueryUpdateProps,
 } from '@src/types/api';
@@ -41,7 +42,10 @@ export const AppForm = ({
   );
   const [name, setName] = useState('');
   // Get the app data if we're editing an existing app
-  const { data, error } = useQuery<AppQueryGetProps, { message: string }>({
+  const { data: formData, error: formError } = useQuery<
+    AppQueryGetProps,
+    { message: string }
+  >({
     queryKey: ['app-form', id],
     queryFn: () =>
       axios.get(`/server/${id}`).then((response) => {
@@ -57,6 +61,22 @@ export const AppForm = ({
     queryKey: ['app-frameworks', id],
     queryFn: () =>
       axios.get('/frameworks').then((response) => {
+        return response.data;
+      }),
+  });
+
+  const { data: environments } = useQuery<string[], { message: string }>({
+    queryKey: ['app-environments', id],
+    queryFn: () =>
+      axios.get('/conda-environments').then((response) => {
+        return response.data;
+      }),
+  });
+
+  const { data: profiles } = useQuery<AppProfileProps[], { message: string }>({
+    queryKey: ['app-profiles', id],
+    queryFn: () =>
+      axios.get('/spawner-profiles').then((response) => {
         return response.data;
       }),
   });
@@ -172,17 +192,17 @@ export const AppForm = ({
   });
 
   useEffect(() => {
-    if (data?.name && data?.user_options) {
-      setName(data.name);
-      reset({ ...data.user_options });
+    if (formData?.name && formData?.user_options) {
+      setName(formData.name);
+      reset({ ...formData.user_options });
     }
-  }, [data?.name, data?.user_options, reset]);
+  }, [formData?.name, formData?.user_options, reset]);
 
   useEffect(() => {
-    if (error) {
-      setNotification(error.message);
+    if (formError) {
+      setNotification(formError.message);
     }
-  }, [error, setNotification]);
+  }, [formError, setNotification]);
 
   return (
     <form id="app-form" onSubmit={handleSubmit(onFormSubmit)} className="form">
@@ -266,17 +286,76 @@ export const AppForm = ({
           )}
         />
       </FormGroup>
-      <FormGroup>
-        <Label htmlFor="conda_env">Conda Environment</Label>
-        <Controller
-          name="conda_env"
-          control={control}
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          render={({ field: { ref: _, ...field } }) => (
-            <TextInput {...field} id="conda_env" />
+      {environments && environments.length > 0 ? (
+        <FormGroup
+          errors={
+            errors.conda_env?.message ? [errors.conda_env.message] : undefined
+          }
+        >
+          <Label htmlFor="conda_env" required>
+            Conda Environment
+          </Label>
+          <Controller
+            name="conda_env"
+            control={control}
+            rules={REQUIRED_FORM_FIELDS_RULES}
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            render={({ field: { ref: _, ...field } }) => (
+              <Select
+                {...field}
+                id="conda_env"
+                options={[
+                  { value: '', label: 'Select...' },
+                  ...environments.map((env: string) => ({
+                    value: env,
+                    label: env,
+                  })),
+                ]}
+              ></Select>
+            )}
+          />
+          {errors.conda_env?.message && (
+            <ErrorMessages errors={[errors.conda_env.message]} />
           )}
-        />
-      </FormGroup>
+        </FormGroup>
+      ) : (
+        <></>
+      )}
+      {profiles && profiles.length > 0 ? (
+        <FormGroup
+          errors={
+            errors.profile?.message ? [errors.profile.message] : undefined
+          }
+        >
+          <Label htmlFor="profile" required>
+            Spawner Profile
+          </Label>
+          <Controller
+            name="profile"
+            control={control}
+            rules={REQUIRED_FORM_FIELDS_RULES}
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            render={({ field: { ref: _, ...field } }) => (
+              <Select
+                {...field}
+                id="profile"
+                options={[
+                  { value: '', label: 'Select...' },
+                  ...profiles.map((profile: AppProfileProps) => ({
+                    value: profile.display_name,
+                    label: profile.display_name,
+                  })),
+                ]}
+              ></Select>
+            )}
+          />
+          {errors.profile?.message && (
+            <ErrorMessages errors={[errors.profile.message]} />
+          )}
+        </FormGroup>
+      ) : (
+        <></>
+      )}
       {currentFramework === 'custom' ? (
         <FormGroup
           errors={
