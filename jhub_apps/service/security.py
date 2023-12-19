@@ -17,7 +17,7 @@ auth_by_param = APIKeyQuery(name="token", auto_error=False)
 
 auth_url = os.environ["PUBLIC_HOST"] + "/hub/api/oauth2/authorize"
 auth_by_header = OAuth2AuthorizationCodeBearer(
-    authorizationUrl=auth_url, tokenUrl="get_token", auto_error=False
+    authorizationUrl=auth_url, tokenUrl="oauth_callback", auto_error=False
 )
 ### ^^ The flow for OAuth2 in Swagger is that the "authorize" button
 ### will redirect user (browser) to "auth_url", which is the Hub login page.

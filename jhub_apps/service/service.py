@@ -1,7 +1,8 @@
 import dataclasses
 import os
 
-from fastapi import APIRouter, Depends, Form, status
+from fastapi import APIRouter, Depends, Form, status, Request
+from starlette.responses import RedirectResponse
 
 from jhub_apps.service.client import get_client
 from jhub_apps.service.models import AuthorizationError, HubApiError, User, ServerCreation
@@ -25,11 +26,15 @@ router = APIRouter(prefix=service_prefix)
 # TODO: Add response models for all endpoints
 
 
-@router.post("/get_token", include_in_schema=False)
-async def get_token(code: str = Form(...)):
+@router.get("/oauth_callback", include_in_schema=False)
+async def get_token(code: str):
     "Callback function for OAuth2AuthorizationCodeBearer scheme"
     # The only thing we need in this form post is the code
     # Everything else we can hardcode / pull from env
+    print("*"*100)
+    print("Getting token")
+    print("*"*100)
+    # import ipdb as pdb; pdb.set_trace()
     async with get_client() as client:
         redirect_uri = (
             os.environ["PUBLIC_HOST"] + os.environ["JUPYTERHUB_OAUTH_CALLBACK_URL"],
@@ -45,6 +50,12 @@ async def get_token(code: str = Form(...)):
     ### resp.json() is {'access_token': <token>, 'token_type': 'Bearer'}
     return resp.json()
 
+
+
+@router.get("/jhub-login", description="Login via OAuth2")
+async def login(request: Request):
+    authorization_url = os.environ["PUBLIC_HOST"] + "/hub/api/oauth2/authorize?response_type=code&client_id=service-japps"
+    return RedirectResponse(authorization_url, status_code=302)
 
 @router.get("/server/", description="Get all servers")
 @router.get("/server/{server_name}", description="Get a server by server name")
