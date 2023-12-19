@@ -1,9 +1,11 @@
 import dataclasses
 import os
+from datetime import timedelta
 
-from fastapi import APIRouter, Depends, Form, status, Request
+from fastapi import APIRouter, Depends, Form, status, Request, Response
 from starlette.responses import RedirectResponse
 
+from jhub_apps.service.auth import create_access_token
 from jhub_apps.service.client import get_client
 from jhub_apps.service.models import AuthorizationError, HubApiError, User, ServerCreation
 from jhub_apps.service.security import get_current_user
@@ -18,6 +20,8 @@ from jhub_apps.spawner.types import FRAMEWORKS
 app = FastAPI()
 
 templates = Jinja2Templates(directory="jhub_apps/templates")
+# Expires in 7 days
+ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7
 
 # APIRouter prefix cannot end in /
 service_prefix = os.getenv("JUPYTERHUB_SERVICE_PREFIX", "").rstrip("/")
@@ -47,8 +51,14 @@ async def get_token(code: str):
             "redirect_uri": redirect_uri,
         }
         resp = await client.post("/oauth2/token", data=data)
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(
+        data={"sub": resp.json()}, expires_delta=access_token_expires
+    )
     ### resp.json() is {'access_token': <token>, 'token_type': 'Bearer'}
-    return resp.json()
+    response = Response("ok")
+    response.set_cookie(key="access_token",value=f"Bearer {access_token}", httponly=True)
+    return response
 
 
 
