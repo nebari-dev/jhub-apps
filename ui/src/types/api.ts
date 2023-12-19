@@ -37,3 +37,7 @@ export interface AppFrameworkProps {
   display_name: string;
   logo: string;
 }
+
+export interface AppProfileProps {
+  display_name: string;
+}
