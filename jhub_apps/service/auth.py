@@ -1,11 +1,12 @@
 import os
+import typing
 from datetime import timedelta, datetime
 
 import jwt
 from fastapi import HTTPException, status
 
 
-def create_access_token(data: dict, expires_delta: timedelta | None = None):
+def create_access_token(data: dict, expires_delta: typing.Optional[timedelta] = None):
     to_encode = data.copy()
     if expires_delta:
         expire = datetime.utcnow() + expires_delta
