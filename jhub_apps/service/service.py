@@ -35,10 +35,6 @@ async def get_token(code: str):
     "Callback function for OAuth2AuthorizationCodeBearer scheme"
     # The only thing we need in this form post is the code
     # Everything else we can hardcode / pull from env
-    print("*"*100)
-    print("Getting token")
-    print("*"*100)
-    # import ipdb as pdb; pdb.set_trace()
     async with get_client() as client:
         redirect_uri = (
             os.environ["PUBLIC_HOST"] + os.environ["JUPYTERHUB_OAUTH_CALLBACK_URL"],
