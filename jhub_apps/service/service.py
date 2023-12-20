@@ -56,11 +56,8 @@ async def get_token(code: str):
         data={"sub": resp.json()}, expires_delta=access_token_expires
     )
     ### resp.json() is {'access_token': <token>, 'token_type': 'Bearer'}
-    # response = Response("ok")
     response = RedirectResponse(os.environ["PUBLIC_HOST"] + "/hub/home", status_code=302)
     response.set_cookie(key="access_token",value=access_token, httponly=True)
-    # response = RedirectResponse(os.environ["PUBLIC_HOST"] + "/hub/home", status_code=302)
-    # response.headers["API-TOKEN"] = access_token
     return response
 
 
