@@ -5,9 +5,6 @@ const instance = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-  params: {
-    token: process.env.JUPYERHUB_API_TOKEN,
-  },
 });
 
 instance.interceptors.response.use(
