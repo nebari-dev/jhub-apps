@@ -2,7 +2,7 @@ import dataclasses
 import os
 from datetime import timedelta
 
-from fastapi import APIRouter, Depends, Form, status, Request, Response
+from fastapi import APIRouter, Depends, status, Request
 from starlette.responses import RedirectResponse
 
 from jhub_apps.service.auth import create_access_token
@@ -56,10 +56,12 @@ async def get_token(code: str):
         data={"sub": resp.json()}, expires_delta=access_token_expires
     )
     ### resp.json() is {'access_token': <token>, 'token_type': 'Bearer'}
-    response = Response("ok")
-    response.set_cookie(key="access_token",value=f"Bearer {access_token}", httponly=True)
+    # response = Response("ok")
+    response = RedirectResponse(os.environ["PUBLIC_HOST"] + "/hub/home", status_code=302)
+    response.set_cookie(key="access_token",value=access_token, httponly=True)
+    # response = RedirectResponse(os.environ["PUBLIC_HOST"] + "/hub/home", status_code=302)
+    # response.headers["API-TOKEN"] = access_token
     return response
-
 
 
 @router.get("/jhub-login", description="Login via OAuth2")
