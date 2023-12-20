@@ -25,7 +25,7 @@ app = FastAPI(
     swagger_ui_parameters={"persistAuthorization": True},
     ### Default /docs/oauth2 redirect will cause Hub
     ### to raise oauth2 redirect uri mismatch errors
-    swagger_ui_oauth2_redirect_url=os.environ["JUPYTERHUB_OAUTH_CALLBACK_URL"],
+    # swagger_ui_oauth2_redirect_url=os.environ["JUPYTERHUB_OAUTH_CALLBACK_URL"],
 )
 static_files = StaticFiles(directory=STATIC_DIR)
 app.mount(f"{router.prefix}/static", static_files, name="static")

@@ -27,6 +27,13 @@ pip install -e .
 
 ## Starting JupyterHub
 
+Set the following environment variable:
+
+```bash
+export JWT_SECRET_KEY=$(openssl rand -hex 32)
+```
+
+
 ```bash
 jupyterhub -f jupyterhub_config.py
 ```

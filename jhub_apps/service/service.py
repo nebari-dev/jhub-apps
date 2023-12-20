@@ -1,8 +1,11 @@
 import dataclasses
 import os
+from datetime import timedelta
 
-from fastapi import APIRouter, Depends, Form, status
+from fastapi import APIRouter, Depends, status, Request
+from starlette.responses import RedirectResponse
 
+from jhub_apps.service.auth import create_access_token
 from jhub_apps.service.client import get_client
 from jhub_apps.service.models import AuthorizationError, HubApiError, User, ServerCreation
 from jhub_apps.service.security import get_current_user
@@ -17,6 +20,8 @@ from jhub_apps.spawner.types import FRAMEWORKS
 app = FastAPI()
 
 templates = Jinja2Templates(directory="jhub_apps/templates")
+# Expires in 7 days
+ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7
 
 # APIRouter prefix cannot end in /
 service_prefix = os.getenv("JUPYTERHUB_SERVICE_PREFIX", "").rstrip("/")
@@ -25,8 +30,8 @@ router = APIRouter(prefix=service_prefix)
 # TODO: Add response models for all endpoints
 
 
-@router.post("/get_token", include_in_schema=False)
-async def get_token(code: str = Form(...)):
+@router.get("/oauth_callback", include_in_schema=False)
+async def get_token(code: str):
     "Callback function for OAuth2AuthorizationCodeBearer scheme"
     # The only thing we need in this form post is the code
     # Everything else we can hardcode / pull from env
@@ -42,9 +47,20 @@ async def get_token(code: str = Form(...)):
             "redirect_uri": redirect_uri,
         }
         resp = await client.post("/oauth2/token", data=data)
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(
+        data={"sub": resp.json()}, expires_delta=access_token_expires
+    )
     ### resp.json() is {'access_token': <token>, 'token_type': 'Bearer'}
-    return resp.json()
+    response = RedirectResponse(os.environ["PUBLIC_HOST"] + "/hub/home", status_code=302)
+    response.set_cookie(key="access_token",value=access_token, httponly=True)
+    return response
 
+
+@router.get("/jhub-login", description="Login via OAuth2")
+async def login(request: Request):
+    authorization_url = os.environ["PUBLIC_HOST"] + "/hub/api/oauth2/authorize?response_type=code&client_id=service-japps"
+    return RedirectResponse(authorization_url, status_code=302)
 
 @router.get("/server/", description="Get all servers")
 @router.get("/server/{server_name}", description="Get a server by server name")

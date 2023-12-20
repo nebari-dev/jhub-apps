@@ -22,6 +22,7 @@ dependencies = [
     "panel",
     "bokeh",
     "traitlets",
+    "PyJWT",
 ]
 dynamic = ["version"]
 

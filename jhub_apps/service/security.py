@@ -2,9 +2,10 @@ import json
 import os
 
 from fastapi import HTTPException, Security, status
-from fastapi.security import OAuth2AuthorizationCodeBearer
+from fastapi.security import OAuth2AuthorizationCodeBearer, APIKeyCookie
 from fastapi.security.api_key import APIKeyQuery
 
+from .auth import get_jhub_token_from_jwt_token
 from .client import get_client
 from .models import User
 
@@ -15,9 +16,10 @@ from .models import User
 ### not being included here.
 auth_by_param = APIKeyQuery(name="token", auto_error=False)
 
+auth_by_cookie = APIKeyCookie(name="access_token")
 auth_url = os.environ["PUBLIC_HOST"] + "/hub/api/oauth2/authorize"
 auth_by_header = OAuth2AuthorizationCodeBearer(
-    authorizationUrl=auth_url, tokenUrl="get_token", auto_error=False
+    authorizationUrl=auth_url, tokenUrl="oauth_callback", auto_error=False
 )
 ### ^^ The flow for OAuth2 in Swagger is that the "authorize" button
 ### will redirect user (browser) to "auth_url", which is the Hub login page.
@@ -38,13 +40,16 @@ else:
 async def get_current_user(
     auth_param: str = Security(auth_by_param),
     auth_header: str = Security(auth_by_header),
+    auth_cookie: str = Security(auth_by_cookie)
 ):
-    token = auth_param or auth_header
+    token = auth_param or auth_header or auth_cookie
     if token is None:
         raise HTTPException(
             status.HTTP_401_UNAUTHORIZED,
             detail="Must login with token parameter or Authorization bearer header",
         )
+
+    token = get_jhub_token_from_jwt_token(token)
 
     async with get_client() as client:
         endpoint = "/user"
@@ -54,7 +59,7 @@ async def get_current_user(
         resp = await client.get(endpoint, headers=headers)
         if resp.is_error:
             raise HTTPException(
-                status.HTTP_400_BAD_REQUEST,
+                status.HTTP_401_UNAUTHORIZED,
                 detail={
                     "msg": "Error getting user info from token",
                     "request_url": str(resp.request.url),

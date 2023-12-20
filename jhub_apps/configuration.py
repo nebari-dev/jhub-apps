@@ -60,6 +60,7 @@ def install_jhub_apps(c, spawner_to_subclass):
                     "JHUB_APP_TITLE": c.JAppsConfig.app_title,
                     "JHUB_APP_ICON": c.JAppsConfig.app_icon,
                     "JHUB_JUPYTERHUB_CONFIG": c.JAppsConfig.jupyterhub_config_path,
+                    "JWT_SECRET_KEY": os.environ["JWT_SECRET_KEY"],
                 },
                 "oauth_redirect_uri": oauth_redirect_uri,
                 "display": False,
