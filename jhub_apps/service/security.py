@@ -59,7 +59,7 @@ async def get_current_user(
         resp = await client.get(endpoint, headers=headers)
         if resp.is_error:
             raise HTTPException(
-                status.HTTP_400_BAD_REQUEST,
+                status.HTTP_401_UNAUTHORIZED,
                 detail={
                     "msg": "Error getting user info from token",
                     "request_url": str(resp.request.url),
