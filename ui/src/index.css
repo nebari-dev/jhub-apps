@@ -229,6 +229,8 @@
 
   .modal-body {
     min-height: 120px;
+    max-height: 90vh;
+    overflow-y: auto;
     color: theme('colors.text-dark');
     padding: 16px 24px;
     font-size: 0.93rem;
