@@ -61,7 +61,7 @@ describe('JupyterHub utils', () => {
   test('returns an array of JhService for given services', () => {
     const user = 'testUser';
     const result = getServices(servicesFull, user);
-    expect(result.length).toEqual(1);
+    expect(result.length).toEqual(2);
     expect(result[0]).toEqual({
       name: 'Service 1',
       url: 'http://service1.com/testUser',

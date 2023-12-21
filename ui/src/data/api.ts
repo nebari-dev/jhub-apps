@@ -1,10 +1,23 @@
-import { AppFrameworkProps, AppQueryGetProps } from '@src/types/api';
+import {
+  AppFrameworkProps,
+  AppProfileProps,
+  AppQueryGetProps,
+} from '@src/types/api';
 import { UserState } from '@src/types/user';
 
 export const frameworks: AppFrameworkProps[] = [
   { name: 'panel', display_name: 'Panel', logo: '' },
   { name: 'bokeh', display_name: 'Bokeh', logo: '' },
   { name: 'jupyterlab', display_name: 'JupyterLab', logo: '' },
+  { name: 'custom', display_name: 'Custom Command', logo: '' },
+];
+
+export const environments = ['env-1', 'env-2', 'env-3', 'env-4', 'env-5'];
+
+export const profiles: AppProfileProps[] = [
+  { display_name: 'Small' },
+  { display_name: 'Medium' },
+  { display_name: 'Large' },
 ];
 
 export const app: AppQueryGetProps = {
