@@ -1,3 +1,4 @@
+import { app, environments, frameworks, profiles } from '@src/data/api';
 import axios from '@src/utils/axios';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import '@testing-library/jest-dom';
@@ -74,13 +75,20 @@ describe('AppCard', () => {
   });
 
   test('simulates editing an app', async () => {
-    mock.onGet().reply(200);
+    mock.onGet(new RegExp('/frameworks')).reply(200, frameworks);
+    mock.onGet(new RegExp('/conda-environments')).reply(200, environments);
+    mock.onGet(new RegExp('/spawner-profiles')).reply(200, profiles);
+    mock.onGet(new RegExp('/server/app-1')).reply(200, app);
+    queryClient.setQueryData(['app-form'], app);
+    queryClient.setQueryData(['app-frameworks'], frameworks);
+    queryClient.setQueryData(['app-environments'], environments);
+    queryClient.setQueryData(['app-profiles'], profiles);
     mock.onPut().reply(200);
     const { baseElement } = render(
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
           <AppCard
-            id="card-1"
+            id="app-1"
             title="Card 1"
             framework="Some Framework"
             url="/some-url"
@@ -128,13 +136,16 @@ describe('AppCard', () => {
   });
 
   test('simulates editing an app with an error', async () => {
-    mock.onGet().reply(200);
-    mock.onPut().reply(500, { error: 'Some error' });
+    mock.onGet(new RegExp('/frameworks')).reply(200, frameworks);
+    mock.onGet(new RegExp('/server/app-1')).reply(200, app);
+    mock
+      .onPut(new RegExp('/server/app-1'))
+      .reply(500, { message: 'Some error' });
     const { baseElement } = render(
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
           <AppCard
-            id="card-1"
+            id="app-1"
             title="Card 1"
             framework="Some Framework"
             url="/some-url"
