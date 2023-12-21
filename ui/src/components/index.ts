@@ -3,6 +3,7 @@ export { default as ButtonGroup } from './button-group/button-group';
 export { default as Button } from './button/button';
 export { default as ContextMenu } from './context-menu/context-menu';
 export { default as ErrorMessages } from './error-messages/error-messages';
+export { default as FileInput } from './file-input/file-input';
 export { default as FormGroup } from './form-group/form-group';
 export { default as Label } from './label/label';
 export { default as Modal } from './modal/modal';

@@ -94,6 +94,7 @@
   }
 
   .text-input,
+  .file-input,
   .text-area,
   .select {
     width: 100%;
@@ -101,27 +102,21 @@
   }
 
   .text-input,
-  .text-area {
-    border: 1px solid theme('colors.gray-darkest');
-    border-radius: 0;
-  }
-
-  .text-input:focus,
-  .text-area:focus {
-    outline: 0.2rem solid theme('colors.primary-light');
-  }
-
-  .text-area {
-    min-height: 6rem;
-  }
-
+  .text-area,
   .select {
     border: 1px solid theme('colors.gray-darkest');
     border-radius: 0;
   }
 
+  .text-input:focus,
+  .file-input:focus,
+  .text-area:focus,
   .select:focus {
     outline: 0.2rem solid theme('colors.primary-light');
+  }
+
+  .text-area {
+    min-height: 6rem;
   }
 
   .text-red {

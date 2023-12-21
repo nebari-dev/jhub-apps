@@ -16,6 +16,7 @@ import {
   Button,
   ButtonGroup,
   ErrorMessages,
+  FileInput,
   FormGroup,
   Label,
   Select,
@@ -237,6 +238,17 @@ export const AppForm = ({
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
           render={({ field: { ref: _, ...field } }) => (
             <TextArea {...field} id="description" />
+          )}
+        />
+      </FormGroup>
+      <FormGroup>
+        <Label htmlFor="thumbnail">Thumbnail</Label>
+        <Controller
+          name="thumbnail"
+          control={control}
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          render={({ field: { ref: _, ...field } }) => (
+            <FileInput {...field} id="thumbnail" />
           )}
         />
       </FormGroup>
