@@ -1,12 +1,18 @@
+import axios from '@src/utils/axios';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import '@testing-library/jest-dom';
 import { act, fireEvent, render } from '@testing-library/react';
+import MockAdapter from 'axios-mock-adapter';
 import { BrowserRouter } from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
 import { Home } from './home';
 
 describe('Home', () => {
   const queryClient = new QueryClient();
+  const mock = new MockAdapter(axios);
+  beforeAll(() => {
+    mock.reset();
+  });
 
   const componentWrapper = (
     <RecoilRoot>

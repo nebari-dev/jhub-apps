@@ -57,7 +57,23 @@ export const servicesFull: JhServiceFull[] = [
     roles: [],
     pid: 0,
     url: '',
-    name: 'service1',
+    name: 'service2',
+    command: [],
+  },
+  {
+    display: true,
+    info: {
+      name: 'Service 3',
+      url: 'http://service3.com/[USER]',
+      external: false,
+    },
+    prefix: '/services',
+    kind: '',
+    admin: true,
+    roles: [],
+    pid: 0,
+    url: '',
+    name: 'service3',
     command: [],
   },
 ];
@@ -165,4 +181,13 @@ export const userData = {
       state: {},
     },
   },
+};
+
+export const jhData = {
+  base_url: '/hub/',
+  prefix: '/',
+  user: 'test',
+  admin_access: false,
+  options_form: false,
+  xsrf_token: '2|12345|12345|12345',
 };

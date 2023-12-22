@@ -1,16 +1,23 @@
 import { userState } from '@src/data/api';
+import { jhData } from '@src/data/jupyterhub';
 import axios from '@src/utils/axios';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import '@testing-library/jest-dom';
 import { render } from '@testing-library/react';
 import MockAdapter from 'axios-mock-adapter';
 import { RecoilRoot } from 'recoil';
+import { currentJhData } from '../../../store';
 import { AppsGrid } from './apps-grid';
 
 describe('AppsGrid', () => {
   const queryClient = new QueryClient();
   const mock = new MockAdapter(axios);
   beforeAll(() => {
+    mock.reset();
+  });
+
+  beforeEach(() => {
+    queryClient.clear();
     mock.reset();
   });
 
@@ -56,26 +63,28 @@ describe('AppsGrid', () => {
 
   test('renders with mocked data', async () => {
     mock.onGet(new RegExp('/server/')).reply(200, userState.servers);
+    queryClient.setQueryData(['app-state'], userState.servers);
     const { baseElement } = render(
-      <RecoilRoot>
+      <RecoilRoot initializeState={({ set }) => set(currentJhData, jhData)}>
         <QueryClientProvider client={queryClient}>
           <AppsGrid filter="" />
         </QueryClientProvider>
       </RecoilRoot>,
     );
-    expect(baseElement).toHaveTextContent('No apps available');
+    expect(baseElement.querySelectorAll('.card')).toHaveLength(1);
   });
 
-  test('renders with filtered mocked data', async () => {
-    mock.onGet(new RegExp('/server')).reply(200, userState.servers);
+  test('renders with mocked data and filter', async () => {
+    mock.onGet(new RegExp('/server/')).reply(200, userState.servers);
+    queryClient.setQueryData(['app-state'], userState.servers);
     const { baseElement } = render(
-      <RecoilRoot>
+      <RecoilRoot initializeState={({ set }) => set(currentJhData, jhData)}>
         <QueryClientProvider client={queryClient}>
-          <AppsGrid filter="test" />
+          <AppsGrid filter="panel" />
         </QueryClientProvider>
       </RecoilRoot>,
     );
-    expect(baseElement).toHaveTextContent('No apps available');
+    expect(baseElement.querySelectorAll('.card')).toHaveLength(1);
   });
 
   test('renders with data error', async () => {
