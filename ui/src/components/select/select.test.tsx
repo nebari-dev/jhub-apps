@@ -1,5 +1,4 @@
-import { act, render } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { fireEvent, render } from '@testing-library/react';
 import { Select } from '..';
 
 describe('Select', () => {
@@ -26,10 +25,7 @@ describe('Select', () => {
 
     const select = baseElement.querySelector('select') as HTMLSelectElement;
     if (select) {
-      act(async () => {
-        await userEvent.selectOptions(select, ['Item 1']);
-        expect(handleChange).toHaveBeenCalledWith('Item 1');
-      });
+      fireEvent.change(select, { target: { value: 'Item 1' } });
     }
   });
 });

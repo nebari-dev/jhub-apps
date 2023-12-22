@@ -59,7 +59,7 @@ export const AppForm = ({
     AppFrameworkProps[],
     { message: string }
   >({
-    queryKey: ['app-frameworks', id],
+    queryKey: ['app-frameworks'],
     queryFn: () =>
       axios.get('/frameworks').then((response) => {
         return response.data;
@@ -67,7 +67,7 @@ export const AppForm = ({
   });
 
   const { data: environments } = useQuery<string[], { message: string }>({
-    queryKey: ['app-environments', id],
+    queryKey: ['app-environments'],
     queryFn: () =>
       axios.get('/conda-environments').then((response) => {
         return response.data;
@@ -75,7 +75,7 @@ export const AppForm = ({
   });
 
   const { data: profiles } = useQuery<AppProfileProps[], { message: string }>({
-    queryKey: ['app-profiles', id],
+    queryKey: ['app-profiles'],
     queryFn: () =>
       axios.get('/spawner-profiles').then((response) => {
         return response.data;
