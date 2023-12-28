@@ -1,0 +1,41 @@
+[api]
+dashboard = true
+
+[log]
+level = "DEBUG"
+
+[accessLog]
+format = "json"
+
+[providers]
+providersThrottleDuration = "0s"
+
+[entryPoints.http]
+address = ":80"
+
+[entryPoints.https]
+address = ":443"
+
+[entryPoints.auth_api]
+address = "localhost:8099"
+
+[providers.file]
+directory = "/home/ubuntu/jhub-apps/rules"
+watch = true
+
+[certificatesResolvers.letsencrypt.acme]
+email = "akumar@quansight.com"
+storage = "acme.json"
+
+[entryPoints.https.http.tls]
+options = "default"
+
+[entryPoints.https.transport.respondingTimeouts]
+idleTimeout = "10m"
+
+[certificatesResolvers.letsencrypt.acme.tlsChallenge]
+
+[entryPoints.http.http.redirections.entryPoint]
+to = "https"
+scheme = "https"
+

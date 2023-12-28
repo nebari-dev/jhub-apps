@@ -1,0 +1,10 @@
+# traefik.toml dynamic config (mostly TLS)
+# dynamic config in the static config file will be ignored
+[tls]
+[tls.stores.default.defaultGeneratedCert]
+resolver = "letsencrypt"
+[tls.stores.default.defaultGeneratedCert.domain]
+main = "jh.quansight.dev"
+sans = [
+
+]

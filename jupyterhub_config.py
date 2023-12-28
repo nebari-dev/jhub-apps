@@ -7,11 +7,21 @@ c = get_config()  # noqa
 
 from jupyterhub.auth import DummyAuthenticator  # noqa: E402
 
+c.JupyterHub.proxy_class = "traefik_file"
+
+c.TraefikProxy.traefik_entrypoint = "https"
+c.TraefikFileProviderProxy.should_start = False
+c.TraefikFileProviderProxy.traefik_api_username = "admin"
+c.TraefikFileProviderProxy.traefik_api_password = "admin"
+c.TraefikFileProviderProxy.traefik_log_level = "DEBUG"
+c.TraefikFileProviderProxy.static_config_file = "traefik.toml"
+c.TraefikFileProviderProxy.dynamic_config_file = "rules/rules.toml"
+
 c.Authenticator.admin_users = {"admin"}
 c.JupyterHub.authenticator_class = DummyAuthenticator
 c.JupyterHub.log_level = 10
 
-hub_url = "http://127.0.0.1:8000"
+hub_url = "https://jh.quansight.dev"
 c.JupyterHub.bind_url = hub_url
 c.JAppsConfig.jupyterhub_config_path = "jupyterhub_config.py"
 c.JAppsConfig.conda_envs = []
