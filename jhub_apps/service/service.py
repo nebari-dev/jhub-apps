@@ -1,8 +1,11 @@
+import typing
 import dataclasses
 import os
 from datetime import timedelta
 
-from fastapi import APIRouter, Depends, status, Request
+from fastapi import APIRouter, Depends, status, Request, File, UploadFile, Form, HTTPException
+from fastapi.encoders import jsonable_encoder
+from pydantic import BaseModel, ValidationError
 from starlette.responses import RedirectResponse
 
 from jhub_apps.service.auth import create_access_token
@@ -14,7 +17,8 @@ from fastapi import FastAPI
 from fastapi.templating import Jinja2Templates
 
 from jhub_apps.hub_client.hub_client import HubClient
-from jhub_apps.service.utils import get_conda_envs, get_jupyterhub_config, get_spawner_profiles
+from jhub_apps.service.utils import get_conda_envs, get_jupyterhub_config, get_spawner_profiles, \
+    encode_file_to_data_url
 from jhub_apps.spawner.types import FRAMEWORKS
 
 app = FastAPI()
@@ -62,6 +66,7 @@ async def login(request: Request):
     authorization_url = os.environ["PUBLIC_HOST"] + "/hub/api/oauth2/authorize?response_type=code&client_id=service-japps"
     return RedirectResponse(authorization_url, status_code=302)
 
+
 @router.get("/server/", description="Get all servers")
 @router.get("/server/{server_name}", description="Get a server by server name")
 async def get_server(user: User = Depends(get_current_user), server_name=None):
@@ -81,12 +86,31 @@ async def get_server(user: User = Depends(get_current_user), server_name=None):
         return user_servers
 
 
+class Checker:
+    def __init__(self, model: BaseModel):
+        self.model = model
+
+    def __call__(self, data: str = Form(...)):
+        try:
+            return self.model.model_validate_json(data)
+        except ValidationError as e:
+            raise HTTPException(
+                detail=jsonable_encoder(e.errors()),
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            )
+
+
 @router.post("/server/")
 async def create_server(
-    # request: Request,
-    server: ServerCreation,
+    server: ServerCreation = Depends(Checker(ServerCreation)),
+    thumbnail: typing.Optional[UploadFile] = File(...),
     user: User = Depends(get_current_user),
 ):
+    if thumbnail:
+        thumbnail_contents = await thumbnail.read()
+        server.user_options.thumbnail = encode_file_to_data_url(
+            thumbnail.filename, thumbnail_contents
+        )
     hub_client = HubClient()
     return hub_client.create_server(
         username=user.name,
