@@ -4,7 +4,6 @@ from secrets import token_bytes
 
 from jhub_apps import JAppsConfig
 from jhub_apps.spawner.spawner_creation import subclass_spawner
-from jhub_apps.spawner.utils import get_origin_host
 
 
 def _create_token_for_service():
@@ -65,24 +64,6 @@ def install_jhub_apps(c, spawner_to_subclass):
                 "oauth_redirect_uri": oauth_redirect_uri,
                 "display": False,
             },
-            {
-                "name": "launcher",
-                "url": "http://127.0.0.1:5000",
-                "command": [
-                    c.JAppsConfig.python_exec,
-                    "-m",
-                    "jhub_apps.launcher.main",
-                    f"--origin-host={get_origin_host(c.JupyterHub.bind_url)}",
-                ],
-                # Remove this get, set environment properly
-                "api_token": os.environ.get(
-                    "JHUB_APP_LAUNCHER_TOKEN", _create_token_for_service()
-                ),
-                "environment": {
-                    "JHUB_JUPYTERHUB_CONFIG": c.JAppsConfig.jupyterhub_config_path,
-                },
-                "display": False,
-            },
         ]
     )
 
@@ -91,7 +72,6 @@ def install_jhub_apps(c, spawner_to_subclass):
             "name": "japps-service-role",  # name the role
             "services": [
                 "japps",  # assign the service to this role
-                "launcher",
             ],
             "scopes": [
                 # declare what permissions the service should have
