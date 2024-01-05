@@ -22,6 +22,7 @@ interface AppCardProps {
   url: string;
   ready?: boolean;
   isPublic?: boolean;
+  isShared?: boolean;
 }
 
 export const AppCard = ({
@@ -32,6 +33,7 @@ export const AppCard = ({
   framework,
   url,
   isPublic = false,
+  isShared = false,
   ready = false,
 }: AppCardProps): React.ReactElement => {
   const queryClient = useQueryClient();
@@ -138,19 +140,21 @@ export const AppCard = ({
       title: 'Stop',
       onClick: () => setIsStopOpen(true),
       visible: true,
-      disabled: !ready,
+      disabled: !ready || isShared,
     },
     {
       id: 'edit',
       title: 'Edit',
       onClick: () => setIsEditOpen(true),
       visible: true,
+      disabled: isShared,
     },
     {
       id: 'delete',
       title: 'Delete',
       onClick: () => setIsDeleteOpen(true),
       visible: true,
+      disabled: isShared,
     },
   ];
 
