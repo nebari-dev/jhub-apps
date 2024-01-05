@@ -24,32 +24,31 @@ export const getServices = (services: JhServiceFull[], user: string) => {
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export const getApps = (servers: any, appType: string) => {
-  const apps: JhApp[] = [];
-  for (const key in servers) {
-    if (Object.hasOwnProperty.call(servers, key)) {
-      const server = servers[key];
-      if (server.user_options?.jhub_app) {
-        const app = server.user_options;
-        apps.push({
-          id: app.name,
-          name: app.display_name,
-          description: app.description,
-          framework: getFriendlyFrameworkName(app.framework),
-          url: server.url,
-          thumbnail: app.thumbnail,
-          shared: false,
-          ready: server.ready,
-          public: app.public,
-        });
-      }
-    }
+  const serverApps = [];
+  if (appType.toLowerCase() === 'shared') {
+    serverApps.push(...servers.shared_apps);
+  } else {
+    serverApps.push(...servers.user_apps);
   }
 
-  if (appType.toLowerCase() === 'shared') {
-    return apps.filter((app: JhApp) => app.shared === true);
-  } else {
-    return apps.filter((app: JhApp) => app.shared === false);
-  }
+  const filteredApps: JhApp[] = [];
+  serverApps.forEach((server: any) => {
+    if (server.user_options?.jhub_app) {
+      const app = server.user_options;
+      filteredApps.push({
+        id: app.name,
+        name: app.display_name,
+        description: app.description,
+        framework: getFriendlyFrameworkName(app.framework),
+        url: server.url,
+        thumbnail: app.thumbnail,
+        ready: server.ready,
+        public: app.public,
+      });
+    }
+  });
+
+  return filteredApps;
 };
 
 export const getFriendlyFrameworkName = (framework: string) => {

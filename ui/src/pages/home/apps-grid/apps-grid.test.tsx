@@ -1,4 +1,4 @@
-import { userState } from '@src/data/api';
+import { serverApps } from '@src/data/api';
 import { jhData } from '@src/data/jupyterhub';
 import axios from '@src/utils/axios';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -62,8 +62,8 @@ describe('AppsGrid', () => {
   });
 
   test('renders with mocked data', async () => {
-    mock.onGet(new RegExp('/server/')).reply(200, userState.servers);
-    queryClient.setQueryData(['app-state'], userState.servers);
+    mock.onGet(new RegExp('/server/')).reply(200, serverApps);
+    queryClient.setQueryData(['app-state'], serverApps);
     const { baseElement } = render(
       <RecoilRoot initializeState={({ set }) => set(currentJhData, jhData)}>
         <QueryClientProvider client={queryClient}>
@@ -71,12 +71,12 @@ describe('AppsGrid', () => {
         </QueryClientProvider>
       </RecoilRoot>,
     );
-    expect(baseElement.querySelectorAll('.card')).toHaveLength(1);
+    expect(baseElement.querySelectorAll('.card')).toHaveLength(4);
   });
 
   test('renders with mocked data and filter', async () => {
-    mock.onGet(new RegExp('/server/')).reply(200, userState.servers);
-    queryClient.setQueryData(['app-state'], userState.servers);
+    mock.onGet(new RegExp('/server/')).reply(200, serverApps);
+    queryClient.setQueryData(['app-state'], serverApps);
     const { baseElement } = render(
       <RecoilRoot initializeState={({ set }) => set(currentJhData, jhData)}>
         <QueryClientProvider client={queryClient}>
