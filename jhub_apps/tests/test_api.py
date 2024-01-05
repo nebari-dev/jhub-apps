@@ -59,6 +59,21 @@ def test_api_create_server(create_server, client):
     assert response.json() == create_server_response
 
 
+@patch.object(HubClient, "start_server")
+def test_api_start_server(create_server, client):
+    start_server_response = {"user": "aktech"}
+    create_server.return_value = start_server_response
+    server_name = "server-name"
+    response = client.post(
+        f"/server/{server_name}",
+    )
+    create_server.assert_called_once_with(
+        username=MOCK_USER.name,
+        servername=server_name,
+    )
+    assert response.json() == start_server_response
+
+
 @pytest.mark.parametrize("name,remove", [
     ('delete', True,),
     ('stop', False,),
