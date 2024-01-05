@@ -67,7 +67,7 @@ FRAMEWORKS = [
     FrameworkConf(
         name=Framework.gradio.value,
         display_name="Gradio",
-        logo="https://pbs.twimg.com/profile_images/1526964416834510848/Njy4Kh2q_400x400.jpg",
+        logo="https://www.gradio.app/_app/immutable/assets/gradio.8a5e8876.svg",
     ),
     FrameworkConf(
         name=Framework.jupyterlab.value,

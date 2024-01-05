@@ -18,8 +18,7 @@ from fastapi import FastAPI
 from fastapi.templating import Jinja2Templates
 
 from jhub_apps.hub_client.hub_client import HubClient
-from jhub_apps.service.utils import get_conda_envs, get_jupyterhub_config, get_spawner_profiles, \
-    encode_file_to_data_url
+from jhub_apps.service.utils import get_conda_envs, get_jupyterhub_config, get_spawner_profiles, get_thumbnail_data_url
 from jhub_apps.spawner.types import FRAMEWORKS
 
 app = FastAPI()
@@ -35,6 +34,7 @@ service_prefix = os.getenv("JUPYTERHUB_SERVICE_PREFIX", "").rstrip("/")
 router = APIRouter(prefix=service_prefix)
 
 # TODO: Add response models for all endpoints
+
 
 @router.get("/oauth_callback", include_in_schema=False)
 async def get_token(code: str):
@@ -82,7 +82,10 @@ async def get_server(user: User = Depends(get_current_user), server_name=None):
         for s_name, server_details in user_servers.items():
             if s_name == server_name:
                 return server_details
-        return status.HTTP_404_NOT_FOUND
+        raise HTTPException(
+            detail=f"server '{server_name}' not found",
+            status_code=status.HTTP_404_NOT_FOUND,
+        )
     else:
         # Get all servers
         return user_servers
@@ -108,11 +111,10 @@ async def create_server(
     thumbnail: typing.Optional[UploadFile] = File(None),
     user: User = Depends(get_current_user),
 ):
-    if thumbnail:
-        thumbnail_contents = await thumbnail.read()
-        server.user_options.thumbnail = encode_file_to_data_url(
-            thumbnail.filename, thumbnail_contents
-        )
+    server.user_options.thumbnail = await get_thumbnail_data_url(
+        framework_name=server.user_options.framework,
+        thumbnail=thumbnail
+    )
     hub_client = HubClient()
     return hub_client.create_server(
         username=user.name,
@@ -121,17 +123,35 @@ async def create_server(
     )
 
 
+@router.post("/server/{server_name}")
+async def start_server(
+        server_name=None,
+        user: User = Depends(get_current_user),
+):
+    """Start an already existing server."""
+    hub_client = HubClient()
+    response = hub_client.start_server(
+        username=user.name,
+        servername=server_name,
+    )
+    if response is None:
+        raise HTTPException(
+            detail=f"server '{server_name}' not found",
+            status_code=status.HTTP_404_NOT_FOUND,
+        )
+    return response
+
+
 @router.put("/server/{server_name}")
 async def update_server(
     server: ServerCreation = Depends(Checker(ServerCreation)),
     thumbnail: typing.Optional[UploadFile] = File(None),
     user: User = Depends(get_current_user), server_name=None
 ):
-    if thumbnail:
-        thumbnail_contents = await thumbnail.read()
-        server.user_options.thumbnail = encode_file_to_data_url(
-            thumbnail.filename, thumbnail_contents
-        )
+    server.user_options.thumbnail = await get_thumbnail_data_url(
+        framework_name=server.user_options.framework,
+        thumbnail=thumbnail
+    )
     hub_client = HubClient()
     return hub_client.create_server(
         username=user.name,
@@ -142,11 +162,17 @@ async def update_server(
 
 
 @router.delete("/server/{server_name}")
-async def delete_server(user: User = Depends(get_current_user), server_name=None):
+async def delete_server(
+        user: User = Depends(get_current_user),
+        server_name=None,
+        remove: bool = False,
+):
+    """Delete or stop server. Delete if remove is True otherwise stop the server"""
     hub_client = HubClient()
     return hub_client.delete_server(
         user.name,
         server_name=server_name,
+        remove=remove
     )
 
 
