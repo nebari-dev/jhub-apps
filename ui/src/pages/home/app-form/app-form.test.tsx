@@ -65,6 +65,49 @@ describe('AppForm', () => {
     }
   });
 
+  test('simulates creating a standard app with thumbnail', async () => {
+    mock.onGet(new RegExp('/frameworks')).reply(200, frameworks);
+    mock.onPost(new RegExp('/server')).reply(200);
+    queryClient.setQueryData(['app-frameworks'], frameworks);
+    const { baseElement } = render(
+      <RecoilRoot>
+        <QueryClientProvider client={queryClient}>
+          <AppForm />
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+
+    const displayNameField = baseElement.querySelector(
+      '#display_name',
+    ) as HTMLInputElement;
+    const thumbnailField = baseElement.querySelector(
+      '#thumbnail',
+    ) as HTMLInputElement;
+    const frameworkField = baseElement.querySelector(
+      '#framework',
+    ) as HTMLSelectElement;
+    if (displayNameField && thumbnailField && frameworkField) {
+      // Attempt submitting without filling in required fields
+      const btn = baseElement.querySelector('#submit-btn') as HTMLButtonElement;
+      await act(async () => {
+        btn.click();
+      });
+
+      const file = new File(['File contents'], 'image.png', {
+        type: 'image/png',
+      });
+      await userEvent.upload(thumbnailField, file);
+
+      await userEvent.type(displayNameField, 'App 1');
+      fireEvent.change(frameworkField, { target: { value: 'panel' } });
+
+      // Submit with all required fields filled in
+      await act(async () => {
+        btn.click();
+      });
+    }
+  });
+
   test('simulates creating a standard app with onSubmit', async () => {
     mock.onGet(new RegExp('/frameworks')).reply(200, frameworks);
     mock.onPost(new RegExp('/server')).reply(200);
