@@ -2,6 +2,7 @@ import typing
 from datetime import datetime
 from typing import Any, Dict, List, Optional
 
+
 from pydantic import BaseModel
 
 
@@ -51,7 +52,7 @@ class UserOptions(BaseModel):
     jhub_app: bool
     display_name: str
     description: str
-    thumbnail: typing.Optional[str] = str()
+    thumbnail: str = None
     filepath: typing.Optional[str] = str()
     framework: str = "panel"
     custom_command: typing.Optional[str] = str()

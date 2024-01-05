@@ -166,7 +166,13 @@ export const AppForm = ({
     servername,
     user_options,
   }: AppQueryUpdateProps) => {
-    const response = await axios.post('/server', { servername, user_options });
+    const headers = {
+      accept: 'application/json',
+      'Content-Type': 'multipart/form-data',
+    };
+    const formData = new FormData();
+    formData.append('data', JSON.stringify({ servername, user_options }));
+    const response = await axios.post('/server', formData, { headers });
     return response.data;
   };
 
