@@ -21,6 +21,7 @@ interface AppCardProps {
   thumbnail?: string;
   url: string;
   ready?: boolean;
+  isPublic?: boolean;
 }
 
 export const AppCard = ({
@@ -30,6 +31,7 @@ export const AppCard = ({
   thumbnail,
   framework,
   url,
+  isPublic = false,
 }: AppCardProps): React.ReactElement => {
   const queryClient = useQueryClient();
   const [submitting, setSubmitting] = useState(false);
@@ -149,6 +151,11 @@ export const AppCard = ({
       </div>
       <div className="card-footer">
         <Tag id={`tag-${id}`}>{framework}</Tag>
+        {isPublic ? (
+          <Tag id={`tag-${id}`} className="ml-2 bg-warning-light">
+            Public
+          </Tag>
+        ) : undefined}
       </div>
     </div>
   );

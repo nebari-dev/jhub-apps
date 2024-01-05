@@ -29,7 +29,7 @@ export default {
       success: '#00a91c',
       'success-light': '#ecf3ec',
       warning: '#ffbe2e',
-      'warning-light': '#faf3d1',
+      'warning-light': '#fde68a',
       error: '#d54309',
       'error-light': '#f4e3db',
       info: '#00bde3',
