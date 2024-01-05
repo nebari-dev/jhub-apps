@@ -1,3 +1,4 @@
+import logging
 import dataclasses
 import os
 from datetime import timedelta
@@ -19,7 +20,9 @@ from jhub_apps.spawner.types import FRAMEWORKS
 
 app = FastAPI()
 
+logger = logging.getLogger(__name__)
 templates = Jinja2Templates(directory="jhub_apps/templates")
+
 # Expires in 7 days
 ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7
 
@@ -28,7 +31,6 @@ service_prefix = os.getenv("JUPYTERHUB_SERVICE_PREFIX", "").rstrip("/")
 router = APIRouter(prefix=service_prefix)
 
 # TODO: Add response models for all endpoints
-
 
 @router.get("/oauth_callback", include_in_schema=False)
 async def get_token(code: str):
@@ -137,6 +139,7 @@ async def get_frameworks(user: User = Depends(get_current_user)):
 
 @router.get("/conda-environments/", description="Get all conda environments")
 async def conda_environments(user: User = Depends(get_current_user)):
+    logging.info("Getting conda environments")
     config = get_jupyterhub_config()
     conda_envs = get_conda_envs(config)
     return conda_envs
@@ -144,6 +147,7 @@ async def conda_environments(user: User = Depends(get_current_user)):
 
 @router.get("/spawner-profiles/", description="Get all spawner profiles")
 async def spawner_profiles(user: User = Depends(get_current_user)):
+    logging.info("Getting spawner profiles")
     config = get_jupyterhub_config()
     spawner_profiles_ = get_spawner_profiles(config)
     return spawner_profiles_
