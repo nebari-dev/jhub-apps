@@ -46,6 +46,16 @@ class HubClient:
         text = text.replace(" ", "-")
         return text
 
+    def start_server(self, username, servername):
+        server = self.get_server(username, servername)
+        if not server:
+            return None
+        url = f"/users/{username}/servers/{servername}"
+        data = {"name": servername}
+        r = requests.post(API_URL + url, headers=self._headers(), json=data)
+        r.raise_for_status()
+        return r.status_code, servername
+
     def create_server(self, username, servername, edit=False, user_options=None):
         server = self.get_server(username, servername)
         if not edit:

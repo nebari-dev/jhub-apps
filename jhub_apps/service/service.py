@@ -121,6 +121,18 @@ async def create_server(
     )
 
 
+@router.post("/server/{server_name}")
+async def start_server(
+        server_name=None,
+        user: User = Depends(get_current_user),
+):
+    hub_client = HubClient()
+    return hub_client.start_server(
+        username=user.name,
+        servername=server_name,
+    )
+
+
 @router.put("/server/{server_name}")
 async def update_server(
     server: ServerCreation = Depends(Checker(ServerCreation)),
