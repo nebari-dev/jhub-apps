@@ -16,6 +16,7 @@ STATIC_DIR = Path(__file__).parent.parent / "static"
 
 
 def setup_logging():
+    # TODO: Use structlog
     logging_format = (
         "%(asctime)s %(levelname)9s %(lineno)4s %(module)s: %(message)s"
     )
