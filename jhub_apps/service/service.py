@@ -18,8 +18,7 @@ from fastapi import FastAPI
 from fastapi.templating import Jinja2Templates
 
 from jhub_apps.hub_client.hub_client import HubClient
-from jhub_apps.service.utils import get_conda_envs, get_jupyterhub_config, get_spawner_profiles, \
-    encode_file_to_data_url
+from jhub_apps.service.utils import get_conda_envs, get_jupyterhub_config, get_spawner_profiles, get_thumbnail_data_url
 from jhub_apps.spawner.types import FRAMEWORKS
 
 app = FastAPI()
@@ -35,6 +34,7 @@ service_prefix = os.getenv("JUPYTERHUB_SERVICE_PREFIX", "").rstrip("/")
 router = APIRouter(prefix=service_prefix)
 
 # TODO: Add response models for all endpoints
+
 
 @router.get("/oauth_callback", include_in_schema=False)
 async def get_token(code: str):
@@ -111,11 +111,10 @@ async def create_server(
     thumbnail: typing.Optional[UploadFile] = File(None),
     user: User = Depends(get_current_user),
 ):
-    if thumbnail:
-        thumbnail_contents = await thumbnail.read()
-        server.user_options.thumbnail = encode_file_to_data_url(
-            thumbnail.filename, thumbnail_contents
-        )
+    server.user_options.thumbnail = await get_thumbnail_data_url(
+        framework_name=server.user_options.framework,
+        thumbnail=thumbnail
+    )
     hub_client = HubClient()
     return hub_client.create_server(
         username=user.name,
@@ -149,11 +148,10 @@ async def update_server(
     thumbnail: typing.Optional[UploadFile] = File(None),
     user: User = Depends(get_current_user), server_name=None
 ):
-    if thumbnail:
-        thumbnail_contents = await thumbnail.read()
-        server.user_options.thumbnail = encode_file_to_data_url(
-            thumbnail.filename, thumbnail_contents
-        )
+    server.user_options.thumbnail = await get_thumbnail_data_url(
+        framework_name=server.user_options.framework,
+        thumbnail=thumbnail
+    )
     hub_client = HubClient()
     return hub_client.create_server(
         username=user.name,
