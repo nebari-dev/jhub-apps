@@ -1,3 +1,4 @@
+import base64
 import os
 
 from jupyterhub.app import JupyterHub
@@ -44,3 +45,14 @@ def get_spawner_profiles(config):
         raise ValueError(
             f"Invalid value for config.KubeSpawner.profile_list: {profile_list}"
         )
+
+
+def encode_file_to_data_url(filename, file_contents):
+    """Converts image file to data url to display in browser."""
+    base64_encoded = base64.b64encode(file_contents)
+    filename_ = filename.lower()
+    mime_type = "image/png"
+    if filename_.endswith(".jpg") or filename_.endswith(".jpeg"):
+        mime_type = "image/jpeg"
+    data_url = f"data:{mime_type};base64,{base64_encoded.decode('utf-8')}"
+    return data_url
