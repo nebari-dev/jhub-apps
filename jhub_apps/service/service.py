@@ -76,7 +76,7 @@ def get_all_shared_servers(hub_users, current_hub_user):
             hub_user_servers = hub_user["servers"]
             all_servers.extend(list(hub_user_servers.values()))
     # Filter default servers
-    return list(filter(lambda server: server['name'] is not '', all_servers))
+    return list(filter(lambda server: server['name'] != '', all_servers))
 
 
 @router.get("/server/", description="Get all servers")
