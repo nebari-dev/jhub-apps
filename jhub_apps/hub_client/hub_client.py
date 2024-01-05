@@ -27,9 +27,10 @@ class HubClient:
         return users
 
     def get_user(self, user):
-        params = {"include_stopped_servers": True}
         r = requests.get(
-            API_URL + f"/users/{user}", params=params, headers=self._headers()
+            API_URL + f"/users/{user}",
+            params={"include_stopped_servers": True},
+            headers=self._headers()
         )
         r.raise_for_status()
         user = r.json()

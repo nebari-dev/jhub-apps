@@ -69,11 +69,14 @@ async def login(request: Request):
     return RedirectResponse(authorization_url, status_code=302)
 
 
-def get_all_servers(hub_users, current_hub_user):
+def get_all_shared_servers(hub_users, current_hub_user):
     all_servers = []
     for hub_user in hub_users:
         if hub_user['name'] != current_hub_user['name']:
-            all_servers.update()
+            hub_user_servers = hub_user["servers"]
+            all_servers.extend(list(hub_user_servers.values()))
+    # Filter default servers
+    return list(filter(lambda server: server['name'] is not '', all_servers))
 
 
 @router.get("/server/", description="Get all servers")
@@ -104,7 +107,10 @@ async def get_server(user: User = Depends(get_current_user), server_name=None):
         )
     else:
         # Get all servers
-        return user_servers
+        return {
+            "shared": get_all_shared_servers(hub_users=users, current_hub_user=current_hub_user),
+            "user": list(user_servers.values())
+        }
 
 
 class Checker:
