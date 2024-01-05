@@ -26,13 +26,15 @@ def mock_user_options():
     return user_options
 
 
-@patch.object(HubClient, "get_user")
-def test_api_get_server(get_user, client):
+@patch.object(HubClient, "get_users")
+def test_api_get_server(get_users, client):
     server_data = {"panel-app": {}}
-    create_server_response = {"user": "aktech", "servers": server_data}
-    get_user.return_value = create_server_response
+    get_users_response = [
+        {'name': 'aktech', 'servers': server_data}
+    ]
+    get_users.return_value = get_users_response
     response = client.get("/server/panel-app")
-    get_user.assert_called_once_with(MOCK_USER.name)
+    get_users.assert_called_once_with()
     assert response.status_code == 200
     assert response.json() == server_data["panel-app"]
 
