@@ -127,10 +127,13 @@ async def start_server(
         user: User = Depends(get_current_user),
 ):
     hub_client = HubClient()
-    return hub_client.start_server(
+    response = hub_client.start_server(
         username=user.name,
         servername=server_name,
     )
+    if response is None:
+        return status.HTTP_404_NOT_FOUND
+    return response
 
 
 @router.put("/server/{server_name}")
