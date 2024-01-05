@@ -69,14 +69,30 @@ async def login(request: Request):
     return RedirectResponse(authorization_url, status_code=302)
 
 
+def get_all_servers(hub_users, current_hub_user):
+    all_servers = []
+    for hub_user in hub_users:
+        if hub_user['name'] != current_hub_user['name']:
+            all_servers.update()
+
+
 @router.get("/server/", description="Get all servers")
 @router.get("/server/{server_name}", description="Get a server by server name")
 async def get_server(user: User = Depends(get_current_user), server_name=None):
     """Get servers for the authenticated user"""
     hub_client = HubClient()
-    user = hub_client.get_user(user.name)
-    assert user
-    user_servers = user["servers"]
+    users = hub_client.get_users()
+    current_hub_user = None
+    for hub_user in users:
+        if hub_user['name'] == user.name:
+            current_hub_user = hub_user
+            break
+    if not current_hub_user:
+        raise HTTPException(
+            detail=f"Hub user '{user.name}' not found",
+            status_code=status.HTTP_404_NOT_FOUND,
+        )
+    user_servers = current_hub_user["servers"]
     if server_name:
         # Get a particular server
         for s_name, server_details in user_servers.items():

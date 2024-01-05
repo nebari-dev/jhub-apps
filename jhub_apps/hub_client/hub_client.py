@@ -17,7 +17,11 @@ class HubClient:
         return {"Authorization": f"token {self.token}"}
 
     def get_users(self):
-        r = requests.get(API_URL + "/users", headers=self._headers())
+        r = requests.get(
+            API_URL + "/users",
+            params={"include_stopped_servers": True},
+            headers=self._headers()
+        )
         r.raise_for_status()
         users = r.json()
         return users
