@@ -142,11 +142,17 @@ async def update_server(
 
 
 @router.delete("/server/{server_name}")
-async def delete_server(user: User = Depends(get_current_user), server_name=None):
+async def delete_server(
+        user: User = Depends(get_current_user),
+        server_name=None,
+        remove=False,
+):
+    """Delete or stop server. Delete if remove is True otherwise stop the server"""
     hub_client = HubClient()
     return hub_client.delete_server(
         user.name,
         server_name=server_name,
+        remove=remove
     )
 
 

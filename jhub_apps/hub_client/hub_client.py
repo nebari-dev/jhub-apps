@@ -53,7 +53,7 @@ class HubClient:
             servername = f"{servername}-{uuid.uuid4().hex[:7]}"
         if server:
             if edit:
-                self.delete_server(username, server["name"])
+                self.delete_server(username, server["name"], remove=True)
             else:
                 raise ValueError(f"Server: {servername} already exists")
         url = f"/users/{username}/servers/{servername}"
@@ -63,9 +63,10 @@ class HubClient:
         r.raise_for_status()
         return r.status_code, servername
 
-    def delete_server(self, username, server_name):
+    def delete_server(self, username, server_name, remove=False):
         url = f"/users/{username}/servers/{server_name}"
-        params = {"remove": True}
+        # This will remove it from the database, otherwise it will just stop the server
+        params = {"remove": remove}
         r = requests.delete(API_URL + url, headers=self._headers(), json=params)
         r.raise_for_status()
         return r.status_code
