@@ -19,6 +19,7 @@ def mock_user_options():
         "custom_command": "",
         "conda_env": "",
         "profile": "",
+        "public": False
     }
     return user_options
 
