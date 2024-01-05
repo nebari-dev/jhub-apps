@@ -82,7 +82,10 @@ async def get_server(user: User = Depends(get_current_user), server_name=None):
         for s_name, server_details in user_servers.items():
             if s_name == server_name:
                 return server_details
-        return status.HTTP_404_NOT_FOUND
+        raise HTTPException(
+            detail=f"server '{server_name}' not found",
+            status_code=status.HTTP_404_NOT_FOUND,
+        )
     else:
         # Get all servers
         return user_servers
@@ -121,6 +124,25 @@ async def create_server(
     )
 
 
+@router.post("/server/{server_name}")
+async def start_server(
+        server_name=None,
+        user: User = Depends(get_current_user),
+):
+    """Start an already existing server."""
+    hub_client = HubClient()
+    response = hub_client.start_server(
+        username=user.name,
+        servername=server_name,
+    )
+    if response is None:
+        raise HTTPException(
+            detail=f"server '{server_name}' not found",
+            status_code=status.HTTP_404_NOT_FOUND,
+        )
+    return response
+
+
 @router.put("/server/{server_name}")
 async def update_server(
     server: ServerCreation = Depends(Checker(ServerCreation)),
@@ -142,11 +164,17 @@ async def update_server(
 
 
 @router.delete("/server/{server_name}")
-async def delete_server(user: User = Depends(get_current_user), server_name=None):
+async def delete_server(
+        user: User = Depends(get_current_user),
+        server_name=None,
+        remove: bool = False,
+):
+    """Delete or stop server. Delete if remove is True otherwise stop the server"""
     hub_client = HubClient()
     return hub_client.delete_server(
         user.name,
         server_name=server_name,
+        remove=remove
     )
 
 
