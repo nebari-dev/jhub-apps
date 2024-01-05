@@ -33,6 +33,7 @@ def test_api_get_server(get_user, client):
     get_user.return_value = create_server_response
     response = client.get("/server/panel-app")
     get_user.assert_called_once_with(MOCK_USER.name)
+    assert response.status_code == 200
     assert response.json() == server_data["panel-app"]
 
 
@@ -56,6 +57,7 @@ def test_api_create_server(create_server, client):
         servername="panel-app",
         user_options=final_user_options,
     )
+    assert response.status_code == 200
     assert response.json() == create_server_response
 
 
@@ -105,6 +107,7 @@ def test_api_delete_server(delete_server, name, remove, client):
         server_name="panel-app",
         remove=remove
     )
+    assert response.status_code == 200
     assert response.json() == create_server_response
 
 
@@ -130,6 +133,7 @@ def test_api_update_server(create_server, client):
         edit=True,
         user_options=final_user_options,
     )
+    assert response.status_code == 200
     assert response.json() == create_server_response
 
 
@@ -147,4 +151,5 @@ def test_api_status(client):
     response = client.get(
         "/status",
     )
+    assert response.status_code == 200
     assert response.json() == {"status": "ok"}

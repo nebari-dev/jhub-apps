@@ -129,6 +129,7 @@ async def start_server(
         server_name=None,
         user: User = Depends(get_current_user),
 ):
+    """Start an already existing server."""
     hub_client = HubClient()
     response = hub_client.start_server(
         username=user.name,
