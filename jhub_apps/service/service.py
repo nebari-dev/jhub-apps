@@ -108,8 +108,8 @@ async def get_server(user: User = Depends(get_current_user), server_name=None):
     else:
         # Get all servers
         return {
-            "shared": get_all_shared_servers(hub_users=users, current_hub_user=current_hub_user),
-            "user": list(user_servers.values())
+            "shared_apps": get_all_shared_servers(hub_users=users, current_hub_user=current_hub_user),
+            "user_apps": list(user_servers.values())
         }
 
 
