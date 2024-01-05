@@ -76,13 +76,20 @@ def test_api_update_server(create_server, client):
     create_server_response = {"user": "aktech"}
     create_server.return_value = create_server_response
     user_options = mock_user_options()
-    body = {"servername": "panel-app", "user_options": user_options}
-    response = client.put("/server/panel-app", json=body)
+    thumbnail = b"contents of thumbnail"
+    in_memory_file = io.BytesIO(thumbnail)
+    response = client.put(
+        "/server/panel-app",
+        data={'data': json.dumps({"servername": "panel-app", "user_options": user_options})},
+        files={'thumbnail': ('image.jpeg', in_memory_file)}
+    )
+    final_user_options = UserOptions(**user_options)
+    final_user_options.thumbnail = "data:image/jpeg;base64,Y29udGVudHMgb2YgdGh1bWJuYWls"
     create_server.assert_called_once_with(
         username=MOCK_USER.name,
         servername="panel-app",
         edit=True,
-        user_options=UserOptions(**user_options),
+        user_options=final_user_options,
     )
     assert response.json() == create_server_response
 

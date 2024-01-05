@@ -16,6 +16,7 @@ import {
   Button,
   ButtonGroup,
   ErrorMessages,
+  FileInput,
   FormGroup,
   Label,
   Select,
@@ -41,6 +42,7 @@ export const AppForm = ({
     currentNotification,
   );
   const [name, setName] = useState('');
+  const [currentFile, setCurrentFile] = useState<File>();
   // Get the app data if we're editing an existing app
   const { data: formData, error: formError } = useQuery<
     AppQueryGetProps,
@@ -172,6 +174,10 @@ export const AppForm = ({
     };
     const formData = new FormData();
     formData.append('data', JSON.stringify({ servername, user_options }));
+    if (currentFile) {
+      formData.append('thumbnail', currentFile as Blob);
+    }
+
     const response = await axios.post('/server', formData, { headers });
     return response.data;
   };
@@ -180,9 +186,18 @@ export const AppForm = ({
     servername,
     user_options,
   }: AppQueryUpdateProps) => {
-    const response = await axios.put(`/server/${servername}`, {
-      servername,
-      user_options,
+    const headers = {
+      accept: 'application/json',
+      'Content-Type': 'multipart/form-data',
+    };
+    const formData = new FormData();
+    formData.append('data', JSON.stringify({ servername, user_options }));
+    if (currentFile) {
+      formData.append('thumbnail', currentFile as Blob);
+    }
+
+    const response = await axios.put(`/server/${servername}`, formData, {
+      headers,
     });
     return response.data;
   };
@@ -243,6 +258,26 @@ export const AppForm = ({
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
           render={({ field: { ref: _, ...field } }) => (
             <TextArea {...field} id="description" />
+          )}
+        />
+      </FormGroup>
+      <FormGroup>
+        <Label htmlFor="thumbnail">Thumbnail</Label>
+        <Controller
+          name="thumbnail"
+          control={control}
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          render={({ field: { ref: _, value, onChange, ...field } }) => (
+            <FileInput
+              {...field}
+              id="thumbnail"
+              value={undefined}
+              onChange={(event) => {
+                const { files } = event.target;
+                const selectedFiles = files as FileList;
+                setCurrentFile(selectedFiles?.[0]);
+              }}
+            />
           )}
         />
       </FormGroup>

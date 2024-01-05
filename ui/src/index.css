@@ -94,6 +94,7 @@
   }
 
   .text-input,
+  .file-input,
   .text-area,
   .select {
     width: 100%;
@@ -101,27 +102,21 @@
   }
 
   .text-input,
-  .text-area {
-    border: 1px solid theme('colors.gray-darkest');
-    border-radius: 0;
-  }
-
-  .text-input:focus,
-  .text-area:focus {
-    outline: 0.2rem solid theme('colors.primary-light');
-  }
-
-  .text-area {
-    min-height: 6rem;
-  }
-
+  .text-area,
   .select {
     border: 1px solid theme('colors.gray-darkest');
     border-radius: 0;
   }
 
+  .text-input:focus,
+  .file-input:focus,
+  .text-area:focus,
   .select:focus {
     outline: 0.2rem solid theme('colors.primary-light');
+  }
+
+  .text-area {
+    min-height: 6rem;
   }
 
   .text-red {
@@ -159,6 +154,10 @@
     height: 150px;
     background-color: theme('colors.gray-lighter');
     overflow: hidden;
+  }
+
+  .card-header-img > img {
+    margin: auto auto;
   }
 
   .card-body {
@@ -234,6 +233,8 @@
 
   .modal-body {
     min-height: 120px;
+    max-height: 90vh;
+    overflow-y: auto;
     color: theme('colors.text-dark');
     padding: 16px 24px;
     font-size: 0.93rem;

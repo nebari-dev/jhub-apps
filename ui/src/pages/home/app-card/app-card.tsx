@@ -135,7 +135,7 @@ export const AppCard = ({
             />
           )}
         </div>
-        <div className="card-header-img">
+        <div className="card-header-img flex flex-row">
           {thumbnail ? <img src={thumbnail} alt="App thumb" /> : undefined}
         </div>
       </div>
