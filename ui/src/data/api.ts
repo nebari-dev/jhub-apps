@@ -44,6 +44,90 @@ export const app: AppQueryGetProps = {
   state: {},
 };
 
+export const serverApps = {
+  user_apps: [
+    {
+      name: 'test-app',
+      url: '/user/test/test-app/',
+      ready: true,
+      user_options: {
+        name: 'test-app',
+        jhub_app: true,
+        display_name: 'Test App',
+        description:
+          'Lorem ipsum dolor sit amet consectetur. Sit vestibulum facilisis auctor pulvinar ac. Cras.',
+        imgUrl:
+          'https://designsystem.digital.gov/img/introducing-uswds-2-0/built-to-grow--alt.jpg',
+        framework: 'Panel',
+        public: true,
+      },
+    },
+    {
+      name: 'test-app-2',
+      url: '/user/test/test-app-2/',
+      ready: false,
+      user_options: {
+        name: 'test-app-2',
+        jhub_app: true,
+        display_name: 'Test App 2',
+        description:
+          'Lorem ipsum dolor sit amet consectetur. Sit vestibulum facilisis auctor pulvinar ac. Bras.',
+        imgUrl:
+          'https://designsystem.digital.gov/img/introducing-uswds-2-0/built-to-grow--alt.jpg',
+        framework: 'Streamlit',
+        public: false,
+      },
+    },
+    {
+      name: 'test-app-3',
+      url: '/user/test/test-app-3/',
+      ready: false,
+      user_options: {
+        name: 'test-app-3',
+        jhub_app: true,
+        display_name: 'Test App 3',
+        description:
+          'Lorem ipsum dolor sit amet consectetur. Sit vestibulum facilisis auctor pulvinar ac. Dras.',
+        imgUrl: null,
+        framework: 'JupyterLab',
+        public: false,
+      },
+    },
+    {
+      name: 'test-app-4',
+      url: '/user/test/test-app-4/',
+      ready: false,
+      user_options: {
+        name: 'test-app-4',
+        jhub_app: true,
+        display_name: 'Test App 4',
+        description: 'Cras.',
+        imgUrl: null,
+        framework: 'Streamlit',
+        public: false,
+      },
+    },
+  ],
+  shared_apps: [
+    {
+      name: 'shared-app',
+      url: '/shared/test/shared-app/',
+      ready: true,
+      user_options: {
+        name: 'shared-app',
+        jhub_app: true,
+        display_name: 'Shared App',
+        description:
+          'Lorem ipsum dolor sit amet consectetur. Sit vestibulum facilisis auctor pulvinar ac. Cras.',
+        imgUrl:
+          'https://designsystem.digital.gov/img/introducing-uswds-2-0/built-to-grow--alt.jpg',
+        framework: 'Panel',
+        public: false,
+      },
+    },
+  ],
+};
+
 export const userState: UserState = {
   admin: false,
   auth_state: null,

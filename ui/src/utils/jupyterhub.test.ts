@@ -1,6 +1,6 @@
+import { serverApps } from '@src/data/api';
 import { servicesFull } from '@src/data/jupyterhub';
 import { JhServiceFull } from '@src/types/jupyterhub';
-import { UserState } from '@src/types/user';
 import {
   getApps,
   getFriendlyFrameworkName,
@@ -9,34 +9,6 @@ import {
 } from './jupyterhub';
 
 describe('JupyterHub utils', () => {
-  const userState: UserState = {
-    admin: true,
-    auth_state: 'current',
-    created: '',
-    groups: [],
-    kind: '',
-    last_activity: '',
-    name: 'test',
-    pending: false,
-    roles: [],
-    scopes: [],
-    server: '',
-    session_id: '',
-    servers: {
-      server1: {
-        user_options: {
-          jhub_app: true,
-          name: 'app1',
-          display_name: 'App 1',
-          description: 'Description 1',
-          framework: 'python',
-          imgUrl: 'image1.jpg',
-        },
-        url: 'server1-url',
-      },
-    },
-  };
-
   test('returns empty jhdata from window object', () => {
     const mockJhdata = {};
     window.jhdata = mockJhdata;
@@ -77,15 +49,13 @@ describe('JupyterHub utils', () => {
   });
 
   test('returns an array of JhApp for shared apps', () => {
-    const result = getApps(userState.servers, 'Shared');
-    expect(result.length).toEqual(0);
-    expect(result.every((app) => app.shared === true)).toBe(true);
+    const result = getApps(serverApps, 'Shared');
+    expect(result.length).toEqual(1);
   });
 
   test('returns an array of JhApp for non-shared apps', () => {
-    const result = getApps(userState.servers, 'My');
-    expect(result.length).toBeGreaterThan(0);
-    expect(result.every((app) => app.shared === false)).toBe(true);
+    const result = getApps(serverApps, 'My');
+    expect(result.length).toEqual(4);
   });
 
   test('returns the framework name with the first letter capitalized', () => {
