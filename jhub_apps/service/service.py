@@ -4,6 +4,7 @@ import dataclasses
 import os
 from datetime import timedelta
 
+import requests
 from fastapi import APIRouter, Depends, status, Request, File, UploadFile, Form, HTTPException
 from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel, ValidationError
@@ -130,10 +131,16 @@ async def start_server(
 ):
     """Start an already existing server."""
     hub_client = HubClient()
-    response = hub_client.start_server(
-        username=user.name,
-        servername=server_name,
-    )
+    try:
+        response = hub_client.start_server(
+            username=user.name,
+            servername=server_name,
+        )
+    except requests.exceptions.HTTPError as e:
+        raise HTTPException(
+            detail=f"Probably server '{server_name}' is already running: {e}",
+            status_code=status.HTTP_400_BAD_REQUEST,
+        )
     if response is None:
         raise HTTPException(
             detail=f"server '{server_name}' not found",

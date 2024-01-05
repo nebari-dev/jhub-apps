@@ -51,7 +51,7 @@ class HubClient:
         if not server:
             return None
         url = f"/users/{username}/servers/{servername}"
-        data = {"name": servername}
+        data = {"name": servername, **server["user_options"]}
         r = requests.post(API_URL + url, headers=self._headers(), json=data)
         r.raise_for_status()
         return r.status_code, servername
