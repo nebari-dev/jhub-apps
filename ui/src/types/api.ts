@@ -8,6 +8,7 @@ export interface UserOptions {
   custom_command: string;
   conda_env: string;
   profile: string;
+  public: boolean;
 }
 
 export interface AppQueryUpdateProps {

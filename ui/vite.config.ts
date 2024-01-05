@@ -81,8 +81,9 @@ export default defineConfig({
                 filepath: '',
                 framework: 'panel',
                 custom_command: '',
-                conda_env: '',
-                profile: '',
+                conda_env: 'env1',
+                profile: 'Small Instance',
+                public: true,
               },
               progress_url: '',
               state: {},
@@ -109,6 +110,7 @@ export default defineConfig({
                     'https://designsystem.digital.gov/img/introducing-uswds-2-0/built-to-grow--alt.jpg',
                   framework: 'Panel',
                   ready: true,
+                  public: true,
                 },
               },
               'test-app-2': {
@@ -124,6 +126,7 @@ export default defineConfig({
                     'https://designsystem.digital.gov/img/introducing-uswds-2-0/built-to-grow--alt.jpg',
                   framework: 'Streamlit',
                   ready: false,
+                  public: false,
                 },
               },
               'test-app-3': {
@@ -138,6 +141,7 @@ export default defineConfig({
                   imgUrl: null,
                   framework: 'JupyterLab',
                   ready: false,
+                  public: false,
                 },
               },
               'test-app-4': {
@@ -151,6 +155,7 @@ export default defineConfig({
                   imgUrl: null,
                   framework: 'Streamlit',
                   ready: false,
+                  public: false,
                 },
               },
             }),
