@@ -80,9 +80,12 @@ def subclass_spawner(base_spawner):
                 self.user_options.get("jhub_app")
                 and framework != Framework.jupyterlab.value
             ):
+                auth_type = "oauth"
+                if self.user_options.get("public", False):
+                    auth_type = "none"
                 self.cmd = DEFAULT_CMD.get_substituted_args(
                     python_exec=self.config.JAppsConfig.python_exec,
-                    authtype=self.config.JAppsConfig.apps_auth_type,
+                    authtype=auth_type,
                 )
             if framework == Framework.jupyterlab.value:
                 self.cmd = [

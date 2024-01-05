@@ -57,6 +57,8 @@ class UserOptions(BaseModel):
     custom_command: typing.Optional[str] = str()
     conda_env: typing.Optional[str] = str()
     profile: typing.Optional[str] = str()
+    # Make app available to public (unauthenticated Hub users)
+    public: typing.Optional[bool] = False
 
 
 class ServerCreation(BaseModel):
