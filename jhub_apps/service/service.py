@@ -82,7 +82,10 @@ async def get_server(user: User = Depends(get_current_user), server_name=None):
         for s_name, server_details in user_servers.items():
             if s_name == server_name:
                 return server_details
-        return status.HTTP_404_NOT_FOUND
+        raise HTTPException(
+            detail=f"server '{server_name}' not found",
+            status_code=status.HTTP_404_NOT_FOUND,
+        )
     else:
         # Get all servers
         return user_servers
@@ -132,7 +135,10 @@ async def start_server(
         servername=server_name,
     )
     if response is None:
-        return status.HTTP_404_NOT_FOUND
+        raise HTTPException(
+            detail=f"server '{server_name}' not found",
+            status_code=status.HTTP_404_NOT_FOUND,
+        )
     return response
 
 
