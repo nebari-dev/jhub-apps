@@ -157,7 +157,7 @@ async def update_server(
 async def delete_server(
         user: User = Depends(get_current_user),
         server_name=None,
-        remove=False,
+        remove: bool = False,
 ):
     """Delete or stop server. Delete if remove is True otherwise stop the server"""
     hub_client = HubClient()

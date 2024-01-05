@@ -3,6 +3,8 @@ import io
 import json
 from unittest.mock import patch
 
+import pytest
+
 from jhub_apps.hub_client.hub_client import HubClient
 from jhub_apps.spawner.types import FRAMEWORKS
 from jhub_apps.tests.constants import MOCK_USER
@@ -57,15 +59,19 @@ def test_api_create_server(create_server, client):
     assert response.json() == create_server_response
 
 
+@pytest.mark.parametrize("name,remove", [
+    ('delete', True,),
+    ('stop', False,),
+])
 @patch.object(HubClient, "delete_server")
-def test_api_delete_server(delete_server, client):
+def test_api_delete_server(delete_server, name, remove, client):
     create_server_response = {"user": "aktech"}
     delete_server.return_value = create_server_response
-    response = client.delete("/server/panel-app")
+    response = client.delete("/server/panel-app", params={"remove": remove})
     delete_server.assert_called_once_with(
         MOCK_USER.name,
         server_name="panel-app",
-        remove=False
+        remove=remove
     )
     assert response.json() == create_server_response
 
