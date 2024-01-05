@@ -38,6 +38,7 @@ export const app: AppQueryGetProps = {
     custom_command: '',
     conda_env: '',
     profile: '',
+    public: false,
   },
   progress_url: '',
   state: {},

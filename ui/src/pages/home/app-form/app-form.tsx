@@ -22,6 +22,7 @@ import {
   Select,
   TextArea,
   TextInput,
+  Toggle,
 } from '../../../components';
 import { currentNotification } from '../../../store';
 
@@ -43,6 +44,7 @@ export const AppForm = ({
   );
   const [name, setName] = useState('');
   const [currentFile, setCurrentFile] = useState<File>();
+  const [isPublic, setIsPublic] = useState(false);
   // Get the app data if we're editing an existing app
   const { data: formData, error: formError } = useQuery<
     AppQueryGetProps,
@@ -99,6 +101,7 @@ export const AppForm = ({
       conda_env: '',
       custom_command: '',
       profile: '',
+      is_public: false,
     },
   });
   const currentFramework = watch('framework');
@@ -126,6 +129,7 @@ export const AppForm = ({
         conda_env: conda_env || '',
         custom_command: custom_command || '',
         profile: profile || '',
+        public: isPublic,
       },
     };
 
@@ -216,6 +220,7 @@ export const AppForm = ({
     if (formData?.name && formData?.user_options) {
       setName(formData.name);
       reset({ ...formData.user_options });
+      setIsPublic(formData.user_options.public);
     }
   }, [formData?.name, formData?.user_options, reset]);
 
@@ -424,6 +429,24 @@ export const AppForm = ({
       ) : (
         <></>
       )}
+      <FormGroup>
+        <Label htmlFor="is_public">Allow Public Access</Label>
+        <Controller
+          name="is_public"
+          control={control}
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          render={({ field: { ref: _, value, onChange, ...field } }) => (
+            <Toggle
+              {...field}
+              id="is_public"
+              checked={isPublic}
+              onChange={() => {
+                setIsPublic(!isPublic);
+              }}
+            />
+          )}
+        />
+      </FormGroup>
       <ButtonGroup>
         <Button
           id="cancel-btn"

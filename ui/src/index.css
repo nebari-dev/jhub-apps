@@ -119,6 +119,27 @@
     min-height: 6rem;
   }
 
+  .toggle {
+    margin-top: 0.5rem;
+  }
+
+  .toggle-dot {
+    background-color: theme('colors.white');
+    border: 1px solid theme('colors.gray-lighter');
+  }
+
+  .toggle-body {
+    background-color: theme('colors.gray-lighter');
+  }
+
+  .toggle-body-on {
+    background-color: #c316e9;
+  }
+
+  .toggle-label {
+    color: theme('colors.text-dark');
+  }
+
   .text-red {
     color: theme('colors.error');
   }

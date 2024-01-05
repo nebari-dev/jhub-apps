@@ -101,6 +101,10 @@ label {
     outline-color: var(--primary-color) !important;
 }
 
+.toggle-body-on {
+    background-color: var(--primary-color) !important;
+}
+
 a {
     color: var(--link-text-color);
     text-decoration: underline;

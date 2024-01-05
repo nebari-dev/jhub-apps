@@ -88,6 +88,7 @@ export const AppsGrid = ({
                 framework={app.framework}
                 url={app.url}
                 ready={app.ready}
+                isPublic={app.public}
               />
             ))}
           </div>

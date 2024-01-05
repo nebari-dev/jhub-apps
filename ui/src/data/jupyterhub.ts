@@ -90,6 +90,7 @@ export const apps: JhApp[] = [
     url: '/hub/app1',
     shared: false,
     ready: true,
+    public: true,
   },
   {
     id: '2',
@@ -102,6 +103,7 @@ export const apps: JhApp[] = [
     url: '/hub/app2',
     shared: false,
     ready: false,
+    public: false,
   },
   {
     id: '3',
@@ -112,6 +114,7 @@ export const apps: JhApp[] = [
     url: '/hub/app3',
     shared: false,
     ready: false,
+    public: false,
   },
   {
     id: '4',
@@ -122,6 +125,7 @@ export const apps: JhApp[] = [
     url: '/hub/app4',
     shared: false,
     ready: false,
+    public: false,
   },
   {
     id: '5',
@@ -132,6 +136,7 @@ export const apps: JhApp[] = [
     url: '/hub/app5',
     shared: false,
     ready: false,
+    public: false,
   },
   {
     id: '6',
@@ -142,6 +147,7 @@ export const apps: JhApp[] = [
     url: '/hub/app6',
     shared: true,
     ready: false,
+    public: false,
   },
 ];
 

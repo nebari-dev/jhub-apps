@@ -13,4 +13,5 @@ export interface AppFormInput {
   conda_env?: string;
   custom_command?: string;
   profile?: string;
+  is_public: boolean;
 }
