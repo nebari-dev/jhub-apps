@@ -100,6 +100,7 @@ export default defineConfig({
               'test-app': {
                 name: 'test-app',
                 url: '/user/test/test-app/',
+                ready: true,
                 user_options: {
                   name: 'test-app',
                   jhub_app: true,
@@ -109,13 +110,13 @@ export default defineConfig({
                   imgUrl:
                     'https://designsystem.digital.gov/img/introducing-uswds-2-0/built-to-grow--alt.jpg',
                   framework: 'Panel',
-                  ready: true,
                   public: true,
                 },
               },
               'test-app-2': {
                 name: 'test-app-2',
                 url: '/user/test/test-app-2/',
+                ready: false,
                 user_options: {
                   name: 'test-app-2',
                   jhub_app: true,
@@ -125,13 +126,13 @@ export default defineConfig({
                   imgUrl:
                     'https://designsystem.digital.gov/img/introducing-uswds-2-0/built-to-grow--alt.jpg',
                   framework: 'Streamlit',
-                  ready: false,
                   public: false,
                 },
               },
               'test-app-3': {
                 name: 'test-app-3',
                 url: '/user/test/test-app-3/',
+                ready: false,
                 user_options: {
                   name: 'test-app-3',
                   jhub_app: true,
@@ -140,13 +141,13 @@ export default defineConfig({
                     'Lorem ipsum dolor sit amet consectetur. Sit vestibulum facilisis auctor pulvinar ac. Dras.',
                   imgUrl: null,
                   framework: 'JupyterLab',
-                  ready: false,
                   public: false,
                 },
               },
               'test-app-4': {
                 name: 'test-app-4',
                 url: '/user/test/test-app-4/',
+                ready: false,
                 user_options: {
                   name: 'test-app-4',
                   jhub_app: true,
@@ -154,7 +155,6 @@ export default defineConfig({
                   description: 'Cras.',
                   imgUrl: null,
                   framework: 'Streamlit',
-                  ready: false,
                   public: false,
                 },
               },

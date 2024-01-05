@@ -74,6 +74,110 @@ describe('AppCard', () => {
     expect(body).toHaveTextContent('Some app description');
   });
 
+  test('simulates starting an app', async () => {
+    mock.onPost().reply(200);
+    const { baseElement } = render(
+      <RecoilRoot>
+        <QueryClientProvider client={queryClient}>
+          <AppCard
+            id="card-1"
+            title="Card 1"
+            framework="Some Framework"
+            url="/some-url"
+            ready={false}
+          />
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+
+    const menu = baseElement.querySelectorAll(
+      '.context-menu-container',
+    )[0] as HTMLDivElement;
+    await act(async () => {
+      menu.click();
+    });
+
+    const btn = baseElement.querySelectorAll(
+      '.context-menu li a',
+    )[0] as HTMLAnchorElement;
+    await act(async () => {
+      btn.click();
+    });
+
+    const cancelBtn = baseElement.querySelector(
+      '#cancel-btn',
+    ) as HTMLButtonElement;
+    await act(async () => {
+      cancelBtn.click();
+    });
+
+    await act(async () => {
+      menu.click();
+    });
+
+    await act(async () => {
+      btn.click();
+    });
+
+    const startBtn = baseElement.querySelector(
+      '#start-btn',
+    ) as HTMLButtonElement;
+    await act(async () => {
+      startBtn.click();
+    });
+  });
+
+  test('simulates stopping an app', async () => {
+    mock.onDelete().reply(200);
+    const { baseElement } = render(
+      <RecoilRoot>
+        <QueryClientProvider client={queryClient}>
+          <AppCard
+            id="card-1"
+            title="Card 1"
+            framework="Some Framework"
+            url="/some-url"
+            ready={true}
+          />
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+
+    const menu = baseElement.querySelectorAll(
+      '.context-menu-container',
+    )[0] as HTMLDivElement;
+    await act(async () => {
+      menu.click();
+    });
+
+    const btn = baseElement.querySelectorAll(
+      '.context-menu li a',
+    )[1] as HTMLAnchorElement;
+    await act(async () => {
+      btn.click();
+    });
+
+    const cancelBtn = baseElement.querySelector(
+      '#cancel-btn',
+    ) as HTMLButtonElement;
+    await act(async () => {
+      cancelBtn.click();
+    });
+
+    await act(async () => {
+      menu.click();
+    });
+
+    await act(async () => {
+      btn.click();
+    });
+
+    const stopBtn = baseElement.querySelector('#stop-btn') as HTMLButtonElement;
+    await act(async () => {
+      stopBtn.click();
+    });
+  });
+
   test('simulates editing an app', async () => {
     mock.onGet(new RegExp('/frameworks')).reply(200, frameworks);
     mock.onGet(new RegExp('/conda-environments')).reply(200, environments);
@@ -107,7 +211,7 @@ describe('AppCard', () => {
 
     const btn = baseElement.querySelectorAll(
       '.context-menu li a',
-    )[0] as HTMLAnchorElement;
+    )[2] as HTMLAnchorElement;
     await act(async () => {
       btn.click();
     });
@@ -164,7 +268,7 @@ describe('AppCard', () => {
 
     const btn = baseElement.querySelectorAll(
       '.context-menu li a',
-    )[0] as HTMLAnchorElement;
+    )[2] as HTMLAnchorElement;
     await act(async () => {
       btn.click();
     });
@@ -202,7 +306,7 @@ describe('AppCard', () => {
 
     const btn = baseElement.querySelectorAll(
       '.context-menu li a',
-    )[1] as HTMLAnchorElement;
+    )[3] as HTMLAnchorElement;
     await act(async () => {
       btn.click();
     });
@@ -255,7 +359,7 @@ describe('AppCard', () => {
 
     const btn = baseElement.querySelectorAll(
       '.context-menu li a',
-    )[1] as HTMLAnchorElement;
+    )[3] as HTMLAnchorElement;
     await act(async () => {
       btn.click();
     });

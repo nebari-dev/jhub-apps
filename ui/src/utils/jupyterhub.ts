@@ -38,7 +38,7 @@ export const getApps = (servers: any, appType: string) => {
           url: server.url,
           thumbnail: app.thumbnail,
           shared: false,
-          ready: app.ready,
+          ready: server.ready,
           public: app.public,
         });
       }

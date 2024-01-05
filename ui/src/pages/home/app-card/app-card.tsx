@@ -1,4 +1,4 @@
-import { AppQueryDeleteProps } from '@src/types/api';
+import { AppQueryDeleteProps, AppQueryPostProps } from '@src/types/api';
 import axios from '@src/utils/axios';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import React, { useState } from 'react';
@@ -32,19 +32,36 @@ export const AppCard = ({
   framework,
   url,
   isPublic = false,
+  ready = false,
 }: AppCardProps): React.ReactElement => {
   const queryClient = useQueryClient();
   const [submitting, setSubmitting] = useState(false);
   const [, setNotification] = useRecoilState<string | undefined>(
     currentNotification,
   );
+  const [isStartOpen, setIsStartOpen] = useState(false);
+  const [isStopOpen, setIsStopOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
 
-  const deleteRequest = async ({ id }: AppQueryDeleteProps) => {
-    const response = await axios.delete(`/server/${id}`);
+  const startRequest = async ({ id }: AppQueryPostProps) => {
+    const response = await axios.post(`/server/${id}`);
     return response;
   };
+
+  const deleteRequest = async ({ id, remove }: AppQueryDeleteProps) => {
+    const response = await axios.delete(`/server/${id}`, {
+      params: {
+        remove,
+      },
+    });
+    return response;
+  };
+
+  const { mutate: startQuery } = useMutation({
+    mutationFn: startRequest,
+    retry: 1,
+  });
 
   const { mutate: deleteQuery } = useMutation({
     mutationFn: deleteRequest,
@@ -54,7 +71,7 @@ export const AppCard = ({
   const handleDelete = () => {
     setSubmitting(true);
     deleteQuery(
-      { id },
+      { id, remove: true },
       {
         onSuccess: async () => {
           setSubmitting(false);
@@ -70,7 +87,59 @@ export const AppCard = ({
     );
   };
 
+  const handleStart = () => {
+    setSubmitting(true);
+    startQuery(
+      { id },
+      {
+        onSuccess: async () => {
+          setSubmitting(false);
+          setIsStartOpen(false);
+          queryClient.invalidateQueries(['app-state']);
+        },
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        onError: async (error: any) => {
+          setSubmitting(false);
+          setNotification(error.message);
+        },
+      },
+    );
+  };
+
+  const handleStop = () => {
+    setSubmitting(true);
+    deleteQuery(
+      { id, remove: false },
+      {
+        onSuccess: async () => {
+          setSubmitting(false);
+          setIsStopOpen(false);
+          queryClient.invalidateQueries(['app-state']);
+        },
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        onError: async (error: any) => {
+          setSubmitting(false);
+          setNotification(error.message);
+        },
+      },
+    );
+  };
+
   const menuItems: ContextMenuItem[] = [
+    {
+      id: 'start',
+      title: 'Start',
+      onClick: () => setIsStartOpen(true),
+      visible: true,
+      disabled: ready,
+    },
+    {
+      id: 'stop',
+      title: 'Stop',
+      onClick: () => setIsStopOpen(true),
+      visible: true,
+      disabled: !ready,
+    },
     {
       id: 'edit',
       title: 'Edit',
@@ -84,6 +153,56 @@ export const AppCard = ({
       visible: true,
     },
   ];
+
+  const startModalBody = (
+    <>
+      <p className="w-[400px] mb-6">
+        Are you sure you want to start <b>{title}</b>?
+      </p>
+      <ButtonGroup>
+        <Button
+          id="cancel-btn"
+          variant="secondary"
+          onClick={() => setIsStartOpen(false)}
+        >
+          Cancel
+        </Button>
+        <Button
+          id="start-btn"
+          variant="primary"
+          onClick={() => handleStart()}
+          disabled={submitting}
+        >
+          Start
+        </Button>
+      </ButtonGroup>
+    </>
+  );
+
+  const stopModalBody = (
+    <>
+      <p className="w-[400px] mb-6">
+        Are you sure you want to stop <b>{title}</b>?
+      </p>
+      <ButtonGroup>
+        <Button
+          id="cancel-btn"
+          variant="secondary"
+          onClick={() => setIsStopOpen(false)}
+        >
+          Cancel
+        </Button>
+        <Button
+          id="stop-btn"
+          variant="primary"
+          onClick={() => handleStop()}
+          disabled={submitting}
+        >
+          Stop
+        </Button>
+      </ButtonGroup>
+    </>
+  );
 
   const deleteModalBody = (
     <>
@@ -116,6 +235,20 @@ export const AppCard = ({
       <div className="card-header-media">
         <div className="card-header-menu">
           <ContextMenu id={`card-menu-${id}`} items={menuItems} />
+          {isStartOpen && (
+            <Modal
+              title={`Start ${title}`}
+              setIsOpen={setIsStartOpen}
+              body={startModalBody}
+            />
+          )}
+          {isStopOpen && (
+            <Modal
+              title={`Stop ${title}`}
+              setIsOpen={setIsStopOpen}
+              body={stopModalBody}
+            />
+          )}
           {isDeleteOpen && (
             <Modal
               title={`Delete ${title}`}

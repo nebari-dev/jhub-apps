@@ -16,8 +16,13 @@ export interface AppQueryUpdateProps {
   user_options: UserOptions;
 }
 
+export interface AppQueryPostProps {
+  id: string;
+}
+
 export interface AppQueryDeleteProps {
   id: string;
+  remove: boolean;
 }
 
 export interface AppQueryGetProps {
