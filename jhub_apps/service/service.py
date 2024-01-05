@@ -103,7 +103,7 @@ class Checker:
 @router.post("/server/")
 async def create_server(
     server: ServerCreation = Depends(Checker(ServerCreation)),
-    thumbnail: typing.Optional[UploadFile] = File(...),
+    thumbnail: typing.Optional[UploadFile] = File(None),
     user: User = Depends(get_current_user),
 ):
     if thumbnail:
