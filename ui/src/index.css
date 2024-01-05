@@ -156,6 +156,10 @@
     overflow: hidden;
   }
 
+  .card-header-img > img {
+    margin: auto auto;
+  }
+
   .card-body {
     min-height: 75px;
     padding: 0.5rem 1.5rem;

@@ -121,8 +121,15 @@ async def create_server(
 
 @router.put("/server/{server_name}")
 async def update_server(
-    server: ServerCreation, user: User = Depends(get_current_user), server_name=None
+    server: ServerCreation = Depends(Checker(ServerCreation)),
+    thumbnail: typing.Optional[UploadFile] = File(None),
+    user: User = Depends(get_current_user), server_name=None
 ):
+    if thumbnail:
+        thumbnail_contents = await thumbnail.read()
+        server.user_options.thumbnail = encode_file_to_data_url(
+            thumbnail.filename, thumbnail_contents
+        )
     hub_client = HubClient()
     return hub_client.create_server(
         username=user.name,
