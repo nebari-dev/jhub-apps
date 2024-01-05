@@ -65,6 +65,7 @@ def test_api_delete_server(delete_server, client):
     delete_server.assert_called_once_with(
         MOCK_USER.name,
         server_name="panel-app",
+        remove=False
     )
     assert response.json() == create_server_response
 
