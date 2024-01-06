@@ -17,11 +17,11 @@ def get_jupyterhub_config():
     os.environ["PROXY_API_SERVICE_PORT"] = "*"
     os.environ["HUB_SERVICE_PORT"] = "*"
     jhub_config_file_path = os.environ["JHUB_JUPYTERHUB_CONFIG"]
-    print(f"Getting JHub config from file: {jhub_config_file_path}")
+    logger.info(f"Getting JHub config from file: {jhub_config_file_path}")
     hub.load_config_file(jhub_config_file_path)
     config = hub.config
-    print(f"JHub config from file: {config}")
-    print(f"JApps config: {config.JAppsConfig}")
+    logger.info(f"JHub config from file: {config}")
+    logger.info(f"JApps config: {config.JAppsConfig}")
     return config
 
 
@@ -44,7 +44,7 @@ def get_conda_envs(config):
         )
 
 
-def get_spawner_profiles(config):
+async def get_spawner_profiles(config):
     """This will extract spawner profiles from the JupyterHub config
     If the Spawner is KubeSpawner
     """
@@ -56,7 +56,7 @@ def get_spawner_profiles(config):
     elif callable(profile_list):
         try:
             logger.info("config.KubeSpawner.profile_list is a callable, calling now..")
-            return profile_list()
+            return await profile_list()
         except Exception as e:
             logger.exception(e)
             return []

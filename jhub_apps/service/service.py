@@ -236,7 +236,8 @@ async def conda_environments(user: User = Depends(get_current_user)):
 async def spawner_profiles(user: User = Depends(get_current_user)):
     logging.info("Getting spawner profiles")
     config = get_jupyterhub_config()
-    spawner_profiles_ = get_spawner_profiles(config)
+    spawner_profiles_ = await get_spawner_profiles(config)
+    logger.info(f"Loaded spawner profiles: {config}")
     return spawner_profiles_
 
 
