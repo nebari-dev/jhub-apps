@@ -27,6 +27,9 @@ def install_jhub_apps(c, spawner_to_subclass):
     if not isinstance(c.JAppsConfig.app_icon, str):
         c.JAppsConfig.app_icon = JAppsConfig.app_icon.default_value
 
+    if not isinstance(c.JAppsConfig.hub_host, str):
+        c.JAppsConfig.hub_host = JAppsConfig.hub_host.default_value
+
     if not isinstance(c.JAppsConfig.jupyterhub_config_path, str):
         c.JAppsConfig.jupyterhub_config_path = (
             JAppsConfig.jupyterhub_config_path.default_value
@@ -45,7 +48,7 @@ def install_jhub_apps(c, spawner_to_subclass):
         [
             {
                 "name": fast_api_service_name,
-                "url": "http://127.0.0.1:10202",
+                "url": f"http://{c.JAppsConfig.hub_host}:10202",
                 "command": [
                     c.JAppsConfig.python_exec,
                     "-m",

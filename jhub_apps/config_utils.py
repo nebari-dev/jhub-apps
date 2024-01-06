@@ -38,3 +38,8 @@ class JAppsConfig(SingletonConfigurable):
         "jupyterhub_config.py",
         help="Path to JupyterHub config file.",
     ).tag(config=True)
+
+    hub_host = Unicode(
+        "127.0.0.1",
+        help="Hub Host name, in k8s environment it would be the container name, e.g. 'hub'",
+    ).tag(config=True)
