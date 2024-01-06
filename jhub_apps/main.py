@@ -1,6 +1,2 @@
 def app():
-    print("Hello world")
-    import time
-
-    time.sleep(500)
-    return 1
+    print("JupyterHub App Launcher")
