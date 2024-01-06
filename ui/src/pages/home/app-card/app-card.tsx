@@ -52,7 +52,7 @@ export const AppCard = ({
   };
 
   const deleteRequest = async ({ id, remove }: AppQueryDeleteProps) => {
-    const response = await axios.delete(`/server/${id}/`, {
+    const response = await axios.delete(`/server/${id}`, {
       params: {
         remove,
       },
