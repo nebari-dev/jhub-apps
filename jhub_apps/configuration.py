@@ -63,6 +63,10 @@ def install_jhub_apps(c, spawner_to_subclass):
                     "JHUB_APP_ICON": c.JAppsConfig.app_icon,
                     "JHUB_JUPYTERHUB_CONFIG": c.JAppsConfig.jupyterhub_config_path,
                     "JWT_SECRET_KEY": os.environ["JWT_SECRET_KEY"],
+
+                    # Temp environment variables for Nebari Deployment
+                    "PROXY_API_SERVICE_PORT": "*",
+                    "HUB_SERVICE_PORT": "*",
                 },
                 "oauth_redirect_uri": oauth_redirect_uri,
                 "display": False,
