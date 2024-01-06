@@ -1,3 +1,5 @@
+import logging
+
 from jhub_apps.spawner.utils import get_origin_host
 from jhub_apps.spawner.command import (
     EXAMPLES_DIR,
@@ -10,11 +12,23 @@ from jhub_apps.spawner.command import (
 from jhub_apps.spawner.types import Framework
 
 
+logger = logging.getLogger(__name__)
+
+
 def subclass_spawner(base_spawner):
     # TODO: Find a better way to do this
     class JHubSpawner(base_spawner):
         def get_args(self):
             """Return arguments to pass to the notebook server"""
+            logger.info("Getting Spawner args")
+            try:
+                auth_state = self.user.get_auth_state()
+                logger.info("^"*100)
+                logger.info(f"auth_state: {auth_state}")
+                logger.info("^"*100)
+            except Exception as e:
+                logger.exception(e)
+
             argv = super().get_args()
             if self.user_options.get("argv"):
                 argv.extend(self.user_options["argv"])
