@@ -45,7 +45,7 @@ def install_jhub_apps(c, spawner_to_subclass):
         [
             {
                 "name": fast_api_service_name,
-                "url": "http://127.0.0.1:10202",
+                "url": "http://hub:10202",
                 "command": [
                     c.JAppsConfig.python_exec,
                     "-m",
