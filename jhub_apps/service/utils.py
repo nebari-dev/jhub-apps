@@ -32,7 +32,12 @@ def get_conda_envs(config):
     elif isinstance(config.JAppsConfig.conda_envs, LazyConfigValue):
         return []
     elif callable(config.JAppsConfig.conda_envs):
-        return config.JAppsConfig.conda_envs()
+        try:
+            logger.info("JAppsConfig.conda_envs is a callable, calling now..")
+            return config.JAppsConfig.conda_envs()
+        except Exception as e:
+            logger.exception(e)
+            return []
     else:
         raise ValueError(
             f"Invalid value for config.JAppsConfig.conda_envs: {config.JAppsConfig.conda_envs}"
@@ -49,7 +54,12 @@ def get_spawner_profiles(config):
     elif isinstance(profile_list, LazyConfigValue):
         return []
     elif callable(profile_list):
-        return profile_list()
+        try:
+            logger.info("config.KubeSpawner.profile_list is a callable, calling now..")
+            return profile_list()
+        except Exception as e:
+            logger.exception(e)
+            return []
     else:
         raise ValueError(
             f"Invalid value for config.KubeSpawner.profile_list: {profile_list}"
