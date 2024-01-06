@@ -1,2 +1,2 @@
 def app():
-    print(f"JupyterHub App Launcher")
+    print("JupyterHub App Launcher")
