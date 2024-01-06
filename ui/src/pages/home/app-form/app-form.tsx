@@ -64,7 +64,7 @@ export const AppForm = ({
   >({
     queryKey: ['app-frameworks'],
     queryFn: () =>
-      axios.get('/frameworks').then((response) => {
+      axios.get('/frameworks/').then((response) => {
         return response.data;
       }),
   });
@@ -72,7 +72,7 @@ export const AppForm = ({
   const { data: environments } = useQuery<string[], { message: string }>({
     queryKey: ['app-environments'],
     queryFn: () =>
-      axios.get('/conda-environments').then((response) => {
+      axios.get('/conda-environments/').then((response) => {
         return response.data;
       }),
   });
@@ -80,7 +80,7 @@ export const AppForm = ({
   const { data: profiles } = useQuery<AppProfileProps[], { message: string }>({
     queryKey: ['app-profiles'],
     queryFn: () =>
-      axios.get('/spawner-profiles').then((response) => {
+      axios.get('/spawner-profiles/').then((response) => {
         return response.data;
       }),
   });
