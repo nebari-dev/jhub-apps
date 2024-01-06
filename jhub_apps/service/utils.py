@@ -14,6 +14,8 @@ logger = logging.getLogger(__name__)
 
 def get_jupyterhub_config():
     hub = JupyterHub()
+    os.environ["PROXY_API_SERVICE_PORT"] = "*"
+    os.environ["HUB_SERVICE_PORT"] = "*"
     jhub_config_file_path = os.environ["JHUB_JUPYTERHUB_CONFIG"]
     print(f"Getting JHub config from file: {jhub_config_file_path}")
     hub.load_config_file(jhub_config_file_path)
