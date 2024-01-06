@@ -47,12 +47,12 @@ export const AppCard = ({
   const [isEditOpen, setIsEditOpen] = useState(false);
 
   const startRequest = async ({ id }: AppQueryPostProps) => {
-    const response = await axios.post(`/server/${id}`);
+    const response = await axios.post(`/server/${id}/`);
     return response;
   };
 
   const deleteRequest = async ({ id, remove }: AppQueryDeleteProps) => {
-    const response = await axios.delete(`/server/${id}`, {
+    const response = await axios.delete(`/server/${id}/`, {
       params: {
         remove,
       },
