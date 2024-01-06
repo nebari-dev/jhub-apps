@@ -15,6 +15,7 @@ dependencies = [
     "requests",
     "fastapi",
     "uvicorn",
+    "python-multipart",
     "jupyterhub",
     "jupyter",
     "plotlydash-tornado-cmd",
