@@ -2,7 +2,7 @@ import axios from 'axios';
 import { getJhData } from './jupyterhub';
 
 const instance = axios.create({
-  baseURL: '/api',
+  baseURL: '/hub/api',
   headers: {
     'Content-Type': 'application/json',
     Authorization: `Authorization: token ${process.env.JUPYERHUB_API_TOKEN}`,
