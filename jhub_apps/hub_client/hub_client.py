@@ -85,3 +85,8 @@ class HubClient:
         r = requests.delete(API_URL + url, headers=self._headers(), json=params)
         r.raise_for_status()
         return r.status_code
+
+    def get_services(self):
+        r = requests.get(API_URL + "/services", headers=self._headers())
+        r.raise_for_status()
+        return r.json()

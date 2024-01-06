@@ -90,6 +90,7 @@ def install_jhub_apps(c, spawner_to_subclass):
                 "admin:server_state",  # start/stop servers
                 "access:services",
                 "list:services",
+                "read:services",  # read service models
             ],
         },
         {
