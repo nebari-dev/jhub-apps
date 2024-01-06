@@ -4,6 +4,7 @@ channels:
 dependencies:
   - uvicorn
   - fastapi
+  - python-multipart
   - jupyterhub
   - jupyter
   - plotlydash-tornado-cmd
