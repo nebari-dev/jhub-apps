@@ -2,7 +2,8 @@ name: jhub-apps-dev
 channels:
   - conda-forge
 dependencies:
-  - flask
+  - uvicorn
+  - fastapi
   - jupyterhub
   - jupyter
   - plotlydash-tornado-cmd

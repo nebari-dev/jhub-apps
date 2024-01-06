@@ -1,0 +1,33 @@
+name: Release
+
+on: [release, workflow_dispatch]
+
+env:
+  HATCH_INDEX_USER: __token__
+  HATCH_INDEX_AUTH: ${{ secrets.HATCH_INDEX_AUTH }}
+
+name: Release
+jobs:
+  release:
+    name: Release jhub-apps
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2.5.0
+
+      - name: Setup Python
+        uses: mamba-org/setup-micromamba@v1.4.3
+        with:
+          python-version: ${{ matrix.python-version }}
+          environment-file: environment-dev.yml
+          create-args: >-
+            python=${{ matrix.python-version }}
+            numpy
+            -c conda-forge
+
+      - name: Hatch Build
+        run: hatch build
+
+      - name: Hatch Publish
+        run: hatch publish -n
