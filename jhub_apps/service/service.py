@@ -241,6 +241,13 @@ async def spawner_profiles(user: User = Depends(get_current_user)):
     return spawner_profiles_
 
 
+@router.get("/services/", description="Get all services")
+async def hub_services(user: User = Depends(get_current_user)):
+    logging.info("Getting hub services")
+    hub_client = HubClient()
+    return hub_client.get_services()
+
+
 @router.get(
     "/status",
 )
