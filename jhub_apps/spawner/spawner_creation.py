@@ -19,9 +19,9 @@ def subclass_spawner(base_spawner):
     # TODO: Find a better way to do this
     class JHubSpawner(base_spawner):
 
-        def _get_user_auth_state(self):
+        async def _get_user_auth_state(self):
             try:
-                auth_state = self.user.get_auth_state()
+                auth_state = await self.user.get_auth_state()
                 print("PRINT-------------------")
                 logger.info("^"*100)
                 logger.info(f"auth_state: {auth_state}")
@@ -32,8 +32,8 @@ def subclass_spawner(base_spawner):
 
         def get_args(self):
             """Return arguments to pass to the notebook server"""
-            logger.info("Getting Spawner args")
-            self._get_user_auth_state()
+            # logger.info("Getting Spawner args")
+            # self._get_user_auth_state()
             argv = super().get_args()
             if self.user_options.get("argv"):
                 argv.extend(self.user_options["argv"])
@@ -75,8 +75,8 @@ def subclass_spawner(base_spawner):
             return argv
 
         def get_env(self):
-            logger.info("Getting spawner environments")
-            self._get_user_auth_state()
+            # logger.info("Getting spawner environments")
+            # await self._get_user_auth_state()
             env = super().get_env()
             if self.user_options.get("env"):
                 env.update(self.user_options["env"])
@@ -97,7 +97,7 @@ def subclass_spawner(base_spawner):
 
         async def start(self):
             logger.info("Starting spawner process")
-            self._get_user_auth_state()
+            await self._get_user_auth_state()
             framework = self.user_options.get("framework")
             if (
                 self.user_options.get("jhub_app")
