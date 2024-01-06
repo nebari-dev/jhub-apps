@@ -22,6 +22,7 @@ def subclass_spawner(base_spawner):
         def _get_user_auth_state(self):
             try:
                 auth_state = self.user.get_auth_state()
+                print("PRINT-------------------")
                 logger.info("^"*100)
                 logger.info(f"auth_state: {auth_state}")
                 logger.info("^"*100)
