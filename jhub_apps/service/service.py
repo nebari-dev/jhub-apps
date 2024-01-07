@@ -231,12 +231,20 @@ async def conda_environments(user: User = Depends(get_current_user)):
     logging.info(f"Getting conda environments for user: {user}")
     config = get_jupyterhub_config()
     conda_envs = get_conda_envs(config)
+    hclient = HubClient()
+    logger.info("#"*100)
+    logger.info(f"USER FROM HUB CLIENT: {hclient.get_user(user.name)}")
+    logger.info("#"*100)
     logger.info(f"Found conda environments: {conda_envs}")
     return conda_envs
 
 
 @router.get("/spawner-profiles/", description="Get all spawner profiles")
 async def spawner_profiles(user: User = Depends(get_current_user)):
+    hclient = HubClient()
+    logger.info("*"*100)
+    logger.info(f"USER FROM HUB CLIENT: {hclient.get_user(user.name)}")
+    logger.info("*"*100)
     logging.info(f"Getting spawner profiles for user: {user}")
     config = get_jupyterhub_config()
     spawner_profiles_ = await get_spawner_profiles(config)
