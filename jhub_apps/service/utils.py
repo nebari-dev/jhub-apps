@@ -1,6 +1,7 @@
 import base64
 import logging
 import os
+from unittest.mock import Mock
 
 import requests
 from jupyterhub.app import JupyterHub
@@ -44,7 +45,14 @@ def get_conda_envs(config):
         )
 
 
-async def get_spawner_profiles(config):
+def get_fake_spawner_object(auth_state):
+    fake_spawner = Mock()
+    fake_spawner.user.get_auth_state.return_value = auth_state
+    fake_spawner.log = logger
+    return fake_spawner
+
+
+async def get_spawner_profiles(config, auth_state=None):
     """This will extract spawner profiles from the JupyterHub config
     If the Spawner is KubeSpawner
     """
@@ -56,7 +64,7 @@ async def get_spawner_profiles(config):
     elif callable(profile_list):
         try:
             logger.info("config.KubeSpawner.profile_list is a callable, calling now..")
-            return await profile_list()
+            return await profile_list(get_fake_spawner_object(auth_state))
         except Exception as e:
             logger.exception(e)
             return []
