@@ -47,7 +47,11 @@ def get_conda_envs(config):
 
 def get_fake_spawner_object(auth_state):
     fake_spawner = Mock()
-    fake_spawner.user.get_auth_state.return_value = auth_state
+
+    async def get_auth_state():
+        return auth_state
+
+    fake_spawner.user.get_auth_state = get_auth_state
     fake_spawner.log = logger
     return fake_spawner
 
