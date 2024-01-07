@@ -242,12 +242,11 @@ async def conda_environments(user: User = Depends(get_current_user)):
 @router.get("/spawner-profiles/", description="Get all spawner profiles")
 async def spawner_profiles(user: User = Depends(get_current_user)):
     hclient = HubClient()
-    logger.info("*"*100)
-    logger.info(f"USER FROM HUB CLIENT: {hclient.get_user(user.name)}")
-    logger.info("*"*100)
-    logging.info(f"Getting spawner profiles for user: {user}")
+    user_from_service = hclient.get_user(user.name)
+    auth_state = user_from_service.get("auth_state")
+    logging.info(f"Getting spawner profiles for user: {user.name}")
     config = get_jupyterhub_config()
-    spawner_profiles_ = await get_spawner_profiles(config)
+    spawner_profiles_ = await get_spawner_profiles(config, auth_state=auth_state)
     logger.info(f"Loaded spawner profiles: {spawner_profiles_}")
     return spawner_profiles_
 
