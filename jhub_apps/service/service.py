@@ -230,6 +230,7 @@ async def conda_environments(user: User = Depends(get_current_user)):
     logging.info(f"Getting conda environments for user: {user}")
     config = get_jupyterhub_config()
     conda_envs = get_conda_envs(config)
+    logger.info(f"Found conda environments: {conda_envs}")
     return conda_envs
 
 
@@ -238,7 +239,7 @@ async def spawner_profiles(user: User = Depends(get_current_user)):
     logging.info(f"Getting spawner profiles for user: {user}")
     config = get_jupyterhub_config()
     spawner_profiles_ = await get_spawner_profiles(config)
-    logger.info(f"Loaded spawner profiles: {config}")
+    logger.info(f"Loaded spawner profiles: {spawner_profiles_}")
     return spawner_profiles_
 
 
