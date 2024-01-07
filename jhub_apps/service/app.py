@@ -5,7 +5,7 @@ from pathlib import Path
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 
-from .service import router
+from .routes import router
 
 ### When managed by Jupyterhub, the actual endpoints
 ### will be served out prefixed by /services/:name.

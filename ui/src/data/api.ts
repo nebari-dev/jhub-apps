@@ -15,9 +15,9 @@ export const frameworks: AppFrameworkProps[] = [
 export const environments = ['env-1', 'env-2', 'env-3', 'env-4', 'env-5'];
 
 export const profiles: AppProfileProps[] = [
-  { display_name: 'Small' },
-  { display_name: 'Medium' },
-  { display_name: 'Large' },
+  { display_name: 'Small', slug: 'small' },
+  { display_name: 'Medium', slug: 'medium' },
+  { display_name: 'Large', slug: 'large' },
 ];
 
 export const app: AppQueryGetProps = {

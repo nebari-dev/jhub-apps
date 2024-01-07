@@ -8,6 +8,7 @@ from jupyterhub.app import JupyterHub
 from traitlets.config import LazyConfigValue
 
 from jhub_apps.spawner.types import FrameworkConf, FRAMEWORKS_MAPPING
+from slugify import slugify
 
 
 logger = logging.getLogger(__name__)
@@ -56,6 +57,21 @@ def get_fake_spawner_object(auth_state):
     return fake_spawner
 
 
+def _slugify_profile_list(profile_list):
+    # this is replicating the following:
+    # https://github.com/jupyterhub/kubespawner/blob/a4b9b190f0335406c33c6de11b5d1b687842dd89/kubespawner/spawner.py#L3279
+    # Since we are not inside spawner yet, the profiles might not be slugified yet
+    if not profile_list:
+        # empty profile lists are just returned
+        return profile_list
+
+    for profile in profile_list:
+        # generate missing slug fields from display_name
+        if 'slug' not in profile:
+            profile['slug'] = slugify(profile['display_name'])
+    return profile_list
+
+
 async def get_spawner_profiles(config, auth_state=None):
     """This will extract spawner profiles from the JupyterHub config
     If the Spawner is KubeSpawner
@@ -68,7 +84,8 @@ async def get_spawner_profiles(config, auth_state=None):
     elif callable(profile_list):
         try:
             logger.info("config.KubeSpawner.profile_list is a callable, calling now..")
-            return await profile_list(get_fake_spawner_object(auth_state))
+            profile_list = await profile_list(get_fake_spawner_object(auth_state))
+            return _slugify_profile_list(profile_list)
         except Exception as e:
             logger.exception(e)
             return []
