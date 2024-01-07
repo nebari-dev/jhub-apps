@@ -17,7 +17,7 @@ def create_access_token(data: dict, expires_delta: typing.Optional[timedelta] = 
     else:
         expire = datetime.utcnow() + timedelta(minutes=15)
     to_encode.update({"exp": expire})
-    secret_key = os.environ["JWT_SECRET_KEY"]
+    secret_key = os.environ["JHUB_APP_JWT_SECRET_KEY"]
     logger.info(f"JWT secret key: {secret_key}")
     encoded_jwt = jwt.encode(to_encode, secret_key, algorithm="HS256")
     return encoded_jwt
@@ -33,12 +33,12 @@ def get_jhub_token_from_jwt_token(token):
         headers={"WWW-Authenticate": "Bearer"},
     )
     try:
-        payload = jwt.decode(token, os.environ["JWT_SECRET_KEY"], algorithms=["HS256"])
+        payload = jwt.decode(token, os.environ["JHUB_APP_JWT_SECRET_KEY"], algorithms=["HS256"])
         access_token_data: dict = payload.get("sub")
         if access_token_data is None:
             raise credentials_exception
     except jwt.PyJWTError as e:
-        logger.warning(f"Authentication failed for token: {token}, JWT_SECRET_KEY: {os.environ['JWT_SECRET_KEY']}")
+        logger.warning(f"Authentication failed for token: {token}, JWT_SECRET_KEY: {os.environ['JHUB_APP_JWT_SECRET_KEY']}")
         logger.exception(e)
         raise credentials_exception
     logger.info("Fetched access token from JWT Token")
