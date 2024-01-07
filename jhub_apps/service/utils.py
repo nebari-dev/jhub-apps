@@ -22,7 +22,6 @@ def get_jupyterhub_config():
     logger.info(f"Getting JHub config from file: {jhub_config_file_path}")
     hub.load_config_file(jhub_config_file_path)
     config = hub.config
-    logger.info(f"JHub config from file: {config}")
     logger.info(f"JApps config: {config.JAppsConfig}")
     return config
 
