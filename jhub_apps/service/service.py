@@ -228,7 +228,7 @@ async def get_frameworks(user: User = Depends(get_current_user)):
 
 @router.get("/conda-environments/", description="Get all conda environments")
 async def conda_environments(user: User = Depends(get_current_user)):
-    logging.info("Getting conda environments")
+    logging.info(f"Getting conda environments for user: {user}")
     config = get_jupyterhub_config()
     conda_envs = get_conda_envs(config)
     return conda_envs
@@ -236,7 +236,7 @@ async def conda_environments(user: User = Depends(get_current_user)):
 
 @router.get("/spawner-profiles/", description="Get all spawner profiles")
 async def spawner_profiles(user: User = Depends(get_current_user)):
-    logging.info("Getting spawner profiles")
+    logging.info(f"Getting spawner profiles for user: {user}")
     config = get_jupyterhub_config()
     spawner_profiles_ = await get_spawner_profiles(config)
     logger.info(f"Loaded spawner profiles: {config}")
@@ -245,7 +245,7 @@ async def spawner_profiles(user: User = Depends(get_current_user)):
 
 @router.get("/services/", description="Get all services")
 async def hub_services(user: User = Depends(get_current_user)):
-    logging.info("Getting hub services")
+    logging.info(f"Getting hub services for user: {user}")
     hub_client = HubClient()
     return hub_client.get_services()
 

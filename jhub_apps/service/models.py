@@ -29,6 +29,7 @@ class User(BaseModel):
     last_activity: Optional[datetime] = None
     servers: Optional[Dict[str, Server]] = None
     scopes: List[str]
+    auth_state: Optional[Dict] = None
 
 
 # https://stackoverflow.com/questions/64501193/fastapi-how-to-use-httpexception-in-responses
