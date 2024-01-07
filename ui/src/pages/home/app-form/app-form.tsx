@@ -388,7 +388,7 @@ export const AppForm = ({
                 options={[
                   { value: '', label: 'Select...' },
                   ...profiles.map((profile: AppProfileProps) => ({
-                    value: profile.display_name,
+                    value: profile.slug,
                     label: profile.display_name,
                   })),
                 ]}
