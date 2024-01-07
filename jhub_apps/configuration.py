@@ -62,7 +62,7 @@ def install_jhub_apps(c, spawner_to_subclass):
                     "JHUB_APP_TITLE": c.JAppsConfig.app_title,
                     "JHUB_APP_ICON": c.JAppsConfig.app_icon,
                     "JHUB_JUPYTERHUB_CONFIG": c.JAppsConfig.jupyterhub_config_path,
-                    "JWT_SECRET_KEY": _create_token_for_service(),
+                    "JHUB_APP_JWT_SECRET_KEY": _create_token_for_service(),
 
                     # Temp environment variables for Nebari Deployment
                     "PROXY_API_SERVICE_PORT": "*",
