@@ -22,10 +22,6 @@ def subclass_spawner(base_spawner):
         async def _get_user_auth_state(self):
             try:
                 auth_state = await self.user.get_auth_state()
-                print("PRINT-------------------")
-                logger.info("^"*100)
-                logger.info(f"auth_state: {auth_state}")
-                logger.info("^"*100)
                 return auth_state
             except Exception as e:
                 logger.exception(e)
