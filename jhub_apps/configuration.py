@@ -88,6 +88,7 @@ def install_jhub_apps(c, spawner_to_subclass):
                 "admin:servers",  # start/stop servers
                 "admin:server_state",  # start/stop servers
                 "admin:server_state",  # start/stop servers
+                "admin:auth_state",
                 "access:services",
                 "list:services",
                 "read:services",  # read service models
@@ -96,7 +97,11 @@ def install_jhub_apps(c, spawner_to_subclass):
         {
             "name": "user",
             # grant all users access to services
-            "scopes": ["self", "access:services"],
+            "scopes": [
+                "self",
+                "access:services",
+                "admin:auth_state"
+            ],
         },
     ]
 
