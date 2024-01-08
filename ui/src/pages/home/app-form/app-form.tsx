@@ -200,7 +200,7 @@ export const AppForm = ({
       formData.append('thumbnail', currentFile as Blob);
     }
 
-    const response = await axios.put(`/server/${servername}/`, formData, {
+    const response = await axios.put(`/server/${servername}`, formData, {
       headers,
     });
     return response.data;
