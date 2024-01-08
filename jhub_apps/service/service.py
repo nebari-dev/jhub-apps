@@ -74,8 +74,9 @@ def get_all_shared_servers(hub_users, current_hub_user):
     all_servers = []
     for hub_user in hub_users:
         if hub_user['name'] != current_hub_user['name']:
-            hub_user_servers = hub_user["servers"]
-            all_servers.extend(list(hub_user_servers.values()))
+            hub_user_servers = list(hub_user["servers"].values())
+            hub_user_servers_with_name = [{"username": hub_user['name'], **server} for server in hub_user_servers]
+            all_servers.extend(hub_user_servers_with_name)
     # Filter default servers
     return list(filter(lambda server: server['name'] != '', all_servers))
 
