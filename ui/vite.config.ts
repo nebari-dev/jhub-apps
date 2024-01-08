@@ -175,7 +175,7 @@ export default defineConfig({
                       'https://designsystem.digital.gov/img/introducing-uswds-2-0/built-to-grow--alt.jpg',
                     framework: 'Panel',
                     public: false,
-                    username: 'Johnny Bouder',
+                    username: 'Test User',
                   },
                 },
               ],
