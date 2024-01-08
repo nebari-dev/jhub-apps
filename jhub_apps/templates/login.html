@@ -4,6 +4,10 @@
 {% extends "templates/login.html" %} {% set announcement = '' %} {% block main %}
 <div class="container text-center main">
     <h1>{{ hub_title or 'Nebari' }}</h1>
+    <h2>{{ hub_subtitle }}</h2>
+    <p>
+        {% if welcome %} {{ (welcome | safe) }} {% else %} Welcome to Nebari. For more information about Nebari, visit <a href="https://nebari.dev/">https://nebari.dev</a>. {% endif %}
+    </p>
 </div>
 
 {{ super() }} {% endblock main%}
