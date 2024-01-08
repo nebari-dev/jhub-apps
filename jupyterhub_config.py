@@ -25,7 +25,6 @@ c.JupyterHub.template_paths = theme_template_paths
 def service_for_jhub_apps(name, url):
     return {
         "name": name,
-        "url": hub_url,
         "display": True,
         "info": {
             "name": name,
