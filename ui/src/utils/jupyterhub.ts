@@ -10,7 +10,7 @@ export const getServices = (services: JhServiceFull[], user: string) => {
   for (const key in services) {
     if (Object.hasOwnProperty.call(services, key)) {
       const service = services[key];
-      if (service.display === true) {
+      if (service.display === true && service.info.name) {
         jhServices.push({
           name: service.info.name,
           url: service.info.url?.replace('[USER]', user),

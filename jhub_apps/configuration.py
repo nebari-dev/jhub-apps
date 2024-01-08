@@ -1,4 +1,3 @@
-import os
 from base64 import b64encode
 from secrets import token_bytes
 
@@ -62,7 +61,11 @@ def install_jhub_apps(c, spawner_to_subclass):
                     "JHUB_APP_TITLE": c.JAppsConfig.app_title,
                     "JHUB_APP_ICON": c.JAppsConfig.app_icon,
                     "JHUB_JUPYTERHUB_CONFIG": c.JAppsConfig.jupyterhub_config_path,
-                    "JWT_SECRET_KEY": os.environ["JWT_SECRET_KEY"],
+                    "JHUB_APP_JWT_SECRET_KEY": _create_token_for_service(),
+
+                    # Temp environment variables for Nebari Deployment
+                    "PROXY_API_SERVICE_PORT": "*",
+                    "HUB_SERVICE_PORT": "*",
                 },
                 "oauth_redirect_uri": oauth_redirect_uri,
                 "display": False,
@@ -84,14 +87,20 @@ def install_jhub_apps(c, spawner_to_subclass):
                 "admin:servers",  # start/stop servers
                 "admin:server_state",  # start/stop servers
                 "admin:server_state",  # start/stop servers
+                "admin:auth_state",
                 "access:services",
                 "list:services",
+                "read:services",  # read service models
             ],
         },
         {
             "name": "user",
             # grant all users access to services
-            "scopes": ["self", "access:services"],
+            "scopes": [
+                "self",
+                "access:services",
+                "admin:auth_state"
+            ],
         },
     ]
 

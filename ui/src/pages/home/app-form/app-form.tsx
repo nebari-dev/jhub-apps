@@ -52,7 +52,7 @@ export const AppForm = ({
   >({
     queryKey: ['app-form', id],
     queryFn: () =>
-      axios.get(`/server/${id}`).then((response) => {
+      axios.get(`/server/${id}/`).then((response) => {
         return response.data;
       }),
     enabled: !!id,
@@ -64,7 +64,7 @@ export const AppForm = ({
   >({
     queryKey: ['app-frameworks'],
     queryFn: () =>
-      axios.get('/frameworks').then((response) => {
+      axios.get('/frameworks/').then((response) => {
         return response.data;
       }),
   });
@@ -72,7 +72,7 @@ export const AppForm = ({
   const { data: environments } = useQuery<string[], { message: string }>({
     queryKey: ['app-environments'],
     queryFn: () =>
-      axios.get('/conda-environments').then((response) => {
+      axios.get('/conda-environments/').then((response) => {
         return response.data;
       }),
   });
@@ -80,7 +80,7 @@ export const AppForm = ({
   const { data: profiles } = useQuery<AppProfileProps[], { message: string }>({
     queryKey: ['app-profiles'],
     queryFn: () =>
-      axios.get('/spawner-profiles').then((response) => {
+      axios.get('/spawner-profiles/').then((response) => {
         return response.data;
       }),
   });
@@ -182,7 +182,7 @@ export const AppForm = ({
       formData.append('thumbnail', currentFile as Blob);
     }
 
-    const response = await axios.post('/server', formData, { headers });
+    const response = await axios.post('/server/', formData, { headers });
     return response.data;
   };
 
@@ -200,7 +200,7 @@ export const AppForm = ({
       formData.append('thumbnail', currentFile as Blob);
     }
 
-    const response = await axios.put(`/server/${servername}`, formData, {
+    const response = await axios.put(`/server/${servername}/`, formData, {
       headers,
     });
     return response.data;
@@ -388,7 +388,7 @@ export const AppForm = ({
                 options={[
                   { value: '', label: 'Select...' },
                   ...profiles.map((profile: AppProfileProps) => ({
-                    value: profile.display_name,
+                    value: profile.slug,
                     label: profile.display_name,
                   })),
                 ]}

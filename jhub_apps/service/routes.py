@@ -42,6 +42,7 @@ async def get_token(code: str):
     "Callback function for OAuth2AuthorizationCodeBearer scheme"
     # The only thing we need in this form post is the code
     # Everything else we can hardcode / pull from env
+    logger.info(f"Getting token for code {code}")
     async with get_client() as client:
         redirect_uri = (
             os.environ["PUBLIC_HOST"] + os.environ["JUPYTERHUB_OAUTH_CALLBACK_URL"],
@@ -60,12 +61,13 @@ async def get_token(code: str):
     )
     ### resp.json() is {'access_token': <token>, 'token_type': 'Bearer'}
     response = RedirectResponse(os.environ["PUBLIC_HOST"] + "/hub/home", status_code=302)
-    response.set_cookie(key="access_token",value=access_token, httponly=True)
+    response.set_cookie(key="access_token", value=access_token, httponly=True)
     return response
 
 
 @router.get("/jhub-login", description="Login via OAuth2")
 async def login(request: Request):
+    logger.info(f"Logging in: {request}")
     authorization_url = os.environ["PUBLIC_HOST"] + "/hub/api/oauth2/authorize?response_type=code&client_id=service-japps"
     return RedirectResponse(authorization_url, status_code=302)
 
@@ -226,18 +228,30 @@ async def get_frameworks(user: User = Depends(get_current_user)):
 
 @router.get("/conda-environments/", description="Get all conda environments")
 async def conda_environments(user: User = Depends(get_current_user)):
-    logging.info("Getting conda environments")
+    logging.info(f"Getting conda environments for user: {user}")
     config = get_jupyterhub_config()
     conda_envs = get_conda_envs(config)
+    logger.info(f"Found conda environments: {conda_envs}")
     return conda_envs
 
 
 @router.get("/spawner-profiles/", description="Get all spawner profiles")
 async def spawner_profiles(user: User = Depends(get_current_user)):
-    logging.info("Getting spawner profiles")
+    hclient = HubClient()
+    user_from_service = hclient.get_user(user.name)
+    auth_state = user_from_service.get("auth_state")
+    logging.info(f"Getting spawner profiles for user: {user.name}")
     config = get_jupyterhub_config()
-    spawner_profiles_ = get_spawner_profiles(config)
+    spawner_profiles_ = await get_spawner_profiles(config, auth_state=auth_state)
+    logger.info(f"Loaded spawner profiles: {spawner_profiles_}")
     return spawner_profiles_
+
+
+@router.get("/services/", description="Get all services")
+async def hub_services(user: User = Depends(get_current_user)):
+    logging.info(f"Getting hub services for user: {user}")
+    hub_client = HubClient()
+    return hub_client.get_services()
 
 
 @router.get(

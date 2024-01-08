@@ -47,7 +47,7 @@ export const AppCard = ({
   const [isEditOpen, setIsEditOpen] = useState(false);
 
   const startRequest = async ({ id }: AppQueryPostProps) => {
-    const response = await axios.post(`/server/${id}`);
+    const response = await axios.post(`/server/${id}/`);
     return response;
   };
 

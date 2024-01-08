@@ -1,11 +1,11 @@
 import { Button } from '@src/components';
 import { JhData, JhService, JhServiceFull } from '@src/types/jupyterhub';
+import axios from '@src/utils/axios';
 import { getServices } from '@src/utils/jupyterhub';
 import { useQuery } from '@tanstack/react-query';
 import React, { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { currentJhData, currentNotification } from '../../../store';
-import axios from '../../../utils/jupyterhub-axios';
 
 export const ServicesGrid = (): React.ReactElement => {
   const [jHData] = useRecoilState<JhData>(currentJhData);
@@ -21,7 +21,7 @@ export const ServicesGrid = (): React.ReactElement => {
     queryKey: ['service-data'],
     queryFn: () =>
       axios
-        .get('/services')
+        .get('/services/')
         .then((response) => {
           return response.data;
         })

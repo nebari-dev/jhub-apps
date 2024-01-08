@@ -1,3 +1,5 @@
+import logging
+
 from jhub_apps.spawner.utils import get_origin_host
 from jhub_apps.spawner.command import (
     EXAMPLES_DIR,
@@ -10,11 +12,24 @@ from jhub_apps.spawner.command import (
 from jhub_apps.spawner.types import Framework
 
 
+logger = logging.getLogger(__name__)
+
+
 def subclass_spawner(base_spawner):
     # TODO: Find a better way to do this
     class JHubSpawner(base_spawner):
+
+        async def _get_user_auth_state(self):
+            try:
+                auth_state = await self.user.get_auth_state()
+                return auth_state
+            except Exception as e:
+                logger.exception(e)
+
         def get_args(self):
             """Return arguments to pass to the notebook server"""
+            # logger.info("Getting Spawner args")
+            # self._get_user_auth_state()
             argv = super().get_args()
             if self.user_options.get("argv"):
                 argv.extend(self.user_options["argv"])
@@ -56,6 +71,8 @@ def subclass_spawner(base_spawner):
             return argv
 
         def get_env(self):
+            # logger.info("Getting spawner environments")
+            # await self._get_user_auth_state()
             env = super().get_env()
             if self.user_options.get("env"):
                 env.update(self.user_options["env"])
@@ -75,6 +92,8 @@ def subclass_spawner(base_spawner):
             return env
 
         async def start(self):
+            logger.info("Starting spawner process")
+            await self._get_user_auth_state()
             framework = self.user_options.get("framework")
             if (
                 self.user_options.get("jhub_app")
@@ -93,7 +112,7 @@ def subclass_spawner(base_spawner):
                     "-m",
                     "jupyterhub.singleuser",
                 ]
-            print(f"Final Spawner Command: {self.cmd}")
+            logger.info(f"Final Spawner Command: {self.cmd}")
             return await super().start()
 
         def _expand_user_vars(self, string):
