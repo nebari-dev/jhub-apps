@@ -42,6 +42,7 @@ export const getApps = (servers: any, appType: string) => {
         framework: getFriendlyFrameworkName(app.framework),
         url: server.url,
         thumbnail: app.thumbnail,
+        username: app.username,
         ready: server.ready,
         public: app.public,
       });
