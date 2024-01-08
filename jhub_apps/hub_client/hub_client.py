@@ -1,3 +1,4 @@
+import logging
 import os
 import re
 import uuid
@@ -7,6 +8,8 @@ import requests
 
 API_URL = os.environ.get("JUPYTERHUB_API_URL")
 JUPYTERHUB_API_TOKEN = os.environ.get("JUPYTERHUB_API_TOKEN")
+
+logger = logging.getLogger(__name__)
 
 
 class HubClient:
@@ -61,19 +64,29 @@ class HubClient:
         r.raise_for_status()
         return r.status_code, servername
 
-    def create_server(self, username, servername, edit=False, user_options=None):
+    def create_server(self, username, servername, user_options=None):
+        logger.info("Creating new server")
+        servername = self.normalize_server_name(servername)
+        servername = f"{servername}-{uuid.uuid4().hex[:7]}"
+        return self._create_server(username, servername, user_options)
+
+    def edit_server(self, username, servername, user_options=None):
+        logger.info(f"Editing server: {servername}")
         server = self.get_server(username, servername)
-        if not edit:
-            servername = self.normalize_server_name(servername)
-            servername = f"{servername}-{uuid.uuid4().hex[:7]}"
         if server:
-            if edit:
-                self.delete_server(username, server["name"], remove=True)
-            else:
-                raise ValueError(f"Server: {servername} already exists")
+            # Stop the server first
+            logger.info(f"Stopping the server: {servername} first")
+            self.delete_server(username, server["name"])
+        else:
+            raise ValueError("Server does not exists")
+        logger.info(f"Now creating the server: {servername} with new params")
+        return self._create_server(username, servername, user_options)
+
+    def _create_server(self, username, servername, user_options):
         url = f"/users/{username}/servers/{servername}"
         params = user_options.model_dump()
         data = {"name": servername, **params}
+        logger.info("Creating new server")
         r = requests.post(API_URL + url, headers=self._headers(), json=data)
         r.raise_for_status()
         return r.status_code, servername
