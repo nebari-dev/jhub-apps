@@ -185,10 +185,9 @@ async def update_server(
         thumbnail=thumbnail
     )
     hub_client = HubClient()
-    return hub_client.create_server(
+    return hub_client.edit_server(
         username=user.name,
         servername=server_name,
-        edit=True,
         user_options=server.user_options,
     )
 
