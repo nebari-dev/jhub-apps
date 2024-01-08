@@ -52,7 +52,7 @@ export const AppForm = ({
   >({
     queryKey: ['app-form', id],
     queryFn: () =>
-      axios.get(`/server/${id}/`).then((response) => {
+      axios.get(`/server/${id}`).then((response) => {
         return response.data;
       }),
     enabled: !!id,
