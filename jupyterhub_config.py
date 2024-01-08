@@ -20,74 +20,29 @@ c.JupyterHub.default_url = "/hub/home"
 c = install_jhub_apps(c, spawner_to_subclass=SimpleLocalProcessSpawner)
 
 c.JupyterHub.template_paths = theme_template_paths
+
+
+def service_for_jhub_apps(name, url):
+    return {
+        "name": name,
+        "url": hub_url,
+        "display": True,
+        "info": {
+            "name": name,
+            "url": url,
+            "external": True,
+        },
+        "oauth_no_confirm": True,
+    }
+
+
 c.JupyterHub.services.extend(
     [
-        {
-            "name": "JuypterLab",
-            "url": hub_url,
-            "display": True,
-            "info": {
-                "name": "JupyterLab",
-                "url": "/user/[USER]/lab",
-                "external": True,
-            },
-            "oauth_no_confirm": True,
-        },
-        {
-            "name": "Argo",
-            "url": hub_url,
-            "display": True,
-            "info": {
-                "name": "Argo Workflows",
-                "url": "/hub/argo",
-                "external": True,
-            },
-            "oauth_no_confirm": True,
-        },
-        {
-            "name": "Users",
-            "url": hub_url,
-            "display": True,
-            "info": {
-                "name": "User Management",
-                "url": "/auth/admin/nebari/console/",
-                "external": True,
-            },
-            "oauth_no_confirm": True,
-        },
-        {
-            "name": "Environments",
-            "url": hub_url,
-            "display": True,
-            "info": {
-                "name": "Environments",
-                "url": "/hub/conda-store",
-                "external": True,
-            },
-            "oauth_no_confirm": True,
-        },
-        {
-            "name": "Monitoring",
-            "url": hub_url,
-            "display": True,
-            "info": {
-                "name": "Monitoring",
-                "url": "/hub/monitoring",
-                "external": True,
-            },
-            "oauth_no_confirm": True,
-        },
-        {
-            "name": "MLflow",
-            "url": "http://mlflow.mlflow:5000",
-            "display": True,
-            "info": {
-                "name": "MLflow",
-                "url": "http://mlflow.mlflow:5000",
-                "external": True,
-            },
-            "oauth_no_confirm": True,
-        },
+        service_for_jhub_apps(name="JupyterLab", url="/user/[USER]/lab"),
+        service_for_jhub_apps(name="Argo", url="/argo"),
+        service_for_jhub_apps(name="Users", url="/auth/admin/nebari/console/"),
+        service_for_jhub_apps(name="Environments", url="/conda-store"),
+        service_for_jhub_apps(name="Monitoring", url="/monitoring"),
     ]
 )
 
