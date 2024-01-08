@@ -69,11 +69,11 @@ FRAMEWORKS = [
         display_name="Gradio",
         logo="https://www.gradio.app/_app/immutable/assets/gradio.8a5e8876.svg",
     ),
-    FrameworkConf(
-        name=Framework.jupyterlab.value,
-        display_name="JupyterLab",
-        logo="https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Jupyter_logo.svg/1200px-Jupyter_logo.svg.png",
-    ),
+    # FrameworkConf(
+    #     name=Framework.jupyterlab.value,
+    #     display_name="JupyterLab",
+    #     logo="https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Jupyter_logo.svg/1200px-Jupyter_logo.svg.png",
+    # ),
     FrameworkConf(
         name=Framework.custom.value,
         display_name="Custom Command",
