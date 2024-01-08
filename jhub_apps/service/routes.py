@@ -232,9 +232,6 @@ async def conda_environments(user: User = Depends(get_current_user)):
     config = get_jupyterhub_config()
     conda_envs = get_conda_envs(config)
     hclient = HubClient()
-    logger.info("#"*100)
-    logger.info(f"USER FROM HUB CLIENT: {hclient.get_user(user.name)}")
-    logger.info("#"*100)
     logger.info(f"Found conda environments: {conda_envs}")
     return conda_envs
 

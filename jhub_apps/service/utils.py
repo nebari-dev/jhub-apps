@@ -16,8 +16,6 @@ logger = logging.getLogger(__name__)
 
 def get_jupyterhub_config():
     hub = JupyterHub()
-    os.environ["PROXY_API_SERVICE_PORT"] = "*"
-    os.environ["HUB_SERVICE_PORT"] = "*"
     jhub_config_file_path = os.environ["JHUB_JUPYTERHUB_CONFIG"]
     logger.info(f"Getting JHub config from file: {jhub_config_file_path}")
     hub.load_config_file(jhub_config_file_path)
@@ -57,7 +55,7 @@ def get_fake_spawner_object(auth_state):
 
 
 def _slugify_profile_list(profile_list):
-    # this is replicating the following:
+    # This is replicating the following:
     # https://github.com/jupyterhub/kubespawner/blob/a4b9b190f0335406c33c6de11b5d1b687842dd89/kubespawner/spawner.py#L3279
     # Since we are not inside spawner yet, the profiles might not be slugified yet
     if not profile_list:
@@ -74,6 +72,7 @@ def _slugify_profile_list(profile_list):
 async def get_spawner_profiles(config, auth_state=None):
     """This will extract spawner profiles from the JupyterHub config
     If the Spawner is KubeSpawner
+    # See: https://jupyterhub-kubespawner.readthedocs.io/en/latest/spawner.html#kubespawner.KubeSpawner.profile_list
     """
     profile_list = config.KubeSpawner.profile_list
     if isinstance(profile_list, list):
