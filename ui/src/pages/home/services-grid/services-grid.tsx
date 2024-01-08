@@ -55,14 +55,14 @@ export const ServicesGrid = (): React.ReactElement => {
 
   return (
     <>
-      <div className="container grid grid-cols-12 flex flex-align-center pb-12">
-        <div className="col-span-1">
+      <div className="container flex flex-align-center pb-12">
+        <div className="grid-heading-left w-full">
           <h2 className="whitespace-nowrap font-bold">Services</h2>
         </div>
-        <div className="col-span-10">
-          <hr className="spacer"></hr>
+        <div className="grid-heading-center w-full">
+          <hr className="grid-spacer"></hr>
         </div>
-        <div className="col-span-1 flex justify-end">
+        <div className="grid-heading-right w-full flex justify-end">
           <h2 className="whitespace-nowrap font-bold">
             {services.length} services
           </h2>

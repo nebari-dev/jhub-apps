@@ -64,14 +64,14 @@ export const AppsGrid = ({
 
   return (
     <>
-      <div className="container grid grid-cols-12 flex flex-align-center pb-12">
-        <div className="col-span-1">
+      <div className="container w-full flex flex-align-center pb-12">
+        <div className="grid-heading-left w-full">
           <h2 className="whitespace-nowrap font-bold">{appType} Apps</h2>
         </div>
-        <div className="col-span-10">
-          <hr className="spacer"></hr>
+        <div className="grid-heading-center w-full">
+          <hr className="grid-spacer"></hr>
         </div>
-        <div className="col-span-1 flex justify-end">
+        <div className="grid-heading-right flex justify-end w-full">
           <h2 className="whitespace-nowrap font-bold">{apps.length} apps</h2>
         </div>
       </div>
