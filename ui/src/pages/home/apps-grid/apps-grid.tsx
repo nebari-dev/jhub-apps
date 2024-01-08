@@ -88,6 +88,7 @@ export const AppsGrid = ({
                 framework={app.framework}
                 url={app.url}
                 ready={app.ready}
+                username={app.username}
                 isPublic={app.public}
                 isShared={appType === 'Shared' ? true : false}
               />

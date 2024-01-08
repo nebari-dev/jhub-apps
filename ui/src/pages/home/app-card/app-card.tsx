@@ -20,6 +20,7 @@ interface AppCardProps {
   framework: string;
   thumbnail?: string;
   url: string;
+  username?: string;
   ready?: boolean;
   isPublic?: boolean;
   isShared?: boolean;
@@ -32,9 +33,10 @@ export const AppCard = ({
   thumbnail,
   framework,
   url,
+  username,
+  ready = false,
   isPublic = false,
   isShared = false,
-  ready = false,
 }: AppCardProps): React.ReactElement => {
   const queryClient = useQueryClient();
   const [submitting, setSubmitting] = useState(false);
@@ -275,7 +277,7 @@ export const AppCard = ({
           )}
         </div>
         <div className="card-header-img flex flex-row">
-          {thumbnail ? <img src={thumbnail} alt="App thumb" /> : undefined}
+          {thumbnail ? <img src={thumbnail} alt="App thumb" /> : <></>}
         </div>
       </div>
       <div className="card-header">
@@ -284,7 +286,15 @@ export const AppCard = ({
         </h3>
       </div>
       <div className="card-body">
-        <p className="text-sm">{description}</p>
+        <p className="text-sm pb-2">{description}</p>
+        {username ? (
+          <div className="text-sm">
+            <span className="font-bold">Author: </span>
+            {username}
+          </div>
+        ) : (
+          <></>
+        )}
       </div>
       <div className="card-footer">
         <Tag id={`tag-${id}`}>{framework}</Tag>
@@ -292,7 +302,9 @@ export const AppCard = ({
           <Tag id={`tag-${id}`} className="ml-2 bg-warning-light">
             Public
           </Tag>
-        ) : undefined}
+        ) : (
+          <></>
+        )}
       </div>
     </div>
   );

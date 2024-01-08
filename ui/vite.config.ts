@@ -10,7 +10,7 @@ export default defineConfig({
   server: {
     port: 8080,
     proxy: {
-      '/api': {
+      '/services/japps/services/': {
         target: 'http://localhost:8080',
         // Bypass any JuptyerHub API calls and mock with static data
         bypass(req, res, options) {
@@ -108,7 +108,7 @@ export default defineConfig({
                     display_name: 'Test App',
                     description:
                       'Lorem ipsum dolor sit amet consectetur. Sit vestibulum facilisis auctor pulvinar ac. Cras.',
-                    imgUrl:
+                    thumbnail:
                       'https://designsystem.digital.gov/img/introducing-uswds-2-0/built-to-grow--alt.jpg',
                     framework: 'Panel',
                     public: true,
@@ -124,7 +124,7 @@ export default defineConfig({
                     display_name: 'Test App 2',
                     description:
                       'Lorem ipsum dolor sit amet consectetur. Sit vestibulum facilisis auctor pulvinar ac. Bras.',
-                    imgUrl:
+                    thumbnail:
                       'https://designsystem.digital.gov/img/introducing-uswds-2-0/built-to-grow--alt.jpg',
                     framework: 'Streamlit',
                     public: false,
@@ -140,7 +140,7 @@ export default defineConfig({
                     display_name: 'Test App 3',
                     description:
                       'Lorem ipsum dolor sit amet consectetur. Sit vestibulum facilisis auctor pulvinar ac. Dras.',
-                    imgUrl: null,
+                    thumbnail: null,
                     framework: 'JupyterLab',
                     public: false,
                   },
@@ -154,7 +154,7 @@ export default defineConfig({
                     jhub_app: true,
                     display_name: 'Test App 4',
                     description: 'Cras.',
-                    imgUrl: null,
+                    thumbnail: null,
                     framework: 'Streamlit',
                     public: false,
                   },
@@ -165,13 +165,14 @@ export default defineConfig({
                   name: 'shared-app',
                   url: '/shared/test/shared-app/',
                   ready: true,
+                  username: 'Test User',
                   user_options: {
                     name: 'shared-app',
                     jhub_app: true,
                     display_name: 'Shared App',
                     description:
                       'Lorem ipsum dolor sit amet consectetur. Sit vestibulum facilisis auctor pulvinar ac. Cras.',
-                    imgUrl:
+                    thumbnail:
                       'https://designsystem.digital.gov/img/introducing-uswds-2-0/built-to-grow--alt.jpg',
                     framework: 'Panel',
                     public: false,
