@@ -165,6 +165,7 @@ export default defineConfig({
                   name: 'shared-app',
                   url: '/shared/test/shared-app/',
                   ready: true,
+                  username: 'Test User',
                   user_options: {
                     name: 'shared-app',
                     jhub_app: true,
@@ -175,7 +176,6 @@ export default defineConfig({
                       'https://designsystem.digital.gov/img/introducing-uswds-2-0/built-to-grow--alt.jpg',
                     framework: 'Panel',
                     public: false,
-                    username: 'Test User',
                   },
                 },
               ],
