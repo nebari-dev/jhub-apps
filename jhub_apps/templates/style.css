@@ -97,7 +97,7 @@ label {
     font-family: var(--base-font-family);
 }
 
-.text-input:focus, .text-area:focus, .select:focus, .card:focus, .card:active {
+.text-input:focus, .text-area:focus, .select:focus, .card:focus, .card:active, .toggle > label {
     outline-color: var(--primary-color) !important;
 }
 

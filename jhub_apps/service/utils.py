@@ -111,6 +111,9 @@ def encode_file_to_data_url(filename, file_contents):
 def get_default_thumbnail(framework_name):
     framework: FrameworkConf = FRAMEWORKS_MAPPING.get(framework_name)
     thumbnail_url = framework.logo
+    if thumbnail_url.startswith("/"):
+        base_url = os.environ["PUBLIC_HOST"]
+        thumbnail_url = f"{base_url}{thumbnail_url}"
     try:
         response = requests.get(thumbnail_url)
     except Exception as e:

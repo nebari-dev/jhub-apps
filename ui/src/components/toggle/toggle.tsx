@@ -44,7 +44,11 @@ export const Toggle = ({
 
   return (
     <div className="toggle flex items-center">
-      <label htmlFor={id} className="flex items-center cursor-pointer">
+      <label
+        htmlFor={id}
+        className="flex items-center cursor-pointer"
+        tabIndex={0}
+      >
         <div className="relative">
           <input
             type="checkbox"

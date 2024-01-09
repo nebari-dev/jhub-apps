@@ -42,32 +42,32 @@ FRAMEWORKS = [
     FrameworkConf(
         name=Framework.panel.value,
         display_name="Panel",
-        logo="https://raw.githubusercontent.com/holoviz/panel/5c69f11bc139076a0e55d444dcfbf3e44b3ed8a8/doc/_static/logo.png",
+        logo="/services/japps/static/img/logos/panel.png",
     ),
     FrameworkConf(
         name=Framework.bokeh.value,
         display_name="Bokeh",
-        logo="https://static.bokeh.org/branding/icons/bokeh-icon@5x.png",
+        logo="/services/japps/static/img/logos/bokeh.png",
     ),
     FrameworkConf(
         name=Framework.streamlit.value,
         display_name="Streamlit",
-        logo="https://streamlit.io/images/brand/streamlit-mark-color.png",
+        logo="/services/japps/static/img/logos/streamlit.png",
     ),
     FrameworkConf(
         name=Framework.voila.value,
         display_name="Voila",
-        logo="https://raw.githubusercontent.com/voila-dashboards/voila/main/docs/voila-logo.svg",
+        logo="/services/japps/static/img/logos/voila.png",
     ),
     FrameworkConf(
         name=Framework.plotlydash.value,
         display_name="PlotlyDash",
-        logo="https://raw.githubusercontent.com/plotly/dash/6eaf2e17c25f7ca1847c41aafeb18e87c586cb9f/components/dash-table/tests/selenium/assets/logo.png",
+        logo="/services/japps/static/img/logos/plotly-dash.png",
     ),
     FrameworkConf(
         name=Framework.gradio.value,
         display_name="Gradio",
-        logo="https://www.gradio.app/_app/immutable/assets/gradio.8a5e8876.svg",
+        logo="/services/japps/static/img/logos/gradio.png",
     ),
     # FrameworkConf(
     #     name=Framework.jupyterlab.value,
@@ -77,7 +77,7 @@ FRAMEWORKS = [
     FrameworkConf(
         name=Framework.custom.value,
         display_name="Custom Command",
-        logo="https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Jupyter_logo.svg/1200px-Jupyter_logo.svg.png",
+        logo="/services/japps/static/img/logos/jupyter.png",
     ),
 ]
 
