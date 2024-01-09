@@ -113,12 +113,12 @@ def test_api_delete_server(delete_server, name, remove, client):
     assert response.json() == create_server_response
 
 
-@patch.object(HubClient, "create_server")
-def test_api_update_server(create_server, client):
+@patch.object(HubClient, "edit_server")
+def test_api_update_server(edit_server, client):
     from jhub_apps.service.models import UserOptions
 
     create_server_response = {"user": "aktech"}
-    create_server.return_value = create_server_response
+    edit_server.return_value = create_server_response
     user_options = mock_user_options()
     thumbnail = b"contents of thumbnail"
     in_memory_file = io.BytesIO(thumbnail)
@@ -129,10 +129,9 @@ def test_api_update_server(create_server, client):
     )
     final_user_options = UserOptions(**user_options)
     final_user_options.thumbnail = "data:image/jpeg;base64,Y29udGVudHMgb2YgdGh1bWJuYWls"
-    create_server.assert_called_once_with(
+    edit_server.assert_called_once_with(
         username=MOCK_USER.name,
         servername="panel-app",
-        edit=True,
         user_options=final_user_options,
     )
     assert response.status_code == 200
