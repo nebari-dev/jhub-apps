@@ -137,7 +137,6 @@ export const AppForm = ({
     if (id) {
       updateQuery(payload, {
         onSuccess: async () => {
-          setSubmitting(false);
           queryClient.invalidateQueries(['app-state']);
           if (onSubmit) {
             onSubmit();
@@ -152,7 +151,6 @@ export const AppForm = ({
     } else {
       createQuery(payload, {
         onSuccess: async (data) => {
-          setSubmitting(false);
           const username = getJhData().user;
           if (username && data?.length > 1) {
             const server = data[1];
