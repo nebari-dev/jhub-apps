@@ -10,7 +10,9 @@ jobs:
   release:
     name: Release jhub-apps
     runs-on: ubuntu-latest
-
+    defaults:
+      run:
+        shell: bash -el {0}
     steps:
       - name: Checkout
         uses: actions/checkout@v2.5.0
@@ -24,6 +26,9 @@ jobs:
             python=${{ matrix.python-version }}
             numpy
             -c conda-forge
+
+      - name: Install Hatch
+        run: pip install hatch
 
       - name: Hatch Build
         run: hatch build
