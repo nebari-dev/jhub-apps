@@ -6,7 +6,6 @@ env:
   HATCH_INDEX_USER: __token__
   HATCH_INDEX_AUTH: ${{ secrets.HATCH_INDEX_AUTH }}
 
-name: Release
 jobs:
   release:
     name: Release jhub-apps
