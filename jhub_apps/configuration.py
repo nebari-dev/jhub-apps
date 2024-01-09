@@ -33,6 +33,10 @@ def install_jhub_apps(c, spawner_to_subclass):
         c.JAppsConfig.jupyterhub_config_path = (
             JAppsConfig.jupyterhub_config_path.default_value
         )
+    if not isinstance(c.JAppsConfig.service_workers, int):
+        c.JAppsConfig.service_workers = (
+            JAppsConfig.service_workers.default_value
+        )
 
     if not isinstance(bind_url, str):
         raise ValueError(f"c.JupyterHub.bind_url is not set: {c.JupyterHub.bind_url}")
