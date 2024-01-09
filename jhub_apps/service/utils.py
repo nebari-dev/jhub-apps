@@ -112,10 +112,9 @@ def get_default_thumbnail(framework_name):
     framework: FrameworkConf = FRAMEWORKS_MAPPING.get(framework_name)
     thumbnail_url = framework.logo
     if thumbnail_url.startswith("/"):
-        base_url = "http://127.0.0.1:8000" # For testing purposes
+        base_url = os.environ["PUBLIC_HOST"]
         thumbnail_url = f"{base_url}{thumbnail_url}"
     try:
-        logger.info(f"Fetching thumbnail from url: {thumbnail_url}")
         response = requests.get(thumbnail_url)
     except Exception as e:
         logger.info(f"Unable to fetch thumbnail from url: {thumbnail_url}:")

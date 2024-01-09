@@ -55,6 +55,7 @@ def install_jhub_apps(c, spawner_to_subclass):
                     "jhub_apps.service.app:app",
                     "--port=10202",
                     "--host=0.0.0.0",
+                    "--workers=2",
                 ],
                 "environment": {
                     "PUBLIC_HOST": c.JupyterHub.bind_url,
