@@ -153,4 +153,6 @@ def test_api_status(client):
         "/status",
     )
     assert response.status_code == 200
-    assert response.json() == {"status": "ok"}
+    rjson = response.json()
+    assert rjson["status"] == "ok"
+    assert "version" in rjson
