@@ -1,4 +1,4 @@
-from traitlets import Unicode, Union, List, Callable
+from traitlets import Unicode, Union, List, Callable, Integer
 from traitlets.config import SingletonConfigurable, Enum
 
 
@@ -42,4 +42,9 @@ class JAppsConfig(SingletonConfigurable):
     hub_host = Unicode(
         "127.0.0.1",
         help="Hub Host name, in k8s environment it would be the container name, e.g. 'hub'",
+    ).tag(config=True)
+
+    service_workers = Integer(
+        2,
+        help="The number of workers to create for the JHub Apps FastAPI service",
     ).tag(config=True)
