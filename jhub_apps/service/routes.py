@@ -229,7 +229,9 @@ async def get_frameworks(user: User = Depends(get_current_user)):
 async def conda_environments(user: User = Depends(get_current_user)):
     logging.info(f"Getting conda environments for user: {user}")
     config = get_jupyterhub_config()
-    conda_envs = get_conda_envs(config)
+    hclient = HubClient()
+    user_from_service = hclient.get_user(user.name)
+    conda_envs = get_conda_envs(config, user_from_service)
     logger.info(f"Found conda environments: {conda_envs}")
     return conda_envs
 

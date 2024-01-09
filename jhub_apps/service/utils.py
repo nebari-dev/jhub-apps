@@ -24,7 +24,7 @@ def get_jupyterhub_config():
     return config
 
 
-def get_conda_envs(config):
+def get_conda_envs(config, user):
     """This will extract conda environment from the JupyterHub config"""
     if isinstance(config.JAppsConfig.conda_envs, list):
         return config.JAppsConfig.conda_envs
@@ -33,7 +33,7 @@ def get_conda_envs(config):
     elif callable(config.JAppsConfig.conda_envs):
         try:
             logger.info("JAppsConfig.conda_envs is a callable, calling now..")
-            return config.JAppsConfig.conda_envs()
+            return config.JAppsConfig.conda_envs(user)
         except Exception as e:
             logger.exception(e)
             return []
