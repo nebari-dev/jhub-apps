@@ -71,7 +71,7 @@ describe('AppsGrid', () => {
         </QueryClientProvider>
       </RecoilRoot>,
     );
-    expect(baseElement.querySelectorAll('.card')).toHaveLength(4);
+    expect(baseElement.querySelectorAll('.card')).toHaveLength(5);
   });
 
   test('renders with mocked data and filter', async () => {

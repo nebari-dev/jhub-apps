@@ -16,14 +16,6 @@ export default defineConfig({
         bypass(req, res, options) {
           res.end(
             JSON.stringify({
-              JuypterLab: {
-                display: true,
-                info: {
-                  name: 'JupyterLab',
-                  url: '/user/[USER]/lab',
-                  external: true,
-                },
-              },
               Argo: {
                 display: true,
                 info: {
@@ -98,6 +90,12 @@ export default defineConfig({
           res.end(
             JSON.stringify({
               user_apps: [
+                {
+                  name: '',
+                  url: '/user/test',
+                  ready: true,
+                  user_options: {},
+                },
                 {
                   name: 'test-app',
                   url: '/user/test/test-app/',

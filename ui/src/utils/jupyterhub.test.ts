@@ -55,7 +55,7 @@ describe('JupyterHub utils', () => {
 
   test('returns an array of JhApp for non-shared apps', () => {
     const result = getApps(serverApps, 'My');
-    expect(result.length).toEqual(4);
+    expect(result.length).toEqual(5);
   });
 
   test('returns the framework name with the first letter capitalized', () => {

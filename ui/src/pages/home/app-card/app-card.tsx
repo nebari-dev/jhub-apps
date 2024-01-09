@@ -149,14 +149,14 @@ export const AppCard = ({
       title: 'Edit',
       onClick: () => setIsEditOpen(true),
       visible: true,
-      disabled: isShared,
+      disabled: isShared || id === '',
     },
     {
       id: 'delete',
       title: 'Delete',
       onClick: () => setIsDeleteOpen(true),
       visible: true,
-      disabled: isShared,
+      disabled: isShared || id === '',
     },
   ];
 
