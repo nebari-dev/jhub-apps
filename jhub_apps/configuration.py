@@ -1,6 +1,8 @@
 from base64 import b64encode
 from secrets import token_bytes
 
+from traitlets.config import LazyConfigValue
+
 from jhub_apps import JAppsConfig
 from jhub_apps.spawner.spawner_creation import subclass_spawner
 
@@ -9,35 +11,24 @@ def _create_token_for_service():
     return b64encode(token_bytes(32)).decode()
 
 
+def set_defaults_for_jhub_apps_config(c):
+    """Set default values for configuration items which are not set by the user"""
+    trait_names = JAppsConfig().trait_names()
+    trait_names.remove('parent')
+    trait_names.remove('log')
+    trait_names.remove('config')
+    defaults = JAppsConfig().trait_defaults()
+    for trait_name in trait_names:
+        if isinstance(getattr(c.JAppsConfig, trait_name), LazyConfigValue):
+            setattr(c.JAppsConfig, trait_name, defaults.get(trait_name))
+
+
 def install_jhub_apps(c, spawner_to_subclass):
     c.JupyterHub.spawner_class = subclass_spawner(spawner_to_subclass)
     c.JupyterHub.allow_named_servers = True
     bind_url = c.JupyterHub.bind_url
 
-    if not isinstance(c.JAppsConfig.python_exec, str):
-        c.JAppsConfig.python_exec = JAppsConfig.python_exec.default_value
-
-    if not isinstance(c.JAppsConfig.apps_auth_type, str):
-        c.JAppsConfig.apps_auth_type = JAppsConfig.apps_auth_type.default_value
-
-    if not isinstance(c.JAppsConfig.app_title, str):
-        c.JAppsConfig.app_title = JAppsConfig.app_title.default_value
-
-    if not isinstance(c.JAppsConfig.app_icon, str):
-        c.JAppsConfig.app_icon = JAppsConfig.app_icon.default_value
-
-    if not isinstance(c.JAppsConfig.hub_host, str):
-        c.JAppsConfig.hub_host = JAppsConfig.hub_host.default_value
-
-    if not isinstance(c.JAppsConfig.jupyterhub_config_path, str):
-        c.JAppsConfig.jupyterhub_config_path = (
-            JAppsConfig.jupyterhub_config_path.default_value
-        )
-    if not isinstance(c.JAppsConfig.service_workers, int):
-        c.JAppsConfig.service_workers = (
-            JAppsConfig.service_workers.default_value
-        )
-
+    set_defaults_for_jhub_apps_config(c)
     if not isinstance(bind_url, str):
         raise ValueError(f"c.JupyterHub.bind_url is not set: {c.JupyterHub.bind_url}")
     if not c.JupyterHub.services:
