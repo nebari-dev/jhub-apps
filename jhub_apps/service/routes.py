@@ -21,6 +21,7 @@ from fastapi.templating import Jinja2Templates
 from jhub_apps.hub_client.hub_client import HubClient
 from jhub_apps.service.utils import get_conda_envs, get_jupyterhub_config, get_spawner_profiles, get_thumbnail_data_url
 from jhub_apps.spawner.types import FRAMEWORKS
+from jhub_apps.version import get_version
 
 app = FastAPI()
 
@@ -261,4 +262,8 @@ async def hub_services(user: User = Depends(get_current_user)):
 async def status_endpoint():
     """Check API Status"""
     # TODO: Add version
-    return {"status": "ok"}
+    version = get_version()
+    return {
+        "status": "ok",
+        "version": str(version)
+    }
