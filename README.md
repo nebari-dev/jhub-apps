@@ -18,7 +18,21 @@ command. Currently, the following frameworks are supported:
 
 ![JHub Apps Demo](https://raw.githubusercontent.com/nebari-dev/jhub-apps/main/demo.gif)
 
-## Install Dependencies
+## Installation
+
+```
+pip install jhub-apps
+```
+
+or via conda
+
+```bash
+conda install -c conda-forge jhub-apps
+```
+
+## Development Installation
+
+### Install Dependencies
 
 ```bash
 conda env create -f environment-dev.yml
