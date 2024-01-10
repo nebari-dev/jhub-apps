@@ -132,7 +132,7 @@ class Checker:
             )
 
 
-@router.post("/server/")
+@router.post("/server")
 async def create_server(
     server: ServerCreation = Depends(Checker(ServerCreation)),
     thumbnail: typing.Optional[UploadFile] = File(None),
@@ -150,6 +150,7 @@ async def create_server(
     )
 
 
+@router.post("/server/")
 @router.post("/server/{server_name}")
 async def start_server(
         server_name=None,
@@ -194,6 +195,7 @@ async def update_server(
 
 
 @router.delete("/server/{server_name}")
+@router.delete("/server/")
 async def delete_server(
         user: User = Depends(get_current_user),
         server_name=None,

@@ -1,5 +1,6 @@
 import { JhApp, JhService, JhServiceFull } from '@src/types/jupyterhub';
 import { JhData } from '@src/types/jupyterhub.ts';
+import { DEFAULT_APP_THUMBNAIL } from './constants';
 
 export const getJhData = (): JhData => {
   return window.jhdata;
@@ -25,13 +26,30 @@ export const getServices = (services: JhServiceFull[], user: string) => {
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export const getApps = (servers: any, appType: string) => {
   const serverApps = [];
+  const filteredApps: JhApp[] = [];
   if (appType.toLowerCase() === 'shared') {
     serverApps.push(...servers.shared_apps);
   } else {
     serverApps.push(...servers.user_apps);
+    // Add default app manually
+    const defaultApp = serverApps.find(
+      (app: any) => app.name === '' && !app.user_options?.jhub_app,
+    );
+
+    if (defaultApp) {
+      filteredApps.push({
+        id: '',
+        name: 'JupyterLab',
+        description: 'This is your default JupyterLab server.',
+        framework: 'JupyterLab',
+        url: defaultApp.url,
+        thumbnail: DEFAULT_APP_THUMBNAIL,
+        ready: defaultApp.ready,
+        public: false,
+      });
+    }
   }
 
-  const filteredApps: JhApp[] = [];
   serverApps.forEach((server: any) => {
     if (server.user_options?.jhub_app) {
       const app = server.user_options;

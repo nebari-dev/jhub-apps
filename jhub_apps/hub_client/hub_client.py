@@ -55,11 +55,19 @@ class HubClient:
         return text
 
     def start_server(self, username, servername):
-        server = self.get_server(username, servername)
-        if not server:
-            return None
+        if not servername:
+            logger.info("Starting JupyterLab server")
+            # Default server, which is JupyterLab (not named server)
+            servername = ""
+            user_options = {}
+        else:
+            # Get named server
+            server = self.get_server(username, servername)
+            user_options = server["user_options"]
+            if not server:
+                return None
         url = f"/users/{username}/servers/{servername}"
-        data = {"name": servername, **server["user_options"]}
+        data = {"name": servername, **user_options}
         r = requests.post(API_URL + url, headers=self._headers(), json=data)
         r.raise_for_status()
         return r.status_code, servername
@@ -92,6 +100,9 @@ class HubClient:
         return r.status_code, servername
 
     def delete_server(self, username, server_name, remove=False):
+        if server_name is None:
+            # Default server and not named server
+            server_name = ""
         url = f"/users/{username}/servers/{server_name}"
         # This will remove it from the database, otherwise it will just stop the server
         params = {"remove": remove}

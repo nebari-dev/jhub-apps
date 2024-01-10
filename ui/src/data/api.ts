@@ -47,6 +47,12 @@ export const app: AppQueryGetProps = {
 export const serverApps = {
   user_apps: [
     {
+      name: '',
+      url: '/user/test',
+      ready: true,
+      user_options: {},
+    },
+    {
       name: 'test-app',
       url: '/user/test/test-app/',
       ready: true,
