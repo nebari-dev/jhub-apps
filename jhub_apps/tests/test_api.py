@@ -48,7 +48,7 @@ def test_api_create_server(create_server, client):
     thumbnail = b"contents of thumbnail"
     in_memory_file = io.BytesIO(thumbnail)
     response = client.post(
-        "/server/",
+        "/server",
         data={'data': json.dumps({"servername": "panel-app", "user_options": user_options})},
         files={'thumbnail': ('image.jpeg', in_memory_file)}
     )
