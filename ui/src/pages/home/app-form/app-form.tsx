@@ -180,7 +180,7 @@ export const AppForm = ({
       formData.append('thumbnail', currentFile as Blob);
     }
 
-    const response = await axios.post('/server/', formData, { headers });
+    const response = await axios.post('/server', formData, { headers });
     return response.data;
   };
 
