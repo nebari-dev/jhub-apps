@@ -187,11 +187,14 @@ async def update_server(
         thumbnail=thumbnail
     )
     hub_client = HubClient()
-    return hub_client.edit_server(
+    logger.info(f"Updating server: {server_name}")
+    edit_server_response = hub_client.edit_server(
         username=user.name,
         servername=server_name,
         user_options=server.user_options,
     )
+    logger.info(f"Edit server response: {edit_server_response}")
+    return edit_server_response
 
 
 @router.delete("/server/{server_name}")
