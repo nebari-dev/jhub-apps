@@ -4,9 +4,10 @@ from pathlib import Path
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 
-from .logging_utils import setup_logging
-from .middlewares import create_middlewares
-from .routes import router
+from jhub_apps.service.logging_utils import setup_logging
+from jhub_apps.service.middlewares import create_middlewares
+from jhub_apps.service.routes import router
+from jhub_apps.version import get_version
 
 ### When managed by Jupyterhub, the actual endpoints
 ### will be served out prefixed by /services/:name.
@@ -17,7 +18,7 @@ STATIC_DIR = Path(__file__).parent.parent / "static"
 
 app = FastAPI(
     title="JApps Service",
-    version="0.1",
+    version=get_version(),
     ### Serve out Swagger from the service prefix (<hub>/services/:name/docs)
     openapi_url=router.prefix + "/openapi.json",
     docs_url=router.prefix + "/docs",
