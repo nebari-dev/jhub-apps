@@ -265,9 +265,8 @@ async def hub_services(user: User = Depends(get_current_user)):
     return hub_client.get_services()
 
 
-@router.get(
-    "/status",
-)
+@router.get("/")
+@router.get("/status")
 async def status_endpoint():
     """Check API Status"""
     version = get_version()
