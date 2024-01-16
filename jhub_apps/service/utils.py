@@ -1,6 +1,8 @@
 import base64
 import logging
 import os
+
+from cachetools import cached, TTLCache
 from unittest.mock import Mock
 
 import requests
@@ -12,8 +14,11 @@ from slugify import slugify
 
 
 logger = logging.getLogger(__name__)
+CACHE_JUPYTERHUB_CONFIG_TIMEOUT = 180
 
 
+# Cache JupyterHub config as it might be an expensive operation
+@cached(cache=TTLCache(maxsize=1024, ttl=CACHE_JUPYTERHUB_CONFIG_TIMEOUT))
 def get_jupyterhub_config():
     hub = JupyterHub()
     jhub_config_file_path = os.environ["JHUB_JUPYTERHUB_CONFIG"]
