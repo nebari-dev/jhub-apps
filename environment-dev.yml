@@ -5,7 +5,7 @@ dependencies:
   - uvicorn
   - fastapi
   - python-multipart
-  - jupyterhub
+  - jupyterhub>=4
   - jupyter
   - plotlydash-tornado-cmd
   - bokeh-root-cmd
