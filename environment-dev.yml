@@ -9,7 +9,7 @@ dependencies:
   - jupyter
   - plotlydash-tornado-cmd
   - bokeh-root-cmd
-  - jhsingle-native-proxy
+  - jhsingle-native-proxy=0.8.2
   - pytest
   - ruff
   - panel
