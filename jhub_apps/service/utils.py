@@ -1,5 +1,5 @@
 import base64
-import logging
+import structlog
 import os
 
 from cachetools import cached, TTLCache
@@ -13,8 +13,9 @@ from jhub_apps.spawner.types import FrameworkConf, FRAMEWORKS_MAPPING
 from slugify import slugify
 
 
-logger = logging.getLogger(__name__)
+
 CACHE_JUPYTERHUB_CONFIG_TIMEOUT = 180
+logger = structlog.get_logger(__name__)
 
 
 # Cache JupyterHub config as it might be an expensive operation

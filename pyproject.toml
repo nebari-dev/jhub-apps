@@ -26,6 +26,7 @@ dependencies = [
     "traitlets",
     "python-slugify",
     "cachetools",
+    "structlog",
     "PyJWT",
 ]
 dynamic = ["version"]
