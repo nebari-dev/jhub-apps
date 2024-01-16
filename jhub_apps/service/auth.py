@@ -1,4 +1,4 @@
-import logging
+import structlog
 import os
 import typing
 from datetime import timedelta, datetime
@@ -6,7 +6,7 @@ from datetime import timedelta, datetime
 import jwt
 from fastapi import HTTPException, status
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 
 def create_access_token(data: dict, expires_delta: typing.Optional[timedelta] = None):

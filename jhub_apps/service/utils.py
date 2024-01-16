@@ -1,5 +1,5 @@
 import base64
-import logging
+import structlog
 import os
 from unittest.mock import Mock
 
@@ -11,7 +11,7 @@ from jhub_apps.spawner.types import FrameworkConf, FRAMEWORKS_MAPPING
 from slugify import slugify
 
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 
 def get_jupyterhub_config():

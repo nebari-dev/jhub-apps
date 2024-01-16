@@ -1,4 +1,4 @@
-import logging
+import structlog
 
 from jhub_apps.spawner.utils import get_origin_host
 from jhub_apps.spawner.command import (
@@ -12,7 +12,7 @@ from jhub_apps.spawner.command import (
 from jhub_apps.spawner.types import Framework
 
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 
 def subclass_spawner(base_spawner):

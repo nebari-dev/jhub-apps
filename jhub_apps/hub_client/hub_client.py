@@ -1,4 +1,4 @@
-import logging
+import structlog
 import os
 import re
 import uuid
@@ -9,7 +9,7 @@ import requests
 API_URL = os.environ.get("JUPYTERHUB_API_URL")
 JUPYTERHUB_API_TOKEN = os.environ.get("JUPYTERHUB_API_TOKEN")
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 
 class HubClient:

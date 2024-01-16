@@ -20,5 +20,5 @@ dependencies:
   - tornado>=5.1
   - traitlets
   - python-slugify
-  - pip:
-      - gradio
+  - structlog
+  - gradio
