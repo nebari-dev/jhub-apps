@@ -20,5 +20,6 @@ dependencies:
   - tornado>=5.1
   - traitlets
   - python-slugify
+  - cachetools
   - pip:
       - gradio

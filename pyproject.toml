@@ -25,6 +25,7 @@ dependencies = [
     "bokeh",
     "traitlets",
     "python-slugify",
+    "cachetools",
     "PyJWT",
 ]
 dynamic = ["version"]
