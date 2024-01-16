@@ -1,6 +1,8 @@
 import base64
 import structlog
 import os
+
+from cachetools import cached, TTLCache
 from unittest.mock import Mock
 
 import requests
@@ -11,9 +13,13 @@ from jhub_apps.spawner.types import FrameworkConf, FRAMEWORKS_MAPPING
 from slugify import slugify
 
 
+
+CACHE_JUPYTERHUB_CONFIG_TIMEOUT = 180
 logger = structlog.get_logger(__name__)
 
 
+# Cache JupyterHub config as it might be an expensive operation
+@cached(cache=TTLCache(maxsize=1024, ttl=CACHE_JUPYTERHUB_CONFIG_TIMEOUT))
 def get_jupyterhub_config():
     hub = JupyterHub()
     jhub_config_file_path = os.environ["JHUB_JUPYTERHUB_CONFIG"]
