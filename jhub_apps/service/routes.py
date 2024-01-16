@@ -1,4 +1,4 @@
-import logging
+import structlog
 import typing
 import dataclasses
 import os
@@ -25,7 +25,7 @@ from jhub_apps.version import get_version
 
 app = FastAPI()
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 templates = Jinja2Templates(directory="jhub_apps/templates")
 
 # Expires in 7 days
@@ -230,7 +230,7 @@ async def get_frameworks(user: User = Depends(get_current_user)):
 
 @router.get("/conda-environments/", description="Get all conda environments")
 async def conda_environments(user: User = Depends(get_current_user)):
-    logging.info(f"Getting conda environments for user: {user}")
+    logger.info(f"Getting conda environments for user: {user}")
     config = get_jupyterhub_config()
     hclient = HubClient()
     user_from_service = hclient.get_user(user.name)
@@ -244,7 +244,7 @@ async def spawner_profiles(user: User = Depends(get_current_user)):
     hclient = HubClient()
     user_from_service = hclient.get_user(user.name)
     auth_state = user_from_service.get("auth_state")
-    logging.info(f"Getting spawner profiles for user: {user.name}")
+    logger.info(f"Getting spawner profiles for user: {user.name}")
     config = get_jupyterhub_config()
     spawner_profiles_ = await get_spawner_profiles(config, auth_state=auth_state)
     logger.info(f"Loaded spawner profiles: {spawner_profiles_}")
@@ -253,7 +253,7 @@ async def spawner_profiles(user: User = Depends(get_current_user)):
 
 @router.get("/services/", description="Get all services")
 async def hub_services(user: User = Depends(get_current_user)):
-    logging.info(f"Getting hub services for user: {user}")
+    logger.info(f"Getting hub services for user: {user}")
     hub_client = HubClient()
     return hub_client.get_services()
 
@@ -263,7 +263,6 @@ async def hub_services(user: User = Depends(get_current_user)):
 )
 async def status_endpoint():
     """Check API Status"""
-    # TODO: Add version
     version = get_version()
     return {
         "status": "ok",

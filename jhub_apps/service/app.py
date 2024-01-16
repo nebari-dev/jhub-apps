@@ -1,10 +1,11 @@
-import logging
 import os
 from pathlib import Path
 
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 
+from .logging_utils import setup_logging
+from .middlewares import create_middlewares
 from .routes import router
 
 ### When managed by Jupyterhub, the actual endpoints
@@ -13,17 +14,6 @@ from .routes import router
 ### All routes are defined in service.py
 
 STATIC_DIR = Path(__file__).parent.parent / "static"
-
-
-def setup_logging():
-    # TODO: Use structlog
-    logging_format = (
-        "%(asctime)s %(levelname)9s %(lineno)4s %(module)s: %(message)s"
-    )
-    logging.basicConfig(
-        level=logging.INFO, format=logging_format
-    )
-
 
 app = FastAPI(
     title="JApps Service",
@@ -42,4 +32,5 @@ app = FastAPI(
 static_files = StaticFiles(directory=STATIC_DIR)
 app.mount(f"{router.prefix}/static", static_files, name="static")
 app.include_router(router)
+create_middlewares(app)
 setup_logging()
