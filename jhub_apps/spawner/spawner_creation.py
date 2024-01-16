@@ -28,8 +28,6 @@ def subclass_spawner(base_spawner):
 
         def get_args(self):
             """Return arguments to pass to the notebook server"""
-            # logger.info("Getting Spawner args")
-            # self._get_user_auth_state()
             argv = super().get_args()
             if self.user_options.get("argv"):
                 argv.extend(self.user_options["argv"])
@@ -71,8 +69,6 @@ def subclass_spawner(base_spawner):
             return argv
 
         def get_env(self):
-            # logger.info("Getting spawner environments")
-            # await self._get_user_auth_state()
             env = super().get_env()
             if self.user_options.get("env"):
                 env.update(self.user_options["env"])
