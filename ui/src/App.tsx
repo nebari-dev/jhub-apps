@@ -7,7 +7,13 @@ import { currentJhData } from './store';
 import { JhData } from './types/jupyterhub';
 import { getJhData } from './utils/jupyterhub';
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 export const App = (): React.ReactElement => {
   const [, setJhData] = useRecoilState<JhData>(currentJhData);
