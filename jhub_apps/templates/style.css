@@ -254,6 +254,10 @@ a:focus {
     background-color: {{ navbar_hover_color | default("#00a3b0") }};
 }
 
+.progress-bar {
+    background-color: var(--primary-color) !important;
+}
+
 /* Authenticator form */
 #login-main input[type=submit]:focus{
     border-color: var(--text-color);
