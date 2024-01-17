@@ -17,6 +17,9 @@ EXAMPLES_FILE = {
 
 EXAMPLES_DIR = Path(__file__).parent.parent / "examples"
 
+# Timeout for readiness request in seconds for the apps
+READY_TIMEOUT = 300
+
 
 @dataclass
 class TString:
@@ -58,6 +61,7 @@ DEFAULT_CMD = Command(
 GENERIC_ARGS = [
     "--destport=0",
     "--ready-check-path=/ready-check",
+    f"--ready-timeout={READY_TIMEOUT}",
     TString("--conda-env=$conda_env"),
     TString("$python_exec"),
     "{-}m",
@@ -73,6 +77,7 @@ COMMANDS = {
             "{--}server-port={port}",
             TString("{--}root-path=$jh_service_prefix"),
             "--ready-check-path=/",
+            f"--ready-timeout={READY_TIMEOUT}",
         ],
     ),
     Framework.voila.value: Command(
@@ -93,6 +98,7 @@ COMMANDS = {
             TString("{--}Voila.base_url=$voila_base_url"),
             "--progressive",
             "--ready-check-path=/voila/static/",
+            f"--ready-timeout={READY_TIMEOUT}",
         ],
     ),
     Framework.streamlit.value: Command(
@@ -108,6 +114,7 @@ COMMANDS = {
             "{--}server.headless=True",
             TString("{--}browser.serverAddress=$origin_host"),
             "{--}browser.gatherUsageStats=false",
+            f"--ready-timeout={READY_TIMEOUT}",
         ],
     ),
     Framework.plotlydash.value: Command(
@@ -119,6 +126,7 @@ COMMANDS = {
             "plotlydash_tornado_cmd.main",
             TString("$filepath"),
             "{--}port={port}",
+            f"--ready-timeout={READY_TIMEOUT}",
         ],
     ),
     Framework.bokeh.value: Command(
@@ -134,6 +142,7 @@ COMMANDS = {
             TString("{--}prefix=$base_url"),
             "--ip=0.0.0.0",
             "--ready-check-path=/ready-check",
+            f"--ready-timeout={READY_TIMEOUT}",
         ]
     ),
     Framework.panel.value: Command(
@@ -151,6 +160,7 @@ COMMANDS = {
             TString("{--}prefix=$base_url"),
             "--ip=0.0.0.0",
             "--ready-check-path=/ready-check",
+            f"--ready-timeout={READY_TIMEOUT}",
         ]
     ),
     Framework.jupyterlab.value: Command(args=[]),
