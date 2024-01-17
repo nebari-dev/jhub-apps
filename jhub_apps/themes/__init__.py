@@ -1,7 +1,9 @@
 LOGO = "/services/japps/static/img/Nebari-Logo-Horizontal-Lockup-White-text.svg"
+FAVICON = "/services/japps/static/favicon.ico"
 
 DEFAULT_THEME = {
     "logo": LOGO,
+    "favicon": FAVICON,
     "primary_color": "#C316E9",
     "primary_color_dark": "#79158a",
     "secondary_color": "#18817A",

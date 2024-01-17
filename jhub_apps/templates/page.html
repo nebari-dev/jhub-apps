@@ -42,4 +42,6 @@ jsurls %}
       title="Home"
   /></a>
 </span>
-{% endblock logo%}
+{% endblock logo%} {% block title %}{{ hub_title or 'JupyterHub'}}{% endblock %}
+{% block favicon %} <link rel="icon" href="{{ favicon or
+static_url("favicon.ico") }}" type="image/x-icon" /> {% endblock %}
