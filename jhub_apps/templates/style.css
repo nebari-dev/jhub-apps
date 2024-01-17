@@ -86,8 +86,6 @@ h6 {
 }
 
 .container {
-    margin-left: 20px;
-    margin-right: 20px;
     padding-left: 20px;
     padding-right: 20px;
     width: 100%;
@@ -339,15 +337,16 @@ a:focus {
 /* Misc */
 .version {
     position: fixed;
-    bottom: 20px; /* Place the button at the bottom of the page */
-    left: 30px; /* Place the button 30px from the left */
+    bottom: 0;
+    left: 0;
     z-index: 99; /* Make sure it does not overlap */
-    width: auto;
-    padding: 5px;
-    background: none;
+    width: 100%;
+    padding: 5px 20px;
+    background-color: #fff;
     color: var(--primary-color);
-    text-align: center;
+    text-align: start;
     font-size: 1rem; /* Increase font size */
     font-family: var(--base-font-family);
     word-wrap: break-word;
+    border-top: 1px solid #e6e6e6;
 }

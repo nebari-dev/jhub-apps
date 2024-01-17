@@ -51,5 +51,6 @@ c.JupyterHub.template_vars = {
     "hub_title": "Welcome to Nebari",
     "hub_subtitle": "your open source data science platform",
     "welcome": "Running in dev mode",
+    "display_version": True,
     **themes.DEFAULT_THEME
 }
