@@ -59,9 +59,6 @@ DEFAULT_CMD = Command(
 )
 
 GENERIC_ARGS = [
-    "--destport=0",
-    "--ready-check-path=/ready-check",
-    f"--ready-timeout={READY_TIMEOUT}",
     TString("--conda-env=$conda_env"),
     TString("$python_exec"),
     "{-}m",
