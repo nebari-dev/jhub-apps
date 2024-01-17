@@ -15,9 +15,18 @@ logger = structlog.get_logger(__name__)
 class HubClient:
     def __init__(self, token=None):
         self.token = token or JUPYTERHUB_API_TOKEN
+        self.jhub_apps_request_id = None
+        self._set_request_id()
+
+    def _set_request_id(self):
+        contextvars = structlog.contextvars.get_contextvars()
+        self.jhub_apps_request_id = contextvars.get("request_id")
 
     def _headers(self):
-        return {"Authorization": f"token {self.token}"}
+        return {
+            "Authorization": f"token {self.token}",
+            "JHUB_APPS_REQUEST_ID": self.jhub_apps_request_id
+        }
 
     def get_users(self):
         r = requests.get(
