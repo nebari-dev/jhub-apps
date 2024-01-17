@@ -2,13 +2,10 @@
 <!-- Distributed under the terms of the Modified BSD License. -->
 
 {% extends "templates/page.html" %} {% block nav_bar_left_items %} {% endblock
-nav_bar_left_items %} {% block nav_bar_right_items %}
-
+nav_bar_left_items %} {% block nav_bar_right_items %} {% if user %}
 <div class="profile-menu">
   <div class="profile">
-    {% if user %}
     <span class="username">{{user.name}}</span>
-    {% endif %}
     <i class="fa fa-caret-down pull-right"></i>
   </div>
   <ul class="menu">
@@ -19,8 +16,8 @@ nav_bar_left_items %} {% block nav_bar_right_items %}
     <li><a href="{{base_url}}logout">Logout</a></li>
   </ul>
 </div>
-
-{% endblock nav_bar_right_items %} {% block footer %} {% if display_version %}
+{% endif %} {% endblock nav_bar_right_items %} {% block footer %} {% if
+display_version %}
 <div class="version">{{ version or 'v0.0.1'}}</div>
 {% endif %} {% endblock footer%} {% block stylesheet %} <link rel="stylesheet"
 href="{{ static_url("css/style.min.css") }}" type="text/css"/>
