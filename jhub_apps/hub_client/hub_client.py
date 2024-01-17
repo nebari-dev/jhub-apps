@@ -88,15 +88,15 @@ class HubClient:
         return self._create_server(username, servername, user_options)
 
     def edit_server(self, username, servername, user_options=None):
-        logger.info(f"Editing server", server_name=servername)
+        logger.info("Editing server", server_name=servername)
         server = self.get_server(username, servername)
         if server:
             # Stop the server first
-            logger.info(f"Stopping the server first", server_name=servername)
+            logger.info("Stopping the server first", server_name=servername)
             self.delete_server(username, server["name"])
         else:
             raise ValueError("Server does not exists")
-        logger.info(f"Now creating the server with new params", server_name=servername)
+        logger.info("Now creating the server with new params", server_name=servername)
         return self._create_server(username, servername, user_options)
 
     def _create_server(self, username, servername, user_options):

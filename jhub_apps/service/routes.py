@@ -68,7 +68,7 @@ async def get_token(code: str):
 
 @router.get("/jhub-login", description="Login via OAuth2")
 async def login(request: Request):
-    logger.info(f"Logging in", request=request)
+    logger.info("Logging in", request=request)
     authorization_url = os.environ["PUBLIC_HOST"] + "/hub/api/oauth2/authorize?response_type=code&client_id=service-japps"
     return RedirectResponse(authorization_url, status_code=302)
 
@@ -138,7 +138,7 @@ async def create_server(
     thumbnail: typing.Optional[UploadFile] = File(None),
     user: User = Depends(get_current_user),
 ):
-    logger.info(f"Creating server", server_name=server.servername,  user=user.name)
+    logger.info("Creating server", server_name=server.servername,  user=user.name)
     server.user_options.thumbnail = await get_thumbnail_data_url(
         framework_name=server.user_options.framework,
         thumbnail=thumbnail
@@ -158,7 +158,7 @@ async def start_server(
         user: User = Depends(get_current_user),
 ):
     """Start an already existing server."""
-    logger.info(f"Starting server", server_name=server_name,  user=user.name)
+    logger.info("Starting server", server_name=server_name,  user=user.name)
     hub_client = HubClient()
     try:
         response = hub_client.start_server(
@@ -189,7 +189,7 @@ async def update_server(
         thumbnail=thumbnail
     )
     hub_client = HubClient()
-    logger.info(f"Updating server", server_name=server.servername,  user=user.name)
+    logger.info("Updating server", server_name=server.servername,  user=user.name)
     edit_server_response = hub_client.edit_server(
         username=user.name,
         servername=server_name,
@@ -208,7 +208,7 @@ async def delete_server(
 ):
     """Delete or stop server. Delete if remove is True otherwise stop the server"""
     hub_client = HubClient()
-    logger.info(f"Deleting server", server_name=server_name,  user=user.name)
+    logger.info("Deleting server", server_name=server_name,  user=user.name)
     return hub_client.delete_server(
         user.name,
         server_name=server_name,
@@ -228,7 +228,7 @@ async def me(user: User = Depends(get_current_user)):
 
 @router.get("/frameworks/", description="Get all frameworks")
 async def get_frameworks(user: User = Depends(get_current_user)):
-    logger.info(f"Getting all the frameworks")
+    logger.info("Getting all the frameworks")
     frameworks = []
     for framework in FRAMEWORKS:
         frameworks.append(dataclasses.asdict(framework))
@@ -237,7 +237,7 @@ async def get_frameworks(user: User = Depends(get_current_user)):
 
 @router.get("/conda-environments/", description="Get all conda environments")
 async def conda_environments(user: User = Depends(get_current_user)):
-    logger.info(f"Getting conda environments",  user=user.name)
+    logger.info("Getting conda environments",  user=user.name)
     config = get_jupyterhub_config()
     hclient = HubClient()
     user_from_service = hclient.get_user(user.name)
@@ -251,7 +251,7 @@ async def spawner_profiles(user: User = Depends(get_current_user)):
     hclient = HubClient()
     user_from_service = hclient.get_user(user.name)
     auth_state = user_from_service.get("auth_state")
-    logger.info(f"Getting spawner profiles", user=user.name)
+    logger.info("Getting spawner profiles", user=user.name)
     config = get_jupyterhub_config()
     spawner_profiles_ = await get_spawner_profiles(config, auth_state=auth_state)
     logger.debug(f"Loaded spawner profiles: {spawner_profiles_}")
