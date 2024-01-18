@@ -18,7 +18,6 @@ EXAMPLES_FILE = {
 EXAMPLES_DIR = Path(__file__).parent.parent / "examples"
 
 # Timeout for readiness request in seconds for the apps
-# READY_TIMEOUT = 90
 READY_TIMEOUT = 300
 
 
