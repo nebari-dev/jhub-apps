@@ -13,7 +13,6 @@ from jhub_apps.spawner.types import FrameworkConf, FRAMEWORKS_MAPPING
 from slugify import slugify
 
 
-
 CACHE_JUPYTERHUB_CONFIG_TIMEOUT = 180
 logger = structlog.get_logger(__name__)
 
@@ -26,7 +25,7 @@ def get_jupyterhub_config():
     logger.info(f"Getting JHub config from file: {jhub_config_file_path}")
     hub.load_config_file(jhub_config_file_path)
     config = hub.config
-    logger.info(f"JApps config: {config.JAppsConfig}")
+    logger.info(f"JHub Apps config: {config.JAppsConfig}")
     return config
 
 
