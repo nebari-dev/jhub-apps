@@ -332,6 +332,7 @@ a:focus {
   /* Show menu on hover */
   .profile-menu:hover .menu {
     display: block;
+    z-index: 1001;
   }
 
 /* Misc */
@@ -350,3 +351,25 @@ a:focus {
     word-wrap: break-word;
     border-top: 1px solid #e6e6e6;
 }
+
+@media only screen and (max-width: 480px) {
+    .navbar-nav {
+        margin: 0;
+    }
+    .navbar-right {
+      float: right !important;
+    }
+    .collapse {
+      display: block !important;
+    }
+    .navbar-default .navbar-collapse, .navbar-default .navbar-form {
+        position: absolute;
+        top: 0;
+        right: 10px;
+        border-color: unset;
+        border: 0;
+    }
+    .modal-body > .form {
+        min-width: 300px;
+    }
+  }
