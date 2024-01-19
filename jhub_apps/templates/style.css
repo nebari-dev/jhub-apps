@@ -19,16 +19,16 @@
     /*  Colors */
     --heading-color: {{ h1_color | default("#0f1015") }};
     --text-color: {{ text_color | default("#1c1d26") }};
-    --link-text-color: {{ text_color | default("#20b1a8") }};
-    --primary-color: {{ primary_color | default("#9e17b7") }};
+    --link-text-color: {{ text_color | default("#1c1d26") }};
+    --primary-color: {{ primary_color | default("#C316E9") }};
     --primary-color-dark: {{ primary_color_dark | default("#79158a") }};
-    --secondary-color: {{ secondary_color | default("#20b1a8") }};
-    --secondary-color-dark: {{ secondary_color_dark | default("#07837b") }};
+    --secondary-color: {{ secondary_color | default("#18817A") }};
+    --secondary-color-dark: {{ secondary_color_dark | default("#12635E") }};
     --accent-color: {{ accent_color | default("#eda61d") }};
     --accent-color-dark: {{ accent_color_dark | default("#a16d14") }};
     --navbar-background-color: {{ navbar_color | default("#1c1d26") }};
-    --navbar-text-color: {{ navbar_text_color | default("#f1f1f6") }};
-    --navbar-hover-color: {{ navbar_hover_color | default("#db96f3") }};
+    --navbar-text-color: {{ navbar_text_color | default("#ffffff") }};
+    --navbar-hover-color: {{ navbar_hover_color | default("#20b1a8") }};
     --link-hover-color: {{ accent_color | default("#20b1a8") }};
     --light-text-color: #f1f1f6;
     --danger-color: #e60f66;
