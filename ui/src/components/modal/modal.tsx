@@ -19,6 +19,7 @@ export const Modal = ({ title, setIsOpen, body, footer }: ModalProps) => {
             <button
               className="modal-close-btn"
               onClick={() => setIsOpen(false)}
+              aria-label="Close modal"
             >
               <XMarkIcon />
             </button>
