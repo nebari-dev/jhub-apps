@@ -35,6 +35,7 @@ describe('ServicesGrid', () => {
   });
 
   test('renders a message when no services', () => {
+    queryClient.setQueryData(['service-data'], null);
     const { baseElement } = render(
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
@@ -43,6 +44,18 @@ describe('ServicesGrid', () => {
       </RecoilRoot>,
     );
     expect(baseElement).toHaveTextContent('No services available');
+  });
+
+  test('renders a loading message', () => {
+    queryClient.isFetching = jest.fn().mockReturnValue(true);
+    const { baseElement } = render(
+      <RecoilRoot>
+        <QueryClientProvider client={queryClient}>
+          <ServicesGrid />
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+    expect(baseElement).toHaveTextContent('Loading...');
   });
 
   test('renders with mocked data', async () => {

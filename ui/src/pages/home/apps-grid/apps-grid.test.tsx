@@ -50,7 +50,8 @@ describe('AppsGrid', () => {
   });
 
   test('renders a message when no apps and filter', () => {
-    mock.onGet(new RegExp('/server/')).reply(200, []);
+    queryClient.setQueryData(['app-state'], null);
+    mock.onGet(new RegExp('/server/')).reply(200, null);
     const { baseElement } = render(
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
@@ -59,6 +60,19 @@ describe('AppsGrid', () => {
       </RecoilRoot>,
     );
     expect(baseElement).toHaveTextContent('No apps available');
+  });
+
+  test('renders a loading message', () => {
+    queryClient.isFetching = jest.fn().mockReturnValue(true);
+    mock.onGet(new RegExp('/server/')).reply(200, null);
+    const { baseElement } = render(
+      <RecoilRoot>
+        <QueryClientProvider client={queryClient}>
+          <AppsGrid filter="test" />
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+    expect(baseElement).toHaveTextContent('Loading...');
   });
 
   test('renders with mocked data', async () => {
@@ -88,6 +102,7 @@ describe('AppsGrid', () => {
   });
 
   test('renders with data error', async () => {
+    queryClient.setQueryData(['app-state'], null);
     mock.onGet().reply(500, { message: 'Some error' });
     const { baseElement } = render(
       <RecoilRoot>
