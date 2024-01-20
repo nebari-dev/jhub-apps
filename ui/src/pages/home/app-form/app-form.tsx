@@ -58,7 +58,7 @@ export const AppForm = ({
     enabled: !!id,
   });
 
-  const { data: frameworks } = useQuery<
+  const { data: frameworks, isLoading: frameworksLoading } = useQuery<
     AppFrameworkProps[],
     { message: string }
   >({
@@ -69,7 +69,10 @@ export const AppForm = ({
       }),
   });
 
-  const { data: environments } = useQuery<string[], { message: string }>({
+  const { data: environments, isLoading: environmentsLoading } = useQuery<
+    string[],
+    { message: string }
+  >({
     queryKey: ['app-environments'],
     queryFn: () =>
       axios.get('/conda-environments/').then((response) => {
@@ -77,7 +80,10 @@ export const AppForm = ({
       }),
   });
 
-  const { data: profiles } = useQuery<AppProfileProps[], { message: string }>({
+  const { data: profiles, isLoading: profilesLoading } = useQuery<
+    AppProfileProps[],
+    { message: string }
+  >({
     queryKey: ['app-profiles'],
     queryFn: () =>
       axios.get('/spawner-profiles/').then((response) => {
@@ -454,7 +460,16 @@ export const AppForm = ({
         >
           Cancel
         </Button>
-        <Button id="submit-btn" type="submit" disabled={submitting}>
+        <Button
+          id="submit-btn"
+          type="submit"
+          disabled={
+            submitting ||
+            frameworksLoading ||
+            environmentsLoading ||
+            profilesLoading
+          }
+        >
           Submit
         </Button>
       </ButtonGroup>
