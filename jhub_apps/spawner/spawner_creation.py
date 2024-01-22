@@ -78,6 +78,9 @@ def subclass_spawner(base_spawner):
                     # will load static files from cdn
                     # See this https://github.com/bokeh/bokeh/issues/13170
                     env["BOKEH_RESOURCES"] = "cdn"
+                elif framework == Framework.custom.value:
+                    env["RAGNA_API_ROOT_PATH"] = "/user/aktech/custom-2-ragna-36d1e87/"
+                    env["BOKEH_ALLOW_WS_ORIGIN"] = "127.0.0.1:8000"
             return env
 
         async def start(self):

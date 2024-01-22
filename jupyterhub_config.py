@@ -21,6 +21,7 @@ c.JupyterHub.default_url = "/hub/home"
 c = install_jhub_apps(c, spawner_to_subclass=SimpleLocalProcessSpawner)
 
 c.JupyterHub.template_paths = theme_template_paths
+# c.JAppsConfig.conda_envs = ["jhub-apps-dev", "ragna"]
 
 
 def service_for_jhub_apps(name, url):
