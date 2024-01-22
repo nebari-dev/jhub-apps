@@ -444,6 +444,7 @@ export const AppForm = ({
               {...field}
               id="is_public"
               checked={isPublic}
+              ariaLabel="Allow Public Access"
               onChange={() => {
                 setIsPublic(!isPublic);
               }}

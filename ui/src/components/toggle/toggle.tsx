@@ -18,6 +18,10 @@ export interface ToggleProps {
    */
   label?: string;
   /**
+   * An accessible label for the toggle
+   */
+  ariaLabel?: string;
+  /**
    * Custom callback for when input is changed
    */
   onChange?: ChangeEventHandler<HTMLInputElement>;
@@ -28,6 +32,7 @@ export const Toggle = ({
   name,
   checked = false,
   label,
+  ariaLabel,
   onChange,
 }: ToggleProps) => {
   const [isChecked, setIsChecked] = useState(false);
@@ -48,6 +53,7 @@ export const Toggle = ({
         htmlFor={id}
         className="flex items-center cursor-pointer"
         tabIndex={0}
+        aria-label={ariaLabel}
       >
         <div className="relative">
           <input
@@ -57,6 +63,7 @@ export const Toggle = ({
             className="sr-only"
             checked={isChecked}
             onChange={toggleHandler}
+            tabIndex={-1}
           />
           <div
             className={`toggle-body w-12 h-6 rounded-full shadow-inner ${
