@@ -34,6 +34,8 @@ describe('AppForm', () => {
     mock.onGet(new RegExp('/frameworks')).reply(200, frameworks);
     mock.onPost(new RegExp('/server')).reply(200);
     queryClient.setQueryData(['app-frameworks'], frameworks);
+    queryClient.setQueryData(['app-environments'], null);
+    queryClient.setQueryData(['app-profiles'], null);
     const { baseElement } = render(
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
@@ -69,6 +71,8 @@ describe('AppForm', () => {
     mock.onGet(new RegExp('/frameworks')).reply(200, frameworks);
     mock.onPost(new RegExp('/server')).reply(200);
     queryClient.setQueryData(['app-frameworks'], frameworks);
+    queryClient.setQueryData(['app-environments'], null);
+    queryClient.setQueryData(['app-profiles'], null);
     const { baseElement } = render(
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
@@ -112,6 +116,8 @@ describe('AppForm', () => {
     mock.onGet(new RegExp('/frameworks')).reply(200, frameworks);
     mock.onPost(new RegExp('/server')).reply(200);
     queryClient.setQueryData(['app-frameworks'], frameworks);
+    queryClient.setQueryData(['app-environments'], null);
+    queryClient.setQueryData(['app-profiles'], null);
     const { baseElement } = render(
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
@@ -240,6 +246,9 @@ describe('AppForm', () => {
     mock.onGet(new RegExp('/frameworks')).reply(200, frameworks);
     mock.onGet(new RegExp('/server/app-1')).reply(200, app);
     queryClient.setQueryData(['app-form'], app);
+    queryClient.setQueryData(['app-frameworks'], frameworks);
+    queryClient.setQueryData(['app-environments'], null);
+    queryClient.setQueryData(['app-profiles'], null);
     mock.onPut().reply(200);
     const { baseElement } = render(
       <RecoilRoot>

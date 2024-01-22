@@ -58,7 +58,7 @@ export const AppForm = ({
     enabled: !!id,
   });
 
-  const { data: frameworks } = useQuery<
+  const { data: frameworks, isLoading: frameworksLoading } = useQuery<
     AppFrameworkProps[],
     { message: string }
   >({
@@ -69,7 +69,10 @@ export const AppForm = ({
       }),
   });
 
-  const { data: environments } = useQuery<string[], { message: string }>({
+  const { data: environments, isLoading: environmentsLoading } = useQuery<
+    string[],
+    { message: string }
+  >({
     queryKey: ['app-environments'],
     queryFn: () =>
       axios.get('/conda-environments/').then((response) => {
@@ -77,7 +80,10 @@ export const AppForm = ({
       }),
   });
 
-  const { data: profiles } = useQuery<AppProfileProps[], { message: string }>({
+  const { data: profiles, isLoading: profilesLoading } = useQuery<
+    AppProfileProps[],
+    { message: string }
+  >({
     queryKey: ['app-profiles'],
     queryFn: () =>
       axios.get('/spawner-profiles/').then((response) => {
@@ -154,7 +160,7 @@ export const AppForm = ({
           const username = getJhData().user;
           if (username && data?.length > 1) {
             const server = data[1];
-            window.location.assign(`/user/${username}/${server}`);
+            window.location.assign(`/hub/spawn-pending/${username}/${server}`);
           }
         },
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -455,7 +461,16 @@ export const AppForm = ({
         >
           Cancel
         </Button>
-        <Button id="submit-btn" type="submit" disabled={submitting}>
+        <Button
+          id="submit-btn"
+          type="submit"
+          disabled={
+            submitting ||
+            frameworksLoading ||
+            environmentsLoading ||
+            profilesLoading
+          }
+        >
           Submit
         </Button>
       </ButtonGroup>

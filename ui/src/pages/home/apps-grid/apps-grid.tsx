@@ -76,7 +76,9 @@ export const AppsGrid = ({
         </div>
       </div>
       <div className="container grid pb-12">
-        {apps.length > 0 ? (
+        {isLoading ? (
+          <div className="font-bold">Loading...</div>
+        ) : apps.length > 0 ? (
           <div className="flex flex flex-row flex-wrap gap-4">
             {apps.map((app: JhApp) => (
               <AppCard

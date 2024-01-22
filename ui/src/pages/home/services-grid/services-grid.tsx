@@ -69,7 +69,9 @@ export const ServicesGrid = (): React.ReactElement => {
         </div>
       </div>
       <div className="container grid pb-12">
-        {services.length > 0 ? (
+        {isLoading ? (
+          <div className="font-bold">Loading...</div>
+        ) : services.length > 0 ? (
           <div className="flex flex flex-row flex-wrap gap-4">
             {services.map((service, index) => (
               <Button
