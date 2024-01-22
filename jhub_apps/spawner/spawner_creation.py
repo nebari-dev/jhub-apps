@@ -19,13 +19,6 @@ def subclass_spawner(base_spawner):
     # TODO: Find a better way to do this
     class JHubSpawner(base_spawner):
 
-        async def _get_user_auth_state(self):
-            try:
-                auth_state = await self.user.get_auth_state()
-                return auth_state
-            except Exception as e:
-                logger.exception(e)
-
         def get_args(self):
             """Return arguments to pass to the notebook server"""
             argv = super().get_args()
@@ -89,7 +82,6 @@ def subclass_spawner(base_spawner):
 
         async def start(self):
             logger.info("Starting spawner process")
-            await self._get_user_auth_state()
             framework = self.user_options.get("framework")
             if (
                 self.user_options.get("jhub_app")
