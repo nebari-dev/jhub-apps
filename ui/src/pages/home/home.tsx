@@ -22,10 +22,10 @@ export const Home = (): React.ReactElement => {
   return (
     <>
       <div className="container grid grid-cols-12 pb-12">
-        <div className="md:col-span-2 xs:col-span-12">
+        <div className="md:col-span-2 col-span-12">
           <h1 className="text-3xl font-bold">Home</h1>
         </div>
-        <div className="md:col-span-8 xs:col-span-8">
+        <div className="md:col-span-8 col-span-8">
           <TextInput
             id="search"
             placeholder="Search..."
@@ -34,7 +34,7 @@ export const Home = (): React.ReactElement => {
             onChange={handleSearch}
           />
         </div>
-        <div className="md:col-span-2 xs:col-span-4 flex justify-end">
+        <div className="md:col-span-2 col-span-4 flex justify-end">
           <Button
             id="create-app"
             onClick={() => {

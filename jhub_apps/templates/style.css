@@ -19,16 +19,16 @@
     /*  Colors */
     --heading-color: {{ h1_color | default("#0f1015") }};
     --text-color: {{ text_color | default("#1c1d26") }};
-    --link-text-color: {{ text_color | default("#20b1a8") }};
-    --primary-color: {{ primary_color | default("#9e17b7") }};
+    --link-text-color: {{ text_color | default("#1c1d26") }};
+    --primary-color: {{ primary_color | default("#C316E9") }};
     --primary-color-dark: {{ primary_color_dark | default("#79158a") }};
-    --secondary-color: {{ secondary_color | default("#20b1a8") }};
-    --secondary-color-dark: {{ secondary_color_dark | default("#07837b") }};
+    --secondary-color: {{ secondary_color | default("#18817A") }};
+    --secondary-color-dark: {{ secondary_color_dark | default("#12635E") }};
     --accent-color: {{ accent_color | default("#eda61d") }};
     --accent-color-dark: {{ accent_color_dark | default("#a16d14") }};
     --navbar-background-color: {{ navbar_color | default("#1c1d26") }};
-    --navbar-text-color: {{ navbar_text_color | default("#f1f1f6") }};
-    --navbar-hover-color: {{ navbar_hover_color | default("#db96f3") }};
+    --navbar-text-color: {{ navbar_text_color | default("#ffffff") }};
+    --navbar-hover-color: {{ navbar_hover_color | default("#20b1a8") }};
     --link-hover-color: {{ accent_color | default("#20b1a8") }};
     --light-text-color: #f1f1f6;
     --danger-color: #e60f66;
@@ -86,8 +86,6 @@ h6 {
 }
 
 .container {
-    margin-left: 20px;
-    margin-right: 20px;
     padding-left: 20px;
     padding-right: 20px;
     width: 100%;
@@ -97,7 +95,7 @@ label {
     font-family: var(--base-font-family);
 }
 
-.text-input:focus, .text-area:focus, .select:focus, .card:focus, .card:active, .toggle > label {
+.text-input:focus, .text-area:focus, .select:focus, .card:focus, .card:active, .toggle > label, .file-input {
     outline-color: var(--primary-color) !important;
 }
 
@@ -254,6 +252,10 @@ a:focus {
     background-color: {{ navbar_hover_color | default("#00a3b0") }};
 }
 
+.progress-bar {
+    background-color: var(--primary-color) !important;
+}
+
 /* Authenticator form */
 #login-main input[type=submit]:focus{
     border-color: var(--text-color);
@@ -302,7 +304,7 @@ a:focus {
   .menu {
     list-style: none;
     position: absolute;
-    top: 42px;
+    top: 41px;
     right: -15px;
     background-color: #fff;
     border: 1px solid #f0f0f0;
@@ -330,20 +332,44 @@ a:focus {
   /* Show menu on hover */
   .profile-menu:hover .menu {
     display: block;
+    z-index: 1001;
   }
 
 /* Misc */
 .version {
     position: fixed;
-    bottom: 20px; /* Place the button at the bottom of the page */
-    left: 30px; /* Place the button 30px from the left */
+    bottom: 0;
+    left: 0;
     z-index: 99; /* Make sure it does not overlap */
-    width: auto;
-    padding: 5px;
-    background: none;
+    width: 100%;
+    padding: 5px 20px;
+    background-color: #fff;
     color: var(--primary-color);
-    text-align: center;
+    text-align: start;
     font-size: 1rem; /* Increase font size */
     font-family: var(--base-font-family);
     word-wrap: break-word;
+    border-top: 1px solid #e6e6e6;
 }
+
+@media only screen and (max-width: 480px) {
+    .navbar-nav {
+        margin: 0;
+    }
+    .navbar-right {
+      float: right !important;
+    }
+    .collapse {
+      display: block !important;
+    }
+    .navbar-default .navbar-collapse, .navbar-default .navbar-form {
+        position: absolute;
+        top: 0;
+        right: 10px;
+        border-color: unset;
+        border: 0;
+    }
+    .modal-body > .form {
+        min-width: 300px;
+    }
+  }

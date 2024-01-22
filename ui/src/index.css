@@ -133,7 +133,7 @@
   }
 
   .toggle-body-on {
-    background-color: #c316e9;
+    background-color: theme('colors.primary');
   }
 
   .toggle-label {

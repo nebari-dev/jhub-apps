@@ -1,26 +1,48 @@
 <!-- Copyright (c) Nebari Development Team.-->
 <!-- Distributed under the terms of the Modified BSD License. -->
 
-{% extends "templates/page.html" %} {% block nav_bar_left_items %} {% endblock
-nav_bar_left_items %} {% block nav_bar_right_items %}
+{% extends "templates/page.html" %} {% block nav_bar %}
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      {% block logo %}
+      <span id="jupyterhub-logo" class="pull-left">
+        <!-- ignore: H006 since we inherit from Hub -->
+        <a href="{{logo_url or base_url}}"
+          ><img
+            src="{{ logo }}"
+            alt="JupyterHub logo - Nebari Home"
+            class="jpy-logo"
+            title="Home"
+        /></a>
+      </span>
+      {% endblock logo%}
+    </div>
 
-<div class="profile-menu">
-  <div class="profile">
-    {% if user %}
-    <span class="username">{{user.name}}</span>
-    {% endif %}
-    <i class="fa fa-caret-down pull-right"></i>
+    <div class="collapse navbar-collapse" id="thenavbar">
+      {% if user %}
+      <div class="nav navbar-nav navbar-right">
+        <div class="profile-menu">
+          <div class="profile">
+            <span class="username">{{user.name}}</span>
+            <i class="fa fa-caret-down pull-right"></i>
+          </div>
+          <ul class="menu">
+            <li><a href="{{base_url}}token">Tokens</a></li>
+            {% if user.admin %}
+            <li><a href="{{base_url}}admin">Admin</a></li>
+            {% endif %}
+            <li><a href="{{base_url}}logout">Logout</a></li>
+          </ul>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+
+    {% block header %} {% endblock %}
   </div>
-  <ul class="menu">
-    <li><a href="{{base_url}}token">Tokens</a></li>
-    {% if user.admin %}
-    <li><a href="{{base_url}}admin">Admin</a></li>
-    {% endif %}
-    <li><a href="{{base_url}}logout">Logout</a></li>
-  </ul>
-</div>
-
-{% endblock nav_bar_right_items %} {% block footer %} {% if display_version %}
+</nav>
+{% endblock %} {% block footer %} {% if display_version %}
 <div class="version">{{ version or 'v0.0.1'}}</div>
 {% endif %} {% endblock footer%} {% block stylesheet %} <link rel="stylesheet"
 href="{{ static_url("css/style.min.css") }}" type="text/css"/>
@@ -34,15 +56,6 @@ jsurls %}
 {% endfor %} {% endblock stylesheet %}
 
 <!-- {# requires jupyerhub > 0.9.4 https://github.com/jupyterhub/jupyterhub/pull/2296 #}  -->
-{% block logo %}
-<span id="jupyterhub-logo" class="pull-left">
-  <!-- ignore: H006 since we inherit from Hub -->
-  <a href="{{logo_url or base_url}}"
-    ><img
-      src="{{ logo }}"
-      alt="JupyterHub logo - Nebari Home"
-      class="jpy-logo"
-      title="Home"
-  /></a>
-</span>
-{% endblock logo%}
+{% block title %}{{ hub_title or 'JupyterHub'}}{% endblock %} {% block favicon
+%} <link rel="icon" href="{{ favicon or static_url("favicon.ico") }}"
+type="image/x-icon" /> {% endblock %}

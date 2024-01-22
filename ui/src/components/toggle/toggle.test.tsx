@@ -17,6 +17,16 @@ describe('Toggle', () => {
     expect(label).toBeInTheDocument();
   });
 
+  test('renders a toggle with aria-label', () => {
+    const { baseElement } = render(
+      <Toggle id="label-toggle" ariaLabel="label" />,
+    );
+    const label = baseElement.querySelector('label');
+
+    expect(label).toBeInTheDocument();
+    expect(label).toHaveAttribute('aria-label', 'label');
+  });
+
   test('fires event callback when changed', async () => {
     const { baseElement } = render(<Toggle id="clickable-toggle" />);
     const input = baseElement.querySelector('input') as HTMLInputElement;
