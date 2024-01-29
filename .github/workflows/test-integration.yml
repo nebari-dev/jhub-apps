@@ -71,5 +71,5 @@ jobs:
       if: matrix.test_type == 'tests_e2e'
       uses: actions/upload-artifact@v4.3.0
       with:
-        name: playwright-videos
+        name: {{ matrix.os }}-playwright-videos
         path: jhub_apps/test-results
