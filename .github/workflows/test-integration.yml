@@ -37,6 +37,9 @@ jobs:
       run: |
         pip install .
 
+    - name: Install chp
+      run: npm install -g configurable-http-proxy
+
     - name: Start JupyterHub
       if: matrix.test_type == 'tests_e2e'
       run: |
