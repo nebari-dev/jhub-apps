@@ -40,3 +40,7 @@ jobs:
     - name: Run Tests
       run: |
         pytest jhub_apps/${{ matrix.test_type }} -vvv -s
+
+    - name: Debugging with tmate
+      uses: mxschmitt/action-tmate@v3.17
+    
