@@ -1,0 +1,55 @@
+name: Test
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash -el {0}
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version:
+          - "3.9"
+        test_type:
+          - tests_e2e
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Setup Python
+      uses: mamba-org/setup-micromamba@v1.4.3
+      with:
+        python-version: ${{ matrix.python-version }}
+        environment-file: environment-dev.yml
+        create-args: >-
+          python=${{ matrix.python-version }}
+          numpy
+          -c conda-forge
+
+    - name: Install JHub Apps
+      run: |
+        pip install .
+
+    - name: Start JupyterHub
+      if: matrix.test_type == 'tests_e2e'
+      run: |
+        jupyterhub -f jupyterhub_config.py &
+        # Give it some to time to start properly
+        sleep 5
+
+    - name: Install Playwright
+      if: matrix.test_type == 'tests_e2e'
+      run: |
+        pip install pytest-playwright
+
+    - name: Install Playwright Browser
+      if: matrix.test_type == 'tests_e2e'
+      run: |
+        playwright install
+    - name: Run Tests
+      run: |
+        pytest jhub_apps/${{ matrix.test_type }} -vvv -s
