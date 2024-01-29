@@ -65,7 +65,7 @@ jobs:
         playwright install
     - name: Run Tests
       run: |
-        pytest --browser chromium --video on jhub_apps/${{ matrix.test_type }} -vvv
+        pytest --browser chromium --headless --video on jhub_apps/${{ matrix.test_type }} -vvv
 
     - name: Upload Playwright Videos
       if: matrix.test_type == 'tests_e2e'
