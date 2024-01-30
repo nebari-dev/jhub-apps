@@ -65,11 +65,11 @@ jobs:
         playwright install
     - name: Run Tests
       run: |
-        xvfb-run pytest --browser chromium --video on jhub_apps/${{ matrix.test_type }} -vvv
+        pytest jhub_apps/${{ matrix.test_type }} -vvv
 
     - name: Upload Playwright Videos
       if: matrix.test_type == 'tests_e2e'
       uses: actions/upload-artifact@v4.3.0
       with:
         name: ${{ matrix.os }}-playwright-videos
-        path: jhub_apps/test-results
+        path: videos

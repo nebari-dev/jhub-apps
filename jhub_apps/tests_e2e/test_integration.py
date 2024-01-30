@@ -1,20 +1,27 @@
 import re
 import time
 
-from playwright.sync_api import Page, Playwright, expect
+from playwright.sync_api import Playwright, expect
 
 BASE_URL = "http://127.0.0.1:8000"
 
 
-def test_jupyterhub_loading(page: Page):
+def get_page(playwright: Playwright):
+    browser = playwright.chromium.launch(headless=True)
+    context = browser.new_context(record_video_dir="videos/")
+    page = context.new_page()
+    return browser, context, page
+
+
+def test_jupyterhub_loading(playwright: Playwright):
+    browser, context, page = get_page(playwright)
     page.goto(BASE_URL)
     expect(page).to_have_title(re.compile("Welcome to Nebari"))
+    context.close()
 
 
 def test_panel_app_creation(playwright: Playwright) -> None:
-    browser = playwright.chromium.launch(headless=False)
-    context = browser.new_context()
-    page = context.new_page()
+    browser, context, page = get_page(playwright)
     page.goto(BASE_URL)
     print("Signing in")
     page.get_by_label("Username:").click()
