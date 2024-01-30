@@ -68,7 +68,7 @@ jobs:
         pytest jhub_apps/${{ matrix.test_type }} -vvv
 
     - name: Upload Playwright Videos
-      if: matrix.test_type == 'tests_e2e'
+      if: matrix.test_type == 'tests_e2e' && always()
       uses: actions/upload-artifact@v4.3.0
       with:
         name: ${{ matrix.os }}-playwright-videos
