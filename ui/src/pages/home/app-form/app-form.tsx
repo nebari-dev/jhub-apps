@@ -143,7 +143,7 @@ export const AppForm = ({
     if (id) {
       updateQuery(payload, {
         onSuccess: async () => {
-          queryClient.invalidateQueries(['app-state']);
+          queryClient.invalidateQueries({ queryKey: ['app-state'] });
           if (onSubmit) {
             onSubmit();
           }

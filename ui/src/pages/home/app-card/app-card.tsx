@@ -80,7 +80,7 @@ export const AppCard = ({
         onSuccess: async () => {
           setSubmitting(false);
           setIsDeleteOpen(false);
-          queryClient.invalidateQueries(['app-state']);
+          queryClient.invalidateQueries({ queryKey: ['app-state'] });
         },
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         onError: async (error: any) => {
@@ -99,7 +99,7 @@ export const AppCard = ({
         onSuccess: async () => {
           setSubmitting(false);
           setIsStartOpen(false);
-          queryClient.invalidateQueries(['app-state']);
+          queryClient.invalidateQueries({ queryKey: ['app-state'] });
         },
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         onError: async (error: any) => {
@@ -118,7 +118,7 @@ export const AppCard = ({
         onSuccess: async () => {
           setSubmitting(false);
           setIsStopOpen(false);
-          queryClient.invalidateQueries(['app-state']);
+          queryClient.invalidateQueries({ queryKey: ['app-state'] });
         },
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         onError: async (error: any) => {
