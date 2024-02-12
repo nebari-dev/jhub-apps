@@ -1,0 +1,23 @@
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/ui"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 10
+    labels:
+      - "dependencies"
+    ignore:
+      - dependency-name: react
+        versions:
+          - ">=18.2.0"
+      - dependency-name: react-dom
+        versions:
+          - ">=18.2.0"
+      - dependency-name: "@types/react"
+        versions:
+          - ">=18.2.0"
+      - dependency-name: "@types/react-dom"
+        versions:
+          - ">=18.2.0"
+      - dependency-name: "@tanstack/react-query"
