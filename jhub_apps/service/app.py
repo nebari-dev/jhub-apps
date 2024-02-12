@@ -18,7 +18,7 @@ STATIC_DIR = Path(__file__).parent.parent / "static"
 
 app = FastAPI(
     title="JApps Service",
-    version=get_version(),
+    version=str(get_version()),
     ### Serve out Swagger from the service prefix (<hub>/services/:name/docs)
     openapi_url=router.prefix + "/openapi.json",
     docs_url=router.prefix + "/docs",
