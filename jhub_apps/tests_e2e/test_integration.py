@@ -12,11 +12,10 @@ logger = structlog.get_logger(__name__)
 
 
 def get_page(playwright: Playwright):
-    browser = playwright.chromium.launch(headless=True)
+    browser = playwright.chromium.launch(headless=False)
     context = browser.new_context(
         record_video_dir="videos/",
         record_video_size={"width": 1920, "height": 1080},
-        device_scale_factor=2,
         viewport={"width": 1920, "height": 1080},
         ignore_https_errors=True
     )
@@ -38,6 +37,7 @@ def test_panel_app_creation(playwright: Playwright) -> None:
     # for searching app with unique name in the UI
     app_name = f"{framework} app {app_suffix}"
     app_page_title = "Panel Test App"
+    wait_for_element_in_app = 'div.bk-slider-title >> text=Slider:'
     try:
         page.goto(BASE_URL)
         logger.info("Signing in")
@@ -57,18 +57,10 @@ def test_panel_app_creation(playwright: Playwright) -> None:
         page.get_by_label("Framework *").select_option(framework)
         logger.info("Click Submit")
         page.get_by_role("button", name="Submit").click()
-        page.wait_for_timeout(5)
-        # time.sleep(5)
-        logger.info("Checking out the created panel app")
-        page.goto(BASE_URL)
-        logger.info("Clicking on the panel app")
-        page.get_by_role("link", name=app_name).click()
+        slider_text_element = page.wait_for_selector(wait_for_element_in_app)
+        assert slider_text_element is not None, "Slider text element not found!"
         logger.info("Checking page title")
         expect(page).to_have_title(re.compile(app_page_title))
-        # sleep for some time to make sure we capture enough visual screen
-        # data for debugging on failure.
-        page.wait_for_timeout(5)
-        # ---------------------
     except Exception as e:
         # So that we save the video, before we exit
         context.close()
