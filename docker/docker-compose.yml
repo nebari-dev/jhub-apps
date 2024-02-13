@@ -11,6 +11,7 @@ services:
       dockerfile: Dockerfile.jupyterhub
       args:
         JUPYTERHUB_VERSION: latest
+        COMMIT_HASH: ${COMMIT_HASH}
     restart: always
     image: jupyterhub
     container_name: jupyterhub
