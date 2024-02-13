@@ -11,7 +11,7 @@ logger = structlog.get_logger(__name__)
 
 
 def get_page(playwright: Playwright):
-    browser = playwright.chromium.launch(headless=False)
+    browser = playwright.chromium.launch(headless=True)
     context = browser.new_context(
         record_video_dir="videos/",
         record_video_size={"width": 1920, "height": 1080},
