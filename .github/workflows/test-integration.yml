@@ -67,6 +67,13 @@ jobs:
         name: ${{ matrix.os }}-playwright-videos
         path: videos
 
+    - name: Upload JupyterHub logs
+      if: matrix.test_type == 'tests_e2e' && always()
+      uses: actions/upload-artifact@v4.3.0
+      with:
+        name: ${{ matrix.os }}-jupyterhub-logs
+        path: jupyterhub-logs.txt
+
     - name: JupyterHub logs
       if: always()
       run: cat jupyterhub-logs.txt
