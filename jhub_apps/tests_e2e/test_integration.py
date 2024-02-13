@@ -15,6 +15,10 @@ def get_page(playwright: Playwright):
     browser = playwright.chromium.launch(headless=True)
     context = browser.new_context(
         record_video_dir="videos/",
+        record_video_size={"width": 1920, "height": 1080},
+        device_scale_factor=2,
+        viewport={"width": 1920, "height": 1080},
+        ignore_https_errors=True
     )
     page = context.new_page()
     return browser, context, page
@@ -53,7 +57,8 @@ def test_panel_app_creation(playwright: Playwright) -> None:
         page.get_by_label("Framework *").select_option(framework)
         logger.info("Click Submit")
         page.get_by_role("button", name="Submit").click()
-        time.sleep(5)
+        page.wait_for_timeout(5)
+        # time.sleep(5)
         logger.info("Checking out the created panel app")
         page.goto(BASE_URL)
         logger.info("Clicking on the panel app")
@@ -62,7 +67,7 @@ def test_panel_app_creation(playwright: Playwright) -> None:
         expect(page).to_have_title(re.compile(app_page_title))
         # sleep for some time to make sure we capture enough visual screen
         # data for debugging on failure.
-        time.sleep(2)
+        page.wait_for_timeout(5)
         # ---------------------
     except Exception as e:
         # So that we save the video, before we exit
