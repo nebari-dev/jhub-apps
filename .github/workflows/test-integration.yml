@@ -40,17 +40,12 @@ jobs:
     - name: Start JupyterHub on Ubuntu
       if: matrix.test_type == 'tests_e2e' &&  matrix.os == 'ubuntu-latest'
       run: |
-        jupyterhub -f jupyterhub_config.py > jupyterhub-logs.txt 2>&1 &
+        nohup jupyterhub -f jupyterhub_config.py > jupyterhub-logs.txt 2>&1 &
         # Give it some to time to start properly
-        sleep 5
+        sleep 10
         cat jupyterhub-logs.txt
-
-    - name: Start JupyterHub on Windows
-      if: matrix.test_type == 'tests_e2e' &&  matrix.os == 'windows-latest'
-      run: |
-        start jupyterhub -f jupyterhub_config.py
-        # Give it some to time to start properly
-        sleep 5
+        curl http://127.0.0.1:8000/services/japps/
+        cat jupyterhub-logs.txt
 
     - name: Install Playwright
       if: matrix.test_type == 'tests_e2e'
