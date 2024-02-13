@@ -40,7 +40,7 @@ jobs:
     - name: Start JupyterHub on Ubuntu
       if: matrix.test_type == 'tests_e2e' &&  matrix.os == 'ubuntu-latest'
       run: |
-        jupyterhub -f jupyterhub_config.py > jupyterhub-logs.txt &
+        jupyterhub -f jupyterhub_config.py > jupyterhub-logs.txt 2>&1 &
         # Give it some to time to start properly
         sleep 5
         cat jupyterhub-logs.txt
