@@ -23,12 +23,12 @@ jobs:
     - uses: actions/checkout@v4.1.1
 
     - name: Setup Python
-        uses: mamba-org/setup-micromamba@v1.8.0
-        with:
-          environment-file: environment-dev.yml
-          create-args: >-
-            python=${{ matrix.python-version }}
-            -c conda-forge
+      uses: mamba-org/setup-micromamba@v1.8.0
+      with:
+        environment-file: environment-dev.yml
+        create-args: >-
+          python=${{ matrix.python-version }}
+          -c conda-forge
 
     - name: Install JHub Apps
       run: |
@@ -75,3 +75,7 @@ jobs:
     - name: JupyterHub logs
       if: always()
       run: cat jupyterhub-logs.txt
+
+    - name: Debugging with tmate
+      if: always()
+      uses: mxschmitt/action-tmate@v3.17
