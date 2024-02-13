@@ -10,7 +10,6 @@ def get_page(playwright: Playwright):
     browser = playwright.chromium.launch(headless=True)
     context = browser.new_context(
         record_video_dir="videos/",
-        record_video_size={"width": 1920, "height": 1080}
     )
     page = context.new_page()
     return browser, context, page
