@@ -58,6 +58,8 @@ class UserOptions(BaseModel):
     framework: str = "panel"
     custom_command: typing.Optional[str] = str()
     conda_env: typing.Optional[str] = str()
+    # Environment variables
+    env: typing.Optional[str] = dict()
     profile: typing.Optional[str] = str()
     # Make app available to public (unauthenticated Hub users)
     public: typing.Optional[bool] = False
