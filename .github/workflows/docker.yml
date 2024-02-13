@@ -23,6 +23,6 @@ jobs:
 
     - name: Build JHub Image
       run: |
-        docker build -t jhub -f Dockerfile.jhub .
+        docker build --build-arg="COMMIT_HASH=${{ github.sha }}"  -t jhub -f Dockerfile.jhub .
         sleep 5
       working-directory: docker

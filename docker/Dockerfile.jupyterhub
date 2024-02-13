@@ -1,6 +1,7 @@
 # Copyright (c) Jupyter Development Team.
 # Distributed under the terms of the Modified BSD License.
 ARG JUPYTERHUB_VERSION
+ARG COMMIT_HASH
 FROM jupyterhub/jupyterhub:$JUPYTERHUB_VERSION
 
 # Install dockerspawner, nativeauthenticator
@@ -28,6 +29,6 @@ RUN python3 -m pip install --no-cache-dir \
     gradio
 
 RUN python3 -m pip install --no-cache-dir \
-        git+https://github.com/nebari-dev/jhub-apps.git@9fd9d10b96f4c43f279b334ec18e6a9cb284326b
+        git+https://github.com/nebari-dev/jhub-apps.git@${COMMIT_HASH}
 
 CMD ["jupyterhub", "-f", "/srv/jupyterhub/jupyterhub_config.py"]

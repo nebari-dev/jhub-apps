@@ -1,5 +1,5 @@
+ARG COMMIT_HASH
 FROM python:3.8
-
 USER root
 RUN apt update && apt install git gcc musl-dev python3-dev -y
 
@@ -31,5 +31,5 @@ RUN python3 -m pip install --no-cache-dir \
     gradio
 
 RUN python3 -m pip install --no-cache-dir \
-        git+https://github.com/nebari-dev/jhub-apps.git@9fd9d10b96f4c43f279b334ec18e6a9cb284326b
+        git+https://github.com/nebari-dev/jhub-apps.git@$COMMIT_HASH
 CMD ["jupyterhub-singleuser"]
