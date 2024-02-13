@@ -53,7 +53,7 @@ def test_panel_app_creation(playwright: Playwright) -> None:
         page.get_by_label("Framework *").select_option(framework)
         logger.info("Click Submit")
         page.get_by_role("button", name="Submit").click()
-        time.sleep(2)
+        time.sleep(5)
         logger.info("Checking out the created panel app")
         page.goto(BASE_URL)
         logger.info("Clicking on the panel app")
