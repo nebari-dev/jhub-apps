@@ -4,11 +4,13 @@ import pytest
 
 from fastapi.testclient import TestClient
 
+from jhub_apps.service.logging_utils import setup_logging
 from jhub_apps.tests.constants import MOCK_USER
 
 
 @pytest.fixture
 def client():
+    setup_logging()
     os.environ["JUPYTERHUB_API_URL"] = "/"
     os.environ["JUPYTERHUB_API_TOKEN"] = "token"
     os.environ["PUBLIC_HOST"] = "/"
