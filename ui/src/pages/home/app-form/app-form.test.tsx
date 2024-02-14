@@ -30,6 +30,46 @@ describe('AppForm', () => {
     expect(baseElement.querySelector('div')).toBeTruthy();
   });
 
+  // test('simulates creating a standard app', async () => {
+  //   mock.onGet(new RegExp('/frameworks')).reply(200, frameworks);
+  //   mock.onPost(new RegExp('/server')).reply(200);
+  //   queryClient.setQueryData(['app-frameworks'], frameworks);
+  //   queryClient.setQueryData(['app-environments'], null);
+  //   queryClient.setQueryData(['app-profiles'], null);
+  //   const { baseElement } = render(
+  //     <RecoilRoot>
+  //       <QueryClientProvider client={queryClient}>
+  //         <AppForm />
+  //       </QueryClientProvider>
+  //     </RecoilRoot>,
+  //   );
+
+  //   const displayNameField = baseElement.querySelector(
+  //     '#display_name',
+  //   ) as HTMLInputElement;
+  //   const frameworkField = baseElement.querySelector(
+  //     '#framework',
+  //   ) as HTMLSelectElement;
+  //   const envVariableField = baseElement.querySelector(
+  //     '#env',
+  //   ) as HTMLInputElement;
+  //   if (displayNameField && frameworkField && envVariableField) {
+  //     // Attempt submitting without filling in required fields
+  //     const btn = baseElement.querySelector('#submit-btn') as HTMLButtonElement;
+  //     await act(async () => {
+  //       btn.click();
+  //     });
+
+  //     await userEvent.type(displayNameField, 'App 1');
+  //     fireEvent.change(frameworkField, { target: { value: 'panel' } });
+  //     await userEvent.type(envVariableField, 'ENV_VAR=VALUE');
+
+  //     // Submit with all required fields filled in
+  //     await act(async () => {
+  //       btn.click();
+  //     });
+  //   }
+  // });
   test('simulates creating a standard app', async () => {
     mock.onGet(new RegExp('/frameworks')).reply(200, frameworks);
     mock.onPost(new RegExp('/server')).reply(200);
@@ -50,7 +90,10 @@ describe('AppForm', () => {
     const frameworkField = baseElement.querySelector(
       '#framework',
     ) as HTMLSelectElement;
-    if (displayNameField && frameworkField) {
+    const envVariableField = baseElement.querySelector(
+      '#env',
+    ) as HTMLInputElement;
+    if (displayNameField && frameworkField && envVariableField) {
       // Attempt submitting without filling in required fields
       const btn = baseElement.querySelector('#submit-btn') as HTMLButtonElement;
       await act(async () => {
@@ -59,6 +102,10 @@ describe('AppForm', () => {
 
       await userEvent.type(displayNameField, 'App 1');
       fireEvent.change(frameworkField, { target: { value: 'panel' } });
+
+      // prettier-ignore
+      const envJson = JSON.stringify({ "KEY": "VALUE", "KEY-1": "Value-1" });
+      fireEvent.change(envVariableField, { target: { value: envJson } });
 
       // Submit with all required fields filled in
       await act(async () => {
