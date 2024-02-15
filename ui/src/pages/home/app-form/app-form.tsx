@@ -135,7 +135,7 @@ export const AppForm = ({
         thumbnail: thumbnail || '',
         filepath: filepath || '',
         conda_env: conda_env || '',
-        env: env ? JSON.parse(env) : '',
+        env: env ? JSON.parse(env) : null,
         custom_command: custom_command || '',
         profile: profile || '',
         public: isPublic,
