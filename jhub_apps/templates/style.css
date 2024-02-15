@@ -88,7 +88,11 @@ h6 {
 .container {
     padding-left: 20px;
     padding-right: 20px;
-    width: 100%;
+    width: 100%; 
+}
+
+.feedback-container {
+    margin-bottom: 40px;
 }
 
 label {
