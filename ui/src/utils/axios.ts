@@ -18,12 +18,24 @@ instance.interceptors.response.use(
   (response) => {
     const env = process.env.NODE_ENV;
     // If development, mock api calls
-    if (env === 'development' && response.config.method === 'get') {
+    if (
+      env === 'development' &&
+      response.config.method === 'get' &&
+      response.config.url
+    ) {
       const url = response.config.url;
-      if (url === '/services/') {
-        response.data = services;
-      } else if (url === '/server/') {
-        response.data = serverApps;
+      // url data maps for basic endpoints
+      const urlPathResponseDataMap = {
+        '/services/': services,
+        '/server/': serverApps,
+        '/frameworks/': frameworks,
+        '/conda-environments/': environments,
+        '/spawner-profiles/': profiles,
+      } as any; //eslint-disable-line
+
+      const data = urlPathResponseDataMap[url];
+      if (data) {
+        response.data = data;
       } else if (url?.match(/^\/server\/.*$/)) {
         const serverApp = serverApps.user_apps.find(
           (app) => app.name === url.split('/')[2],
@@ -31,12 +43,6 @@ instance.interceptors.response.use(
         if (serverApp) {
           response.data = serverApp;
         }
-      } else if (url === '/frameworks/') {
-        response.data = frameworks;
-      } else if (url === '/conda-environments/') {
-        response.data = environments;
-      } else if (url === '/spawner-profiles/') {
-        response.data = profiles;
       }
     }
 
