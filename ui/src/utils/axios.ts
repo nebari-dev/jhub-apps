@@ -18,25 +18,24 @@ instance.interceptors.response.use(
   (response) => {
     const env = process.env.NODE_ENV;
     // If development, mock api calls
-    if (env === 'development') {
-      const method = response.config.method;
+    if (env === 'development' && response.config.method === 'get') {
       const url = response.config.url;
-      if (method === 'get' && url === '/services/') {
+      if (url === '/services/') {
         response.data = services;
-      } else if (method === 'get' && url === '/server/') {
+      } else if (url === '/server/') {
         response.data = serverApps;
-      } else if (method === 'get' && url?.match(/^\/server\/.*$/)) {
+      } else if (url?.match(/^\/server\/.*$/)) {
         const serverApp = serverApps.user_apps.find(
           (app) => app.name === url.split('/')[2],
         );
         if (serverApp) {
           response.data = serverApp;
         }
-      } else if (method === 'get' && url === '/frameworks/') {
+      } else if (url === '/frameworks/') {
         response.data = frameworks;
-      } else if (method === 'get' && url === '/conda-environments/') {
+      } else if (url === '/conda-environments/') {
         response.data = environments;
-      } else if (method === 'get' && url === '/spawner-profiles/') {
+      } else if (url === '/spawner-profiles/') {
         response.data = profiles;
       }
     }
