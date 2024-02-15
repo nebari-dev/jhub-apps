@@ -15,16 +15,14 @@ jobs:
         shell: bash -el {0}
     steps:
       - name: Checkout
-        uses: actions/checkout@v2.5.0
+        uses: actions/checkout@v4.1.1
 
       - name: Setup Python
-        uses: mamba-org/setup-micromamba@v1.4.3
+        uses: mamba-org/setup-micromamba@v1.8.0
         with:
-          python-version: ${{ matrix.python-version }}
           environment-file: environment-dev.yml
           create-args: >-
             python=${{ matrix.python-version }}
-            numpy
             -c conda-forge
 
       - name: Install Hatch

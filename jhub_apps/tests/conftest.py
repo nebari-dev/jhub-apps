@@ -1,3 +1,4 @@
+import logging
 import os
 
 import pytest
@@ -9,6 +10,12 @@ from jhub_apps.tests.constants import MOCK_USER
 
 @pytest.fixture
 def client():
+    logging_format = (
+        "%(asctime)s %(levelname)9s %(name)s:%(lineno)4s: %(message)s"
+    )
+    logging.basicConfig(
+        level=logging.INFO, format=logging_format
+    )
     os.environ["JUPYTERHUB_API_URL"] = "/"
     os.environ["JUPYTERHUB_API_TOKEN"] = "token"
     os.environ["PUBLIC_HOST"] = "/"

@@ -18,16 +18,14 @@ jobs:
         test_type:
           - tests
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4.1.1
 
     - name: Setup Python
-      uses: mamba-org/setup-micromamba@v1.4.3
+      uses: mamba-org/setup-micromamba@v1.8.0
       with:
-        python-version: ${{ matrix.python-version }}
         environment-file: environment-dev.yml
         create-args: >-
           python=${{ matrix.python-version }}
-          numpy
           -c conda-forge
 
     - name: Install JHub Apps
