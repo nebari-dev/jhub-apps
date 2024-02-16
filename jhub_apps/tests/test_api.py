@@ -20,6 +20,10 @@ def mock_user_options():
         "framework": "panel",
         "custom_command": "",
         "conda_env": "",
+        "env": {
+            "ENV_VAR_KEY_1": "ENV_VAR_KEY_1",
+            "ENV_VAR_KEY_2": "ENV_VAR_KEY_2",
+        },
         "profile": "",
         "public": False
     }
@@ -156,3 +160,12 @@ def test_api_status(client):
     rjson = response.json()
     assert rjson["status"] == "ok"
     assert "version" in rjson
+
+
+def test_open_api_docs(client):
+    response = client.get(
+        "/openapi.json",
+    )
+    assert response.status_code == 200
+    rjson = response.json()
+    assert rjson['info']['version']
