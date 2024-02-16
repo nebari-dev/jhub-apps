@@ -20,6 +20,10 @@ def mock_user_options():
         "framework": "panel",
         "custom_command": "",
         "conda_env": "",
+        "env": {
+            "ENV_VAR_KEY_1": "ENV_VAR_KEY_1",
+            "ENV_VAR_KEY_2": "ENV_VAR_KEY_2",
+        },
         "profile": "",
         "public": False
     }

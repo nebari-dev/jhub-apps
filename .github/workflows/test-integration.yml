@@ -1,0 +1,79 @@
+name: Test Integration
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash -el {0}
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version:
+          - "3.9"
+        test_type:
+          - tests_e2e
+        os:
+          - ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4.1.1
+
+    - name: Setup Python
+      uses: mamba-org/setup-micromamba@v1.8.0
+      with:
+        environment-file: environment-dev.yml
+        create-args: >-
+          python=${{ matrix.python-version }}
+          -c conda-forge
+
+    - name: Install JHub Apps
+      run: |
+        pip install .
+
+    - name: Install chp
+      run: npm install -g configurable-http-proxy
+
+    - name: Start JupyterHub on Ubuntu
+      if: matrix.test_type == 'tests_e2e' &&  matrix.os == 'ubuntu-latest'
+      run: |
+        nohup jupyterhub -f jupyterhub_config.py > jupyterhub-logs.txt 2>&1 &
+        # Give it some to time to start properly
+        sleep 10
+        cat jupyterhub-logs.txt
+        curl http://127.0.0.1:8000/services/japps/
+        cat jupyterhub-logs.txt
+
+    - name: Install Playwright
+      if: matrix.test_type == 'tests_e2e'
+      run: |
+        pip install pytest-playwright
+
+    - name: Install Playwright Browser
+      if: matrix.test_type == 'tests_e2e'
+      run: |
+        playwright install
+    - name: Run Tests
+      run: |
+        pytest jhub_apps/${{ matrix.test_type }} -vvv
+
+    - name: Upload Playwright Videos
+      if: matrix.test_type == 'tests_e2e' && always()
+      uses: actions/upload-artifact@v4.3.0
+      with:
+        name: ${{ matrix.os }}-playwright-videos
+        path: videos
+
+    - name: Upload JupyterHub logs
+      if: matrix.test_type == 'tests_e2e' && always()
+      uses: actions/upload-artifact@v4.3.0
+      with:
+        name: ${{ matrix.os }}-jupyterhub-logs
+        path: jupyterhub-logs.txt
+
+    - name: JupyterHub logs
+      if: always()
+      run: cat jupyterhub-logs.txt

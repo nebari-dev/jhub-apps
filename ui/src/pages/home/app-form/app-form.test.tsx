@@ -50,7 +50,10 @@ describe('AppForm', () => {
     const frameworkField = baseElement.querySelector(
       '#framework',
     ) as HTMLSelectElement;
-    if (displayNameField && frameworkField) {
+    const envVariableField = baseElement.querySelector(
+      '#env',
+    ) as HTMLInputElement;
+    if (displayNameField && frameworkField && envVariableField) {
       // Attempt submitting without filling in required fields
       const btn = baseElement.querySelector('#submit-btn') as HTMLButtonElement;
       await act(async () => {
@@ -59,6 +62,10 @@ describe('AppForm', () => {
 
       await userEvent.type(displayNameField, 'App 1');
       fireEvent.change(frameworkField, { target: { value: 'panel' } });
+
+      // prettier-ignore
+      const envJson = JSON.stringify({ "KEY": "VALUE", "KEY-1": "Value-1" });
+      fireEvent.change(envVariableField, { target: { value: envJson } });
 
       // Submit with all required fields filled in
       await act(async () => {

@@ -105,6 +105,7 @@ export const AppForm = ({
       thumbnail: '',
       filepath: '',
       conda_env: '',
+      env: '',
       custom_command: '',
       profile: '',
       is_public: false,
@@ -119,6 +120,7 @@ export const AppForm = ({
     thumbnail,
     filepath,
     conda_env,
+    env,
     custom_command,
     profile,
   }) => {
@@ -133,6 +135,7 @@ export const AppForm = ({
         thumbnail: thumbnail || '',
         filepath: filepath || '',
         conda_env: conda_env || '',
+        env: env ? JSON.parse(env) : null,
         custom_command: custom_command || '',
         profile: profile || '',
         public: isPublic,
@@ -371,6 +374,29 @@ export const AppForm = ({
       ) : (
         <></>
       )}
+      {/* Environment Variables */}
+      <FormGroup
+        errors={errors.env?.message ? [errors.env.message] : undefined}
+      >
+        <Label htmlFor="env">Environment Variables</Label>
+        <Controller
+          name="env"
+          control={control}
+          // rules={REQUIRED_FORM_FIELDS_RULES}
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          render={({ field: { ref: _, ...field } }) => (
+            <TextInput
+              {...field}
+              id="env"
+              type="text"
+              placeholder={`Enter valid json: {"KEY_1":"VALUE_1","KEY_2":"VALUE_2"}`}
+            />
+          )}
+        />
+        {errors.env?.message && <ErrorMessages errors={[errors.env.message]} />}
+      </FormGroup>
+
+      {/* // environement variables */}
       {profiles && profiles.length > 0 ? (
         <FormGroup
           errors={
