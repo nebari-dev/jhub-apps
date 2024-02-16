@@ -62,9 +62,9 @@ export const serverApps = {
         display_name: 'Test App',
         description:
           'Lorem ipsum dolor sit amet consectetur. Sit vestibulum facilisis auctor pulvinar ac. Cras.',
-        imgUrl:
+        thumbnail:
           'https://designsystem.digital.gov/img/introducing-uswds-2-0/built-to-grow--alt.jpg',
-        framework: 'Panel',
+        framework: 'panel',
         public: true,
       },
     },
@@ -78,7 +78,7 @@ export const serverApps = {
         display_name: 'Test App 2',
         description:
           'Lorem ipsum dolor sit amet consectetur. Sit vestibulum facilisis auctor pulvinar ac. Bras.',
-        imgUrl:
+        thumbnail:
           'https://designsystem.digital.gov/img/introducing-uswds-2-0/built-to-grow--alt.jpg',
         framework: 'Streamlit',
         public: false,
@@ -94,7 +94,7 @@ export const serverApps = {
         display_name: 'Test App 3',
         description:
           'Lorem ipsum dolor sit amet consectetur. Sit vestibulum facilisis auctor pulvinar ac. Dras.',
-        imgUrl: null,
+        thumbnail: null,
         framework: 'JupyterLab',
         public: false,
       },
@@ -108,7 +108,7 @@ export const serverApps = {
         jhub_app: true,
         display_name: 'Test App 4',
         description: 'Cras.',
-        imgUrl: null,
+        thumbnail: null,
         framework: 'Streamlit',
         public: false,
       },
@@ -125,7 +125,7 @@ export const serverApps = {
         display_name: 'Shared App',
         description:
           'Lorem ipsum dolor sit amet consectetur. Sit vestibulum facilisis auctor pulvinar ac. Cras.',
-        imgUrl:
+        thumbnail:
           'https://designsystem.digital.gov/img/introducing-uswds-2-0/built-to-grow--alt.jpg',
         framework: 'Panel',
         public: false,
@@ -133,6 +133,41 @@ export const serverApps = {
       },
     },
   ],
+};
+
+export const services = {
+  Argo: {
+    display: true,
+    info: {
+      name: 'Argo Workflows',
+      url: '/hub/argo',
+      external: true,
+    },
+  },
+  Users: {
+    display: true,
+    info: {
+      name: 'User Management',
+      url: '/auth/admin/nebari/console/',
+      external: true,
+    },
+  },
+  Environments: {
+    display: true,
+    info: {
+      name: 'Environments',
+      url: '/hub/conda-store',
+      external: true,
+    },
+  },
+  Monitoring: {
+    display: true,
+    info: {
+      name: 'Monitoring',
+      url: '/hub/monitoring',
+      external: true,
+    },
+  },
 };
 
 export const userState: UserState = {
