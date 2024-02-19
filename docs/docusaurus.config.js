@@ -9,7 +9,7 @@ import {themes as prismThemes} from 'prism-react-renderer';
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: 'JHub Apps',
-  tagline: 'JupyterHub Apps',
+  tagline: 'JupyterHub Apps Launcher, a generalized server launcher.',
   favicon: 'img/favicon.ico',
 
   // Set the production url of your site here
