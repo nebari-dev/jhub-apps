@@ -207,7 +207,7 @@ export const AppForm = ({
     if (currentFile) {
       formData.append('thumbnail', currentFile as Blob);
     } else if (currentImage) {
-      formData.append('thumbnail', currentImage);
+      formData.append('thumbnail_data_url', currentImage);
     }
 
     const response = await axios.put(`/server/${servername}`, formData, {

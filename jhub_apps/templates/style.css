@@ -100,7 +100,7 @@ label {
     font-family: var(--base-font-family);
 }
 
-.text-input:focus, .text-area:focus, .select:focus, .card:focus, .card:active, .toggle > label, .file-input {
+.text-input:focus, .text-area:focus, .select:focus, .card:focus, .card:active, .toggle > label, .file-input, .thumbnail-icon-container {
     outline-color: var(--primary-color) !important;
 }
 
