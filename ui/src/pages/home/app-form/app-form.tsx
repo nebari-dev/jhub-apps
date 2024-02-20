@@ -1,3 +1,4 @@
+import { Button } from '@mui/material';
 import {
   AppFrameworkProps,
   AppProfileProps,
@@ -13,7 +14,6 @@ import { useEffect, useState } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { useRecoilState } from 'recoil';
 import {
-  Button,
   ButtonGroup,
   ErrorMessages,
   FileInput,
@@ -482,7 +482,8 @@ export const AppForm = ({
         <Button
           id="cancel-btn"
           type="button"
-          variant="secondary"
+          variant="outlined"
+          color="secondary"
           onClick={onCancel}
         >
           Cancel
@@ -490,6 +491,8 @@ export const AppForm = ({
         <Button
           id="submit-btn"
           type="submit"
+          variant="contained"
+          color="primary"
           disabled={
             submitting ||
             frameworksLoading ||

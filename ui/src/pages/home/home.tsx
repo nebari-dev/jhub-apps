@@ -1,4 +1,5 @@
-import { Alert, Button, Modal, TextInput } from '@src/components';
+import { Button } from '@mui/material';
+import { Alert, Modal, TextInput } from '@src/components';
 import React, { SyntheticEvent, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { currentNotification } from '../../store';
@@ -37,6 +38,8 @@ export const Home = (): React.ReactElement => {
         <div className="md:col-span-2 col-span-4 flex justify-end">
           <Button
             id="create-app"
+            variant="contained"
+            color="primary"
             onClick={() => {
               setIsOpen(true);
             }}
