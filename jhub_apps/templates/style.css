@@ -33,6 +33,7 @@
     --light-text-color: #f1f1f6;
     --danger-color: #e60f66;
     --danger-color-dark: #b81a53;
+    --gray-color: #e6e6e6;
 
     /* Miscellaneous */
     --button-hover-shadow: 0 3px 0 var(--text-color);
@@ -163,6 +164,12 @@ a:focus {
 
 .btn-primary:focus {
     outline-color: var(--primary-color) !important;
+}
+
+.btn-primary:disabled {
+    color: var(--light-text-color);
+    background-color: var(--gray-color) !important;
+    border-color: var(--gray-color) !important;
 }
 
 .btn-secondary {

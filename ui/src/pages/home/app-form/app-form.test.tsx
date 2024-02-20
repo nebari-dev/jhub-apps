@@ -8,6 +8,11 @@ import { RecoilRoot } from 'recoil';
 import AppForm from './app-form';
 
 describe('AppForm', () => {
+  Object.defineProperty(URL, 'createObjectURL', {
+    writable: true,
+    value: jest.fn(),
+  });
+
   const queryClient = new QueryClient();
   const mock = new MockAdapter(axios);
   beforeAll(() => {
