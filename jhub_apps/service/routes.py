@@ -1,25 +1,42 @@
-import structlog
-import typing
 import dataclasses
 import os
+import typing
 from datetime import timedelta
 
 import requests
-from fastapi import APIRouter, Depends, status, Request, File, UploadFile, Form, HTTPException
+import structlog
+from fastapi import (
+    APIRouter,
+    Depends,
+    FastAPI,
+    File,
+    Form,
+    HTTPException,
+    Request,
+    UploadFile,
+    status,
+)
 from fastapi.encoders import jsonable_encoder
+from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel, ValidationError
 from starlette.responses import RedirectResponse
 
+from jhub_apps.hub_client.hub_client import HubClient
 from jhub_apps.service.auth import create_access_token
 from jhub_apps.service.client import get_client
-from jhub_apps.service.models import AuthorizationError, HubApiError, User, ServerCreation
+from jhub_apps.service.models import (
+    AuthorizationError,
+    HubApiError,
+    ServerCreation,
+    User,
+)
 from jhub_apps.service.security import get_current_user
-
-from fastapi import FastAPI
-from fastapi.templating import Jinja2Templates
-
-from jhub_apps.hub_client.hub_client import HubClient
-from jhub_apps.service.utils import get_conda_envs, get_jupyterhub_config, get_spawner_profiles, get_thumbnail_data_url
+from jhub_apps.service.utils import (
+    get_conda_envs,
+    get_jupyterhub_config,
+    get_spawner_profiles,
+    get_thumbnail_data_url,
+)
 from jhub_apps.spawner.types import FRAMEWORKS
 from jhub_apps.version import get_version
 
@@ -61,7 +78,9 @@ async def get_token(code: str):
         data={"sub": resp.json()}, expires_delta=access_token_expires
     )
     ### resp.json() is {'access_token': <token>, 'token_type': 'Bearer'}
-    response = RedirectResponse(os.environ["PUBLIC_HOST"] + "/hub/home", status_code=302)
+    response = RedirectResponse(
+        os.environ["PUBLIC_HOST"] + "/hub/home", status_code=302
+    )
     response.set_cookie(key="access_token", value=access_token, httponly=True)
     return response
 
@@ -69,19 +88,24 @@ async def get_token(code: str):
 @router.get("/jhub-login", description="Login via OAuth2")
 async def login(request: Request):
     logger.info("Logging in", request=request)
-    authorization_url = os.environ["PUBLIC_HOST"] + "/hub/api/oauth2/authorize?response_type=code&client_id=service-japps"
+    authorization_url = (
+        os.environ["PUBLIC_HOST"]
+        + "/hub/api/oauth2/authorize?response_type=code&client_id=service-japps"
+    )
     return RedirectResponse(authorization_url, status_code=302)
 
 
 def get_all_shared_servers(hub_users, current_hub_user):
     all_servers = []
     for hub_user in hub_users:
-        if hub_user['name'] != current_hub_user['name']:
+        if hub_user["name"] != current_hub_user["name"]:
             hub_user_servers = list(hub_user["servers"].values())
-            hub_user_servers_with_name = [{"username": hub_user['name'], **server} for server in hub_user_servers]
+            hub_user_servers_with_name = [
+                {"username": hub_user["name"], **server} for server in hub_user_servers
+            ]
             all_servers.extend(hub_user_servers_with_name)
     # Filter default servers
-    return list(filter(lambda server: server['name'] != '', all_servers))
+    return list(filter(lambda server: server["name"] != "", all_servers))
 
 
 @router.get("/server/", description="Get all servers")
@@ -92,7 +116,7 @@ async def get_server(user: User = Depends(get_current_user), server_name=None):
     users = hub_client.get_users()
     current_hub_user = None
     for hub_user in users:
-        if hub_user['name'] == user.name:
+        if hub_user["name"] == user.name:
             current_hub_user = hub_user
             break
     if not current_hub_user:
@@ -113,8 +137,10 @@ async def get_server(user: User = Depends(get_current_user), server_name=None):
     else:
         # Get all servers
         return {
-            "shared_apps": get_all_shared_servers(hub_users=users, current_hub_user=current_hub_user),
-            "user_apps": list(user_servers.values())
+            "shared_apps": get_all_shared_servers(
+                hub_users=users, current_hub_user=current_hub_user
+            ),
+            "user_apps": list(user_servers.values()),
         }
 
 
@@ -138,10 +164,9 @@ async def create_server(
     thumbnail: typing.Optional[UploadFile] = File(None),
     user: User = Depends(get_current_user),
 ):
-    logger.info("Creating server", server_name=server.servername,  user=user.name)
+    logger.info("Creating server", server_name=server.servername, user=user.name)
     server.user_options.thumbnail = await get_thumbnail_data_url(
-        framework_name=server.user_options.framework,
-        thumbnail=thumbnail
+        framework_name=server.user_options.framework, thumbnail=thumbnail
     )
     hub_client = HubClient()
     return hub_client.create_server(
@@ -154,11 +179,11 @@ async def create_server(
 @router.post("/server/")
 @router.post("/server/{server_name}")
 async def start_server(
-        server_name=None,
-        user: User = Depends(get_current_user),
+    server_name=None,
+    user: User = Depends(get_current_user),
 ):
     """Start an already existing server."""
-    logger.info("Starting server", server_name=server_name,  user=user.name)
+    logger.info("Starting server", server_name=server_name, user=user.name)
     hub_client = HubClient()
     try:
         response = hub_client.start_server(
@@ -182,14 +207,18 @@ async def start_server(
 async def update_server(
     server: ServerCreation = Depends(Checker(ServerCreation)),
     thumbnail: typing.Optional[UploadFile] = File(None),
-    user: User = Depends(get_current_user), server_name=None
+    thumbnail_data_url: typing.Optional[str] = Form(None),
+    user: User = Depends(get_current_user),
+    server_name=None,
 ):
-    server.user_options.thumbnail = await get_thumbnail_data_url(
-        framework_name=server.user_options.framework,
-        thumbnail=thumbnail
-    )
+    if thumbnail_data_url:
+        server.user_options.thumbnail = thumbnail_data_url
+    else:
+        server.user_options.thumbnail = await get_thumbnail_data_url(
+            framework_name=server.user_options.framework, thumbnail=thumbnail
+        )
     hub_client = HubClient()
-    logger.info("Updating server", server_name=server.servername,  user=user.name)
+    logger.info("Updating server", server_name=server.servername, user=user.name)
     edit_server_response = hub_client.edit_server(
         username=user.name,
         servername=server_name,
@@ -202,18 +231,14 @@ async def update_server(
 @router.delete("/server/{server_name}")
 @router.delete("/server/")
 async def delete_server(
-        user: User = Depends(get_current_user),
-        server_name=None,
-        remove: bool = False,
+    user: User = Depends(get_current_user),
+    server_name=None,
+    remove: bool = False,
 ):
     """Delete or stop server. Delete if remove is True otherwise stop the server"""
     hub_client = HubClient()
-    logger.info("Deleting server", server_name=server_name,  user=user.name)
-    return hub_client.delete_server(
-        user.name,
-        server_name=server_name,
-        remove=remove
-    )
+    logger.info("Deleting server", server_name=server_name, user=user.name)
+    return hub_client.delete_server(user.name, server_name=server_name, remove=remove)
 
 
 @router.get(
@@ -237,7 +262,7 @@ async def get_frameworks(user: User = Depends(get_current_user)):
 
 @router.get("/conda-environments/", description="Get all conda environments")
 async def conda_environments(user: User = Depends(get_current_user)):
-    logger.info("Getting conda environments",  user=user.name)
+    logger.info("Getting conda environments", user=user.name)
     config = get_jupyterhub_config()
     hclient = HubClient()
     user_from_service = hclient.get_user(user.name)
@@ -270,7 +295,4 @@ async def hub_services(user: User = Depends(get_current_user)):
 async def status_endpoint():
     """Check API Status"""
     version = get_version()
-    return {
-        "status": "ok",
-        "version": str(version)
-    }
+    return {"status": "ok", "version": str(version)}

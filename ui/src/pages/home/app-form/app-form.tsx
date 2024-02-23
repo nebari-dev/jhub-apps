@@ -16,12 +16,12 @@ import {
   Button,
   ButtonGroup,
   ErrorMessages,
-  FileInput,
   FormGroup,
   Label,
   Select,
   TextArea,
   TextInput,
+  Thumbnail,
   Toggle,
 } from '../../../components';
 import { currentNotification } from '../../../store';
@@ -44,6 +44,7 @@ export const AppForm = ({
   );
   const [name, setName] = useState('');
   const [currentFile, setCurrentFile] = useState<File>();
+  const [currentImage, setCurrentImage] = useState<string>();
   const [isPublic, setIsPublic] = useState(false);
   // Get the app data if we're editing an existing app
   const { data: formData, error: formError } = useQuery<
@@ -205,6 +206,8 @@ export const AppForm = ({
     formData.append('data', JSON.stringify({ servername, user_options }));
     if (currentFile) {
       formData.append('thumbnail', currentFile as Blob);
+    } else if (currentImage) {
+      formData.append('thumbnail_data_url', currentImage);
     }
 
     const response = await axios.put(`/server/${servername}`, formData, {
@@ -228,6 +231,7 @@ export const AppForm = ({
       setName(formData.name);
       reset({ ...formData.user_options });
       setIsPublic(formData.user_options.public);
+      setCurrentImage(formData.user_options.thumbnail);
     }
   }, [formData?.name, formData?.user_options, reset]);
 
@@ -280,15 +284,13 @@ export const AppForm = ({
           control={control}
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
           render={({ field: { ref: _, value, onChange, ...field } }) => (
-            <FileInput
+            <Thumbnail
               {...field}
               id="thumbnail"
-              value={undefined}
-              onChange={(event) => {
-                const { files } = event.target;
-                const selectedFiles = files as FileList;
-                setCurrentFile(selectedFiles?.[0]);
-              }}
+              currentImage={currentImage}
+              setCurrentImage={setCurrentImage}
+              currentFile={currentFile}
+              setCurrentFile={setCurrentFile}
             />
           )}
         />
