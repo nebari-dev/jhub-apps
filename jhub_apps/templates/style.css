@@ -150,7 +150,7 @@ a:focus {
     font-size: 1.25rem;
 }
 
-.btn-primary, .MuiButton-containedPrimary {
+.btn-primary, .MuiButton-containedPrimary:not(:disabled) {
     color: var(--light-text-color);
     background-color: var(--primary-color) !important;
     border-color: var(--primary-color) !important;
@@ -165,7 +165,7 @@ a:focus {
     outline-color: var(--primary-color) !important;
 }
 
-.btn-secondary, .MuiButton-outlinedSecondary {
+.btn-secondary, .MuiButton-outlinedSecondary:not(:disabled) {
     color: var(--secondary-color) !important;
     background-color: #ffffff !important;
     border-color: var(--secondary-color) !important;

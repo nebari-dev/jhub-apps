@@ -32,6 +32,7 @@ const config: JestConfigWithTsJest = {
     '!**/index.ts',
     '!**/data/**',
     '!**/constants.ts',
+    '!**/theme/**',
   ],
 
   // The directory where Jest should output its coverage files

@@ -1,7 +1,7 @@
 import { createTheme } from '@mui/material';
 import { PaletteColorOptions } from '@mui/material/styles';
 
-import { black, blue, gray, green, orange, purple, red, white } from './colors';
+import { black, blue, gray, green, orange, red, white } from './colors';
 
 declare module '@mui/material/styles' {
   interface Palette {
@@ -56,20 +56,20 @@ export const theme = createTheme(baseTheme, {
   palette: {
     primary: baseTheme.palette.augmentColor({
       color: {
-        light: purple[300],
-        main: purple[500],
-        dark: purple[700],
+        light: blue[300],
+        main: blue[500],
+        dark: blue[700],
         contrastText: white,
-        50: purple[50],
-        100: purple[100],
-        200: purple[200],
-        300: purple[300],
-        400: purple[400],
-        500: purple[500],
-        600: purple[600],
-        700: purple[700],
-        800: purple[800],
-        900: purple[900],
+        50: blue[50],
+        100: blue[100],
+        200: blue[200],
+        300: blue[300],
+        400: blue[400],
+        500: blue[500],
+        600: blue[600],
+        700: blue[700],
+        800: blue[800],
+        900: blue[900],
       },
       name: 'primary',
     }),
@@ -138,22 +138,30 @@ export const theme = createTheme(baseTheme, {
         {
           props: { variant: 'contained', color: 'primary' },
           style: {
-            backgroundColor: purple[500],
-            border: `1px solid ${purple[500]}`,
+            minWidth: '120px',
+            backgroundColor: blue[500],
+            border: `1px solid ${blue[500]}`,
             fontWeight: 700,
             textTransform: 'none',
+            '&:disabled': {
+              borderColor: 'transparent',
+            },
           },
         },
         {
           props: { variant: 'outlined', color: 'secondary' },
           style: {
+            minWidth: '120px',
             backgroundColor: white,
-            border: `2px solid ${green[500]}`,
-            color: green[500],
+            border: `2px solid ${blue[500]}`,
+            color: blue[500],
             fontWeight: 700,
             textTransform: 'none',
             '&:hover': {
+              backgroundColor: white,
               borderWidth: 2,
+              border: `2px solid ${blue[700]}`,
+              color: blue[700],
             },
           },
         },

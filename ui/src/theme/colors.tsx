@@ -37,11 +37,22 @@ export const purple = {
   900: '#231240',
 };
 
+export const blue = {
+  50: '#2491FF',
+  100: '#2491FF',
+  200: '#2491FF',
+  300: '#2491FF',
+  400: '#2491FF',
+  500: '#005EA2',
+  600: '#1A4480',
+  700: '#1A4480',
+  800: '#1A4480',
+  900: '#162E51',
+};
+
 export const red = '#D72D47';
 
 export const orange = '#F66A0A';
-
-export const blue = '#276BE9';
 
 export const white = '#FFFFFF';
 
