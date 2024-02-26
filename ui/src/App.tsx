@@ -3,6 +3,7 @@ import React, { useEffect } from 'react';
 import { Route, Routes } from 'react-router';
 import { useRecoilState } from 'recoil';
 import { Home } from './pages/home/home';
+import { ServerTypes } from './pages/server-types/server-types';
 import { currentJhData } from './store';
 import { JhData } from './types/jupyterhub';
 import { getJhData } from './utils/jupyterhub';
@@ -28,6 +29,7 @@ export const App = (): React.ReactElement => {
           <Routes>
             <Route path="/home" element={<Home />} />
             <Route path="/" element={<Home />} />
+            <Route path="/server-types" element={<ServerTypes />} />
           </Routes>
         </main>
       </div>

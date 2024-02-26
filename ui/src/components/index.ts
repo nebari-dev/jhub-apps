@@ -7,6 +7,7 @@ export { default as FileInput } from './file-input/file-input';
 export { default as FormGroup } from './form-group/form-group';
 export { default as Label } from './label/label';
 export { default as Modal } from './modal/modal';
+export { default as RadioButton } from './radio-button/radio-button';
 export { default as Select } from './select/select';
 export type { SelectOption } from './select/select';
 export { default as Tag } from './tag/tag';
