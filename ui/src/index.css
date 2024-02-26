@@ -10,7 +10,31 @@ h1 {
   margin-bottom: 1rem;
 }
 
+/* Basic link style */
+a {
+  color: #0645ad; /* A shade of blue for the link */
+  text-decoration: none; /* Removes underline from links */
+  transition: color 0.3s ease-in-out; /* Smooth color transition */
+  text-decoration: underline;
+}
+
+/* Hover state */
+a:hover {
+  color: #0a58ca; /* A darker shade of blue for hover state */
+}
+
+/* Active state */
+a:active {
+  color: #03396c; /* An even darker shade for active/clicked state */
+}
+
+/* Visited state */
+a:visited {
+  color: #4b2e83; /* A purple color for visited links */
+}
+
 /* Utility classes */
+
 .mb-0 {
   margin-bottom: 0;
 }

@@ -73,7 +73,17 @@ export const ServerTypes = (): React.ReactElement => {
             <h1 className="mb-0">Hardware Environment</h1>
             <p>
               Select the appropriate profile for your app. For more information
-              about selecting profiles, visit our docs
+              about selecting profiles,{' '}
+              <span>
+                <a
+                  href="https://www.nebari.dev/docs/welcome"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  visit our docs
+                </a>
+              </span>
+              .
             </p>
             <div className="container my-2">
               {serverTypes.map((type) => (
