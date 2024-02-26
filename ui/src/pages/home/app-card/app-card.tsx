@@ -1,10 +1,10 @@
+import { Button } from '@mui/material';
 import { AppQueryDeleteProps, AppQueryPostProps } from '@src/types/api';
 import axios from '@src/utils/axios';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import React, { useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { ButtonGroup } from '../../../components';
-import Button from '../../../components/button/button';
 import ContextMenu, {
   ContextMenuItem,
 } from '../../../components/context-menu/context-menu';
@@ -168,14 +168,16 @@ export const AppCard = ({
       <ButtonGroup>
         <Button
           id="cancel-btn"
-          variant="secondary"
+          variant="outlined"
+          color="secondary"
           onClick={() => setIsStartOpen(false)}
         >
           Cancel
         </Button>
         <Button
           id="start-btn"
-          variant="primary"
+          variant="contained"
+          color="primary"
           onClick={() => handleStart()}
           disabled={submitting}
         >
@@ -193,14 +195,16 @@ export const AppCard = ({
       <ButtonGroup>
         <Button
           id="cancel-btn"
-          variant="secondary"
+          variant="outlined"
+          color="secondary"
           onClick={() => setIsStopOpen(false)}
         >
           Cancel
         </Button>
         <Button
           id="stop-btn"
-          variant="primary"
+          variant="contained"
+          color="primary"
           onClick={() => handleStop()}
           disabled={submitting}
         >
@@ -219,14 +223,16 @@ export const AppCard = ({
       <ButtonGroup>
         <Button
           id="cancel-btn"
-          variant="secondary"
+          variant="outlined"
+          color="secondary"
           onClick={() => setIsDeleteOpen(false)}
         >
           Cancel
         </Button>
         <Button
           id="delete-btn"
-          variant="primary"
+          variant="contained"
+          color="primary"
           onClick={() => handleDelete()}
           disabled={submitting}
         >

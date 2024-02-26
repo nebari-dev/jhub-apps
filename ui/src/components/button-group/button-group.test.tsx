@@ -1,5 +1,6 @@
+import { Button } from '@mui/material';
 import { render } from '@testing-library/react';
-import { Button, ButtonGroup } from '..';
+import { ButtonGroup } from '..';
 
 describe('ButtonGroup', () => {
   test('renders default button group successfully', () => {

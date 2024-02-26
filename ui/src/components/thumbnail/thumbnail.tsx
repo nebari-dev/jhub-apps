@@ -1,6 +1,6 @@
 import { PhotoIcon } from '@heroicons/react/24/solid';
+import { Button } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
-import { Button } from '..';
 
 export interface ThumbnailProps {
   /**
@@ -135,11 +135,18 @@ export const Thumbnail = ({
         />
       </div>
       <div className="thumbnail-actions">
-        <Button id="upload-thumbnail-btn" onClick={handleBrowseThumbnails}>
+        <Button
+          id="upload-thumbnail-btn"
+          variant="contained"
+          size="small"
+          onClick={handleBrowseThumbnails}
+        >
           Upload Thumbnail
         </Button>
         <Button
           id="remove-thumbnail-btn"
+          variant="contained"
+          size="small"
           onClick={handleRemoveThumbnail}
           disabled={!currentFile && !currentImage}
         >
