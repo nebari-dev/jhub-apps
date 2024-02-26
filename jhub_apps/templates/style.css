@@ -96,6 +96,15 @@ h6 {
     margin-bottom: 40px;
 }
 
+.center-content-text {
+    text-align: center;
+    margin: 0 auto;
+}
+
+.m-b-0{
+    margin-bottom: 0;
+}
+
 label {
     font-family: var(--base-font-family);
 }
@@ -362,6 +371,8 @@ a:focus {
     word-wrap: break-word;
     border-top: 1px solid #e6e6e6;
 }
+
+
 
 @media only screen and (max-width: 480px) {
     .navbar-nav {
