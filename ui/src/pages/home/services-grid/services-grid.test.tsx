@@ -68,7 +68,7 @@ describe('ServicesGrid', () => {
         </QueryClientProvider>
       </RecoilRoot>,
     );
-    expect(baseElement.querySelectorAll('.btn')).toHaveLength(2);
+    expect(baseElement.querySelectorAll('button')).toHaveLength(2);
   });
 
   test('handles button click for external URL', () => {
@@ -87,7 +87,9 @@ describe('ServicesGrid', () => {
         </QueryClientProvider>
       </RecoilRoot>,
     );
-    const button = baseElement.querySelectorAll('.btn')[0] as HTMLButtonElement;
+    const button = baseElement.querySelectorAll(
+      'button',
+    )[0] as HTMLButtonElement;
     fireEvent.click(button);
   });
 
@@ -113,7 +115,9 @@ describe('ServicesGrid', () => {
         </QueryClientProvider>
       </RecoilRoot>,
     );
-    const button = baseElement.querySelectorAll('.btn')[1] as HTMLButtonElement;
+    const button = baseElement.querySelectorAll(
+      'button',
+    )[1] as HTMLButtonElement;
     fireEvent.click(button);
   });
 });
