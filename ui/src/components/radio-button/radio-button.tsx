@@ -43,7 +43,6 @@ export interface RadioButtonProps {
 const RadioButton: React.FC<RadioButtonProps> = ({
   id,
   name,
-  isTile,
   onChange,
   onClick,
   label,
@@ -51,12 +50,9 @@ const RadioButton: React.FC<RadioButtonProps> = ({
   value,
   checked,
 }) => {
-  // Determine the class for styling based on `isTile` prop
-  const className = isTile ? 'radio-tile' : 'radio-button';
-
   return (
     <div className="radio-button">
-      <label htmlFor={id} className={className}>
+      <label htmlFor={id}>
         <input
           className="radio"
           type="radio"

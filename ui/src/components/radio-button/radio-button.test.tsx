@@ -17,17 +17,6 @@ describe('RadioButton', () => {
     expect(getByLabelText('Test Label')).toBeInTheDocument();
   });
 
-  test('has class "radio-tile" when isTile is true', () => {
-    const props = { ...defaultProps, isTile: true };
-    const { container } = render(<RadioButton {...props} />);
-    expect(container.querySelector('.radio-tile')).toBeInTheDocument();
-  });
-
-  test('has class "radio-button" when isTile is false or not provided', () => {
-    const { container } = render(<RadioButton {...defaultProps} />);
-    expect(container.querySelector('.radio-button')).toBeInTheDocument();
-  });
-
   test('calls onChange when clicked', () => {
     const { getByLabelText } = render(<RadioButton {...defaultProps} />);
     fireEvent.click(getByLabelText('Test Label'));
