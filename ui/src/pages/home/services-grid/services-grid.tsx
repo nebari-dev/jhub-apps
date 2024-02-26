@@ -1,4 +1,4 @@
-import { Button } from '@src/components';
+import { Button } from '@mui/material';
 import { JhData, JhService, JhServiceFull } from '@src/types/jupyterhub';
 import axios from '@src/utils/axios';
 import { getServices } from '@src/utils/jupyterhub';
@@ -77,7 +77,8 @@ export const ServicesGrid = (): React.ReactElement => {
               <Button
                 id={`service-${index}`}
                 key={`service-${index}`}
-                variant="secondary"
+                variant="outlined"
+                color="secondary"
                 style={{ minWidth: '180px' }}
                 onClick={() => {
                   handleButtonClick(service.url, service.external);
