@@ -25,4 +25,3 @@ updates:
       - dependency-name: "@types/react-dom"
         versions:
           - ">=18.2.0"
-      - dependency-name: "@tanstack/react-query"
