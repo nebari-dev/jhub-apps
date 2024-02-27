@@ -47,4 +47,5 @@ export interface AppFrameworkProps {
 export interface AppProfileProps {
   display_name: string;
   slug: string;
+  description: string;
 }

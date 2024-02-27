@@ -15,9 +15,59 @@ export const frameworks: AppFrameworkProps[] = [
 export const environments = ['env-1', 'env-2', 'env-3', 'env-4', 'env-5'];
 
 export const profiles: AppProfileProps[] = [
-  { display_name: 'Small', slug: 'small' },
-  { display_name: 'Medium', slug: 'medium' },
-  { display_name: 'Large', slug: 'large' },
+  {
+    display_name: 'Small',
+    slug: 'small0',
+    description: 'Stable environment with 2 CPU / 8GB RAM',
+  },
+  {
+    display_name: 'Small',
+    slug: 'small1',
+    description: 'Stable environment with 2 CPU / 8GB RAM',
+  },
+  {
+    display_name: 'Large GPU Instance',
+    slug: 'large0',
+    description:
+      'Stable environment with 8 CPU / 32GB RAM and 1 NVIDIA Tesla T4',
+  },
+  {
+    display_name: 'Medium Instance',
+    slug: 'medium0',
+    description: 'Stable environment with 4 CPU / 16GB RAM',
+  },
+  {
+    display_name: 'Medium Instance',
+    slug: 'medium1',
+    description: 'Stable environment with 4 CPU / 16GB RAM',
+  },
+  {
+    display_name: 'Medium Instance',
+    slug: 'medium2',
+    description: 'Stable environment with 4 CPU / 16GB RAM',
+  },
+  {
+    display_name: 'Medium Instance',
+    slug: 'medium3',
+    description: 'Stable environment with 4 CPU / 16GB RAM',
+  },
+  {
+    display_name: 'Medium Instance',
+    slug: 'medium4',
+    description: 'Stable environment with 4 CPU / 16GB RAM',
+  },
+  {
+    display_name: 'Large GPU Instance',
+    slug: 'large1',
+    description:
+      'Stable environment with 8 CPU / 32GB RAM and 1 NVIDIA Tesla T4',
+  },
+  {
+    display_name: 'Large GPU Instance',
+    slug: 'large2',
+    description:
+      'Stable environment with 8 CPU / 32GB RAM and 1 NVIDIA Tesla T4',
+  },
 ];
 
 export const app: AppQueryGetProps = {
