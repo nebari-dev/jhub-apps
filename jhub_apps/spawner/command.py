@@ -54,7 +54,7 @@ DEFAULT_CMD = Command(
         TString("$python_exec"),
         "-m",
         "jhsingle_native_proxy.main",
-        TString("--authtype=$authtype"),
+        TString("--authtype=$authtype --no-force-alive"),
     ]
 )
 
