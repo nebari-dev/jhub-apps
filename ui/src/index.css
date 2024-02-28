@@ -35,23 +35,23 @@
 
 /* Utility classes */
 
-.mb-0 {
+.server-types .mb-0 {
   margin-bottom: 0;
 }
 
-.my-2 {
+.server-types .my-2 {
   margin: 2rem 0;
 }
 
-.mr-1 {
+.server-types .mr-1 {
   margin-right: 1rem;
 }
 
-.bt {
+.server-types .bt {
   border-top: 1px solid #ccc;
 }
 
-.br-5 {
+.server-types .br-5 {
   border-radius: 5px;
 }
 
@@ -82,6 +82,10 @@
   padding: 2rem 0;
 }
 
+.server-types .center {
+  margin: 0 auto;
+  text-align: center;
+}
 @layer components {
   .container {
     margin-left: auto;

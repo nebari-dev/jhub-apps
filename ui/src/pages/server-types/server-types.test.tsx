@@ -1,4 +1,5 @@
 import axios from '@src/utils/axios';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import '@testing-library/jest-dom';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { ServerTypes } from './server-types';
@@ -8,12 +9,17 @@ jest.mock('@src/utils/axios', () => ({
   get: jest.fn(),
 }));
 
-// Initial render test remains the same
+// Create a client
+const queryClient = new QueryClient();
+
+// Initial render test
 test('initially displays loading state or no data message', () => {
-  render(<ServerTypes />);
-  expect(
-    screen.getByText(/Please select the appropriate server for you app/i),
-  ).toBeInTheDocument();
+  render(
+    <QueryClientProvider client={queryClient}>
+      <ServerTypes />
+    </QueryClientProvider>,
+  );
+  expect(screen.getByText(/Loading.../i)).toBeInTheDocument();
 });
 
 // Test API Data
@@ -28,11 +34,15 @@ test('fetches and displays server types', async () => {
     Promise.resolve({ data: mockServerTypes }),
   );
 
-  render(<ServerTypes />);
+  render(
+    <QueryClientProvider client={queryClient}>
+      <ServerTypes />
+    </QueryClientProvider>,
+  );
 
   await waitFor(() => {
-    expect(screen.getByLabelText(/Type 1/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/Type 2/i)).toBeInTheDocument();
+    expect(screen.getByText(/Type 1/i)).toBeInTheDocument();
+    expect(screen.getByText(/Type 2/i)).toBeInTheDocument();
   });
 });
 
@@ -47,11 +57,15 @@ test('allows radio button selection', async () => {
     Promise.resolve({ data: mockServerTypes }),
   );
 
-  render(<ServerTypes />);
+  render(
+    <QueryClientProvider client={queryClient}>
+      <ServerTypes />
+    </QueryClientProvider>,
+  );
 
   await waitFor(() => {
-    fireEvent.click(screen.getByLabelText(/Type 1/i));
-    expect(screen.getByLabelText(/Type 1/i)).toBeChecked();
+    fireEvent.click(screen.getByText(/Type 1/i));
+    expect(screen.getByRole('radio', { name: /Type 1/i })).toBeChecked();
   });
 });
 
@@ -66,10 +80,14 @@ test('submits selected server type', async () => {
   );
   const consoleSpy = jest.spyOn(console, 'log');
 
-  render(<ServerTypes />);
+  render(
+    <QueryClientProvider client={queryClient}>
+      <ServerTypes />
+    </QueryClientProvider>,
+  );
 
   await waitFor(() => {
-    fireEvent.click(screen.getByLabelText(/Type 1/i));
+    fireEvent.click(screen.getByText(/Type 1/i));
   });
 
   fireEvent.click(screen.getByText(/Create App/i));
