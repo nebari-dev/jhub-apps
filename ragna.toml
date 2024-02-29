@@ -9,8 +9,8 @@ assistants = ["ragna.assistants.RagnaDemoAssistant"]
 [api]
 url = "http://127.0.0.1:8000"
 origins = ["http://127.0.0.1:8000"]
-database_url = "memory"
-root_path = "/user/aktech/ragna-api-3c98e2b/"
+database_url = "sqlite:////Users/aktech/.cache/ragna/ragna.db"
+root_path = "/user/aktech/ragna-api-f8ed40f/"
 
 [ui]
 url = "http://127.0.0.1:31477"
