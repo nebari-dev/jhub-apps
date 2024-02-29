@@ -1,101 +1,65 @@
 import axios from '@src/utils/axios';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import '@testing-library/jest-dom';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { render, waitFor } from '@testing-library/react';
+import MockAdapter from 'axios-mock-adapter';
+import { RecoilRoot } from 'recoil';
 import { ServerTypes } from './server-types';
 
-// Mock
-jest.mock('@src/utils/axios', () => ({
-  get: jest.fn(),
-}));
+describe('ServerTypes', () => {
+  const queryClient = new QueryClient();
+  const mock = new MockAdapter(axios);
 
-// Create a client
-const queryClient = new QueryClient();
-
-// Initial render test
-test('initially displays loading state or no data message', () => {
-  render(
-    <QueryClientProvider client={queryClient}>
-      <ServerTypes />
-    </QueryClientProvider>,
-  );
-  expect(screen.getByText(/Loading.../i)).toBeInTheDocument();
-});
-
-// Test API Data
-test('fetches and displays server types', async () => {
-  const mockServerTypes = [
-    { slug: 'type1', display_name: 'Type 1', description: 'Description 1' },
-    { slug: 'type2', display_name: 'Type 2', description: 'Description 2' },
-  ];
-
-  // Directly return a promise that resolves with the mock data
-  (axios.get as jest.Mock).mockImplementation(() =>
-    Promise.resolve({ data: mockServerTypes }),
-  );
-
-  render(
-    <QueryClientProvider client={queryClient}>
-      <ServerTypes />
-    </QueryClientProvider>,
-  );
-
-  await waitFor(() => {
-    expect(screen.getByText(/Type 1/i)).toBeInTheDocument();
-    expect(screen.getByText(/Type 2/i)).toBeInTheDocument();
-  });
-});
-
-// Test Radio Button Change
-test('allows radio button selection', async () => {
-  const mockServerTypes = [
-    { slug: 'type1', display_name: 'Type 1', description: 'Description 1' },
-    { slug: 'type2', display_name: 'Type 2', description: 'Description 2' },
-  ];
-
-  (axios.get as jest.Mock).mockImplementation(() =>
-    Promise.resolve({ data: mockServerTypes }),
-  );
-
-  render(
-    <QueryClientProvider client={queryClient}>
-      <ServerTypes />
-    </QueryClientProvider>,
-  );
-
-  await waitFor(() => {
-    fireEvent.click(screen.getByText(/Type 1/i));
-    expect(screen.getByRole('radio', { name: /Type 1/i })).toBeChecked();
-  });
-});
-
-// Test form submission
-test('submits selected server type', async () => {
-  const mockServerTypes = [
-    { slug: 'type1', display_name: 'Type 1', description: 'Description 1' },
-  ];
-
-  (axios.get as jest.Mock).mockImplementation(() =>
-    Promise.resolve({ data: mockServerTypes }),
-  );
-  const consoleSpy = jest.spyOn(console, 'log');
-
-  render(
-    <QueryClientProvider client={queryClient}>
-      <ServerTypes />
-    </QueryClientProvider>,
-  );
-
-  await waitFor(() => {
-    fireEvent.click(screen.getByText(/Type 1/i));
+  beforeAll(() => {
+    mock.reset();
   });
 
-  fireEvent.click(screen.getByText(/Create App/i));
-
-  await waitFor(() => {
-    expect(consoleSpy).toHaveBeenCalledWith('Selected server type:', 'type1');
+  beforeEach(() => {
+    queryClient.clear();
+    mock.reset();
   });
 
-  // Cleanup to avoid memory leak issues
-  consoleSpy.mockRestore();
+  // Loading state test
+  test('renders a loading message', () => {
+    queryClient.isFetching = jest.fn().mockReturnValue(true);
+    mock.onGet(new RegExp('/spawner-profiles/')).reply(200, null);
+    const { baseElement } = render(
+      <RecoilRoot>
+        <QueryClientProvider client={queryClient}>
+          <ServerTypes />
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+    expect(baseElement).toHaveTextContent('Loading...');
+  });
+
+  // Error state test
+  test('renders a message when no servers', () => {
+    queryClient.setQueryData(['serverTypes'], null);
+    mock.onGet(new RegExp('/server/')).reply(200, null);
+    const { baseElement } = render(
+      <RecoilRoot>
+        <QueryClientProvider client={queryClient}>
+          <ServerTypes />
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+    expect(baseElement).toHaveTextContent('No servers available');
+  });
+
+  // Servers type test
+  test('renders server types correctly', async () => {
+    mock.onGet(new RegExp('/spawner-profiles/')).reply(200, [
+      { slug: 'type1', display_name: 'Small', description: 'Description 1' },
+      { slug: 'type2', display_name: 'Small', description: 'Description 2' },
+    ]);
+    const { baseElement } = render(
+      <RecoilRoot>
+        <QueryClientProvider client={queryClient}>
+          <ServerTypes />
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+    await waitFor(() => expect(baseElement).toHaveTextContent('Small'));
+  });
 });

@@ -23,7 +23,6 @@ export const ServerTypes = (): React.ReactElement => {
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log('Selected server type:', selectedServerType);
   };
 
   return (
@@ -32,13 +31,12 @@ export const ServerTypes = (): React.ReactElement => {
         <div>An error occurred: {(error as Error).message}</div>
       ) : isLoading ? (
         <div className="font-bold center">Loading...</div>
-      ) : serverTypes.length > 0 ? (
+      ) : serverTypes && serverTypes.length > 0 ? (
         <form onSubmit={handleSubmit} className="container mx-auto px-4">
           <div className="container mx-auto px-4 server-types">
             <div className="grid grid-cols-12 gap-4">
               <div className="col-start-4 col-span-6 bg-gray-200 p-4">
                 <h1 className="mb-0">Server Type</h1>
-                <h2>Length: {serverTypes.length}</h2>
                 <p>
                   Please select the appropriate server for your app. For more
                   information on server types,{' '}
@@ -67,12 +65,22 @@ export const ServerTypes = (): React.ReactElement => {
                     />
                   ))}
                   <div className="button-container bt">
-                    <button className="btn">Cancel</button>
+                    <button className="btn" role="button">
+                      Cancel
+                    </button>
                     <div className="button-group">
-                      <button className="btn btn-primary br-5 mr-1" disabled>
+                      <button
+                        className="btn btn-primary br-5 mr-1"
+                        role="button"
+                        disabled
+                      >
                         Back
                       </button>
-                      <button type="submit" className="btn btn-primary br-5">
+                      <button
+                        type="submit"
+                        className="btn btn-primary br-5"
+                        role="button"
+                      >
                         Create App
                       </button>
                     </div>
