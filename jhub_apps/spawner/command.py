@@ -55,6 +55,7 @@ DEFAULT_CMD = Command(
         "-m",
         "jhsingle_native_proxy.main",
         TString("--authtype=$authtype"),
+        "--no-force-alive",
     ]
 )
 
