@@ -1,3 +1,4 @@
+import AddIcon from '@mui/icons-material/Add';
 import { Button } from '@mui/material';
 import { Alert, Modal, TextInput } from '@src/components';
 import { API_BASE_URL } from '@src/utils/constants';
@@ -41,6 +42,7 @@ export const Home = (): React.ReactElement => {
             id="create-app"
             variant="contained"
             color="primary"
+            startIcon={<AddIcon />}
             onClick={() => {
               window.location.href = `${API_BASE_URL}/create-app`;
             }}

@@ -360,6 +360,7 @@ export const AppForm = ({
                     {...field}
                     id="conda_env"
                     label="Software Environment"
+                    required
                   >
                     {environments.map((env: string) => (
                       <MenuItem key={env} value={env}>
