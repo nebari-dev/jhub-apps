@@ -52,12 +52,16 @@ const baseTheme = createTheme({
     MuiFormControl: {
       defaultProps: {
         fullWidth: true,
+        sx: {
+          marginBottom: '12px',
+        },
       },
     },
     MuiTextField: {
       defaultProps: {
         autoComplete: 'off',
         fullWidth: true,
+        sx: { marginBottom: '0' },
       },
     },
     MuiSelect: {

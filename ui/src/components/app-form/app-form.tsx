@@ -1,6 +1,7 @@
 import {
   Button,
   FormControl,
+  FormLabel,
   InputLabel,
   MenuItem,
   Select,
@@ -19,7 +20,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { useRecoilState } from 'recoil';
-import { ErrorMessages, FormGroup, Label, Thumbnail, Toggle } from '..';
+import { Thumbnail, Toggle } from '..';
 import { currentNotification } from '../../store';
 
 export interface AppFormProps {
@@ -227,22 +228,21 @@ export const AppForm = ({
   }, [formError, setNotification]);
 
   return (
-    <form id="app-form" onSubmit={handleSubmit(onFormSubmit)} className="form">
+    <form
+      id="app-form"
+      onSubmit={handleSubmit(onFormSubmit)}
+      className="form"
+      noValidate
+    >
       <div className="form-section">
         <h2>App Info</h2>
-        <FormGroup
-          errors={
-            errors.display_name?.message
-              ? [errors.display_name.message]
-              : undefined
-          }
-        >
-          <Controller
-            name="display_name"
-            control={control}
-            rules={REQUIRED_FORM_FIELDS_RULES}
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            render={({ field: { ref: _, ...field } }) => (
+        <Controller
+          name="display_name"
+          control={control}
+          rules={REQUIRED_FORM_FIELDS_RULES}
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          render={({ field: { ref: _, ...field } }) => (
+            <FormControl>
               <TextField
                 {...field}
                 id="display_name"
@@ -251,18 +251,15 @@ export const AppForm = ({
                 required
                 error={errors.display_name?.message ? true : false}
               />
-            )}
-          />
-          {errors.display_name?.message && (
-            <ErrorMessages errors={[errors.display_name.message]} />
+            </FormControl>
           )}
-        </FormGroup>
-        <FormGroup>
-          <Controller
-            name="description"
-            control={control}
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            render={({ field: { ref: _, ...field } }) => (
+        />
+        <Controller
+          name="description"
+          control={control}
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          render={({ field: { ref: _, ...field } }) => (
+            <FormControl>
               <TextField
                 {...field}
                 id="description"
@@ -270,155 +267,126 @@ export const AppForm = ({
                 multiline
                 rows={4}
               />
-            )}
-          />
-        </FormGroup>
+            </FormControl>
+          )}
+        />
       </div>
       <div className="form-section">
         <h2>Configuration</h2>
-        <FormGroup
-          errors={
-            errors.framework?.message ? [errors.framework.message] : undefined
-          }
-        >
+        <Controller
+          name="framework"
+          control={control}
+          rules={REQUIRED_FORM_FIELDS_RULES}
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          render={({ field: { ref: _, ...field } }) => (
+            <FormControl>
+              <InputLabel id="framework-label" required>
+                Framework
+              </InputLabel>
+              <Select
+                {...field}
+                id="framework"
+                label="Framework"
+                required
+                error={errors.framework?.message ? true : false}
+              >
+                {frameworks?.map((framework: AppFrameworkProps) => (
+                  <MenuItem key={framework.name} value={framework.name}>
+                    {framework.display_name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          )}
+        />
+        {currentFramework === 'custom' ? (
           <Controller
-            name="framework"
+            name="custom_command"
             control={control}
             rules={REQUIRED_FORM_FIELDS_RULES}
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             render={({ field: { ref: _, ...field } }) => (
               <FormControl>
-                <InputLabel id="framework-label" required>
-                  Framework
-                </InputLabel>
-                <Select
-                  {...field}
-                  id="framework"
-                  label="Framework"
-                  required
-                  error={errors.framework?.message ? true : false}
-                >
-                  {frameworks?.map((framework: AppFrameworkProps) => (
-                    <MenuItem key={framework.name} value={framework.name}>
-                      {framework.display_name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            )}
-          />
-          {errors.framework?.message && (
-            <ErrorMessages errors={[errors.framework.message]} />
-          )}
-        </FormGroup>
-        {currentFramework === 'custom' ? (
-          <FormGroup
-            errors={
-              errors.custom_command?.message
-                ? [errors.custom_command.message]
-                : undefined
-            }
-          >
-            <Controller
-              name="custom_command"
-              control={control}
-              rules={REQUIRED_FORM_FIELDS_RULES}
-              // eslint-disable-next-line @typescript-eslint/no-unused-vars
-              render={({ field: { ref: _, ...field } }) => (
                 <TextField
                   {...field}
                   id="custom_command"
                   label="Custom Command"
                   required={currentFramework === 'custom'}
                 />
-              )}
-            />
-            {errors.custom_command?.message && (
-              <ErrorMessages errors={[errors.custom_command.message]} />
+              </FormControl>
             )}
-          </FormGroup>
+          />
         ) : (
           <></>
         )}
         {environments && environments.length > 0 ? (
-          <FormGroup
-            errors={
-              errors.conda_env?.message ? [errors.conda_env.message] : undefined
-            }
-          >
-            <Controller
-              name="conda_env"
-              control={control}
-              rules={REQUIRED_FORM_FIELDS_RULES}
-              // eslint-disable-next-line @typescript-eslint/no-unused-vars
-              render={({ field: { ref: _, ...field } }) => (
-                <FormControl>
-                  <InputLabel id="framework-label" required>
-                    Software Environment
-                  </InputLabel>
-                  <Select
-                    {...field}
-                    id="conda_env"
-                    label="Software Environment"
-                    required
-                  >
-                    {environments.map((env: string) => (
-                      <MenuItem key={env} value={env}>
-                        {env}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              )}
-            />
-            {errors.conda_env?.message && (
-              <ErrorMessages errors={[errors.conda_env.message]} />
+          <Controller
+            name="conda_env"
+            control={control}
+            rules={REQUIRED_FORM_FIELDS_RULES}
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            render={({ field: { ref: _, ...field } }) => (
+              <FormControl>
+                <InputLabel id="framework-label" required>
+                  Software Environment
+                </InputLabel>
+                <Select
+                  {...field}
+                  id="conda_env"
+                  label="Software Environment"
+                  required
+                  error={errors.conda_env?.message ? true : false}
+                >
+                  {environments.map((env: string) => (
+                    <MenuItem key={env} value={env}>
+                      {env}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
             )}
-          </FormGroup>
+          />
         ) : (
           <></>
         )}
-        <FormGroup
-          errors={errors.env?.message ? [errors.env.message] : undefined}
-        >
-          <Controller
-            name="env"
-            control={control}
-            // rules={REQUIRED_FORM_FIELDS_RULES}
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            render={({ field: { ref: _, ...field } }) => (
+        <Controller
+          name="env"
+          control={control}
+          // rules={REQUIRED_FORM_FIELDS_RULES}
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          render={({ field: { ref: _, ...field } }) => (
+            <FormControl>
               <TextField
                 {...field}
                 id="env"
                 label="Environment Variables"
                 placeholder={`Enter valid json: {"KEY_1":"VALUE_1","KEY_2":"VALUE_2"}`}
               />
-            )}
-          />
-          {errors.env?.message && (
-            <ErrorMessages errors={[errors.env.message]} />
+            </FormControl>
           )}
-        </FormGroup>
+        />
       </div>
       <div className="form-section">
         <h2>Select</h2>
-        <FormGroup>
-          <Controller
-            name="filepath"
-            control={control}
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            render={({ field: { ref: _, ...field } }) => (
+        <Controller
+          name="filepath"
+          control={control}
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          render={({ field: { ref: _, ...field } }) => (
+            <FormControl>
               <TextField {...field} id="filepath" label="Filepath" />
-            )}
-          />
-        </FormGroup>
-        <FormGroup>
-          <Label htmlFor="thumbnail">Thumbnail</Label>
-          <Controller
-            name="thumbnail"
-            control={control}
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            render={({ field: { ref: _, value, onChange, ...field } }) => (
+            </FormControl>
+          )}
+        />
+        <Controller
+          name="thumbnail"
+          control={control}
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          render={({ field: { ref: _, value, onChange, ...field } }) => (
+            <FormControl>
+              <FormLabel htmlFor="thumbnail" className="form-label">
+                Thumbnail
+              </FormLabel>
               <Thumbnail
                 {...field}
                 id="thumbnail"
@@ -427,16 +395,19 @@ export const AppForm = ({
                 currentFile={currentFile}
                 setCurrentFile={setCurrentFile}
               />
-            )}
-          />
-        </FormGroup>
-        <FormGroup>
-          <Label htmlFor="is_public">Allow Public Access</Label>
-          <Controller
-            name="is_public"
-            control={control}
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            render={({ field: { ref: _, value, onChange, ...field } }) => (
+            </FormControl>
+          )}
+        />
+
+        <Controller
+          name="is_public"
+          control={control}
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          render={({ field: { ref: _, value, onChange, ...field } }) => (
+            <FormControl>
+              <FormLabel htmlFor="is_public" className="form-label">
+                Allow Public Access
+              </FormLabel>
               <Toggle
                 {...field}
                 id="is_public"
@@ -446,9 +417,9 @@ export const AppForm = ({
                   setIsPublic(!isPublic);
                 }}
               />
-            )}
-          />
-        </FormGroup>
+            </FormControl>
+          )}
+        />
       </div>
       <div className="button-section">
         <div className="prev">

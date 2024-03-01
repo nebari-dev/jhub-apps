@@ -118,7 +118,7 @@
 
   .form-section {
     margin: 16px 0;
-    padding: 12px 0 24px 0;
+    padding: 12px 0;
     border-bottom: 1px solid #c3c3c3;
   }
 
@@ -139,6 +139,10 @@
 
   .form > .button-section > .next {
     float: right;
+  }
+
+  .form-label {
+    color: theme('colors.black') !important;
   }
 
   .paragraph {
