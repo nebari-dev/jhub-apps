@@ -1,5 +1,6 @@
 import { Button } from '@mui/material';
 import { Alert, Modal, TextInput } from '@src/components';
+import { API_BASE_URL } from '@src/utils/constants';
 import React, { SyntheticEvent, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { currentNotification } from '../../store';
@@ -41,7 +42,7 @@ export const Home = (): React.ReactElement => {
             variant="contained"
             color="primary"
             onClick={() => {
-              setIsOpen(true);
+              window.location.href = `${API_BASE_URL}/create-app`;
             }}
           >
             Create App

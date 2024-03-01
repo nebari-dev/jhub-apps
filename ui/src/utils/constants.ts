@@ -1,4 +1,6 @@
 export const APP_TITLE = 'JupyterHub';
+export const APP_BASE_URL = process.env.APP_BASE_URL || '/';
+export const API_BASE_URL = process.env.API_BASE_URL || '/';
 export const REQUIRED_FIELD_MESSAGE = 'This field is required.';
 
 export const REQUIRED_FORM_FIELDS_RULES = {

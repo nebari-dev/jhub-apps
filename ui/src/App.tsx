@@ -2,6 +2,8 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import React, { useEffect } from 'react';
 import { Route, Routes } from 'react-router';
 import { useRecoilState } from 'recoil';
+import { CreateApp } from './pages/create-app/create-app';
+import { EditApp } from './pages/edit-app/edit-app';
 import { Home } from './pages/home/home';
 import { ServerTypes } from './pages/server-types/server-types';
 import { currentJhData } from './store';
@@ -28,8 +30,10 @@ export const App = (): React.ReactElement => {
         <main className="my-6">
           <Routes>
             <Route path="/home" element={<Home />} />
-            <Route path="/" element={<Home />} />
+            <Route path="/create-app" element={<CreateApp />} />
+            <Route path="/edit-app/:id" element={<EditApp />} />
             <Route path="/server-types" element={<ServerTypes />} />
+            <Route path="/" element={<Home />} />
           </Routes>
         </main>
       </div>

@@ -1,6 +1,7 @@
 import { Button } from '@mui/material';
 import { AppQueryDeleteProps, AppQueryPostProps } from '@src/types/api';
 import axios from '@src/utils/axios';
+import { API_BASE_URL } from '@src/utils/constants';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import React, { useState } from 'react';
 import { useRecoilState } from 'recoil';
@@ -147,7 +148,7 @@ export const AppCard = ({
     {
       id: 'edit',
       title: 'Edit',
-      onClick: () => setIsEditOpen(true),
+      onClick: () => (window.location.href = `${API_BASE_URL}/edit-app/${id}`),
       visible: true,
       disabled: isShared || id === '',
     },
