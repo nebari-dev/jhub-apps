@@ -49,6 +49,22 @@ const baseTheme = createTheme({
         disableRipple: true,
       },
     },
+    MuiFormControl: {
+      defaultProps: {
+        fullWidth: true,
+      },
+    },
+    MuiTextField: {
+      defaultProps: {
+        autoComplete: 'off',
+        fullWidth: true,
+      },
+    },
+    MuiSelect: {
+      defaultProps: {
+        fullWidth: true,
+      },
+    },
   },
 });
 

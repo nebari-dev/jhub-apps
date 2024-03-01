@@ -96,8 +96,57 @@
     content: unset;
   }
 
+  .row {
+    display: flex;
+    flex-direction: column;
+    margin: 0 0 12px 0;
+  }
+
+  h1 {
+    font-size: 24px;
+    font-weight: 700;
+    padding: 0 0 8px 0;
+  }
+
+  p {
+    font-size: 16px;
+  }
+
   .form {
-    min-width: 400px;
+    max-width: 600px;
+  }
+
+  .form-section {
+    margin: 16px 0;
+    padding: 12px 0 24px 0;
+    border-bottom: 1px solid #c3c3c3;
+  }
+
+  .form > .form-section > h2 {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 0 16px 0;
+  }
+
+  .form > .button-section {
+    width: 100%;
+    margin: 24px 0;
+  }
+
+  .form > .button-section > .prev {
+    float: left;
+  }
+
+  .form > .button-section > .next {
+    float: right;
+  }
+
+  .paragraph {
+    max-width: 600px;
+  }
+
+  .paragraph-link {
+    text-decoration: underline;
   }
 
   .form .btn {

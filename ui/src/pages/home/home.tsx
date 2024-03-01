@@ -3,8 +3,8 @@ import { Alert, Modal, TextInput } from '@src/components';
 import { API_BASE_URL } from '@src/utils/constants';
 import React, { SyntheticEvent, useState } from 'react';
 import { useRecoilState } from 'recoil';
+import AppForm from '../../components/app-form/app-form';
 import { currentNotification } from '../../store';
-import AppForm from './app-form/app-form';
 import { AppsGrid } from './apps-grid/apps-grid';
 import { ServicesGrid } from './services-grid/services-grid';
 
