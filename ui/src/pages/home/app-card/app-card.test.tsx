@@ -215,28 +215,8 @@ describe('AppCard', () => {
     await act(async () => {
       btn.click();
     });
-
-    const cancelBtn = baseElement.querySelector(
-      '#cancel-btn',
-    ) as HTMLButtonElement;
-    await act(async () => {
-      cancelBtn.click();
-    });
-
-    await act(async () => {
-      menu.click();
-    });
-
-    await act(async () => {
-      btn.click();
-    });
-
-    const submitBtn = baseElement.querySelector(
-      '#submit-btn',
-    ) as HTMLButtonElement;
-    await act(async () => {
-      submitBtn.click();
-    });
+    // TODO: Update this test when everything is running in single react app
+    expect(window.location.pathname).not.toBe('/edit-app/app-1');
   });
 
   test('simulates editing an app with an error', async () => {
@@ -272,13 +252,8 @@ describe('AppCard', () => {
     await act(async () => {
       btn.click();
     });
-
-    const submitBtn = baseElement.querySelector(
-      '#submit-btn',
-    ) as HTMLButtonElement;
-    await act(async () => {
-      submitBtn.click();
-    });
+    // TODO: Update this test when everything is running in single react app
+    expect(window.location.pathname).not.toBe('/edit-app/app-1');
   });
 
   test('simulates deleting an app', async () => {

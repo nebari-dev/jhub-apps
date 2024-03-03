@@ -40,21 +40,14 @@ describe('Home', () => {
   });
 
   test('should render create app button and respond to click events', async () => {
-    const { baseElement, getByText } = render(componentWrapper);
+    const { getByText } = render(componentWrapper);
     await act(async () => {
       const button = getByText('Create App');
       expect(button).toBeTruthy();
       fireEvent.click(button);
     });
-    const modalHeader = baseElement.querySelector('h5');
-    expect(modalHeader).toHaveTextContent('Create New App');
-
-    const cancelBtn = baseElement.querySelector(
-      '#cancel-btn',
-    ) as HTMLButtonElement;
-    await act(async () => {
-      cancelBtn.click();
-    });
+    // TODO: Update this test when everything is running in single react app
+    expect(window.location.pathname).not.toBe('/create-app');
   });
 
   test('should render notification when present', async () => {

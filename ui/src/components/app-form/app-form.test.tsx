@@ -53,7 +53,7 @@ describe('AppForm', () => {
       '#display_name',
     ) as HTMLInputElement;
     const frameworkField = baseElement.querySelector(
-      '#framework',
+      '[name="framework"]',
     ) as HTMLSelectElement;
     const envVariableField = baseElement.querySelector(
       '#env',
@@ -100,7 +100,7 @@ describe('AppForm', () => {
       '#thumbnail',
     ) as HTMLInputElement;
     const frameworkField = baseElement.querySelector(
-      '#framework',
+      '[name="framework"]',
     ) as HTMLSelectElement;
     if (displayNameField && thumbnailField && frameworkField) {
       // Attempt submitting without filling in required fields
@@ -142,7 +142,7 @@ describe('AppForm', () => {
       '#display_name',
     ) as HTMLInputElement;
     const frameworkField = baseElement.querySelector(
-      '#framework',
+      '[name="framework"]',
     ) as HTMLSelectElement;
     if (displayNameField && frameworkField) {
       const btn = baseElement.querySelector('#submit-btn') as HTMLButtonElement;
@@ -240,7 +240,7 @@ describe('AppForm', () => {
       '#description',
     ) as HTMLInputElement;
     const frameworkField = baseElement.querySelector(
-      '#framework',
+      '[name="framework"]',
     ) as HTMLSelectElement;
     if (displayNameField && descriptionField && frameworkField) {
       await userEvent.type(displayNameField, 'App 1');
@@ -277,7 +277,7 @@ describe('AppForm', () => {
       '#description',
     ) as HTMLInputElement;
     const frameworkField = baseElement.querySelector(
-      '#framework',
+      '[name="framework"]',
     ) as HTMLSelectElement;
     if (displayNameField && descriptionField && frameworkField) {
       await userEvent.type(displayNameField, 'App 1');
@@ -312,7 +312,7 @@ describe('AppForm', () => {
       '#description',
     ) as HTMLInputElement;
     const frameworkField = baseElement.querySelector(
-      '#framework',
+      '[name="framework"]',
     ) as HTMLSelectElement;
     if (displayNameField && descriptionField && frameworkField) {
       await userEvent.type(displayNameField, 'App 1');
