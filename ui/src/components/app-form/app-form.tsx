@@ -1,7 +1,6 @@
 import {
   Button,
   FormControl,
-  FormLabel,
   InputLabel,
   MenuItem,
   Select,
@@ -247,9 +246,11 @@ export const AppForm = ({
                 {...field}
                 id="display_name"
                 label="Name"
+                placeholder="Add app name (max. 16 characters)"
                 autoFocus
                 required
                 error={errors.display_name?.message ? true : false}
+                inputProps={{ maxLength: 16 }}
               />
             </FormControl>
           )}
@@ -264,8 +265,10 @@ export const AppForm = ({
                 {...field}
                 id="description"
                 label="Description"
+                placeholder="Add app description (max. 75 characters)"
                 multiline
                 rows={4}
+                inputProps={{ maxLength: 75 }}
               />
             </FormControl>
           )}
@@ -350,6 +353,24 @@ export const AppForm = ({
           <></>
         )}
         <Controller
+          name="filepath"
+          control={control}
+          rules={REQUIRED_FORM_FIELDS_RULES}
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          render={({ field: { ref: _, ...field } }) => (
+            <FormControl>
+              <TextField
+                {...field}
+                id="filepath"
+                label="File path"
+                placeholder='Enter the path to the file, e.g. "/shared/users/panel_basic.py"'
+                required
+                error={errors.filepath?.message ? true : false}
+              />
+            </FormControl>
+          )}
+        />
+        <Controller
           name="env"
           control={control}
           // rules={REQUIRED_FORM_FIELDS_RULES}
@@ -367,26 +388,35 @@ export const AppForm = ({
         />
       </div>
       <div className="form-section">
-        <h2>Select</h2>
+        <h2>Sharing</h2>
         <Controller
-          name="filepath"
+          name="is_public"
           control={control}
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          render={({ field: { ref: _, ...field } }) => (
+          render={({ field: { ref: _, value, onChange, ...field } }) => (
             <FormControl>
-              <TextField {...field} id="filepath" label="Filepath" />
+              <Toggle
+                {...field}
+                id="is_public"
+                label="Allow Public Access"
+                checked={isPublic}
+                ariaLabel="Allow Public Access"
+                onChange={() => {
+                  setIsPublic(!isPublic);
+                }}
+              />
             </FormControl>
           )}
         />
+      </div>
+      <div className="form-section">
+        <h2>App Thumbnail</h2>
         <Controller
           name="thumbnail"
           control={control}
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
           render={({ field: { ref: _, value, onChange, ...field } }) => (
             <FormControl>
-              <FormLabel htmlFor="thumbnail" className="form-label">
-                Thumbnail
-              </FormLabel>
               <Thumbnail
                 {...field}
                 id="thumbnail"
@@ -394,28 +424,6 @@ export const AppForm = ({
                 setCurrentImage={setCurrentImage}
                 currentFile={currentFile}
                 setCurrentFile={setCurrentFile}
-              />
-            </FormControl>
-          )}
-        />
-
-        <Controller
-          name="is_public"
-          control={control}
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          render={({ field: { ref: _, value, onChange, ...field } }) => (
-            <FormControl>
-              <FormLabel htmlFor="is_public" className="form-label">
-                Allow Public Access
-              </FormLabel>
-              <Toggle
-                {...field}
-                id="is_public"
-                checked={isPublic}
-                ariaLabel="Allow Public Access"
-                onChange={() => {
-                  setIsPublic(!isPublic);
-                }}
               />
             </FormControl>
           )}

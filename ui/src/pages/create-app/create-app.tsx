@@ -10,16 +10,15 @@ export const CreateApp = (): React.ReactElement => {
         <p className="paragraph">
           Begin your project by entering the details below. For more information
           about creating an app,{' '}
-          <span>
-            <a
-              href="https://www.nebari.dev/docs/welcome"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="paragraph-link"
-            >
-              visit our docs
-            </a>
-          </span>
+          <a
+            href="https://jhub-apps.nebari.dev/docs/reference/create-app-form"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="paragraph-link"
+          >
+            visit our docs
+          </a>
+          .
         </p>
       </div>
       <div className="row">

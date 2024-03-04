@@ -9,17 +9,17 @@ export const EditApp = (): React.ReactElement => {
     <div className="container">
       <div className="row">
         <h1>Edit app</h1>
-        <p>
+        <p className="paragraph">
           Edit your app details here. For more information on editing your app,{' '}
-          <span>
-            <a
-              href="https://www.nebari.dev/docs/welcome"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              visit our docs
-            </a>
-          </span>
+          <a
+            href="https://jhub-apps.nebari.dev/docs/reference/create-app-form"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="paragraph-link"
+          >
+            visit our docs
+          </a>
+          .
         </p>
       </div>
       <div className="row">
