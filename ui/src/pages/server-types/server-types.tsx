@@ -1,11 +1,25 @@
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import {
+  Button,
+  Card,
+  CardContent,
+  FormControlLabel,
+  Radio,
+  RadioGroup,
+} from '@mui/material';
 import { AppProfileProps } from '@src/types/api';
 import axios from '@src/utils/axios';
+import { API_BASE_URL, APP_BASE_URL } from '@src/utils/constants';
 import { useQuery } from '@tanstack/react-query';
 import React from 'react';
-import RadioButton from '../../components/radio-button/radio-button';
+import { useSearchParams } from 'react-router-dom';
+
 export const ServerTypes = (): React.ReactElement => {
+  const [searchParams] = useSearchParams();
   const [selectedServerType, setSelectedServerType] =
     React.useState<string>('');
+
+  const id = searchParams.get('id');
 
   // Use `useQuery` with an inline async function for the Axios call
   const {
@@ -26,67 +40,90 @@ export const ServerTypes = (): React.ReactElement => {
   };
 
   return (
-    <div className="server-types">
+    <div className="container">
+      <div className="row breadcrumb">
+        <Button
+          id="back-btn"
+          type="button"
+          variant="text"
+          color="primary"
+          startIcon={<ArrowBackIcon />}
+          onClick={() =>
+            (document.location.href = `${API_BASE_URL}/create-app`)
+          }
+        >
+          Back
+        </Button>
+      </div>
+      <div className="row">
+        <h1>Server Type</h1>
+        <p className="paragraph">
+          Please select the appropriate server for your app. For more
+          information on server types,{' '}
+          <span>
+            <a
+              href="https://www.nebari.dev/docs/welcome"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="paragraph-link"
+            >
+              visit our docs
+            </a>
+          </span>
+          .
+        </p>
+      </div>
       {error ? (
         <div>An error occurred: {(error as Error).message}</div>
       ) : isLoading ? (
         <div className="font-bold center">Loading...</div>
       ) : serverTypes && serverTypes.length > 0 ? (
-        <form onSubmit={handleSubmit} className="container mx-auto px-4">
-          <div className="container mx-auto px-4 server-types">
-            <div className="grid grid-cols-12 gap-4">
-              <div className="col-start-4 col-span-6 bg-gray-200 p-4">
-                <h1 className="mb-0">Server Type</h1>
-                <p>
-                  Please select the appropriate server for your app. For more
-                  information on server types,{' '}
-                  <span>
-                    <a
-                      href="https://www.nebari.dev/docs/welcome"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      visit our docs
-                    </a>
-                  </span>
-                  .
-                </p>
-                <div className="container my-2">
-                  {serverTypes?.map((type: AppProfileProps) => (
-                    <RadioButton
+        <form className="form" onSubmit={handleSubmit}>
+          <div className="form-section">
+            {serverTypes?.map((type: AppProfileProps) => (
+              <RadioGroup>
+                <Card className="server-type-card">
+                  <CardContent>
+                    <FormControlLabel
+                      value={type.slug}
                       key={type.slug}
                       id={type.slug}
-                      name={type.display_name}
+                      control={
+                        <Radio
+                          checked={selectedServerType === type.slug}
+                          onChange={handleRadioChange}
+                        />
+                      }
                       label={type.display_name}
-                      subtext={type.description}
-                      value={type.slug}
-                      checked={selectedServerType === type.slug}
-                      onChange={handleRadioChange}
                     />
-                  ))}
-                  <div className="button-container bt">
-                    <button className="btn" role="button">
-                      Cancel
-                    </button>
-                    <div className="button-group">
-                      <button
-                        className="btn btn-primary br-5 mr-1"
-                        role="button"
-                        disabled
-                      >
-                        Back
-                      </button>
-                      <button
-                        type="submit"
-                        className="btn btn-primary br-5"
-                        role="button"
-                      >
-                        Create App
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
+                    <p>{type.description}</p>
+                  </CardContent>
+                </Card>
+              </RadioGroup>
+            ))}
+          </div>
+          <hr />
+          <div className="button-section">
+            <div className="prev">
+              <Button
+                id="cancel-btn"
+                type="button"
+                variant="text"
+                color="secondary"
+                onClick={() => (document.location.href = `${APP_BASE_URL}`)}
+              >
+                Cancel
+              </Button>
+            </div>
+            <div className="next">
+              <Button
+                id="submit-btn"
+                type="submit"
+                variant="contained"
+                color="primary"
+              >
+                {id ? <>Update App</> : <>Create App</>}
+              </Button>
             </div>
           </div>
         </form>

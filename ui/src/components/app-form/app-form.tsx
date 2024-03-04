@@ -274,6 +274,7 @@ export const AppForm = ({
           )}
         />
       </div>
+      <hr />
       <div className="form-section">
         <h2>Configuration</h2>
         <Controller
@@ -373,7 +374,6 @@ export const AppForm = ({
         <Controller
           name="env"
           control={control}
-          // rules={REQUIRED_FORM_FIELDS_RULES}
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
           render={({ field: { ref: _, ...field } }) => (
             <FormControl>
@@ -387,6 +387,7 @@ export const AppForm = ({
           )}
         />
       </div>
+      <hr />
       <div className="form-section">
         <h2>Sharing</h2>
         <Controller
@@ -409,6 +410,7 @@ export const AppForm = ({
           )}
         />
       </div>
+      <hr />
       <div className="form-section">
         <h2>App Thumbnail</h2>
         <Controller
@@ -429,6 +431,7 @@ export const AppForm = ({
           )}
         />
       </div>
+      <hr />
       <div className="button-section">
         <div className="prev">
           <Button
