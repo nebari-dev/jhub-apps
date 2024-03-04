@@ -99,7 +99,11 @@
   .row {
     display: flex;
     flex-direction: column;
-    margin: 0 0 12px 0;
+    margin: 0 0 16px 0;
+  }
+
+  .row.breadcrumb > button {
+    width: 50px;
   }
 
   h1 {

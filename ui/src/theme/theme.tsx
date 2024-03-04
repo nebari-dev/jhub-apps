@@ -185,6 +185,14 @@ export const theme = createTheme(baseTheme, {
             },
           },
         },
+        {
+          props: { variant: 'text', color: 'primary' },
+          style: {
+            '&:hover': {
+              backgroundColor: 'transparent',
+            },
+          },
+        },
       ],
     },
   },
