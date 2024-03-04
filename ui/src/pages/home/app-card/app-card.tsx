@@ -148,7 +148,8 @@ export const AppCard = ({
     {
       id: 'edit',
       title: 'Edit',
-      onClick: () => (window.location.href = `${API_BASE_URL}/edit-app/${id}`),
+      onClick: () =>
+        (window.location.href = `${API_BASE_URL}/edit-app?id=${id}`),
       visible: true,
       disabled: isShared || id === '',
     },

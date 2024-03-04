@@ -3,10 +3,12 @@ import { Button } from '@mui/material';
 import { AppForm } from '@src/components';
 import { APP_BASE_URL } from '@src/utils/constants';
 import React from 'react';
-import { useParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 
 export const EditApp = (): React.ReactElement => {
-  const param = useParams();
+  const [searchParams] = useSearchParams();
+  const id = searchParams.get('id');
+
   return (
     <div className="container">
       <div className="row breadcrumb">
@@ -36,12 +38,7 @@ export const EditApp = (): React.ReactElement => {
           .
         </p>
       </div>
-      <div className="row">
-        <AppForm
-          id={param.id}
-          onCancel={() => (document.location.href = `${APP_BASE_URL}`)}
-        />
-      </div>
+      <div className="row">{id ? <AppForm id={id} /> : <>No app found.</>}</div>
     </div>
   );
 };

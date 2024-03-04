@@ -25,7 +25,7 @@ export const App = (): React.ReactElement => {
           <Routes>
             <Route path="/home" element={<Home />} />
             <Route path="/create-app" element={<CreateApp />} />
-            <Route path="/edit-app/:id" element={<EditApp />} />
+            <Route path="/edit-app" element={<EditApp />} />
             <Route path="/server-types" element={<ServerTypes />} />
             <Route path="/" element={<Home />} />
           </Routes>

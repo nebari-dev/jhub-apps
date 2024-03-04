@@ -6,41 +6,42 @@ import {
   Select,
   TextField,
 } from '@mui/material';
-import {
-  AppFrameworkProps,
-  AppQueryGetProps,
-  AppQueryUpdateProps,
-} from '@src/types/api';
+import { AppFrameworkProps, AppQueryGetProps } from '@src/types/api';
 import { AppFormInput } from '@src/types/form';
 import axios from '@src/utils/axios';
-import { REQUIRED_FORM_FIELDS_RULES } from '@src/utils/constants';
-import { getJhData } from '@src/utils/jupyterhub';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { APP_BASE_URL, REQUIRED_FORM_FIELDS_RULES } from '@src/utils/constants';
+import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import { Thumbnail, Toggle } from '..';
-import { currentNotification } from '../../store';
+import {
+  currentFormInput,
+  currentNotification,
+  currentFile as defaultFile,
+  currentImage as defaultImage,
+} from '../../store';
 
 export interface AppFormProps {
   id?: string;
-  onCancel?: () => void;
-  onSubmit?: () => void;
 }
 
-export const AppForm = ({
-  id,
-  onCancel,
-  onSubmit,
-}: AppFormProps): React.ReactElement => {
-  const queryClient = useQueryClient();
-  const [submitting, setSubmitting] = useState(false);
+export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
+  const navigate = useNavigate();
   const [, setNotification] = useRecoilState<string | undefined>(
     currentNotification,
   );
+  const [, setCurrentFormInput] = useRecoilState<AppFormInput | undefined>(
+    currentFormInput,
+  );
   const [name, setName] = useState('');
-  const [currentFile, setCurrentFile] = useState<File>();
-  const [currentImage, setCurrentImage] = useState<string>();
+  const [currentFile, setCurrentFile] = useRecoilState<File | undefined>(
+    defaultFile,
+  );
+  const [currentImage, setCurrentImage] = useRecoilState<string | undefined>(
+    defaultImage,
+  );
   const [isPublic, setIsPublic] = useState(false);
   // Get the app data if we're editing an existing app
   const { data: formData, error: formError } = useQuery<
@@ -110,106 +111,22 @@ export const AppForm = ({
     custom_command,
     profile,
   }) => {
-    const payload = {
-      servername: name || display_name,
-      user_options: {
-        jhub_app: true,
-        name: name || display_name,
-        display_name,
-        description: description || '',
-        framework,
-        thumbnail: thumbnail || '',
-        filepath: filepath || '',
-        conda_env: conda_env || '',
-        env: env ? JSON.parse(env) : null,
-        custom_command: custom_command || '',
-        profile: profile || '',
-        public: isPublic,
-      },
+    const payload: AppFormInput = {
+      jhub_app: true,
+      display_name: name || display_name,
+      description,
+      framework,
+      thumbnail,
+      filepath,
+      conda_env,
+      env: env ? JSON.parse(env) : null,
+      custom_command,
+      profile,
+      is_public: isPublic,
     };
-
-    setSubmitting(true);
-    if (id) {
-      updateQuery(payload, {
-        onSuccess: async () => {
-          queryClient.invalidateQueries({ queryKey: ['app-state'] });
-          if (onSubmit) {
-            onSubmit();
-          }
-        },
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onError: async (error: any) => {
-          setSubmitting(false);
-          setNotification(error.message);
-        },
-      });
-    } else {
-      createQuery(payload, {
-        onSuccess: async (data) => {
-          const username = getJhData().user;
-          if (username && data?.length > 1) {
-            const server = data[1];
-            window.location.assign(`/hub/spawn-pending/${username}/${server}`);
-          }
-        },
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onError: async (error: any) => {
-          setSubmitting(false);
-          setNotification(error.message);
-        },
-      });
-    }
+    setCurrentFormInput(payload);
+    navigate(`/server-types${id ? `?id=${id}` : ''}`);
   };
-
-  const createRequest = async ({
-    servername,
-    user_options,
-  }: AppQueryUpdateProps) => {
-    const headers = {
-      accept: 'application/json',
-      'Content-Type': 'multipart/form-data',
-    };
-    const formData = new FormData();
-    formData.append('data', JSON.stringify({ servername, user_options }));
-    if (currentFile) {
-      formData.append('thumbnail', currentFile as Blob);
-    }
-
-    const response = await axios.post('/server', formData, { headers });
-    return response.data;
-  };
-
-  const updateRequest = async ({
-    servername,
-    user_options,
-  }: AppQueryUpdateProps) => {
-    const headers = {
-      accept: 'application/json',
-      'Content-Type': 'multipart/form-data',
-    };
-    const formData = new FormData();
-    formData.append('data', JSON.stringify({ servername, user_options }));
-    if (currentFile) {
-      formData.append('thumbnail', currentFile as Blob);
-    } else if (currentImage) {
-      formData.append('thumbnail_data_url', currentImage);
-    }
-
-    const response = await axios.put(`/server/${servername}`, formData, {
-      headers,
-    });
-    return response.data;
-  };
-
-  const { mutate: createQuery } = useMutation({
-    mutationFn: createRequest,
-    retry: 1,
-  });
-
-  const { mutate: updateQuery } = useMutation({
-    mutationFn: updateRequest,
-    retry: 1,
-  });
 
   useEffect(() => {
     if (formData?.name && formData?.user_options) {
@@ -218,7 +135,7 @@ export const AppForm = ({
       setIsPublic(formData.user_options.public);
       setCurrentImage(formData.user_options.thumbnail);
     }
-  }, [formData?.name, formData?.user_options, reset]);
+  }, [formData?.name, formData?.user_options, reset, setCurrentImage]);
 
   useEffect(() => {
     if (formError) {
@@ -439,7 +356,7 @@ export const AppForm = ({
             type="button"
             variant="text"
             color="secondary"
-            onClick={onCancel}
+            onClick={() => (document.location.href = `${APP_BASE_URL}`)}
           >
             Cancel
           </Button>
@@ -450,7 +367,7 @@ export const AppForm = ({
             type="submit"
             variant="contained"
             color="primary"
-            disabled={submitting || frameworksLoading || environmentsLoading}
+            disabled={frameworksLoading || environmentsLoading}
           >
             Next
           </Button>

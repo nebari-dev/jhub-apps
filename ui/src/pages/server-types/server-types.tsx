@@ -7,18 +7,38 @@ import {
   Radio,
   RadioGroup,
 } from '@mui/material';
-import { AppProfileProps } from '@src/types/api';
+import { AppProfileProps, AppQueryUpdateProps } from '@src/types/api';
+import { AppFormInput } from '@src/types/form';
 import axios from '@src/utils/axios';
-import { API_BASE_URL, APP_BASE_URL } from '@src/utils/constants';
-import { useQuery } from '@tanstack/react-query';
-import React from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { APP_BASE_URL } from '@src/utils/constants';
+import { getJhData } from '@src/utils/jupyterhub';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import React, { useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useRecoilState } from 'recoil';
+import {
+  currentNotification,
+  currentFile as defaultFile,
+  currentFormInput as defaultFormInput,
+  currentImage as defaultImage,
+} from '../../store';
 
 export const ServerTypes = (): React.ReactElement => {
   const [searchParams] = useSearchParams();
-  const [selectedServerType, setSelectedServerType] =
-    React.useState<string>('');
-
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const [submitting, setSubmitting] = useState(false);
+  const [currentFormInput, setCurrentFormInput] = useRecoilState<
+    AppFormInput | undefined
+  >(defaultFormInput);
+  const [currentFile] = useRecoilState<File | undefined>(defaultFile);
+  const [currentImage] = useRecoilState<string | undefined>(defaultImage);
+  const [, setNotification] = useRecoilState<string | undefined>(
+    currentNotification,
+  );
+  const [selectedServerType, setSelectedServerType] = React.useState<string>(
+    currentFormInput?.profile || '',
+  );
   const id = searchParams.get('id');
 
   // Use `useQuery` with an inline async function for the Axios call
@@ -33,11 +53,112 @@ export const ServerTypes = (): React.ReactElement => {
 
   const handleRadioChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedServerType(event.target.value);
+    if (currentFormInput) {
+      setCurrentFormInput({
+        ...currentFormInput,
+        profile: event.target.value,
+      });
+    }
   };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    const payload = {
+      servername: currentFormInput?.display_name || '',
+      user_options: {
+        jhub_app: true,
+        name: currentFormInput?.display_name || '',
+        display_name: currentFormInput?.display_name || '',
+        description: currentFormInput?.description || '',
+        framework: currentFormInput?.framework || '',
+        thumbnail: currentFormInput?.thumbnail || '',
+        filepath: currentFormInput?.filepath || '',
+        conda_env: currentFormInput?.conda_env || '',
+        env: currentFormInput?.env || '',
+        custom_command: currentFormInput?.custom_command || '',
+        profile: currentFormInput?.profile || '',
+        public: currentFormInput?.is_public || false,
+      },
+    };
+    setSubmitting(true);
+    if (id) {
+      updateQuery(payload, {
+        onSuccess: async () => {
+          queryClient.invalidateQueries({ queryKey: ['app-state'] });
+        },
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        onError: async (error: any) => {
+          setSubmitting(false);
+          setNotification(error.message);
+        },
+      });
+    } else {
+      createQuery(payload, {
+        onSuccess: async (data) => {
+          const username = getJhData().user;
+          if (username && data?.length > 1) {
+            const server = data[1];
+            window.location.assign(`/hub/spawn-pending/${username}/${server}`);
+          }
+        },
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        onError: async (error: any) => {
+          setSubmitting(false);
+          setNotification(error.message);
+        },
+      });
+    }
   };
+
+  const createRequest = async ({
+    servername,
+    user_options,
+  }: AppQueryUpdateProps) => {
+    const headers = {
+      accept: 'application/json',
+      'Content-Type': 'multipart/form-data',
+    };
+    const formData = new FormData();
+    formData.append('data', JSON.stringify({ servername, user_options }));
+    if (currentFile) {
+      formData.append('thumbnail', currentFile as Blob);
+    }
+
+    const response = await axios.post('/server', formData, { headers });
+    return response.data;
+  };
+
+  const updateRequest = async ({
+    servername,
+    user_options,
+  }: AppQueryUpdateProps) => {
+    const headers = {
+      accept: 'application/json',
+      'Content-Type': 'multipart/form-data',
+    };
+    const formData = new FormData();
+    formData.append('data', JSON.stringify({ servername, user_options }));
+    if (currentFile) {
+      formData.append('thumbnail', currentFile as Blob);
+    } else if (currentImage) {
+      formData.append('thumbnail_data_url', currentImage);
+    }
+
+    const response = await axios.put(`/server/${servername}`, formData, {
+      headers,
+    });
+    return response.data;
+  };
+
+  const { mutate: createQuery } = useMutation({
+    mutationFn: createRequest,
+    retry: 1,
+  });
+
+  const { mutate: updateQuery } = useMutation({
+    mutationFn: updateRequest,
+    retry: 1,
+  });
 
   return (
     <div className="container">
@@ -48,9 +169,7 @@ export const ServerTypes = (): React.ReactElement => {
           variant="text"
           color="primary"
           startIcon={<ArrowBackIcon />}
-          onClick={() =>
-            (document.location.href = `${API_BASE_URL}/create-app`)
-          }
+          onClick={() => navigate(id ? `/edit-app?id=${id}` : '/create-app')}
         >
           Back
         </Button>
@@ -80,9 +199,12 @@ export const ServerTypes = (): React.ReactElement => {
       ) : serverTypes && serverTypes.length > 0 ? (
         <form className="form" onSubmit={handleSubmit}>
           <div className="form-section">
-            {serverTypes?.map((type: AppProfileProps) => (
-              <RadioGroup>
-                <Card className="server-type-card">
+            <RadioGroup>
+              {serverTypes?.map((type: AppProfileProps, index: number) => (
+                <Card
+                  key={`server-type-card-${type.slug}`}
+                  className="server-type-card"
+                >
                   <CardContent>
                     <FormControlLabel
                       value={type.slug}
@@ -90,7 +212,9 @@ export const ServerTypes = (): React.ReactElement => {
                       id={type.slug}
                       control={
                         <Radio
-                          checked={selectedServerType === type.slug}
+                          checked={
+                            id ? selectedServerType === type.slug : index === 0
+                          }
                           onChange={handleRadioChange}
                         />
                       }
@@ -99,8 +223,8 @@ export const ServerTypes = (): React.ReactElement => {
                     <p>{type.description}</p>
                   </CardContent>
                 </Card>
-              </RadioGroup>
-            ))}
+              ))}
+            </RadioGroup>
           </div>
           <hr />
           <div className="button-section">
@@ -121,6 +245,7 @@ export const ServerTypes = (): React.ReactElement => {
                 type="submit"
                 variant="contained"
                 color="primary"
+                disabled={submitting}
               >
                 {id ? <>Update App</> : <>Create App</>}
               </Button>

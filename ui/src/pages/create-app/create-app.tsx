@@ -36,9 +36,7 @@ export const CreateApp = (): React.ReactElement => {
         </p>
       </div>
       <div className="row">
-        <AppForm
-          onCancel={() => (document.location.href = `${APP_BASE_URL}`)}
-        />
+        <AppForm />
       </div>
     </div>
   );

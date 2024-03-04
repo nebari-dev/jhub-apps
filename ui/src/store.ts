@@ -1,5 +1,6 @@
 import { User } from '@src/types/user';
 import { atom } from 'recoil';
+import { AppFormInput } from './types/form';
 import { JhData } from './types/jupyterhub';
 
 const currentUser = atom<User | undefined>({
@@ -24,4 +25,26 @@ const currentNotification = atom<string | undefined>({
   default: undefined,
 });
 
-export { currentJhData, currentNotification, currentUser };
+const currentFormInput = atom<AppFormInput | undefined>({
+  key: 'currentFormInput',
+  default: undefined,
+});
+
+const currentImage = atom<string | undefined>({
+  key: 'currentImage',
+  default: undefined,
+});
+
+const currentFile = atom<File | undefined>({
+  key: 'currentFile',
+  default: undefined,
+});
+
+export {
+  currentFile,
+  currentFormInput,
+  currentImage,
+  currentJhData,
+  currentNotification,
+  currentUser,
+};
