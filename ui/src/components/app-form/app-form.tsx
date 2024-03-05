@@ -412,7 +412,6 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
         <Controller
           name="filepath"
           control={control}
-          rules={REQUIRED_FORM_FIELDS_RULES}
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
           render={({ field: { ref: _, ...field } }) => (
             <FormControl>
@@ -421,7 +420,6 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
                 id="filepath"
                 label="File path"
                 placeholder='Enter the path to the file, e.g. "/shared/users/panel_basic.py"'
-                required
                 error={errors.filepath?.message ? true : false}
               />
             </FormControl>
