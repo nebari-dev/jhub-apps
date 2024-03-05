@@ -47,6 +47,9 @@ const baseTheme = createTheme({
     MuiButtonBase: {
       defaultProps: {
         disableRipple: true,
+        style: {
+          textTransform: 'none',
+        },
       },
     },
     MuiFormControl: {
@@ -162,7 +165,22 @@ export const theme = createTheme(baseTheme, {
             backgroundColor: blue[500],
             border: `1px solid ${blue[500]}`,
             fontWeight: 700,
-            textTransform: 'none',
+            '&:disabled': {
+              borderColor: 'transparent',
+            },
+          },
+        },
+        {
+          props: { variant: 'contained', color: 'secondary' },
+          style: {
+            minWidth: '120px',
+            backgroundColor: gray[100],
+            border: `1px solid ${gray[100]}`,
+            color: gray[700],
+            fontWeight: 700,
+            '&:hover': {
+              backgroundColor: white,
+            },
             '&:disabled': {
               borderColor: 'transparent',
             },
@@ -188,6 +206,15 @@ export const theme = createTheme(baseTheme, {
         {
           props: { variant: 'text', color: 'primary' },
           style: {
+            '&:hover': {
+              backgroundColor: 'transparent',
+            },
+          },
+        },
+        {
+          props: { variant: 'text', color: 'secondary' },
+          style: {
+            color: gray[500],
             '&:hover': {
               backgroundColor: 'transparent',
             },

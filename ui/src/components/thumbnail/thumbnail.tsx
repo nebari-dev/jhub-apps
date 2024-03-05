@@ -1,6 +1,6 @@
-import { PhotoIcon } from '@heroicons/react/24/solid';
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import DeleteIcon from '@mui/icons-material/Delete';
+import InsertPhotoOutlinedIcon from '@mui/icons-material/InsertPhotoOutlined';
+import UploadFileIcon from '@mui/icons-material/UploadFile';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { Button, Dialog } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
@@ -128,7 +128,7 @@ export const Thumbnail = ({
             tabIndex={0}
             onClick={handleBrowseThumbnails}
           >
-            <PhotoIcon className="thumbnail-icon" />
+            <InsertPhotoOutlinedIcon className="thumbnail-icon" />
           </div>
         )}
         <input
@@ -146,6 +146,7 @@ export const Thumbnail = ({
         <Button
           id="view-thumbnail-btn"
           variant="contained"
+          color="secondary"
           size="small"
           startIcon={<VisibilityIcon />}
           onClick={handleViewThumbnail}
@@ -156,8 +157,9 @@ export const Thumbnail = ({
         <Button
           id="upload-thumbnail-btn"
           variant="contained"
+          color="secondary"
           size="small"
-          startIcon={<CloudUploadIcon />}
+          startIcon={<UploadFileIcon />}
           onClick={handleBrowseThumbnails}
         >
           Upload Thumbnail
@@ -165,6 +167,7 @@ export const Thumbnail = ({
         <Button
           id="remove-thumbnail-btn"
           variant="contained"
+          color="secondary"
           size="small"
           startIcon={<DeleteIcon />}
           onClick={handleRemoveThumbnail}

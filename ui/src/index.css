@@ -473,7 +473,7 @@
     flex-direction: column;
     width: 100%;
     height: 100%;
-    background-color: #d6e1f1;
+    background-color: #90969c;
   }
 
   .thumbnail-body.dragging {
@@ -496,8 +496,9 @@
   }
 
   .thumbnail-icon {
-    width: 50px;
-    color: #849cbf;
+    width: 64px !important;
+    height: 64px !important;
+    color: theme('colors.white');
   }
 
   .thumbnail-actions {
