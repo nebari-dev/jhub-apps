@@ -51,12 +51,12 @@ export const ServerTypes = (): React.ReactElement => {
     return data;
   });
 
-  const handleRadioChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSelectedServerType(event.target.value);
+  const handleCardClick = (slug: string) => {
+    setSelectedServerType(slug);
     if (currentFormInput) {
       setCurrentFormInput({
         ...currentFormInput,
-        profile: event.target.value,
+        profile: slug,
       });
     }
   };
@@ -204,6 +204,7 @@ export const ServerTypes = (): React.ReactElement => {
                 <Card
                   key={`server-type-card-${type.slug}`}
                   className="server-type-card"
+                  onClick={() => handleCardClick(type.slug)}
                 >
                   <CardContent>
                     <FormControlLabel
@@ -213,9 +214,10 @@ export const ServerTypes = (): React.ReactElement => {
                       control={
                         <Radio
                           checked={
-                            id ? selectedServerType === type.slug : index === 0
+                            selectedServerType
+                              ? selectedServerType === type.slug
+                              : index === 0
                           }
-                          onChange={handleRadioChange}
                         />
                       }
                       label={type.display_name}

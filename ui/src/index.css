@@ -99,6 +99,7 @@
 
   .server-type-card {
     margin: 8px 0;
+    cursor: pointer;
   }
 
   .server-type-card p {
