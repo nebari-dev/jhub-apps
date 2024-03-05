@@ -53,7 +53,7 @@ export const Home = (): React.ReactElement => {
             <Modal
               title="Create New App"
               setIsOpen={setIsOpen}
-              body={<AppForm onCancel={() => setIsOpen(false)} />}
+              body={<AppForm />}
             />
           )}
         </div>

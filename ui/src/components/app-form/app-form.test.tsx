@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, fireEvent, render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import MockAdapter from 'axios-mock-adapter';
+import { BrowserRouter } from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
 import AppForm from './app-form';
 
@@ -28,7 +29,9 @@ describe('AppForm', () => {
     const { baseElement } = render(
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
-          <AppForm />
+          <BrowserRouter>
+            <AppForm />
+          </BrowserRouter>
         </QueryClientProvider>
       </RecoilRoot>,
     );
@@ -44,7 +47,9 @@ describe('AppForm', () => {
     const { baseElement } = render(
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
-          <AppForm />
+          <BrowserRouter>
+            <AppForm />
+          </BrowserRouter>
         </QueryClientProvider>
       </RecoilRoot>,
     );
@@ -88,7 +93,9 @@ describe('AppForm', () => {
     const { baseElement } = render(
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
-          <AppForm />
+          <BrowserRouter>
+            <AppForm />
+          </BrowserRouter>
         </QueryClientProvider>
       </RecoilRoot>,
     );
@@ -133,7 +140,9 @@ describe('AppForm', () => {
     const { baseElement } = render(
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
-          <AppForm onSubmit={jest.fn} />
+          <BrowserRouter>
+            <AppForm />
+          </BrowserRouter>
         </QueryClientProvider>
       </RecoilRoot>,
     );
@@ -165,7 +174,9 @@ describe('AppForm', () => {
     const { baseElement } = render(
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
-          <AppForm />
+          <BrowserRouter>
+            <AppForm />
+          </BrowserRouter>
         </QueryClientProvider>
       </RecoilRoot>,
     );
@@ -228,7 +239,9 @@ describe('AppForm', () => {
     const { baseElement } = render(
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
-          <AppForm />
+          <BrowserRouter>
+            <AppForm />
+          </BrowserRouter>
         </QueryClientProvider>
       </RecoilRoot>,
     );
@@ -265,7 +278,9 @@ describe('AppForm', () => {
     const { baseElement } = render(
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
-          <AppForm id="app-1" />
+          <BrowserRouter>
+            <AppForm id="app-1" />
+          </BrowserRouter>
         </QueryClientProvider>
       </RecoilRoot>,
     );
@@ -300,7 +315,9 @@ describe('AppForm', () => {
     const { baseElement } = render(
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
-          <AppForm id="app-1" />
+          <BrowserRouter>
+            <AppForm id="app-1" />
+          </BrowserRouter>
         </QueryClientProvider>
       </RecoilRoot>,
     );

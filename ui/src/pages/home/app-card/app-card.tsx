@@ -274,13 +274,7 @@ export const AppCard = ({
             <Modal
               title={`Edit ${title}`}
               setIsOpen={setIsEditOpen}
-              body={
-                <AppForm
-                  id={id}
-                  onCancel={() => setIsEditOpen(false)}
-                  onSubmit={() => setIsEditOpen(false)}
-                />
-              }
+              body={<AppForm id={id} />}
             />
           )}
         </div>
