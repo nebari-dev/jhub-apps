@@ -249,7 +249,7 @@ export const ServerTypes = (): React.ReactElement => {
                 color="primary"
                 disabled={submitting}
               >
-                {id ? <>Update App</> : <>Create App</>}
+                {id ? <>Save</> : <>Create App</>}
               </Button>
             </div>
           </div>

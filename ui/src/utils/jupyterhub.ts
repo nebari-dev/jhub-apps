@@ -3,7 +3,17 @@ import { JhData } from '@src/types/jupyterhub.ts';
 import { DEFAULT_APP_THUMBNAIL } from './constants';
 
 export const getJhData = (): JhData => {
-  return window.jhdata;
+  return window.jhdata
+    ? window.jhdata
+    : JSON.parse(localStorage.getItem('jhdata') || '{}');
+};
+
+/**
+ * Store JupyterHub data in local storage for non-hub pages
+ * @param data
+ */
+export const storeJhData = (data: JhData) => {
+  localStorage.setItem('jhdata', JSON.stringify(data));
 };
 
 export const getServices = (services: JhServiceFull[], user: string) => {

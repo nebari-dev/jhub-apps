@@ -8,7 +8,7 @@ import { Home } from './pages/home/home';
 import { ServerTypes } from './pages/server-types/server-types';
 import { currentJhData } from './store';
 import { JhData } from './types/jupyterhub';
-import { getJhData } from './utils/jupyterhub';
+import { getJhData, storeJhData } from './utils/jupyterhub';
 
 const queryClient = new QueryClient();
 
@@ -16,6 +16,7 @@ export const App = (): React.ReactElement => {
   const [, setJhData] = useRecoilState<JhData>(currentJhData);
   useEffect(() => {
     setJhData(getJhData());
+    storeJhData(getJhData());
   }, [setJhData]);
 
   return (

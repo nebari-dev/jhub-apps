@@ -6,11 +6,17 @@ import {
   Select,
   TextField,
 } from '@mui/material';
-import { AppFrameworkProps, AppQueryGetProps } from '@src/types/api';
+import {
+  AppFrameworkProps,
+  AppProfileProps,
+  AppQueryGetProps,
+  AppQueryUpdateProps,
+} from '@src/types/api';
 import { AppFormInput } from '@src/types/form';
 import axios from '@src/utils/axios';
 import { APP_BASE_URL, REQUIRED_FORM_FIELDS_RULES } from '@src/utils/constants';
-import { useQuery } from '@tanstack/react-query';
+import { getJhData } from '@src/utils/jupyterhub';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
@@ -29,6 +35,7 @@ export interface AppFormProps {
 
 export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
   const navigate = useNavigate();
+  const [submitting, setSubmitting] = useState(false);
   const [, setNotification] = useRecoilState<string | undefined>(
     currentNotification,
   );
@@ -78,6 +85,17 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
       }),
   });
 
+  const { data: profiles, isLoading: profilesLoading } = useQuery<
+    AppProfileProps[],
+    { message: string }
+  >({
+    queryKey: ['app-profiles'],
+    queryFn: () =>
+      axios.get('/spawner-profiles/').then((response) => {
+        return response.data;
+      }),
+  });
+
   const {
     control,
     handleSubmit,
@@ -111,22 +129,123 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
     custom_command,
     profile,
   }) => {
-    const payload: AppFormInput = {
-      jhub_app: true,
-      display_name: name || display_name,
-      description,
-      framework,
-      thumbnail,
-      filepath,
-      conda_env,
-      env: env ? JSON.parse(env) : null,
-      custom_command,
-      profile,
-      is_public: isPublic,
-    };
-    setCurrentFormInput(payload);
-    navigate(`/server-types${id ? `?id=${id}` : ''}`);
+    if (profiles && profiles.length > 0) {
+      const payload: AppFormInput = {
+        jhub_app: true,
+        display_name: name || display_name,
+        description,
+        framework,
+        thumbnail,
+        filepath,
+        conda_env,
+        env: env ? JSON.parse(env) : null,
+        custom_command,
+        profile,
+        is_public: isPublic,
+      };
+      setCurrentFormInput(payload);
+      navigate(`/server-types${id ? `?id=${id}` : ''}`);
+    } else {
+      const payload = {
+        servername: name || display_name,
+        user_options: {
+          jhub_app: true,
+          name: name || display_name,
+          display_name,
+          description: description || '',
+          framework,
+          thumbnail: thumbnail || '',
+          filepath: filepath || '',
+          conda_env: conda_env || '',
+          env: env ? JSON.parse(env) : null,
+          custom_command: custom_command || '',
+          profile: profile || '',
+          public: isPublic,
+        },
+      };
+
+      setSubmitting(true);
+      if (id) {
+        updateQuery(payload, {
+          onSuccess: async () => {
+            window.location.assign(APP_BASE_URL);
+          },
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          onError: async (error: any) => {
+            setSubmitting(false);
+            setNotification(error.message);
+          },
+        });
+      } else {
+        createQuery(payload, {
+          onSuccess: async (data) => {
+            const username = getJhData().user;
+            if (username && data?.length > 1) {
+              const server = data[1];
+              window.location.assign(
+                `${APP_BASE_URL}/spawn-pending/${username}/${server}`,
+              );
+            }
+          },
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          onError: async (error: any) => {
+            setSubmitting(false);
+            setNotification(error.message);
+          },
+        });
+      }
+    }
   };
+
+  const createRequest = async ({
+    servername,
+    user_options,
+  }: AppQueryUpdateProps) => {
+    const headers = {
+      accept: 'application/json',
+      'Content-Type': 'multipart/form-data',
+    };
+    const formData = new FormData();
+    formData.append('data', JSON.stringify({ servername, user_options }));
+    if (currentFile) {
+      formData.append('thumbnail', currentFile as Blob);
+    }
+
+    const response = await axios.post('/server', formData, { headers });
+    return response.data;
+  };
+
+  const updateRequest = async ({
+    servername,
+    user_options,
+  }: AppQueryUpdateProps) => {
+    const headers = {
+      accept: 'application/json',
+      'Content-Type': 'multipart/form-data',
+    };
+    const formData = new FormData();
+    formData.append('data', JSON.stringify({ servername, user_options }));
+    if (currentFile) {
+      formData.append('thumbnail', currentFile as Blob);
+    } else if (currentImage) {
+      formData.append('thumbnail_data_url', currentImage);
+    }
+
+    const response = await axios.put(`/server/${servername}`, formData, {
+      headers,
+    });
+    return response.data;
+  };
+
+  const { mutate: createQuery } = useMutation({
+    mutationFn: createRequest,
+    retry: 1,
+  });
+
+  const { mutate: updateQuery } = useMutation({
+    mutationFn: updateRequest,
+    retry: 1,
+  });
 
   useEffect(() => {
     if (formData?.name && formData?.user_options) {
@@ -367,9 +486,20 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
             type="submit"
             variant="contained"
             color="primary"
-            disabled={frameworksLoading || environmentsLoading}
+            disabled={
+              frameworksLoading ||
+              environmentsLoading ||
+              profilesLoading ||
+              submitting
+            }
           >
-            Next
+            {profiles && profiles.length > 0 ? (
+              <>Next</>
+            ) : id ? (
+              <>Save</>
+            ) : (
+              <>Create App</>
+            )}
           </Button>
         </div>
       </div>
