@@ -141,6 +141,11 @@ a:focus {
     padding: 0 !important;
 }
 
+.row.breadcrumb {
+    background-color: unset !important;
+    padding: 0 !important;
+}
+
 /* Buttons */
 .btn {
     font-family: var(--base-font-family) !important;
@@ -371,8 +376,6 @@ a:focus {
     word-wrap: break-word;
     border-top: 1px solid #e6e6e6;
 }
-
-
 
 @media only screen and (max-width: 480px) {
     .navbar-nav {
