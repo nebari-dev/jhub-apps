@@ -186,6 +186,10 @@ a:focus {
     border-color: var(--gray-color) !important;
 }
 
+.MuiButton-containedSecondary {
+    background-color: var(--gray-color) !important;
+}
+
 .btn-secondary, .MuiButton-outlinedSecondary:not(:disabled) {
     color: var(--secondary-color) !important;
     background-color: #ffffff !important;
@@ -200,6 +204,10 @@ a:focus {
 
 .btn-secondary:focus, .MuiButton-outlinedSecondary:focus {
     outline-color: var(--secondary-color) !important;
+}
+
+.MuiButton-textPrimary {
+    color: var(--primary-color) !important;
 }
 
 .btn-success {
@@ -247,6 +255,11 @@ a:focus {
 
 .modal-footer .btn+.btn {
     margin-left: 8px;
+}
+
+/* Misc MUI */
+.MuiCardContent-root:focus {
+    outline-color: var(--primary-color) !important;
 }
 
 /* Navbar  */
