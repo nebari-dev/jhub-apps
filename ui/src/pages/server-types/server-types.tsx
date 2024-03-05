@@ -205,6 +205,7 @@ export const ServerTypes = (): React.ReactElement => {
                   key={`server-type-card-${type.slug}`}
                   className="server-type-card"
                   onClick={() => handleCardClick(type.slug)}
+                  tabIndex={0}
                 >
                   <CardContent>
                     <FormControlLabel

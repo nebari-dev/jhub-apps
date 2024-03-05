@@ -23,9 +23,9 @@ import { useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import { Thumbnail, Toggle } from '..';
 import {
-  currentFormInput,
   currentNotification,
   currentFile as defaultFile,
+  currentFormInput as defaultFormInput,
   currentImage as defaultImage,
 } from '../../store';
 
@@ -39,9 +39,9 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
   const [, setNotification] = useRecoilState<string | undefined>(
     currentNotification,
   );
-  const [, setCurrentFormInput] = useRecoilState<AppFormInput | undefined>(
-    currentFormInput,
-  );
+  const [currentFormInput, setCurrentFormInput] = useRecoilState<
+    AppFormInput | undefined
+  >(defaultFormInput);
   const [name, setName] = useState('');
   const [currentFile, setCurrentFile] = useRecoilState<File | undefined>(
     defaultFile,
@@ -247,6 +247,7 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
     retry: 1,
   });
 
+  // Populate form with existing app data
   useEffect(() => {
     if (formData?.name && formData?.user_options) {
       setName(formData.name);
@@ -255,6 +256,25 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
       setCurrentImage(formData.user_options.thumbnail);
     }
   }, [formData?.name, formData?.user_options, reset, setCurrentImage]);
+
+  // Populate form when returning from server-types page
+  useEffect(() => {
+    if (currentFormInput) {
+      setName(currentFormInput.display_name);
+      reset({
+        display_name: currentFormInput.display_name || '',
+        description: currentFormInput.description || '',
+        framework: currentFormInput.framework || '',
+        filepath: currentFormInput.filepath || '',
+        conda_env: currentFormInput.conda_env || '',
+        env: currentFormInput.env || '',
+        custom_command: currentFormInput.custom_command || '',
+        profile: currentFormInput.profile || '',
+      });
+      setIsPublic(currentFormInput.is_public);
+      setCurrentImage(currentFormInput.thumbnail);
+    }
+  }, [currentFormInput, reset, setCurrentImage]);
 
   useEffect(() => {
     if (formError) {

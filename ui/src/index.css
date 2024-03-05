@@ -73,6 +73,7 @@
   }
 
   .paragraph-link {
+    color: #276be9;
     text-decoration: underline;
   }
 
@@ -100,6 +101,14 @@
   .server-type-card {
     margin: 8px 0;
     cursor: pointer;
+  }
+
+  .server-type-card:hover {
+    background: theme('colors.gray-lightest');
+  }
+
+  .server-type-card:focus {
+    outline: 2px solid theme('colors.primary');
   }
 
   .server-type-card p {
