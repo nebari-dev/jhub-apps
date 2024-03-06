@@ -1,4 +1,10 @@
-import { Button } from '@mui/material';
+import {
+  Button,
+  Chip,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+} from '@mui/material';
 import { AppQueryDeleteProps, AppQueryPostProps } from '@src/types/api';
 import axios from '@src/utils/axios';
 import { API_BASE_URL } from '@src/utils/constants';
@@ -6,12 +12,9 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import React, { useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { ButtonGroup } from '../../../components';
-import AppForm from '../../../components/app-form/app-form';
 import ContextMenu, {
   ContextMenuItem,
 } from '../../../components/context-menu/context-menu';
-import Modal from '../../../components/modal/modal';
-import Tag from '../../../components/tag/tag';
 import { currentNotification } from '../../../store';
 
 interface AppCardProps {
@@ -47,7 +50,6 @@ export const AppCard = ({
   const [isStartOpen, setIsStartOpen] = useState(false);
   const [isStopOpen, setIsStopOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
-  const [isEditOpen, setIsEditOpen] = useState(false);
 
   const startRequest = async ({ id }: AppQueryPostProps) => {
     const response = await axios.post(`/server/${id}`);
@@ -250,32 +252,22 @@ export const AppCard = ({
         <div className="card-header-menu">
           <ContextMenu id={`card-menu-${id}`} items={menuItems} />
           {isStartOpen && (
-            <Modal
-              title={`Start ${title}`}
-              setIsOpen={setIsStartOpen}
-              body={startModalBody}
-            />
+            <Dialog open={isStartOpen} onClose={setIsStartOpen}>
+              <DialogTitle>Start {title}</DialogTitle>
+              <DialogContent>{startModalBody}</DialogContent>
+            </Dialog>
           )}
           {isStopOpen && (
-            <Modal
-              title={`Stop ${title}`}
-              setIsOpen={setIsStopOpen}
-              body={stopModalBody}
-            />
+            <Dialog open={isStopOpen} onClose={setIsStopOpen}>
+              <DialogTitle>Stop {title}</DialogTitle>
+              <DialogContent>{stopModalBody}</DialogContent>
+            </Dialog>
           )}
           {isDeleteOpen && (
-            <Modal
-              title={`Delete ${title}`}
-              setIsOpen={setIsDeleteOpen}
-              body={deleteModalBody}
-            />
-          )}
-          {isEditOpen && (
-            <Modal
-              title={`Edit ${title}`}
-              setIsOpen={setIsEditOpen}
-              body={<AppForm id={id} />}
-            />
+            <Dialog open={isDeleteOpen} onClose={setIsDeleteOpen}>
+              <DialogTitle>Delete {title}</DialogTitle>
+              <DialogContent>{deleteModalBody}</DialogContent>
+            </Dialog>
           )}
         </div>
         <div className="card-header-img flex flex-row">
@@ -299,11 +291,9 @@ export const AppCard = ({
         )}
       </div>
       <div className="card-footer">
-        <Tag id={`tag-${id}`}>{framework}</Tag>
+        <Chip id={`tag-${id}`} label={framework} size="small" />
         {isPublic ? (
-          <Tag id={`tag-${id}`} className="ml-2 bg-warning-light">
-            Public
-          </Tag>
+          <Chip id={`tag-${id}`} label="Public" color="warning" size="small" />
         ) : (
           <></>
         )}

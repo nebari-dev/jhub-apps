@@ -1,6 +1,5 @@
 import AddIcon from '@mui/icons-material/Add';
-import { Button } from '@mui/material';
-import { Alert, TextInput } from '@src/components';
+import { Alert, Button, TextField } from '@mui/material';
 import { API_BASE_URL } from '@src/utils/constants';
 import React, { SyntheticEvent, useState } from 'react';
 import { useRecoilState } from 'recoil';
@@ -27,8 +26,9 @@ export const Home = (): React.ReactElement => {
           <h1 className="text-3xl font-bold">Home</h1>
         </div>
         <div className="md:col-span-8 col-span-8">
-          <TextInput
+          <TextField
             id="search"
+            size="small"
             placeholder="Search..."
             aria-label="Search for an app"
             className="w-full mt-0"
@@ -52,7 +52,7 @@ export const Home = (): React.ReactElement => {
       {notification && (
         <div className="container grid grid-cols-12 pb-2">
           <div className="col-span-12">
-            <Alert id="alert-notification" type="error">
+            <Alert id="alert-notification" severity="error">
               {notification}
             </Alert>
           </div>
