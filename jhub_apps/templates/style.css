@@ -141,6 +141,11 @@ a:focus {
     padding: 0 !important;
 }
 
+.row.breadcrumb {
+    background-color: unset !important;
+    padding: 0 !important;
+}
+
 /* Buttons */
 .btn {
     font-family: var(--base-font-family) !important;
@@ -181,6 +186,10 @@ a:focus {
     border-color: var(--gray-color) !important;
 }
 
+.MuiButton-containedSecondary {
+    background-color: var(--gray-color) !important;
+}
+
 .btn-secondary, .MuiButton-outlinedSecondary:not(:disabled) {
     color: var(--secondary-color) !important;
     background-color: #ffffff !important;
@@ -195,6 +204,10 @@ a:focus {
 
 .btn-secondary:focus, .MuiButton-outlinedSecondary:focus {
     outline-color: var(--secondary-color) !important;
+}
+
+.MuiButton-textPrimary {
+    color: var(--primary-color) !important;
 }
 
 .btn-success {
@@ -242,6 +255,11 @@ a:focus {
 
 .modal-footer .btn+.btn {
     margin-left: 8px;
+}
+
+/* Misc MUI */
+.MuiCardContent-root:focus {
+    outline-color: var(--primary-color) !important;
 }
 
 /* Navbar  */
@@ -371,8 +389,6 @@ a:focus {
     word-wrap: break-word;
     border-top: 1px solid #e6e6e6;
 }
-
-
 
 @media only screen and (max-width: 480px) {
     .navbar-nav {

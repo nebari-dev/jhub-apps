@@ -47,6 +47,29 @@ const baseTheme = createTheme({
     MuiButtonBase: {
       defaultProps: {
         disableRipple: true,
+        style: {
+          textTransform: 'none',
+        },
+      },
+    },
+    MuiFormControl: {
+      defaultProps: {
+        fullWidth: true,
+        sx: {
+          marginBottom: '12px',
+        },
+      },
+    },
+    MuiTextField: {
+      defaultProps: {
+        autoComplete: 'off',
+        fullWidth: true,
+        sx: { marginBottom: '0' },
+      },
+    },
+    MuiSelect: {
+      defaultProps: {
+        fullWidth: true,
       },
     },
   },
@@ -142,7 +165,22 @@ export const theme = createTheme(baseTheme, {
             backgroundColor: blue[500],
             border: `1px solid ${blue[500]}`,
             fontWeight: 700,
-            textTransform: 'none',
+            '&:disabled': {
+              borderColor: 'transparent',
+            },
+          },
+        },
+        {
+          props: { variant: 'contained', color: 'secondary' },
+          style: {
+            minWidth: '120px',
+            backgroundColor: gray[100],
+            border: `1px solid ${gray[100]}`,
+            color: gray[700],
+            fontWeight: 700,
+            '&:hover': {
+              backgroundColor: white,
+            },
             '&:disabled': {
               borderColor: 'transparent',
             },
@@ -162,6 +200,23 @@ export const theme = createTheme(baseTheme, {
               borderWidth: 2,
               border: `2px solid ${blue[700]}`,
               color: blue[700],
+            },
+          },
+        },
+        {
+          props: { variant: 'text', color: 'primary' },
+          style: {
+            '&:hover': {
+              backgroundColor: 'transparent',
+            },
+          },
+        },
+        {
+          props: { variant: 'text', color: 'secondary' },
+          style: {
+            color: gray[500],
+            '&:hover': {
+              backgroundColor: 'transparent',
             },
           },
         },

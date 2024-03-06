@@ -293,3 +293,4 @@ cython_debug/
 jupyterhub.sqlite
 jupyterhub_cookie_secret
 .DS_Store
+videos/

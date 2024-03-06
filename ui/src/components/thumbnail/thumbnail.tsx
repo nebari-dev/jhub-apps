@@ -1,5 +1,8 @@
-import { PhotoIcon } from '@heroicons/react/24/solid';
-import { Button } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
+import InsertPhotoOutlinedIcon from '@mui/icons-material/InsertPhotoOutlined';
+import UploadFileIcon from '@mui/icons-material/UploadFile';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import { Button, Dialog } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
 
 export interface ThumbnailProps {
@@ -39,6 +42,7 @@ export const Thumbnail = ({
   ...props
 }: ThumbnailProps & JSX.IntrinsicElements['input']) => {
   const [dragging, setDragging] = useState(false);
+  const [open, setOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
@@ -68,6 +72,11 @@ export const Thumbnail = ({
     if (!e.target.files) return;
     const uploadedFile = e.target.files[0];
     setCurrentFile(uploadedFile);
+  };
+
+  const handleViewThumbnail = (e: React.SyntheticEvent) => {
+    e.preventDefault();
+    setOpen(true);
   };
 
   const handleBrowseThumbnails = (e: React.SyntheticEvent) => {
@@ -112,7 +121,6 @@ export const Thumbnail = ({
               }
               alt="App thumnail"
             />
-            <p>{currentFile?.name}</p>
           </div>
         ) : (
           <div
@@ -120,7 +128,7 @@ export const Thumbnail = ({
             tabIndex={0}
             onClick={handleBrowseThumbnails}
           >
-            <PhotoIcon className="thumbnail-icon" />
+            <InsertPhotoOutlinedIcon className="thumbnail-icon" />
           </div>
         )}
         <input
@@ -136,9 +144,22 @@ export const Thumbnail = ({
       </div>
       <div className="thumbnail-actions">
         <Button
+          id="view-thumbnail-btn"
+          variant="contained"
+          color="secondary"
+          size="small"
+          startIcon={<VisibilityIcon />}
+          onClick={handleViewThumbnail}
+          disabled={!currentFile && !currentImage}
+        >
+          View Thumbnail
+        </Button>
+        <Button
           id="upload-thumbnail-btn"
           variant="contained"
+          color="secondary"
           size="small"
+          startIcon={<UploadFileIcon />}
           onClick={handleBrowseThumbnails}
         >
           Upload Thumbnail
@@ -146,13 +167,21 @@ export const Thumbnail = ({
         <Button
           id="remove-thumbnail-btn"
           variant="contained"
+          color="secondary"
           size="small"
+          startIcon={<DeleteIcon />}
           onClick={handleRemoveThumbnail}
           disabled={!currentFile && !currentImage}
         >
           Remove Thumbnail
         </Button>
       </div>
+      <Dialog onClose={() => setOpen(false)} open={open}>
+        <img
+          src={currentFile ? URL.createObjectURL(currentFile) : currentImage}
+          alt="App thumnail"
+        />
+      </Dialog>
     </div>
   );
 };

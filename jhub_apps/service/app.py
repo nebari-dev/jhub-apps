@@ -4,6 +4,7 @@ from pathlib import Path
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 
+from jhub_apps.service.japps_routes import router as japps_router
 from jhub_apps.service.logging_utils import setup_logging
 from jhub_apps.service.middlewares import create_middlewares
 from jhub_apps.service.routes import router
@@ -33,5 +34,6 @@ app = FastAPI(
 static_files = StaticFiles(directory=STATIC_DIR)
 app.mount(f"{router.prefix}/static", static_files, name="static")
 app.include_router(router)
+app.include_router(japps_router)
 create_middlewares(app)
 setup_logging()

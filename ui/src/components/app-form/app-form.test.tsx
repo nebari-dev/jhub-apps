@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, fireEvent, render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import MockAdapter from 'axios-mock-adapter';
+import { BrowserRouter } from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
 import AppForm from './app-form';
 
@@ -28,7 +29,9 @@ describe('AppForm', () => {
     const { baseElement } = render(
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
-          <AppForm />
+          <BrowserRouter>
+            <AppForm />
+          </BrowserRouter>
         </QueryClientProvider>
       </RecoilRoot>,
     );
@@ -44,7 +47,9 @@ describe('AppForm', () => {
     const { baseElement } = render(
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
-          <AppForm />
+          <BrowserRouter>
+            <AppForm />
+          </BrowserRouter>
         </QueryClientProvider>
       </RecoilRoot>,
     );
@@ -53,7 +58,7 @@ describe('AppForm', () => {
       '#display_name',
     ) as HTMLInputElement;
     const frameworkField = baseElement.querySelector(
-      '#framework',
+      '[name="framework"]',
     ) as HTMLSelectElement;
     const envVariableField = baseElement.querySelector(
       '#env',
@@ -88,7 +93,9 @@ describe('AppForm', () => {
     const { baseElement } = render(
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
-          <AppForm />
+          <BrowserRouter>
+            <AppForm />
+          </BrowserRouter>
         </QueryClientProvider>
       </RecoilRoot>,
     );
@@ -100,7 +107,7 @@ describe('AppForm', () => {
       '#thumbnail',
     ) as HTMLInputElement;
     const frameworkField = baseElement.querySelector(
-      '#framework',
+      '[name="framework"]',
     ) as HTMLSelectElement;
     if (displayNameField && thumbnailField && frameworkField) {
       // Attempt submitting without filling in required fields
@@ -133,7 +140,9 @@ describe('AppForm', () => {
     const { baseElement } = render(
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
-          <AppForm onSubmit={jest.fn} />
+          <BrowserRouter>
+            <AppForm />
+          </BrowserRouter>
         </QueryClientProvider>
       </RecoilRoot>,
     );
@@ -142,7 +151,7 @@ describe('AppForm', () => {
       '#display_name',
     ) as HTMLInputElement;
     const frameworkField = baseElement.querySelector(
-      '#framework',
+      '[name="framework"]',
     ) as HTMLSelectElement;
     if (displayNameField && frameworkField) {
       const btn = baseElement.querySelector('#submit-btn') as HTMLButtonElement;
@@ -165,7 +174,9 @@ describe('AppForm', () => {
     const { baseElement } = render(
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
-          <AppForm />
+          <BrowserRouter>
+            <AppForm />
+          </BrowserRouter>
         </QueryClientProvider>
       </RecoilRoot>,
     );
@@ -228,7 +239,9 @@ describe('AppForm', () => {
     const { baseElement } = render(
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
-          <AppForm />
+          <BrowserRouter>
+            <AppForm />
+          </BrowserRouter>
         </QueryClientProvider>
       </RecoilRoot>,
     );
@@ -240,7 +253,7 @@ describe('AppForm', () => {
       '#description',
     ) as HTMLInputElement;
     const frameworkField = baseElement.querySelector(
-      '#framework',
+      '[name="framework"]',
     ) as HTMLSelectElement;
     if (displayNameField && descriptionField && frameworkField) {
       await userEvent.type(displayNameField, 'App 1');
@@ -265,7 +278,9 @@ describe('AppForm', () => {
     const { baseElement } = render(
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
-          <AppForm id="app-1" />
+          <BrowserRouter>
+            <AppForm id="app-1" />
+          </BrowserRouter>
         </QueryClientProvider>
       </RecoilRoot>,
     );
@@ -277,7 +292,7 @@ describe('AppForm', () => {
       '#description',
     ) as HTMLInputElement;
     const frameworkField = baseElement.querySelector(
-      '#framework',
+      '[name="framework"]',
     ) as HTMLSelectElement;
     if (displayNameField && descriptionField && frameworkField) {
       await userEvent.type(displayNameField, 'App 1');
@@ -300,7 +315,9 @@ describe('AppForm', () => {
     const { baseElement } = render(
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
-          <AppForm id="app-1" />
+          <BrowserRouter>
+            <AppForm id="app-1" />
+          </BrowserRouter>
         </QueryClientProvider>
       </RecoilRoot>,
     );
@@ -312,7 +329,7 @@ describe('AppForm', () => {
       '#description',
     ) as HTMLInputElement;
     const frameworkField = baseElement.querySelector(
-      '#framework',
+      '[name="framework"]',
     ) as HTMLSelectElement;
     if (displayNameField && descriptionField && frameworkField) {
       await userEvent.type(displayNameField, 'App 1');
@@ -324,5 +341,24 @@ describe('AppForm', () => {
         btn.click();
       });
     }
+  });
+
+  test('clicks cancel to home', async () => {
+    mock.onGet(new RegExp('/frameworks')).reply(200, frameworks);
+    mock.onGet(new RegExp('/server/app-1')).reply(200, app);
+    const { baseElement } = render(
+      <RecoilRoot>
+        <QueryClientProvider client={queryClient}>
+          <BrowserRouter>
+            <AppForm />
+          </BrowserRouter>
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+    const btn = baseElement.querySelector('#cancel-btn') as HTMLButtonElement;
+    await act(async () => {
+      btn.click();
+    });
+    expect(window.location.pathname).toBe('/');
   });
 });

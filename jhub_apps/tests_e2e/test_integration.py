@@ -16,7 +16,7 @@ def get_page(playwright: Playwright):
         record_video_dir="videos/",
         record_video_size={"width": 1920, "height": 1080},
         viewport={"width": 1920, "height": 1080},
-        ignore_https_errors=True
+        ignore_https_errors=True,
     )
     page = context.new_page()
     return browser, context, page
@@ -36,7 +36,7 @@ def test_panel_app_creation(playwright: Playwright) -> None:
     # for searching app with unique name in the UI
     app_name = f"{framework} app {app_suffix}"
     app_page_title = "Panel Test App"
-    wait_for_element_in_app = 'div.bk-slider-title >> text=Slider:'
+    wait_for_element_in_app = "div.bk-slider-title >> text=Slider:"
     try:
         page.goto(BASE_URL)
         logger.info("Signing in")
@@ -50,12 +50,13 @@ def test_panel_app_creation(playwright: Playwright) -> None:
         logger.info("Creating App")
         page.get_by_role("button", name="Create App").click()
         logger.info("Fill App display Name")
-        page.get_by_label("Display Name *").click()
-        page.get_by_label("Display Name *").fill(app_name)
+        page.get_by_label("Name *").click()
+        page.get_by_label("Name *").fill(app_name)
         logger.info("Select Framework")
-        page.get_by_label("Framework *").select_option(framework)
+        page.locator("id=framework").click()
+        page.get_by_role("option", name="Panel").click()
         logger.info("Click Submit")
-        page.get_by_role("button", name="Submit").click()
+        page.get_by_role("button", name="Create App").click()
         slider_text_element = page.wait_for_selector(wait_for_element_in_app)
         assert slider_text_element is not None, "Slider text element not found!"
         logger.info("Checking page title")

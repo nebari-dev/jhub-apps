@@ -1,14 +1,14 @@
+import AddIcon from '@mui/icons-material/Add';
 import { Button } from '@mui/material';
-import { Alert, Modal, TextInput } from '@src/components';
+import { Alert, TextInput } from '@src/components';
+import { API_BASE_URL } from '@src/utils/constants';
 import React, { SyntheticEvent, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { currentNotification } from '../../store';
-import AppForm from './app-form/app-form';
 import { AppsGrid } from './apps-grid/apps-grid';
 import { ServicesGrid } from './services-grid/services-grid';
 
 export const Home = (): React.ReactElement => {
-  const [isOpen, setIsOpen] = useState(false);
   const [notification] = useRecoilState<string | undefined>(
     currentNotification,
   );
@@ -40,19 +40,13 @@ export const Home = (): React.ReactElement => {
             id="create-app"
             variant="contained"
             color="primary"
+            startIcon={<AddIcon />}
             onClick={() => {
-              setIsOpen(true);
+              window.location.href = `${API_BASE_URL}/create-app`;
             }}
           >
             Create App
           </Button>
-          {isOpen && (
-            <Modal
-              title="Create New App"
-              setIsOpen={setIsOpen}
-              body={<AppForm onCancel={() => setIsOpen(false)} />}
-            />
-          )}
         </div>
       </div>
       {notification && (

@@ -1,17 +1,18 @@
 import { Button } from '@mui/material';
 import { AppQueryDeleteProps, AppQueryPostProps } from '@src/types/api';
 import axios from '@src/utils/axios';
+import { API_BASE_URL } from '@src/utils/constants';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import React, { useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { ButtonGroup } from '../../../components';
+import AppForm from '../../../components/app-form/app-form';
 import ContextMenu, {
   ContextMenuItem,
 } from '../../../components/context-menu/context-menu';
 import Modal from '../../../components/modal/modal';
 import Tag from '../../../components/tag/tag';
 import { currentNotification } from '../../../store';
-import AppForm from '../app-form/app-form';
 
 interface AppCardProps {
   id: string;
@@ -147,7 +148,8 @@ export const AppCard = ({
     {
       id: 'edit',
       title: 'Edit',
-      onClick: () => setIsEditOpen(true),
+      onClick: () =>
+        (window.location.href = `${API_BASE_URL}/edit-app?id=${id}`),
       visible: true,
       disabled: isShared || id === '',
     },
@@ -272,13 +274,7 @@ export const AppCard = ({
             <Modal
               title={`Edit ${title}`}
               setIsOpen={setIsEditOpen}
-              body={
-                <AppForm
-                  id={id}
-                  onCancel={() => setIsEditOpen(false)}
-                  onSubmit={() => setIsEditOpen(false)}
-                />
-              }
+              body={<AppForm id={id} />}
             />
           )}
         </div>
