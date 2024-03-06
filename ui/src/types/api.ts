@@ -9,7 +9,7 @@ export interface UserOptions {
   conda_env: string;
   profile: string;
   public: boolean;
-  env: any;
+  env: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 export interface AppQueryUpdateProps {
