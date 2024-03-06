@@ -273,7 +273,9 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
         framework: currentFormInput.framework || '',
         filepath: currentFormInput.filepath || '',
         conda_env: currentFormInput.conda_env || '',
-        env: currentFormInput.env || '',
+        env: currentFormInput.env
+          ? JSON.stringify(currentFormInput.env)
+          : undefined,
         custom_command: currentFormInput.custom_command || '',
         profile: currentFormInput.profile || '',
       });
