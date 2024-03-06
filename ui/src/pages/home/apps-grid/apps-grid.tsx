@@ -6,8 +6,8 @@ import { getApps } from '@src/utils/jupyterhub';
 import { useQuery } from '@tanstack/react-query';
 import React, { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
-import { Item } from 'src/styles/styled-item';
 import { currentJhData, currentNotification } from '../../../store';
+import { Item } from '../../../styles/styled-item';
 import AppCard from '../app-card/app-card';
 interface AppsGridProps {
   appType?: 'My' | 'Shared';

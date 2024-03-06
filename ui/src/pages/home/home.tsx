@@ -1,19 +1,13 @@
 import AddIcon from '@mui/icons-material/Add';
-import { Alert, Box, Button, Grid, TextField } from '@mui/material';
+import { Box, Button, Grid, TextField } from '@mui/material';
 import { API_BASE_URL } from '@src/utils/constants';
 import React, { SyntheticEvent, useState } from 'react';
-import { useRecoilState } from 'recoil';
-import { Item } from 'src/styles/styled-item';
-import { currentNotification } from '../../store';
+import { Item } from '../../styles/styled-item';
 import { AppsGrid } from './apps-grid/apps-grid';
 import './home.css';
 import { ServicesGrid } from './services-grid/services-grid';
 
 export const Home = (): React.ReactElement => {
-  const [notification] = useRecoilState<string | undefined>(
-    currentNotification,
-  );
-
   const [searchValue, setSearchValue] = useState('');
 
   const handleSearch = (event: SyntheticEvent) => {
@@ -59,17 +53,6 @@ export const Home = (): React.ReactElement => {
           </Item>
         </Grid>
       </Grid>
-      {notification && (
-        <Grid container spacing={2} paddingBottom="8px">
-          <Grid item>
-            <Item>
-              <Alert id="alert-notification" severity="error">
-                {notification}
-              </Alert>
-            </Item>
-          </Grid>
-        </Grid>
-      )}
       <ServicesGrid />
       <AppsGrid appType="My" filter={searchValue} />
       <AppsGrid appType="Shared" filter={searchValue} />

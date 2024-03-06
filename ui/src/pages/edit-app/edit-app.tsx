@@ -4,7 +4,7 @@ import { AppForm } from '@src/components';
 import { APP_BASE_URL } from '@src/utils/constants';
 import React from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Item } from 'src/styles/styled-item';
+import { Item } from '../../styles/styled-item';
 
 export const EditApp = (): React.ReactElement => {
   const [searchParams] = useSearchParams();
