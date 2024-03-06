@@ -76,16 +76,6 @@ a {
   content: unset;
 }
 
-.row {
-  display: flex;
-  flex-direction: column;
-  margin: 0 0 16px 0;
-}
-
-.row.breadcrumb > button {
-  width: 50px;
-}
-
 .grid-heading-left {
   width: 120px;
   display: flex;

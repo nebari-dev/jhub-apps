@@ -163,7 +163,7 @@ export const ServerTypes = (): React.ReactElement => {
 
   return (
     <div className="container">
-      <div className="row breadcrumb">
+      <div className="form-breadcrumb">
         <Button
           id="back-btn"
           type="button"

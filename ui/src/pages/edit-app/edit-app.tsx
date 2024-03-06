@@ -14,7 +14,7 @@ export const EditApp = (): React.ReactElement => {
     <Box className="container">
       <Stack>
         <Item>
-          <div className="row breadcrumb">
+          <div className="form-breadcrumb">
             <Button
               id="back-btn"
               type="button"

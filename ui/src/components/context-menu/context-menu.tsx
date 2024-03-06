@@ -1,4 +1,4 @@
-import { EllipsisHorizontalIcon } from '@heroicons/react/24/solid';
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import React, { SyntheticEvent } from 'react';
 import './context-menu.css';
 
@@ -26,7 +26,7 @@ export const ContextMenu = ({
 
   return (
     <div className="context-menu-container" id={id} tabIndex={0} ref={menuRef}>
-      <EllipsisHorizontalIcon />
+      <MoreHorizIcon />
       <ul className={`context-menu`}>
         {items
           .filter((item) => item.visible)
