@@ -9,6 +9,7 @@ export interface UserOptions {
   conda_env: string;
   profile: string;
   public: boolean;
+  env: any;
 }
 
 export interface AppQueryUpdateProps {

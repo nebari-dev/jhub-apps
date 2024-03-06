@@ -251,7 +251,12 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
   useEffect(() => {
     if (formData?.name && formData?.user_options) {
       setName(formData.name);
-      reset({ ...formData.user_options });
+      reset({
+        ...formData.user_options,
+        env: formData.user_options.env
+          ? JSON.stringify(formData.user_options.env)
+          : undefined,
+      });
       setIsPublic(formData.user_options.public);
       setCurrentImage(formData.user_options.thumbnail);
     }
