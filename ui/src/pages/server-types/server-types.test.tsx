@@ -11,6 +11,7 @@ import { ServerTypes } from './server-types';
 describe('ServerTypes', () => {
   const queryClient = new QueryClient();
   const mock = new MockAdapter(axios);
+  let originalLocation = '';
 
   beforeAll(() => {
     mock.reset();
@@ -19,6 +20,11 @@ describe('ServerTypes', () => {
   beforeEach(() => {
     queryClient.clear();
     mock.reset();
+    originalLocation = window.location.href;
+  });
+
+  afterEach(() => {
+    window.location.href = originalLocation;
   });
 
   // Loading state test
@@ -85,11 +91,29 @@ describe('ServerTypes', () => {
       </RecoilRoot>,
     );
     await waitFor(() => expect(baseElement).toHaveTextContent('Small'));
-    const radios = baseElement.querySelectorAll('input[type="radio"]');
-    if (radios) {
-      const radio = radios[0] as HTMLInputElement;
+    const cards = baseElement.querySelectorAll('.server-type-card');
+    if (cards) {
+      const radio = cards[0] as HTMLElement;
       radio.click();
     }
+  });
+
+  test('simulates loading with error', async () => {
+    queryClient.setQueryData(['serverTypes'], null);
+    mock
+      .onGet(new RegExp('/spawner-profiles/'))
+      .reply(500, { message: 'Some error' });
+    const { baseElement } = render(
+      <RecoilRoot>
+        <QueryClientProvider client={queryClient}>
+          <BrowserRouter>
+            <ServerTypes />
+          </BrowserRouter>
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+
+    expect(baseElement).toHaveTextContent('No servers available');
   });
 
   test('simulates creating an app', async () => {
@@ -109,5 +133,86 @@ describe('ServerTypes', () => {
     await act(async () => {
       btn.click();
     });
+  });
+
+  test('simulates editing an app', async () => {
+    const mockSearchParamsGet = jest.spyOn(URLSearchParams.prototype, 'get');
+    mockSearchParamsGet.mockReturnValue('app-1');
+
+    queryClient.setQueryData(['serverTypes'], profiles);
+    mock.onGet(new RegExp('/spawner-profiles/')).reply(200, profiles);
+    const { baseElement } = render(
+      <RecoilRoot>
+        <QueryClientProvider client={queryClient}>
+          <BrowserRouter>
+            <ServerTypes />
+          </BrowserRouter>
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+    await waitFor(() => expect(baseElement).toHaveTextContent('Small'));
+    const btn = baseElement.querySelector('#submit-btn') as HTMLButtonElement;
+    await act(async () => {
+      btn.click();
+    });
+
+    expect(mockSearchParamsGet).toHaveBeenCalledWith('id');
+    mockSearchParamsGet.mockRestore();
+  });
+
+  test('clicks back to create app', async () => {
+    const { baseElement } = render(
+      <RecoilRoot>
+        <QueryClientProvider client={queryClient}>
+          <BrowserRouter>
+            <ServerTypes />
+          </BrowserRouter>
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+    const btn = baseElement.querySelector('#back-btn') as HTMLButtonElement;
+    await act(async () => {
+      btn.click();
+    });
+    expect(window.location.pathname).toBe('/create-app');
+  });
+
+  test('clicks back to edit app', async () => {
+    const mockSearchParamsGet = jest.spyOn(URLSearchParams.prototype, 'get');
+    mockSearchParamsGet.mockReturnValue('app-1');
+    const { baseElement } = render(
+      <RecoilRoot>
+        <QueryClientProvider client={queryClient}>
+          <BrowserRouter>
+            <ServerTypes />
+          </BrowserRouter>
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+    const btn = baseElement.querySelector('#back-btn') as HTMLButtonElement;
+    await act(async () => {
+      btn.click();
+    });
+    expect(window.location.pathname).toBe('/edit-app');
+    mockSearchParamsGet.mockRestore();
+  });
+
+  test('clicks cancel to home', async () => {
+    queryClient.setQueryData(['serverTypes'], profiles);
+    mock.onGet(new RegExp('/spawner-profiles/')).reply(200, profiles);
+    const { baseElement } = render(
+      <RecoilRoot>
+        <QueryClientProvider client={queryClient}>
+          <BrowserRouter>
+            <ServerTypes />
+          </BrowserRouter>
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+    const btn = baseElement.querySelector('#cancel-btn') as HTMLButtonElement;
+    await act(async () => {
+      btn.click();
+    });
+    expect(window.location.pathname).toBe('/edit-app');
   });
 });

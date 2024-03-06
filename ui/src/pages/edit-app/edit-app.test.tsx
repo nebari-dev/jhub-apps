@@ -31,4 +31,38 @@ describe('EditApp', () => {
       expect(baseElement.querySelector('h1')?.textContent).toEqual('Edit app');
     });
   });
+
+  test('simulates editing an app', async () => {
+    const mockSearchParamsGet = jest.spyOn(URLSearchParams.prototype, 'get');
+    mockSearchParamsGet.mockReturnValue('app-1');
+
+    render(
+      <RecoilRoot>
+        <QueryClientProvider client={queryClient}>
+          <BrowserRouter>
+            <EditApp />
+          </BrowserRouter>
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+
+    expect(mockSearchParamsGet).toHaveBeenCalledWith('id');
+  });
+
+  test('clicks back to home', async () => {
+    const { baseElement } = render(
+      <RecoilRoot>
+        <QueryClientProvider client={queryClient}>
+          <BrowserRouter>
+            <EditApp />
+          </BrowserRouter>
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+    const btn = baseElement.querySelector('#back-btn') as HTMLButtonElement;
+    await act(async () => {
+      btn.click();
+    });
+    expect(window.location.pathname).toBe('/');
+  });
 });

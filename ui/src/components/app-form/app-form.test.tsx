@@ -342,4 +342,23 @@ describe('AppForm', () => {
       });
     }
   });
+
+  test('clicks cancel to home', async () => {
+    mock.onGet(new RegExp('/frameworks')).reply(200, frameworks);
+    mock.onGet(new RegExp('/server/app-1')).reply(200, app);
+    const { baseElement } = render(
+      <RecoilRoot>
+        <QueryClientProvider client={queryClient}>
+          <BrowserRouter>
+            <AppForm />
+          </BrowserRouter>
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+    const btn = baseElement.querySelector('#cancel-btn') as HTMLButtonElement;
+    await act(async () => {
+      btn.click();
+    });
+    expect(window.location.pathname).toBe('/');
+  });
 });

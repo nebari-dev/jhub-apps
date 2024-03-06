@@ -1,16 +1,14 @@
 import AddIcon from '@mui/icons-material/Add';
 import { Button } from '@mui/material';
-import { Alert, Modal, TextInput } from '@src/components';
+import { Alert, TextInput } from '@src/components';
 import { API_BASE_URL } from '@src/utils/constants';
 import React, { SyntheticEvent, useState } from 'react';
 import { useRecoilState } from 'recoil';
-import AppForm from '../../components/app-form/app-form';
 import { currentNotification } from '../../store';
 import { AppsGrid } from './apps-grid/apps-grid';
 import { ServicesGrid } from './services-grid/services-grid';
 
 export const Home = (): React.ReactElement => {
-  const [isOpen, setIsOpen] = useState(false);
   const [notification] = useRecoilState<string | undefined>(
     currentNotification,
   );
@@ -49,13 +47,6 @@ export const Home = (): React.ReactElement => {
           >
             Create App
           </Button>
-          {isOpen && (
-            <Modal
-              title="Create New App"
-              setIsOpen={setIsOpen}
-              body={<AppForm />}
-            />
-          )}
         </div>
       </div>
       {notification && (
