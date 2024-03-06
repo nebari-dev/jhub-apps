@@ -2,8 +2,13 @@ from fastapi import APIRouter, FastAPI, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 
+
+from jhub_apps import HERE
+
 app = FastAPI()
-templates = Jinja2Templates(directory="jhub_apps/templates")
+
+TEMPLATE_PATH = HERE.joinpath("templates")
+templates = Jinja2Templates(directory=TEMPLATE_PATH)
 router = APIRouter(prefix="/services/japps")
 
 
