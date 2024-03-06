@@ -1,0 +1,64 @@
+.card {
+  width: 280px;
+  border: 2px solid var(--gray-lighter);
+  border-radius: 0.25rem;
+}
+
+.card:focus {
+  outline: 0.2rem solid var(--primary-light);
+}
+
+.card-header {
+  padding: 1.5rem 1.5rem 0.5rem;
+}
+
+.card-header-menu {
+  width: 100%;
+  display: flex;
+  justify-content: right;
+  position: relative;
+  top: 5px;
+  right: 5px;
+}
+
+.card-header-media {
+  min-height: 1px;
+}
+
+.card-header-img {
+  display: flex;
+  flex-direction: row;
+  height: 150px;
+  background-color: var(--gray-lighter);
+  overflow: hidden;
+}
+
+.card-header-img > img {
+  margin: auto auto;
+  max-width: 280px;
+}
+
+.card-header a {
+  text-decoration: underline;
+  color: var(--text-color);
+}
+
+.card-body {
+  min-height: 75px;
+  padding: 0.5rem 1.5rem;
+}
+
+.card-body > p,
+.card-body > div {
+  font-size: 14px;
+  padding-bottom: 8px;
+}
+
+.card-footer {
+  padding: 0.5rem 1.5rem 1.5rem;
+}
+
+.card-dialog-body {
+  width: 400px;
+  margin-bottom: 24px;
+}

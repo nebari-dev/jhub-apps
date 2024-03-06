@@ -30,6 +30,7 @@ import {
   currentFormInput as defaultFormInput,
   currentImage as defaultImage,
 } from '../../store';
+import './app-form.css';
 
 export interface AppFormProps {
   id?: string;

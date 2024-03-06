@@ -4,6 +4,7 @@ import UploadFileIcon from '@mui/icons-material/UploadFile';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { Button, Dialog } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
+import './thumbnail.css';
 
 export interface ThumbnailProps {
   /**

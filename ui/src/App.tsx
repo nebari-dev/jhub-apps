@@ -22,7 +22,7 @@ export const App = (): React.ReactElement => {
   return (
     <QueryClientProvider client={queryClient}>
       <div>
-        <main className="my-6">
+        <main>
           <Routes>
             <Route path="/home" element={<Home />} />
             <Route path="/create-app" element={<CreateApp />} />

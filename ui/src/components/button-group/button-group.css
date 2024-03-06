@@ -1,0 +1,10 @@
+.button-group {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+}
+
+.button-group-item {
+  margin: 0.25rem;
+  list-style: none;
+}

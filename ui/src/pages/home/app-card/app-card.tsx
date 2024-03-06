@@ -16,6 +16,7 @@ import ContextMenu, {
   ContextMenuItem,
 } from '../../../components/context-menu/context-menu';
 import { currentNotification } from '../../../store';
+import './app-card.css';
 
 interface AppCardProps {
   id: string;
@@ -166,7 +167,7 @@ export const AppCard = ({
 
   const startModalBody = (
     <>
-      <p className="w-[400px] mb-6">
+      <p className="card-dialog-body">
         Are you sure you want to start <b>{title}</b>?
       </p>
       <ButtonGroup>
@@ -193,7 +194,7 @@ export const AppCard = ({
 
   const stopModalBody = (
     <>
-      <p className="w-[400px] mb-6">
+      <p className="card-dialog-body">
         Are you sure you want to stop <b>{title}</b>?
       </p>
       <ButtonGroup>
@@ -220,7 +221,7 @@ export const AppCard = ({
 
   const deleteModalBody = (
     <>
-      <p className="w-[400px] mb-6">
+      <p className="card-dialog-body">
         Are you sure you want to delete <b>{title}</b>? This action is permanent
         and cannot be reversed.
       </p>
@@ -270,7 +271,7 @@ export const AppCard = ({
             </Dialog>
           )}
         </div>
-        <div className="card-header-img flex flex-row">
+        <div className="card-header-img">
           {thumbnail ? <img src={thumbnail} alt="App thumb" /> : <></>}
         </div>
       </div>
@@ -280,9 +281,9 @@ export const AppCard = ({
         </h3>
       </div>
       <div className="card-body">
-        <p className="text-sm pb-2">{description}</p>
+        <p>{description}</p>
         {username ? (
-          <div className="text-sm">
+          <div>
             <span className="font-bold">Author: </span>
             {username}
           </div>

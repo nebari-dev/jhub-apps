@@ -1,5 +1,6 @@
 import { EllipsisHorizontalIcon } from '@heroicons/react/24/solid';
 import React, { SyntheticEvent } from 'react';
+import './context-menu.css';
 
 export interface ContextMenuItem {
   id: string;
