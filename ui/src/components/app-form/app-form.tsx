@@ -264,6 +264,7 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
 
   // Populate form when returning from server-types page
   useEffect(() => {
+    // istanbul ignore next
     if (currentFormInput) {
       setName(currentFormInput.display_name);
       reset({

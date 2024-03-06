@@ -179,6 +179,9 @@ describe('AppCard', () => {
   });
 
   test('simulates editing an app', async () => {
+    Object.defineProperty(window, 'location', {
+      value: { href: jest.fn() },
+    });
     mock.onGet(new RegExp('/frameworks')).reply(200, frameworks);
     mock.onGet(new RegExp('/conda-environments')).reply(200, environments);
     mock.onGet(new RegExp('/spawner-profiles')).reply(200, profiles);
