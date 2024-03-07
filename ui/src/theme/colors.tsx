@@ -28,9 +28,9 @@ export const purple = '#BA18DA';
 export const purpleLight = '#BA18DA10';
 export const purpleDark = '#9B00CE';
 
-export const green = '#20AAA1';
-export const greenLight = '#20AAA110';
-export const greenDark = '#009B8F';
+export const green = '#18817A';
+export const greenLight = '#18817A10';
+export const greenDark = '#12635E';
 
 export const red = '#D72D47';
 

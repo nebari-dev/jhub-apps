@@ -4,8 +4,8 @@
   --primary: #ba18da;
   --primary-dark: #9b00ce;
   --secondary-light: #20aaa110;
-  --secondary: #20aaa1;
-  --secondary-dark: #1a7a6f;
+  --secondary: #18817a;
+  --secondary-dark: #12635e;
   --white: #ffffff;
   --black: #000000;
   --gray-lightest: #f0f0f0;
@@ -54,6 +54,10 @@ h1 {
   font-size: 30px;
   font-weight: 700;
   padding: 0 0 8px 0;
+}
+
+h2 {
+  font-size: 20px;
 }
 
 hr {
