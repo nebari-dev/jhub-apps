@@ -19,10 +19,6 @@
   margin: 0 0 16px 0;
 }
 
-.form hr {
-  color: var(--gray-light);
-}
-
 .form > .button-section {
   width: 100%;
   margin: 24px 0;

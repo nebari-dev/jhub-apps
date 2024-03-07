@@ -1,10 +1,11 @@
 :root {
   /* Colors */
-  --primary-light: #2491ff;
-  --primary: #005ea2;
-  --primary-dark: #1a4480;
-  --primary-darker: #162e51;
-  --secondary: #e31c3d;
+  --primary-light: #ba18da10;
+  --primary: #ba18da;
+  --primary-dark: #9b00ce;
+  --secondary-light: #20aaa110;
+  --secondary: #20aaa1;
+  --secondary-dark: #1a7a6f;
   --white: #ffffff;
   --black: #000000;
   --gray-lightest: #f0f0f0;
@@ -53,6 +54,10 @@ h1 {
   font-size: 30px;
   font-weight: 700;
   padding: 0 0 8px 0;
+}
+
+hr {
+  color: var(--gray-lightest);
 }
 
 p {

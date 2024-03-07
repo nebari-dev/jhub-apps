@@ -14,6 +14,7 @@
   height: 100%;
   background-color: #90969c;
 }
+
 .thumbnail-body.selected {
   background-color: var(--white);
 }
@@ -38,6 +39,10 @@
   width: 100%;
   height: 100%;
   cursor: pointer;
+}
+
+.thumbnail-icon-container:focus {
+  outline-color: var(--primary);
 }
 
 .thumbnail-icon {

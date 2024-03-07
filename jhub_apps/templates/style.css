@@ -161,18 +161,18 @@ a:focus {
     font-size: 1.25rem;
 }
 
-.btn-primary, .MuiButton-containedPrimary:not(:disabled) {
+.btn-primary {
     color: var(--light-text-color);
     background-color: var(--primary-color) !important;
     border-color: var(--primary-color) !important;
 }
 
-.btn-primary:hover, .MuiButton-containedPrimary:hover {
+.btn-primary:hover {
     background-color: var(--primary-color-dark)!important;
     border-color: var(--primary-color-dark)!important;
 }
 
-.btn-primary:focus, .MuiButton-containedPrimary:focus {
+.btn-primary:focus {
     outline-color: var(--primary-color) !important;
 }
 
@@ -182,28 +182,20 @@ a:focus {
     border-color: var(--gray-color) !important;
 }
 
-.MuiButton-containedSecondary {
-    background-color: var(--gray-color) !important;
-}
-
-.btn-secondary, .MuiButton-outlinedSecondary:not(:disabled) {
+.btn-secondary {
     color: var(--secondary-color) !important;
     background-color: #ffffff !important;
     border-color: var(--secondary-color) !important;
 }
 
-.btn-secondary:hover, .MuiButton-outlinedSecondary:hover {
+.btn-secondary:hover {
     color: var(--secondary-color-dark) !important;
     background-color: #ffffff !important;
     border-color: var(--secondary-color-dark) !important;
 }
 
-.btn-secondary:focus, .MuiButton-outlinedSecondary:focus {
+.btn-secondary:focus {
     outline-color: var(--secondary-color) !important;
-}
-
-.MuiButton-textPrimary {
-    color: var(--primary-color) !important;
 }
 
 .btn-success {
@@ -247,19 +239,6 @@ a:focus {
 #help-floater:hover {
     background-color: var(--primary-color-dark)!important;
     border-color: var(--primary-color-dark)!important;
-}
-
-.modal-footer .btn+.btn {
-    margin-left: 8px;
-}
-
-/* Misc MUI */
-.MuiCardContent-root:focus {
-    outline-color: var(--primary-color) !important;
-}
-
-.MuiSwitch-thumb {
-    background-color: var(--white) !important;
 }
 
 /* Navbar  */
@@ -372,6 +351,63 @@ a:focus {
     display: block;
     z-index: 1001;
   }
+
+/* Custom styling */
+.modal-footer .btn+.btn {
+    margin-left: 8px;
+}
+
+.thumbnail-icon-container {
+    outline-color: var(--primary-color) !important;
+}
+
+/* Misc MUI */
+.MuiButton-containedPrimary:not(:disabled) {
+    color: var(--light-text-color);
+    background-color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+}
+
+.MuiButton-containedPrimary:hover {
+    background-color: var(--primary-color-dark)!important;
+    border-color: var(--primary-color-dark)!important;
+}
+
+.MuiButton-containedPrimary:focus {
+    outline-color: var(--primary-color) !important;
+}
+
+.MuiButton-containedSecondary {
+    background-color: var(--gray-color) !important;
+}
+
+.MuiButton-outlinedSecondary:not(:disabled) {
+    color: var(--secondary-color) !important;
+    background-color: #ffffff !important;
+    border-color: var(--secondary-color) !important;
+}
+
+.MuiButton-outlinedSecondary:hover {
+    color: var(--secondary-color-dark) !important;
+    background-color: #ffffff !important;
+    border-color: var(--secondary-color-dark) !important;
+}
+
+.MuiButton-outlinedSecondary:focus {
+    outline-color: var(--secondary-color) !important;
+}
+
+.MuiButton-textPrimary {
+    color: var(--primary-color) !important;
+}
+
+.MuiCardContent-root:focus {
+    outline-color: var(--primary-color) !important;
+}
+
+.MuiSwitch-thumb {
+    background-color: var(--white) !important;
+}
 
 /* Misc */
 .version {
