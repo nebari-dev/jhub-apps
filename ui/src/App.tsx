@@ -15,7 +15,7 @@ const queryClient = new QueryClient();
 
 export const App = (): React.ReactElement => {
   const [, setJhData] = useRecoilState<JhData>(currentJhData);
-  const [notification] = useRecoilState<string | undefined>(
+  const [notification, setNotification] = useRecoilState<string | undefined>(
     currentNotification,
   );
 
@@ -28,7 +28,14 @@ export const App = (): React.ReactElement => {
     <QueryClientProvider client={queryClient}>
       <div>
         <main>
-          {notification ? <NotificationBar message={notification} /> : <></>}
+          {notification ? (
+            <NotificationBar
+              message={notification}
+              onClose={() => setNotification(undefined)}
+            />
+          ) : (
+            <></>
+          )}
           <Routes>
             <Route path="/home" element={<Home />} />
             <Route path="/create-app" element={<CreateApp />} />
