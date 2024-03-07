@@ -34,6 +34,7 @@
     --danger-color: #e60f66;
     --danger-color-dark: #b81a53;
     --gray-color: #e6e6e6;
+    --blue-link-color: #276BE9;
 
     /* Miscellaneous */
     --button-hover-shadow: 0 3px 0 var(--text-color);
@@ -109,10 +110,6 @@ label {
     font-family: var(--base-font-family);
 }
 
-.text-input:focus, .text-area:focus, .select:focus, .card:focus, .card:active, .toggle > label, .file-input, .thumbnail-icon-container {
-    outline-color: var(--primary-color) !important;
-}
-
 .toggle-body-on {
     background-color: var(--primary-color) !important;
 }
@@ -135,15 +132,14 @@ a:focus {
     box-shadow: none;
 }
 
-.form-group .label {
-    color: var(--link-text-color) !important;
-    font-size: 90% !important;
+.form-breadcrumb {
+    background-color: unset !important;
     padding: 0 !important;
 }
 
-.row.breadcrumb {
-    background-color: unset !important;
-    padding: 0 !important;
+.form-paragraph-link {
+    color: var(--blue-link-color);
+    text-decoration: underline;
 }
 
 /* Buttons */
@@ -260,6 +256,10 @@ a:focus {
 /* Misc MUI */
 .MuiCardContent-root:focus {
     outline-color: var(--primary-color) !important;
+}
+
+.MuiSwitch-thumb {
+    background-color: var(--white) !important;
 }
 
 /* Navbar  */
