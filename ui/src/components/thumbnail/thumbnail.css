@@ -14,14 +14,20 @@
   height: 100%;
   background-color: #90969c;
 }
+.thumbnail-body.selected {
+  background-color: var(--white);
+}
 
 .thumbnail-body.dragging {
   border: 2px dashed var(--primary);
 }
 
-.thumbnail-body img {
+.thumbnail-img-container {
+  margin: auto auto;
+}
+
+.thumbnail-img {
   max-height: 150px;
-  margin-bottom: 10px;
 }
 
 .thumbnail-icon-container {

@@ -292,9 +292,19 @@ export const AppCard = ({
         )}
       </div>
       <div className="card-footer">
-        <Chip id={`tag-${id}`} label={framework} size="small" />
+        <Chip
+          id={`tag-${id}`}
+          label={framework}
+          variant="outlined"
+          size="small"
+        />
         {isPublic ? (
-          <Chip id={`tag-${id}`} label="Public" color="warning" size="small" />
+          <Chip
+            id={`tag-${id}`}
+            label="Public"
+            variant="outlined"
+            size="small"
+          />
         ) : (
           <></>
         )}
