@@ -1,5 +1,5 @@
-import DeleteIcon from '@mui/icons-material/Delete';
-import InsertPhotoOutlinedIcon from '@mui/icons-material/InsertPhotoOutlined';
+import InsertPhotoIcon from '@mui/icons-material/CropOriginalRounded';
+import DeleteIcon from '@mui/icons-material/DeleteRounded';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { Button, Dialog } from '@mui/material';
@@ -130,7 +130,7 @@ export const Thumbnail = ({
             tabIndex={0}
             onClick={handleBrowseThumbnails}
           >
-            <InsertPhotoOutlinedIcon className="thumbnail-icon" />
+            <InsertPhotoIcon className="thumbnail-icon" />
           </div>
         )}
         <input
