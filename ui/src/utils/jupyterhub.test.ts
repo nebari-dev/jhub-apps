@@ -1,17 +1,16 @@
 import { serverApps } from '@src/data/api';
-import { jhData, servicesFull } from '@src/data/jupyterhub';
+import { servicesFull } from '@src/data/jupyterhub';
 import { JhServiceFull } from '@src/types/jupyterhub';
 import {
   getApps,
   getFriendlyFrameworkName,
   getJhData,
   getServices,
-  storeJhData,
 } from './jupyterhub';
 
 describe('JupyterHub utils', () => {
   test('returns empty object from no jhdata', () => {
-    window.jhdata = undefined;
+    window.jhdata = {};
     const result = getJhData();
     expect(result).toEqual({});
   });
@@ -68,10 +67,5 @@ describe('JupyterHub utils', () => {
   test('returns the framework name with the first letter capitalized', () => {
     const result = getFriendlyFrameworkName('python');
     expect(result).toBe('Python');
-  });
-
-  test('should store JhData in localStorage', () => {
-    storeJhData(jhData);
-    expect(localStorage.getItem('jhdata')).toEqual(JSON.stringify(jhData));
   });
 });

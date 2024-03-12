@@ -1,5 +1,6 @@
 import { CssBaseline, ThemeProvider } from '@mui/material';
 import { API_BASE_URL, APP_BASE_URL } from '@src/utils/constants.ts';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
@@ -9,6 +10,8 @@ import './index.css';
 import { theme } from './theme/theme.tsx';
 
 const currentUrl = new URL(window.location.href);
+const queryClient = new QueryClient();
+
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <BrowserRouter
@@ -19,7 +22,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
       <RecoilRoot>
         <ThemeProvider theme={theme}>
           <CssBaseline />
-          <App />
+          <QueryClientProvider client={queryClient}>
+            <App />
+          </QueryClientProvider>
         </ThemeProvider>
       </RecoilRoot>
     </BrowserRouter>

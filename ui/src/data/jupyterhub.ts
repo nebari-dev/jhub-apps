@@ -1,4 +1,5 @@
 import { JhService, JhServiceFull } from '../types/jupyterhub';
+
 export const services: JhService[] = [
   {
     name: 'JupyterLab',
