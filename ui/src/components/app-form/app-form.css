@@ -1,0 +1,50 @@
+.form {
+  max-width: 600px;
+}
+
+.form-section {
+  margin: 16px 0;
+  padding: 12px 0;
+}
+
+.form-heading {
+  font-size: 24px;
+  font-weight: 700;
+  padding: 0 0 16px 0;
+}
+
+.form > .form-section > h2 {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 16px 0;
+}
+
+.form > .button-section {
+  width: 100%;
+  margin: 24px 0;
+}
+
+.form > .button-section > .prev {
+  float: left;
+}
+
+.form > .button-section > .next {
+  float: right;
+}
+
+.form-paragraph {
+  max-width: 600px;
+}
+
+.form-paragraph-link {
+  color: var(--link-text-color);
+  text-decoration: underline;
+}
+
+.form-breadcrumb {
+  margin: 0 0 16px 0;
+}
+
+.form-breadcrumb > button {
+  width: 50px;
+}

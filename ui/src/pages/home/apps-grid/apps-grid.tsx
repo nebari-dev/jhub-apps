@@ -1,3 +1,4 @@
+import { Box, Stack } from '@mui/material';
 import { JhApp, JhData } from '@src/types/jupyterhub';
 import { UserState } from '@src/types/user';
 import axios from '@src/utils/axios';
@@ -6,6 +7,7 @@ import { useQuery } from '@tanstack/react-query';
 import React, { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { currentJhData, currentNotification } from '../../../store';
+import { Item } from '../../../styles/styled-item';
 import AppCard from '../app-card/app-card';
 interface AppsGridProps {
   appType?: 'My' | 'Shared';
@@ -63,43 +65,65 @@ export const AppsGrid = ({
   }, [error, setCurrentNotification]);
 
   return (
-    <>
-      <div className="container w-full flex flex-align-center pb-12">
-        <div className="grid-heading-left w-full">
-          <h2 className="whitespace-nowrap font-bold">{appType} Apps</h2>
-        </div>
-        <div className="grid-heading-center w-full">
-          <hr className="grid-spacer"></hr>
-        </div>
-        <div className="grid-heading-right flex justify-end w-full">
-          <h2 className="whitespace-nowrap font-bold">{apps.length} apps</h2>
-        </div>
-      </div>
-      <div className="container grid pb-12">
-        {isLoading ? (
-          <div className="font-bold">Loading...</div>
-        ) : apps.length > 0 ? (
-          <div className="flex flex flex-row flex-wrap gap-4">
-            {apps.map((app: JhApp) => (
-              <AppCard
-                id={app.id}
-                key={`app-${app.id}`}
-                title={app.name}
-                description={app.description}
-                thumbnail={app.thumbnail}
-                framework={app.framework}
-                url={app.url}
-                ready={app.ready}
-                username={app.username}
-                isPublic={app.public}
-                isShared={appType === 'Shared' ? true : false}
-              />
-            ))}
-          </div>
-        ) : (
-          <div>No apps available</div>
-        )}
-      </div>
-    </>
+    <Box>
+      <Stack>
+        <Item>
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              paddingBottom: '48px',
+            }}
+          >
+            <div className="grid-heading-left">
+              <h2>{appType} Apps</h2>
+            </div>
+            <div className="grid-heading-center">
+              <hr className="grid-spacer"></hr>
+            </div>
+            <div className="grid-heading-right">
+              <h2>{apps.length} apps</h2>
+            </div>
+          </Box>
+        </Item>
+        <Item>
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'row',
+              flexWrap: 'wrap',
+              gap: '16px',
+              justifyContent: 'flex-start',
+              paddingBottom: '48px',
+            }}
+          >
+            {isLoading ? (
+              <div className="font-bold">Loading...</div>
+            ) : apps.length > 0 ? (
+              <>
+                {apps.map((app: JhApp) => (
+                  <AppCard
+                    id={app.id}
+                    key={`app-${app.id}`}
+                    title={app.name}
+                    description={app.description}
+                    thumbnail={app.thumbnail}
+                    framework={app.framework}
+                    url={app.url}
+                    ready={app.ready}
+                    username={app.username}
+                    isPublic={app.public}
+                    isShared={appType === 'Shared' ? true : false}
+                  />
+                ))}
+              </>
+            ) : (
+              <div>No apps available</div>
+            )}
+          </Box>
+        </Item>
+      </Stack>
+    </Box>
   );
 };

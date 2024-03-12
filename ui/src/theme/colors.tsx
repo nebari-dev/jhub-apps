@@ -1,14 +1,14 @@
-export const green = {
-  50: '#D6EEDC',
-  100: '#ADDCBA',
-  200: '#85CB97',
-  300: '#5CB975',
-  400: '#36AB55',
-  500: '#298642',
-  600: '#206532',
-  700: '#144321',
-  800: '#0A2210',
-  900: '#051108',
+export const blue = {
+  50: '#2491FF',
+  100: '#2491FF',
+  200: '#2491FF',
+  300: '#2491FF',
+  400: '#2491FF',
+  500: '#005EA2',
+  600: '#1A4480',
+  700: '#1A4480',
+  800: '#1A4480',
+  900: '#162E51',
 };
 
 export const gray = {
@@ -24,31 +24,13 @@ export const gray = {
   900: '#1A1C1D',
 };
 
-export const purple = {
-  50: '#E7E0F0',
-  100: '#D0C0E5',
-  200: '#B9A1DA',
-  300: '#A78BD0',
-  400: '#8966C2',
-  500: '#6643A8',
-  600: '#55309D',
-  700: '#3B216E',
-  800: '#2F1957',
-  900: '#231240',
-};
+export const purple = '#BA18DA';
+export const purpleLight = '#BA18DA10';
+export const purpleDark = '#9B00CE';
 
-export const blue = {
-  50: '#2491FF',
-  100: '#2491FF',
-  200: '#2491FF',
-  300: '#2491FF',
-  400: '#2491FF',
-  500: '#005EA2',
-  600: '#1A4480',
-  700: '#1A4480',
-  800: '#1A4480',
-  900: '#162E51',
-};
+export const green = '#18817A';
+export const greenLight = '#18817A10';
+export const greenDark = '#12635E';
 
 export const red = '#D72D47';
 

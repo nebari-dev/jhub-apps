@@ -1,4 +1,10 @@
-import { Button } from '@mui/material';
+import {
+  Button,
+  Chip,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+} from '@mui/material';
 import { AppQueryDeleteProps, AppQueryPostProps } from '@src/types/api';
 import axios from '@src/utils/axios';
 import { API_BASE_URL } from '@src/utils/constants';
@@ -6,13 +12,11 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import React, { useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { ButtonGroup } from '../../../components';
-import AppForm from '../../../components/app-form/app-form';
 import ContextMenu, {
   ContextMenuItem,
 } from '../../../components/context-menu/context-menu';
-import Modal from '../../../components/modal/modal';
-import Tag from '../../../components/tag/tag';
 import { currentNotification } from '../../../store';
+import './app-card.css';
 
 interface AppCardProps {
   id: string;
@@ -47,7 +51,6 @@ export const AppCard = ({
   const [isStartOpen, setIsStartOpen] = useState(false);
   const [isStopOpen, setIsStopOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
-  const [isEditOpen, setIsEditOpen] = useState(false);
 
   const startRequest = async ({ id }: AppQueryPostProps) => {
     const response = await axios.post(`/server/${id}`);
@@ -164,13 +167,13 @@ export const AppCard = ({
 
   const startModalBody = (
     <>
-      <p className="w-[400px] mb-6">
+      <p className="card-dialog-body">
         Are you sure you want to start <b>{title}</b>?
       </p>
       <ButtonGroup>
         <Button
           id="cancel-btn"
-          variant="outlined"
+          variant="text"
           color="secondary"
           onClick={() => setIsStartOpen(false)}
         >
@@ -191,13 +194,13 @@ export const AppCard = ({
 
   const stopModalBody = (
     <>
-      <p className="w-[400px] mb-6">
+      <p className="card-dialog-body">
         Are you sure you want to stop <b>{title}</b>?
       </p>
       <ButtonGroup>
         <Button
           id="cancel-btn"
-          variant="outlined"
+          variant="text"
           color="secondary"
           onClick={() => setIsStopOpen(false)}
         >
@@ -218,14 +221,14 @@ export const AppCard = ({
 
   const deleteModalBody = (
     <>
-      <p className="w-[400px] mb-6">
+      <p className="card-dialog-body">
         Are you sure you want to delete <b>{title}</b>? This action is permanent
         and cannot be reversed.
       </p>
       <ButtonGroup>
         <Button
           id="cancel-btn"
-          variant="outlined"
+          variant="text"
           color="secondary"
           onClick={() => setIsDeleteOpen(false)}
         >
@@ -250,35 +253,25 @@ export const AppCard = ({
         <div className="card-header-menu">
           <ContextMenu id={`card-menu-${id}`} items={menuItems} />
           {isStartOpen && (
-            <Modal
-              title={`Start ${title}`}
-              setIsOpen={setIsStartOpen}
-              body={startModalBody}
-            />
+            <Dialog open={isStartOpen} onClose={setIsStartOpen}>
+              <DialogTitle>Start {title}</DialogTitle>
+              <DialogContent>{startModalBody}</DialogContent>
+            </Dialog>
           )}
           {isStopOpen && (
-            <Modal
-              title={`Stop ${title}`}
-              setIsOpen={setIsStopOpen}
-              body={stopModalBody}
-            />
+            <Dialog open={isStopOpen} onClose={setIsStopOpen}>
+              <DialogTitle>Stop {title}</DialogTitle>
+              <DialogContent>{stopModalBody}</DialogContent>
+            </Dialog>
           )}
           {isDeleteOpen && (
-            <Modal
-              title={`Delete ${title}`}
-              setIsOpen={setIsDeleteOpen}
-              body={deleteModalBody}
-            />
-          )}
-          {isEditOpen && (
-            <Modal
-              title={`Edit ${title}`}
-              setIsOpen={setIsEditOpen}
-              body={<AppForm id={id} />}
-            />
+            <Dialog open={isDeleteOpen} onClose={setIsDeleteOpen}>
+              <DialogTitle>Delete {title}</DialogTitle>
+              <DialogContent>{deleteModalBody}</DialogContent>
+            </Dialog>
           )}
         </div>
-        <div className="card-header-img flex flex-row">
+        <div className="card-header-img">
           {thumbnail ? <img src={thumbnail} alt="App thumb" /> : <></>}
         </div>
       </div>
@@ -288,9 +281,9 @@ export const AppCard = ({
         </h3>
       </div>
       <div className="card-body">
-        <p className="text-sm pb-2">{description}</p>
+        <p>{description}</p>
         {username ? (
-          <div className="text-sm">
+          <div>
             <span className="font-bold">Author: </span>
             {username}
           </div>
@@ -299,11 +292,19 @@ export const AppCard = ({
         )}
       </div>
       <div className="card-footer">
-        <Tag id={`tag-${id}`}>{framework}</Tag>
+        <Chip
+          id={`tag-${id}`}
+          label={framework}
+          variant="outlined"
+          size="small"
+        />
         {isPublic ? (
-          <Tag id={`tag-${id}`} className="ml-2 bg-warning-light">
-            Public
-          </Tag>
+          <Chip
+            id={`tag-${id}`}
+            label="Public"
+            variant="outlined"
+            size="small"
+          />
         ) : (
           <></>
         )}

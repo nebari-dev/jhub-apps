@@ -1,0 +1,16 @@
+.server-type-card {
+  margin: 8px 0;
+  cursor: pointer;
+}
+
+.server-type-card:hover {
+  background: var(--gray-lightest);
+}
+
+.server-type-card:focus {
+  outline: 2px solid var(--primary);
+}
+
+.server-type-card p {
+  font-size: 14px;
+}

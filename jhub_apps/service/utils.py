@@ -140,3 +140,13 @@ async def get_thumbnail_data_url(framework_name, thumbnail):
     else:
         thumbnail_data_url = get_default_thumbnail(framework_name)
     return thumbnail_data_url
+
+
+def get_theme(config):
+    """This will extract theme variables from the JupyterHub config"""
+    if isinstance(config.theme, dict):
+        return config.theme.jupyterhub
+    elif isinstance(config.theme, LazyConfigValue):
+        return {}
+    else:
+        return None

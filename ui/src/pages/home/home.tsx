@@ -1,18 +1,13 @@
-import AddIcon from '@mui/icons-material/Add';
-import { Button } from '@mui/material';
-import { Alert, TextInput } from '@src/components';
+import AddIcon from '@mui/icons-material/AddRounded';
+import { Box, Button, Grid, TextField } from '@mui/material';
 import { API_BASE_URL } from '@src/utils/constants';
 import React, { SyntheticEvent, useState } from 'react';
-import { useRecoilState } from 'recoil';
-import { currentNotification } from '../../store';
+import { Item } from '../../styles/styled-item';
 import { AppsGrid } from './apps-grid/apps-grid';
+import './home.css';
 import { ServicesGrid } from './services-grid/services-grid';
 
 export const Home = (): React.ReactElement => {
-  const [notification] = useRecoilState<string | undefined>(
-    currentNotification,
-  );
-
   const [searchValue, setSearchValue] = useState('');
 
   const handleSearch = (event: SyntheticEvent) => {
@@ -21,46 +16,46 @@ export const Home = (): React.ReactElement => {
   };
 
   return (
-    <>
-      <div className="container grid grid-cols-12 pb-12">
-        <div className="md:col-span-2 col-span-12">
-          <h1 className="text-3xl font-bold">Home</h1>
-        </div>
-        <div className="md:col-span-8 col-span-8">
-          <TextInput
-            id="search"
-            placeholder="Search..."
-            aria-label="Search for an app"
-            className="w-full mt-0"
-            onChange={handleSearch}
-          />
-        </div>
-        <div className="md:col-span-2 col-span-4 flex justify-end">
-          <Button
-            id="create-app"
-            variant="contained"
-            color="primary"
-            startIcon={<AddIcon />}
-            onClick={() => {
-              window.location.href = `${API_BASE_URL}/create-app`;
-            }}
-          >
-            Create App
-          </Button>
-        </div>
-      </div>
-      {notification && (
-        <div className="container grid grid-cols-12 pb-2">
-          <div className="col-span-12">
-            <Alert id="alert-notification" type="error">
-              {notification}
-            </Alert>
-          </div>
-        </div>
-      )}
+    <Box sx={{ flexGrow: 1 }} className="container">
+      <Grid container spacing={2} paddingBottom="48px">
+        <Grid item xs={12} md={2}>
+          <Item>
+            <h1>Home</h1>
+          </Item>
+        </Grid>
+        <Grid item xs={8} md={8}>
+          <Item>
+            <TextField
+              id="search"
+              size="small"
+              placeholder="Search..."
+              aria-label="Search for an app"
+              className="search-bar"
+              onChange={handleSearch}
+            />
+          </Item>
+        </Grid>
+        <Grid item xs={4} md={2}>
+          <Item>
+            <Box display="flex" justifyContent="flex-end">
+              <Button
+                id="create-app"
+                variant="contained"
+                color="primary"
+                startIcon={<AddIcon />}
+                onClick={() => {
+                  window.location.href = `${API_BASE_URL}/create-app`;
+                }}
+              >
+                Create App
+              </Button>
+            </Box>
+          </Item>
+        </Grid>
+      </Grid>
       <ServicesGrid />
       <AppsGrid appType="My" filter={searchValue} />
       <AppsGrid appType="Shared" filter={searchValue} />
-    </>
+    </Box>
   );
 };

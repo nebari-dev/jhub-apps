@@ -1,4 +1,4 @@
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ArrowBackIcon from '@mui/icons-material/ArrowBackRounded';
 import {
   Button,
   Card,
@@ -22,6 +22,7 @@ import {
   currentFormInput as defaultFormInput,
   currentImage as defaultImage,
 } from '../../store';
+import './server-types.css';
 
 export const ServerTypes = (): React.ReactElement => {
   const [searchParams] = useSearchParams();
@@ -162,7 +163,7 @@ export const ServerTypes = (): React.ReactElement => {
 
   return (
     <div className="container">
-      <div className="row breadcrumb">
+      <div className="form-breadcrumb">
         <Button
           id="back-btn"
           type="button"
@@ -175,8 +176,8 @@ export const ServerTypes = (): React.ReactElement => {
         </Button>
       </div>
       <div className="row">
-        <h1>Server Type</h1>
-        <p className="paragraph">
+        <h1 className="form-heading">Server Type</h1>
+        <p className="form-paragraph">
           Please select the appropriate server for your app. For more
           information on server types,{' '}
           <span>
@@ -184,7 +185,7 @@ export const ServerTypes = (): React.ReactElement => {
               href="https://www.nebari.dev/docs/welcome"
               target="_blank"
               rel="noopener noreferrer"
-              className="paragraph-link"
+              className="form-paragraph-link"
             >
               visit our docs
             </a>

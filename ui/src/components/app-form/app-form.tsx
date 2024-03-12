@@ -1,9 +1,11 @@
 import {
   Button,
   FormControl,
+  FormControlLabel,
   InputLabel,
   MenuItem,
   Select,
+  Switch,
   TextField,
 } from '@mui/material';
 import {
@@ -21,13 +23,14 @@ import { useEffect, useState } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
-import { Thumbnail, Toggle } from '..';
+import { Thumbnail } from '..';
 import {
   currentNotification,
   currentFile as defaultFile,
   currentFormInput as defaultFormInput,
   currentImage as defaultImage,
 } from '../../store';
+import './app-form.css';
 
 export interface AppFormProps {
   id?: string;
@@ -458,15 +461,18 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
           render={({ field: { ref: _, value, onChange, ...field } }) => (
             <FormControl>
-              <Toggle
-                {...field}
-                id="is_public"
+              <FormControlLabel
+                control={
+                  <Switch
+                    {...field}
+                    id="is_public"
+                    checked={isPublic}
+                    onChange={() => {
+                      setIsPublic(!isPublic);
+                    }}
+                  />
+                }
                 label="Allow Public Access"
-                checked={isPublic}
-                ariaLabel="Allow Public Access"
-                onChange={() => {
-                  setIsPublic(!isPublic);
-                }}
               />
             </FormControl>
           )}
