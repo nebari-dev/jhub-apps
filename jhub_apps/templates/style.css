@@ -411,7 +411,7 @@ a:focus {
 }
 
 .MuiInputLabel-root {
-    color: var(--primary-color) !important;
+    color: var(--text-color) !important;
 }
 
 /* Misc */
