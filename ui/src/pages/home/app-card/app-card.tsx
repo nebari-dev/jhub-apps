@@ -173,7 +173,7 @@ export const AppCard = ({
       <ButtonGroup>
         <Button
           id="cancel-btn"
-          variant="outlined"
+          variant="text"
           color="secondary"
           onClick={() => setIsStartOpen(false)}
         >
@@ -200,7 +200,7 @@ export const AppCard = ({
       <ButtonGroup>
         <Button
           id="cancel-btn"
-          variant="outlined"
+          variant="text"
           color="secondary"
           onClick={() => setIsStopOpen(false)}
         >
@@ -228,7 +228,7 @@ export const AppCard = ({
       <ButtonGroup>
         <Button
           id="cancel-btn"
-          variant="outlined"
+          variant="text"
           color="secondary"
           onClick={() => setIsDeleteOpen(false)}
         >
