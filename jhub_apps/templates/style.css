@@ -406,6 +406,14 @@ a:focus {
     background-color: var(--white) !important;
 }
 
+.MuiOutlinedInput-root.Mui-focused > fieldset {
+    border-color: var(--primary-color) !important;
+}
+
+.MuiInputLabel-root {
+    color: var(--primary-color) !important;
+}
+
 /* Misc */
 .version {
     position: fixed;
