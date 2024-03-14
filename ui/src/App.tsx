@@ -1,8 +1,9 @@
+import { Box } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 import React, { useEffect } from 'react';
 import { Route, Routes } from 'react-router';
 import { useRecoilState } from 'recoil';
-import { NotificationBar } from './components';
+import { Navigation, NotificationBar } from './components';
 import { CreateApp } from './pages/create-app/create-app';
 import { EditApp } from './pages/edit-app/edit-app';
 import { Home } from './pages/home/home';
@@ -55,7 +56,16 @@ export const App = (): React.ReactElement => {
 
   return (
     <div>
-      <main>
+      <Navigation />
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          pt: 9,
+          pl: { xs: 1, sm: 33 },
+          pr: 1,
+        }}
+      >
         {notification ? (
           <NotificationBar
             message={notification}
@@ -71,7 +81,7 @@ export const App = (): React.ReactElement => {
           <Route path="/server-types" element={<ServerTypes />} />
           <Route path="/" element={<Home />} />
         </Routes>
-      </main>
+      </Box>
     </div>
   );
 };

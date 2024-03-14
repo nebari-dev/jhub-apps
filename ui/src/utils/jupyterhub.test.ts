@@ -44,6 +44,7 @@ describe('JupyterHub utils', () => {
       name: 'Service 1',
       url: 'http://service1.com/testUser',
       external: true,
+      pinned: false,
     });
   });
 

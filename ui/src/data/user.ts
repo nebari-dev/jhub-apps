@@ -2,7 +2,7 @@ import { UserState } from '../types/user';
 
 export const currentUser: UserState = {
   name: 'test',
-  admin: false,
+  admin: true,
   groups: [],
   roles: [],
   scopes: [],

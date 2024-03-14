@@ -5,26 +5,31 @@ export const services: JhService[] = [
     name: 'JupyterLab',
     url: 'http://127.0.0.1:8000/user/jbouder/lab',
     external: true,
+    pinned: true,
   },
   {
     name: 'Argo Workflows',
     url: '/hub/argo',
     external: false,
+    pinned: false,
   },
   {
     name: 'User Management',
     url: '/auth/admin/nebari/console/',
     external: false,
+    pinned: false,
   },
   {
     name: 'Environments',
     url: '/hub/conda-store',
     external: false,
+    pinned: true,
   },
   {
     name: 'Monitoring',
     url: '/hub/monitoring',
     external: false,
+    pinned: false,
   },
 ];
 
