@@ -223,13 +223,18 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
               >
                 Tokens
               </MenuItem>
-              <MenuItem
-                onClick={() =>
-                  (document.location.href = `${APP_BASE_URL}/admin`)
-                }
-              >
-                Admin
-              </MenuItem>
+              {currentUser?.admin ? (
+                <MenuItem
+                  onClick={() =>
+                    (document.location.href = `${APP_BASE_URL}/admin`)
+                  }
+                >
+                  Admin
+                </MenuItem>
+              ) : (
+                <></>
+              )}
+
               <MenuItem
                 onClick={() =>
                   (document.location.href = `${APP_BASE_URL}/logout`)
