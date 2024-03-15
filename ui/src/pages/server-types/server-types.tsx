@@ -12,6 +12,7 @@ import { AppFormInput } from '@src/types/form';
 import { UserState } from '@src/types/user';
 import axios from '@src/utils/axios';
 import { APP_BASE_URL } from '@src/utils/constants';
+import { navigateToUrl } from '@src/utils/jupyterhub';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import React, { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
@@ -240,7 +241,7 @@ export const ServerTypes = (): React.ReactElement => {
                 type="button"
                 variant="text"
                 color="secondary"
-                onClick={() => (document.location.href = `${APP_BASE_URL}`)}
+                onClick={() => navigateToUrl(APP_BASE_URL)}
               >
                 Cancel
               </Button>

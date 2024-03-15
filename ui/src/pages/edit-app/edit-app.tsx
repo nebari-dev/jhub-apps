@@ -2,6 +2,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBackRounded';
 import { Box, Button, Stack } from '@mui/material';
 import { AppForm } from '@src/components';
 import { APP_BASE_URL } from '@src/utils/constants';
+import { navigateToUrl } from '@src/utils/jupyterhub';
 import React from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Item } from '../../styles/styled-item';
@@ -21,7 +22,7 @@ export const EditApp = (): React.ReactElement => {
               variant="text"
               color="primary"
               startIcon={<ArrowBackIcon />}
-              onClick={() => (document.location.href = `${APP_BASE_URL}`)}
+              onClick={() => navigateToUrl(APP_BASE_URL)}
             >
               Back
             </Button>

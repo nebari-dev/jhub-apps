@@ -1,4 +1,4 @@
-import HomeIcon from '@mui/icons-material/Home';
+import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
 import KeyboardArrowDownRoundedIcon from '@mui/icons-material/KeyboardArrowDownRounded';
 import KeyboardArrowUpRoundedIcon from '@mui/icons-material/KeyboardArrowUpRounded';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -19,17 +19,32 @@ import {
   MenuItem,
   Toolbar,
 } from '@mui/material';
-import { useTheme } from '@mui/material/styles';
+import { styled, useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { JhService, JhServiceFull } from '@src/types/jupyterhub';
 import { UserState } from '@src/types/user';
 import axios from '@src/utils/axios';
 import { APP_BASE_URL } from '@src/utils/constants';
-import { getAppLogoUrl, getServices } from '@src/utils/jupyterhub';
+import {
+  getAppLogoUrl,
+  getServices,
+  navigateToUrl,
+} from '@src/utils/jupyterhub';
 import { useQuery } from '@tanstack/react-query';
 import React, { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { currentNotification, currentUser as defaultUser } from '../../store';
+
+export const StyledListItemTextHeader = styled(ListItemText)(({ theme }) => ({
+  fontWeight: 700,
+  paddingLeft: theme.spacing(4),
+  paddingTop: theme.spacing(1),
+  paddingBottom: theme.spacing(1),
+}));
+
+export const StyledListItemButton = styled(ListItemButton)(({ theme }) => ({
+  paddingLeft: theme.spacing(4),
+}));
 
 export const TopNavigation = ({ ...props }): React.ReactElement => {
   const theme = useTheme();
@@ -67,10 +82,6 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
     setMobileOpen((prevState) => !prevState);
   };
 
-  const handleServiceNavigation = (url: string) => {
-    document.location.href = url;
-  };
-
   useEffect(() => {
     if (!isLoading && data && currentUser) {
       setServices(() => getServices(data, currentUser.name));
@@ -94,14 +105,14 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
   }, [isMobileBreakpoint]);
 
   const drawer = (
-    <Box sx={{ textAlign: 'left' }}>
+    <Box>
       <ListItem disablePadding sx={{ mt: 10, mb: 2 }}>
         <ListItemButton
           sx={{ pl: 3 }}
-          onClick={() => handleServiceNavigation(`${APP_BASE_URL}`)}
+          onClick={() => navigateToUrl(`${APP_BASE_URL}`)}
         >
           <ListItemIcon>
-            <HomeIcon />
+            <HomeRoundedIcon />
           </ListItemIcon>
           <ListItemText primary="Home" />
         </ListItemButton>
@@ -111,25 +122,18 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
         <>
           <List>
             <ListItem disablePadding>
-              <ListItemText
-                primary="Pinned"
-                disableTypography
-                sx={{ fontWeight: 700, pl: 4, py: 1 }}
-              />
+              <StyledListItemTextHeader primary="Pinned" disableTypography />
             </ListItem>
             {services
               .filter((item) => item.pinned)
               .map((item, index) => (
                 <ListItem key={index} disablePadding>
-                  <ListItemButton
-                    sx={{ pl: 4 }}
-                    onClick={() => handleServiceNavigation(item.url)}
-                  >
+                  <StyledListItemButton onClick={() => navigateToUrl(item.url)}>
                     <ListItemText primary={item.name} />
                     <ListItemIcon sx={{ minWidth: '32px' }}>
                       <PushPinRoundedIcon />
                     </ListItemIcon>
-                  </ListItemButton>
+                  </StyledListItemButton>
                 </ListItem>
               ))}
           </List>
@@ -140,20 +144,17 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
       )}
       <List>
         <ListItem disablePadding>
-          <ListItemText
+          <StyledListItemTextHeader
             primary="Services"
             disableTypography
-            sx={{ fontWeight: 700, pl: 4, pt: 2, pb: 1 }}
+            sx={{ pt: 2 }}
           />
         </ListItem>
         {services.map((item, index) => (
           <ListItem key={index} disablePadding>
-            <ListItemButton
-              sx={{ pl: 4 }}
-              onClick={() => handleServiceNavigation(item.url)}
-            >
+            <StyledListItemButton onClick={() => navigateToUrl(item.url)}>
               <ListItemText primary={item.name} />
-            </ListItemButton>
+            </StyledListItemButton>
           </ListItem>
         ))}
       </List>
@@ -201,7 +202,7 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
                   <KeyboardArrowDownRoundedIcon />
                 )
               }
-              sx={{ color: 'white', fontWeight: 700 }}
+              sx={{ color: theme.palette.common.white, fontWeight: 700 }}
             >
               {currentUser?.name} {currentUser?.admin ? '(admin)' : ''}
             </Button>
@@ -216,18 +217,14 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
               sx={{ marginTop: '20px' }}
             >
               <MenuItem
-                onClick={() =>
-                  (document.location.href = `${APP_BASE_URL}/token`)
-                }
+                onClick={() => navigateToUrl(`${APP_BASE_URL}/token`)}
                 sx={{ width: '180px' }}
               >
                 Tokens
               </MenuItem>
               {currentUser?.admin ? (
                 <MenuItem
-                  onClick={() =>
-                    (document.location.href = `${APP_BASE_URL}/admin`)
-                  }
+                  onClick={() => navigateToUrl(`${APP_BASE_URL}/admin`)}
                 >
                   Admin
                 </MenuItem>
@@ -235,11 +232,7 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
                 <></>
               )}
 
-              <MenuItem
-                onClick={() =>
-                  (document.location.href = `${APP_BASE_URL}/logout`)
-                }
-              >
+              <MenuItem onClick={() => navigateToUrl(`${APP_BASE_URL}/logout`)}>
                 Logout
               </MenuItem>
             </Menu>

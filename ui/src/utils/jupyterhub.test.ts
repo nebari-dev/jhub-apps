@@ -2,10 +2,12 @@ import { serverApps } from '@src/data/api';
 import { servicesFull } from '@src/data/jupyterhub';
 import { JhServiceFull } from '@src/types/jupyterhub';
 import {
+  getAppLogoUrl,
   getApps,
   getFriendlyFrameworkName,
   getJhData,
   getServices,
+  navigateToUrl,
 } from './jupyterhub';
 
 describe('JupyterHub utils', () => {
@@ -68,5 +70,16 @@ describe('JupyterHub utils', () => {
   test('returns the framework name with the first letter capitalized', () => {
     const result = getFriendlyFrameworkName('python');
     expect(result).toBe('Python');
+  });
+
+  test('gets app theme url window object', () => {
+    const result = getAppLogoUrl();
+    expect(result).toBe('/img/logo.png');
+  });
+
+  test('navigates to the specified URL', () => {
+    const mockUrl = 'http://localhost/';
+    navigateToUrl(mockUrl);
+    expect(document.location.href).toBe(mockUrl);
   });
 });

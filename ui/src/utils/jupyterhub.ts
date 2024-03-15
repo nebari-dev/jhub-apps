@@ -80,3 +80,7 @@ export const getAppLogoUrl = () => {
     return window.theme.logo;
   }
 };
+
+export const navigateToUrl = (url: string) => {
+  document.location.href = url;
+};
