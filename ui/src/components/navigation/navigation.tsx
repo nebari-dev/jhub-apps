@@ -75,7 +75,7 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
         .then((data) => {
           return data;
         }),
-    enabled: !!currentUser?.name,
+    enabled: !!currentUser,
   });
 
   const handleDrawerToggle = () => {
