@@ -1,13 +1,14 @@
 import { Box, Stack } from '@mui/material';
+import { userData } from '@src/data/user';
 import { JhApp, JhData } from '@src/types/jupyterhub';
-import { UserState } from '@src/types/user';
+import { User, UserState } from '@src/types/user';
 import axios from '@src/utils/axios';
 import { getApps } from '@src/utils/jupyterhub';
 import { useQuery } from '@tanstack/react-query';
 import React, { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
+import { Item } from 'src/styles/styled-item';
 import { currentJhData, currentNotification } from '../../../store';
-import { Item } from '../../../styles/styled-item';
 import AppCard from '../app-card/app-card';
 interface AppsGridProps {
   appType?: 'My' | 'Shared';
@@ -27,18 +28,33 @@ export const AppsGrid = ({
   const {
     isLoading,
     error,
-    data: serverData,
-  } = useQuery<UserState, { message: string }>({
-    queryKey: ['app-state'],
-    queryFn: () =>
-      axios
-        .get(`/server/`)
-        .then((response) => {
-          return response.data;
-        })
-        .then((data) => {
-          return data;
-        }),
+    data: { serverData } = {
+      serverData: undefined,
+    },
+  } = useQuery<{ serverData: UserState; userData: User }, { message: string }>({
+    queryKey: ['app-state', 'user'],
+    queryFn: async () => {
+      // Gets server data
+      const getServerData = async () => {
+        const response = await axios.get(`/server/`);
+        return response.data;
+      };
+
+      // Gets user data
+      const getUserData = async () => {
+        const response = await axios.get(`/user/`);
+        return response.data;
+      };
+
+      // Promise.all to get both sets of data simultaneously
+      const [serverData, userData] = await Promise.all([
+        getServerData(),
+        getUserData(),
+      ]);
+
+      // Combined data
+      return { serverData, userData };
+    },
     enabled: !!jHData.user,
   });
 
@@ -104,6 +120,7 @@ export const AppsGrid = ({
               <>
                 {apps.map((app: JhApp) => (
                   <AppCard
+                    name={userData.displayName || ''}
                     id={app.id}
                     key={`app-${app.id}`}
                     title={app.name}
@@ -112,6 +129,7 @@ export const AppsGrid = ({
                     framework={app.framework}
                     url={app.url}
                     ready={app.ready}
+                    serverStatus={app.status}
                     username={app.username}
                     isPublic={app.public}
                     isShared={appType === 'Shared' ? true : false}

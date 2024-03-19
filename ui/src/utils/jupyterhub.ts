@@ -56,6 +56,7 @@ export const getApps = (servers: any, appType: string) => {
         thumbnail: DEFAULT_APP_THUMBNAIL,
         ready: defaultApp.ready,
         public: false,
+        status: { stopped: false, pending: null, ready: true },
       });
     }
   }
@@ -73,6 +74,7 @@ export const getApps = (servers: any, appType: string) => {
         username: server.username,
         ready: server.ready,
         public: app.public,
+        status: { stopped: false, pending: null, ready: true },
       });
     }
   });

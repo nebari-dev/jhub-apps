@@ -1,70 +1,155 @@
-.card {
-  width: 280px;
-  border: 2px solid var(--gray-lighter);
+.card-new {
+  height: 241px;
+  width: 225px;
+  border: 0.25px solid #ddd;
   border-radius: 0.25rem;
+  box-shadow: 0px 1px 1px #b2aeae;
 }
 
-.card:focus {
-  outline: 0.2rem solid var(--primary-light);
+.card-new .Mui-card {
+  height: 241px;
 }
 
-.card-header {
-  padding: 1.5rem 1.5rem 0.5rem;
-}
-
-.card-header > h3 {
-  font-size: 16px;
-}
-
-.card-header-menu {
-  width: 100%;
-  display: flex;
-  justify-content: right;
+#card-test-app {
   position: relative;
-  top: 5px;
-  right: 5px;
 }
-
-.card-header-media {
-  min-height: 1px;
-}
-
-.card-header-img {
+/* Card Header Section */
+.card-cont-header {
+  position: relative;
   display: flex;
-  flex-direction: row;
-  height: 150px;
-  background-color: var(--gray-lighter);
+  justify-content: center;
+  align-items: center;
+  max-height: 130px;
+  min-height: 130px;
   overflow: hidden;
 }
 
-.card-header-img > img {
-  margin: auto auto;
-  max-width: 280px;
+.card-cont-header img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
 }
 
-.card-header a {
-  text-decoration: underline;
-  color: var(--text-color);
+.card-cont-header .img-overlay {
+  position: relative;
+  display: inline-block;
 }
 
-.card-body {
-  min-height: 100px;
-  padding: 0.5rem 1.5rem;
+.card-cont-header .img-overlay::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.25); /* White overlay with 50% opacity */
+  pointer-events: none; /* Allows click events to pass through to the underlying elements */
 }
 
-.card-body > p,
-.card-body > div {
-  font-size: 14px;
-  padding-bottom: 8px;
-}
-
-.card-footer {
-  padding: 0.5rem 1.5rem 1.5rem;
+.card-cont-header .chip-container {
+  position: absolute;
   display: flex;
-  column-gap: 4px;
+  align-items: center;
+  left: 8px !important;
+  top: 8px !important;
+  z-index: 2;
 }
 
-.card-dialog-body {
-  width: 400px;
-  margin-bottom: 24px;
+/* Card Content Section */
+.card-cont-content {
+  position: relative;
+  z-index: 111;
+}
+.card-cont-content .chip-container {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  left: 1rem !important;
+  top: 1rem !important;
+}
+
+.menu-chip {
+  margin-right: 4px;
+}
+
+/* Card content Hovering effect */
+.card-content-container {
+  background: #fff;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.5s ease-in-out;
+  top: 40px;
+}
+
+.card-content {
+  transition: transform 0.5s ease-in-out;
+}
+
+.card-title {
+  max-width: 190px;
+  overflow: hidden;
+}
+
+.card-title,
+.card-description,
+.card-author {
+  transition:
+    transform 0.5s ease-in-out,
+    opacity 0.5s ease-in-out;
+}
+
+.card-description {
+  max-height: 0;
+  opacity: 0;
+  transition:
+    max-height 0.5s ease-in-out,
+    opacity 0.5s ease-in-out;
+  overflow: hidden;
+}
+
+/* Hover effects */
+.card-content-container:hover {
+  transform: translateY(-36%);
+  background: #fff;
+  height: 111px;
+}
+
+.card-content-container:hover .card-description {
+  opacity: 1;
+  max-height: 4rem;
+}
+
+.card-content-container:hover .card-author {
+  opacity: 0;
+  max-height: 0; /* You might not need this if .card-author doesn't need to hide */
+  transition:
+    opacity 0.5s ease-in-out,
+    max-height 0.5s ease-in-out;
+}
+
+.card-cont-content .content .MuiCardContent-root {
+  padding: 0.5rem 1rem 1rem;
+}
+
+.iconic .MuiSvgIcon-root.MuiSvgIcon-fontSizeMedium {
+  font-size: 1.125rem;
+  position: relative;
+  top: 1px;
+}
+
+.card-cont-content .MuiCardContent-root .MuiTypography-root.MuiTypography-h5 {
+  font-size: 1rem !important;
+  font-weight: bold !important;
+  display: inline;
+}
+
+/* Custom Chip colors */
+/* Override default Chip background and text color */
+.card-cont-header
+  .chip-container
+  .menu-chip
+  .chip-chip.MuiChip-colorDefault.MuiChip-filledDefault {
+  background-color: #fff !important; /* Example gray background */
+  color: #2e7d32 !important;
+  border: 1px solid #2e7d32; /* Example gray text color */
 }
