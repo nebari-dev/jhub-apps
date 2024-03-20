@@ -1,19 +1,9 @@
 import { JhApp, JhService, JhServiceFull } from '@src/types/jupyterhub';
 import { JhData } from '@src/types/jupyterhub.ts';
-import { DEFAULT_APP_THUMBNAIL } from './constants';
+import { DEFAULT_APP_THUMBNAIL, DEFAULT_PINNED_SERVICES } from './constants';
 
 export const getJhData = (): JhData => {
-  return window.jhdata
-    ? window.jhdata
-    : JSON.parse(localStorage.getItem('jhdata') || '{}');
-};
-
-/**
- * Store JupyterHub data in local storage for non-hub pages
- * @param data
- */
-export const storeJhData = (data: JhData) => {
-  localStorage.setItem('jhdata', JSON.stringify(data));
+  return window.jhdata;
 };
 
 export const getServices = (services: JhServiceFull[], user: string) => {
@@ -26,6 +16,7 @@ export const getServices = (services: JhServiceFull[], user: string) => {
           name: service.info.name,
           url: service.info.url?.replace('[USER]', user),
           external: service.info.external,
+          pinned: DEFAULT_PINNED_SERVICES.includes(service.info.name),
         });
       }
     }
@@ -82,4 +73,14 @@ export const getApps = (servers: any, appType: string) => {
 
 export const getFriendlyFrameworkName = (framework: string) => {
   return framework.charAt(0).toUpperCase() + framework.slice(1);
+};
+
+export const getAppLogoUrl = () => {
+  if (window.theme?.logo) {
+    return window.theme.logo;
+  }
+};
+
+export const navigateToUrl = (url: string) => {
+  document.location.href = url;
 };

@@ -1,5 +1,6 @@
 import classnames from 'classnames';
 import React, { Children, ReactNode } from 'react';
+import './button-group.css';
 
 export interface ButtonGroupProps {
   /**

@@ -1,9 +1,17 @@
-import { User } from '../types/user';
+import { UserState } from '../types/user';
 
-export const userData: User = {
-  firstName: 'John',
-  lastName: 'Doe',
-  displayName: 'John Doe',
-  emailAddress: 'johndoe@test.com',
-  phoneNumber: '123-456-7890',
+export const currentUser: UserState = {
+  name: 'test',
+  admin: true,
+  groups: [],
+  roles: [],
+  scopes: [],
+  auth_state: null,
+  servers: {},
+  server: null,
+  session_id: null,
+  last_activity: null,
+  pending: null,
+  kind: null,
+  created: null,
 };

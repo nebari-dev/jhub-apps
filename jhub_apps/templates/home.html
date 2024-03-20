@@ -6,5 +6,12 @@
   rel="stylesheet"
   href="/services/japps/static/css/index.css?v={{version_hash}}"
 />
+<script type="text/javascript">
+  window.theme = {
+    logo: "{{ logo }}",
+  };
+  // Hide the navbar since using new one
+  document.querySelector(".navbar")?.style.setProperty("display", "none");
+</script>
 
 {% endblock %}

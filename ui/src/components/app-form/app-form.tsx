@@ -1,9 +1,11 @@
 import {
   Button,
   FormControl,
+  FormControlLabel,
   InputLabel,
   MenuItem,
   Select,
+  Switch,
   TextField,
 } from '@mui/material';
 import {
@@ -13,21 +15,24 @@ import {
   AppQueryUpdateProps,
 } from '@src/types/api';
 import { AppFormInput } from '@src/types/form';
+import { UserState } from '@src/types/user';
 import axios from '@src/utils/axios';
 import { APP_BASE_URL, REQUIRED_FORM_FIELDS_RULES } from '@src/utils/constants';
-import { getJhData } from '@src/utils/jupyterhub';
+import { navigateToUrl } from '@src/utils/jupyterhub';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
-import { Thumbnail, Toggle } from '..';
+import { Thumbnail } from '..';
 import {
   currentNotification,
   currentFile as defaultFile,
   currentFormInput as defaultFormInput,
   currentImage as defaultImage,
+  currentUser as defaultUser,
 } from '../../store';
+import './app-form.css';
 
 export interface AppFormProps {
   id?: string;
@@ -36,6 +41,7 @@ export interface AppFormProps {
 export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
   const navigate = useNavigate();
   const [submitting, setSubmitting] = useState(false);
+  const [currentUser] = useRecoilState<UserState | undefined>(defaultUser);
   const [, setNotification] = useRecoilState<string | undefined>(
     currentNotification,
   );
@@ -179,7 +185,7 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
       } else {
         createQuery(payload, {
           onSuccess: async (data) => {
-            const username = getJhData().user;
+            const username = currentUser?.name;
             if (username && data?.length > 1) {
               const server = data[1];
               window.location.assign(
@@ -458,15 +464,18 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
           render={({ field: { ref: _, value, onChange, ...field } }) => (
             <FormControl>
-              <Toggle
-                {...field}
-                id="is_public"
+              <FormControlLabel
+                control={
+                  <Switch
+                    {...field}
+                    id="is_public"
+                    checked={isPublic}
+                    onChange={() => {
+                      setIsPublic(!isPublic);
+                    }}
+                  />
+                }
                 label="Allow Public Access"
-                checked={isPublic}
-                ariaLabel="Allow Public Access"
-                onChange={() => {
-                  setIsPublic(!isPublic);
-                }}
               />
             </FormControl>
           )}
@@ -501,7 +510,7 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
             type="button"
             variant="text"
             color="secondary"
-            onClick={() => (document.location.href = `${APP_BASE_URL}`)}
+            onClick={() => navigateToUrl(`${APP_BASE_URL}`)}
           >
             Cancel
           </Button>

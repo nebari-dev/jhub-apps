@@ -1,9 +1,10 @@
-import DeleteIcon from '@mui/icons-material/Delete';
-import InsertPhotoOutlinedIcon from '@mui/icons-material/InsertPhotoOutlined';
+import InsertPhotoIcon from '@mui/icons-material/CropOriginalRounded';
+import DeleteIcon from '@mui/icons-material/DeleteRounded';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { Button, Dialog } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
+import './thumbnail.css';
 
 export interface ThumbnailProps {
   /**
@@ -107,19 +108,20 @@ export const Thumbnail = ({
     <div id={`thumbnail-${id}`} className="thumbnail">
       <div
         id={`thumbnail-body-${id}`}
-        className={`thumbnail-body ${dragging ? 'dragging' : ''} ${currentFile || currentImage ? 'bg-white' : ''}`}
+        className={`thumbnail-body ${dragging ? 'dragging' : ''} ${currentFile || currentImage ? 'selected' : ''}`}
         onDragOver={handleDragOver}
         onDragEnter={handleDragEnter}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
       >
         {currentFile || currentImage ? (
-          <div>
+          <div className="thumbnail-img-container">
             <img
               src={
                 currentFile ? URL.createObjectURL(currentFile) : currentImage
               }
               alt="App thumnail"
+              className="thumbnail-img"
             />
           </div>
         ) : (
@@ -128,7 +130,7 @@ export const Thumbnail = ({
             tabIndex={0}
             onClick={handleBrowseThumbnails}
           >
-            <InsertPhotoOutlinedIcon className="thumbnail-icon" />
+            <InsertPhotoIcon className="thumbnail-icon" />
           </div>
         )}
         <input

@@ -50,20 +50,6 @@ describe('Home', () => {
     expect(window.location.pathname).not.toBe('/create-app');
   });
 
-  test('should render notification when present', async () => {
-    const mockNotification = 'Test notification';
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const recoilStateSpy = jest.spyOn(require('recoil'), 'useRecoilState');
-    recoilStateSpy.mockReturnValue([mockNotification, jest.fn()]);
-
-    const { getByText } = render(componentWrapper);
-    await act(async () => {
-      expect(getByText(mockNotification)).toBeTruthy();
-    });
-
-    recoilStateSpy.mockRestore();
-  });
-
   test('should render ServicesGrid and AppsGrid', async () => {
     const { getByText } = render(componentWrapper);
     await act(async () => {

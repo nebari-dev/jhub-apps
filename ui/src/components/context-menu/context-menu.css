@@ -1,0 +1,56 @@
+.card:hover .context-menu-container,
+.card:focus .context-menu-container {
+  display: block;
+}
+
+.context-menu-container {
+  display: none;
+  position: absolute;
+  color: var(--text-color);
+  width: 24px;
+  height: 24px;
+  border: 1px solid var(--gray-lighter);
+  border-radius: 50%;
+  background-color: var(--white);
+  cursor: pointer;
+}
+
+.context-menu-container:focus .context-menu {
+  display: block;
+}
+
+.context-menu {
+  display: none;
+  list-style: none;
+  position: absolute;
+  top: 28px;
+  right: 0;
+  background-color: var(--white);
+  border: var(--gray-lighter);
+  border-radius: 4px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  padding: 0;
+  min-width: 120px;
+}
+
+.context-menu li {
+  padding: 6px 12px;
+  cursor: pointer;
+}
+
+.context-menu li:hover {
+  background-color: var(--gray-lightest);
+}
+
+.context-menu li a {
+  text-decoration: none;
+  color: var(--text-color);
+  display: block;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.context-menu li a.disabled {
+  cursor: not-allowed;
+  color: var(--gray-light) !important;
+}

@@ -1,5 +1,6 @@
 <html>
   <head>
+    <title>JupyterHub Apps</title>
     <link rel="stylesheet" href="/hub/static/css/style.min.css" />
   </head>
   <body>
@@ -12,5 +13,10 @@
     <style>
       {% include 'style.css' %}
     </style>
+    <script type="text/javascript">
+      window.theme = {
+        logo: "{{ logo }}",
+      };
+    </script>
   </body>
 </html>

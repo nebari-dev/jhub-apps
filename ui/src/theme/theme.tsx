@@ -1,7 +1,20 @@
 import { createTheme } from '@mui/material';
 import { PaletteColorOptions } from '@mui/material/styles';
 
-import { black, blue, gray, green, orange, red, white } from './colors';
+import {
+  black,
+  blue,
+  gray,
+  green,
+  greenDark,
+  greenLight,
+  orange,
+  purple,
+  purpleDark,
+  purpleLight,
+  red,
+  white,
+} from './colors';
 
 declare module '@mui/material/styles' {
   interface Palette {
@@ -49,6 +62,7 @@ const baseTheme = createTheme({
         disableRipple: true,
         style: {
           textTransform: 'none',
+          textWrap: 'nowrap',
         },
       },
     },
@@ -79,39 +93,19 @@ export const theme = createTheme(baseTheme, {
   palette: {
     primary: baseTheme.palette.augmentColor({
       color: {
-        light: blue[300],
-        main: blue[500],
-        dark: blue[700],
+        light: purpleLight,
+        main: purple,
+        dark: purpleDark,
         contrastText: white,
-        50: blue[50],
-        100: blue[100],
-        200: blue[200],
-        300: blue[300],
-        400: blue[400],
-        500: blue[500],
-        600: blue[600],
-        700: blue[700],
-        800: blue[800],
-        900: blue[900],
       },
       name: 'primary',
     }),
     secondary: baseTheme.palette.augmentColor({
       color: {
-        light: green[300],
-        main: green[500],
-        dark: green[700],
-        contrastText: green[500],
-        50: green[50],
-        100: green[100],
-        200: green[200],
-        300: green[300],
-        400: green[400],
-        500: green[500],
-        600: green[600],
-        700: green[700],
-        800: green[800],
-        900: green[900],
+        light: greenLight,
+        main: green,
+        dark: greenDark,
+        contrastText: white,
       },
       name: 'secondary',
     }),
@@ -120,7 +114,7 @@ export const theme = createTheme(baseTheme, {
         light: gray[300],
         main: gray[500],
         dark: gray[700],
-        contrastText: white,
+        contrastText: black,
         50: gray[50],
         100: gray[100],
         200: gray[200],
@@ -162,9 +156,12 @@ export const theme = createTheme(baseTheme, {
           props: { variant: 'contained', color: 'primary' },
           style: {
             minWidth: '120px',
-            backgroundColor: blue[500],
-            border: `1px solid ${blue[500]}`,
+            backgroundColor: `${purple}`,
+            border: `1px solid ${purple}`,
             fontWeight: 700,
+            '&:hover': {
+              backgroundColor: `${purpleDark}`,
+            },
             '&:disabled': {
               borderColor: 'transparent',
             },
@@ -180,6 +177,7 @@ export const theme = createTheme(baseTheme, {
             fontWeight: 700,
             '&:hover': {
               backgroundColor: white,
+              filter: 'brightness(0.96)',
             },
             '&:disabled': {
               borderColor: 'transparent',
@@ -191,23 +189,24 @@ export const theme = createTheme(baseTheme, {
           style: {
             minWidth: '120px',
             backgroundColor: white,
-            border: `2px solid ${blue[500]}`,
-            color: blue[500],
+            border: `2px solid ${green}`,
+            color: `${green}`,
             fontWeight: 700,
             textTransform: 'none',
             '&:hover': {
               backgroundColor: white,
               borderWidth: 2,
-              border: `2px solid ${blue[700]}`,
-              color: blue[700],
+              border: `2px solid ${green}`,
+              color: `${green}`,
             },
           },
         },
         {
           props: { variant: 'text', color: 'primary' },
           style: {
-            '&:hover': {
-              backgroundColor: 'transparent',
+            color: `${purple}`,
+            '&:focus': {
+              backgroundColor: `${purpleLight}`,
             },
           },
         },
@@ -215,8 +214,8 @@ export const theme = createTheme(baseTheme, {
           props: { variant: 'text', color: 'secondary' },
           style: {
             color: gray[500],
-            '&:hover': {
-              backgroundColor: 'transparent',
+            '&:focus': {
+              backgroundColor: `${gray[100]}`,
             },
           },
         },

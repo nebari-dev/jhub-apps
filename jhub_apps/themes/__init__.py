@@ -6,10 +6,10 @@ FAVICON = "/services/japps/static/favicon.ico"
 DEFAULT_THEME = {
     "logo": LOGO,
     "favicon": FAVICON,
-    "primary_color": "#C316E9",
-    "primary_color_dark": "#79158a",
-    "secondary_color": "#18817A",
-    "secondary_color_dark": "#12635E",
+    "primary_color": "#ba18da",
+    "primary_color_dark": "#9b00ce",
+    "secondary_color": "#18817a",
+    "secondary_color_dark": "#12635e",
     "accent_color": "#eda61d",
     "accent_color_dark": "#a16d14",
     "text_color": "#1c1d26",
@@ -18,5 +18,5 @@ DEFAULT_THEME = {
     "navbar_text_color": "#ffffff",
     "navbar_hover_color": "#20b1a8",
     "navbar_color": "#1c1d26",
-    "version": get_version()
+    "version": get_version(),
 }

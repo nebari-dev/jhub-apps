@@ -1,14 +1,19 @@
-import { Button } from '@mui/material';
-import { JhData, JhService, JhServiceFull } from '@src/types/jupyterhub';
+import { Box, Button, Stack } from '@mui/material';
+import { JhService, JhServiceFull } from '@src/types/jupyterhub';
+import { UserState } from '@src/types/user';
 import axios from '@src/utils/axios';
 import { getServices } from '@src/utils/jupyterhub';
 import { useQuery } from '@tanstack/react-query';
 import React, { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
-import { currentJhData, currentNotification } from '../../../store';
+import {
+  currentNotification,
+  currentUser as defaultUser,
+} from '../../../store';
+import { Item } from '../../../styles/styled-item';
 
 export const ServicesGrid = (): React.ReactElement => {
-  const [jHData] = useRecoilState<JhData>(currentJhData);
+  const [currentUser] = useRecoilState<UserState | undefined>(defaultUser);
   const [, setCurrentNotification] = useRecoilState<string | undefined>(
     currentNotification,
   );
@@ -28,7 +33,7 @@ export const ServicesGrid = (): React.ReactElement => {
         .then((data) => {
           return data;
         }),
-    enabled: !!jHData.user,
+    enabled: !!currentUser,
   });
 
   const handleButtonClick = (url: string, isExternal: boolean): void => {
@@ -40,10 +45,10 @@ export const ServicesGrid = (): React.ReactElement => {
   };
 
   useEffect(() => {
-    if (!isLoading && data) {
-      setServices(() => getServices(data, jHData.user));
+    if (!isLoading && data && currentUser) {
+      setServices(() => getServices(data, currentUser.name));
     }
-  }, [isLoading, data, jHData.user]);
+  }, [isLoading, data, currentUser]);
 
   useEffect(() => {
     if (error) {
@@ -54,44 +59,67 @@ export const ServicesGrid = (): React.ReactElement => {
   }, [error, setCurrentNotification]);
 
   return (
-    <>
-      <div className="container flex flex-align-center pb-12">
-        <div className="grid-heading-left w-full">
-          <h2 className="whitespace-nowrap font-bold">Services</h2>
-        </div>
-        <div className="grid-heading-center w-full">
-          <hr className="grid-spacer"></hr>
-        </div>
-        <div className="grid-heading-right w-full flex justify-end">
-          <h2 className="whitespace-nowrap font-bold">
-            {services.length} services
-          </h2>
-        </div>
-      </div>
-      <div className="container grid pb-12">
-        {isLoading ? (
-          <div className="font-bold">Loading...</div>
-        ) : services.length > 0 ? (
-          <div className="flex flex flex-row flex-wrap gap-4">
-            {services.map((service, index) => (
-              <Button
-                id={`service-${index}`}
-                key={`service-${index}`}
-                variant="outlined"
-                color="secondary"
-                style={{ minWidth: '180px' }}
-                onClick={() => {
-                  handleButtonClick(service.url, service.external);
-                }}
-              >
-                {service.name}
-              </Button>
-            ))}
-          </div>
-        ) : (
-          <div>No services available</div>
-        )}
-      </div>
-    </>
+    <Box>
+      <Stack>
+        <Item>
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              paddingBottom: '48px',
+            }}
+          >
+            <div className="grid-heading-left">
+              <h2>Services</h2>
+            </div>
+            <div className="grid-heading-center">
+              <hr className="grid-spacer"></hr>
+            </div>
+            <div className="grid-heading-right">
+              <h2>{services.length} services</h2>
+            </div>
+          </Box>
+        </Item>
+        <Item>
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'row',
+              flexWrap: 'wrap',
+              gap: '16px',
+              justifyContent: 'flex-start',
+              paddingBottom: '48px',
+            }}
+          >
+            {isLoading ? (
+              <div className="font-bold">Loading...</div>
+            ) : services.length > 0 ? (
+              // Wrap the code block inside curly braces and return the JSX elements explicitly
+              <>
+                {services.map((service, index) => {
+                  return (
+                    <Button
+                      id={`service-${index}`}
+                      key={`service-${index}`}
+                      variant="outlined"
+                      color="secondary"
+                      style={{ minWidth: '180px' }}
+                      onClick={() => {
+                        handleButtonClick(service.url, service.external);
+                      }}
+                    >
+                      {service.name}
+                    </Button>
+                  );
+                })}
+              </>
+            ) : (
+              <div>No services available</div>
+            )}
+          </Box>
+        </Item>
+      </Stack>
+    </Box>
   );
 };
