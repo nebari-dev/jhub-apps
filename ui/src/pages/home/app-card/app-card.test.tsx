@@ -110,7 +110,7 @@ describe('AppCard', () => {
 
     const btn = baseElement.querySelectorAll(
       '.MuiList-root li.MuiButtonBase-root',
-    )[0] as HTMLLIElement;
+    )[0] as HTMLAnchorElement;
     await act(async () => {
       btn.click();
     });
@@ -170,7 +170,7 @@ describe('AppCard', () => {
 
     const btn = baseElement.querySelectorAll(
       '.MuiList-root li.MuiButtonBase-root',
-    )[0] as HTMLLIElement;
+    )[0] as HTMLAnchorElement;
     await act(async () => {
       btn.click();
     });
@@ -241,7 +241,7 @@ describe('AppCard', () => {
 
     const btn = baseElement.querySelectorAll(
       '.MuiList-root li.MuiButtonBase-root',
-    )[0] as HTMLLIElement;
+    )[0] as HTMLAnchorElement;
     await act(async () => {
       btn.click();
     });
@@ -281,7 +281,7 @@ describe('AppCard', () => {
 
     const btn = baseElement.querySelectorAll(
       '.MuiList-root li.MuiButtonBase-root',
-    )[0] as HTMLLIElement;
+    )[0] as HTMLAnchorElement;
     await act(async () => {
       btn.click();
     });
@@ -318,7 +318,7 @@ describe('AppCard', () => {
 
     const btn = baseElement.querySelectorAll(
       '.MuiList-root li.MuiButtonBase-root',
-    )[0] as HTMLLIElement;
+    )[0] as HTMLAnchorElement;
     await act(async () => {
       btn.click();
     });
@@ -377,7 +377,7 @@ describe('AppCard', () => {
 
     const btn = baseElement.querySelectorAll(
       '.MuiList-root li.MuiButtonBase-root',
-    )[0] as HTMLLIElement;
+    )[0] as HTMLAnchorElement;
     await act(async () => {
       btn.click();
     });
