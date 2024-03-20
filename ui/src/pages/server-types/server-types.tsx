@@ -9,9 +9,10 @@ import {
 } from '@mui/material';
 import { AppProfileProps, AppQueryUpdateProps } from '@src/types/api';
 import { AppFormInput } from '@src/types/form';
+import { UserState } from '@src/types/user';
 import axios from '@src/utils/axios';
 import { APP_BASE_URL } from '@src/utils/constants';
-import { getJhData } from '@src/utils/jupyterhub';
+import { navigateToUrl } from '@src/utils/jupyterhub';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import React, { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
@@ -21,6 +22,7 @@ import {
   currentFile as defaultFile,
   currentFormInput as defaultFormInput,
   currentImage as defaultImage,
+  currentUser as defaultUser,
 } from '../../store';
 import './server-types.css';
 
@@ -29,6 +31,7 @@ export const ServerTypes = (): React.ReactElement => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [submitting, setSubmitting] = useState(false);
+  const [currentUser] = useRecoilState<UserState | undefined>(defaultUser);
   const [currentFormInput, setCurrentFormInput] = useRecoilState<
     AppFormInput | undefined
   >(defaultFormInput);
@@ -96,7 +99,7 @@ export const ServerTypes = (): React.ReactElement => {
     } else {
       createQuery(payload, {
         onSuccess: async (data) => {
-          const username = getJhData().user;
+          const username = currentUser?.name;
           if (username && data?.length > 1) {
             const server = data[1];
             window.location.assign(`/hub/spawn-pending/${username}/${server}`);
@@ -238,7 +241,7 @@ export const ServerTypes = (): React.ReactElement => {
                 type="button"
                 variant="text"
                 color="secondary"
-                onClick={() => (document.location.href = `${APP_BASE_URL}`)}
+                onClick={() => navigateToUrl(APP_BASE_URL)}
               >
                 Cancel
               </Button>

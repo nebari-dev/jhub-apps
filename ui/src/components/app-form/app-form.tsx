@@ -15,9 +15,10 @@ import {
   AppQueryUpdateProps,
 } from '@src/types/api';
 import { AppFormInput } from '@src/types/form';
+import { UserState } from '@src/types/user';
 import axios from '@src/utils/axios';
 import { APP_BASE_URL, REQUIRED_FORM_FIELDS_RULES } from '@src/utils/constants';
-import { getJhData } from '@src/utils/jupyterhub';
+import { navigateToUrl } from '@src/utils/jupyterhub';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
@@ -29,6 +30,7 @@ import {
   currentFile as defaultFile,
   currentFormInput as defaultFormInput,
   currentImage as defaultImage,
+  currentUser as defaultUser,
 } from '../../store';
 import './app-form.css';
 
@@ -39,6 +41,7 @@ export interface AppFormProps {
 export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
   const navigate = useNavigate();
   const [submitting, setSubmitting] = useState(false);
+  const [currentUser] = useRecoilState<UserState | undefined>(defaultUser);
   const [, setNotification] = useRecoilState<string | undefined>(
     currentNotification,
   );
@@ -182,7 +185,7 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
       } else {
         createQuery(payload, {
           onSuccess: async (data) => {
-            const username = getJhData().user;
+            const username = currentUser?.name;
             if (username && data?.length > 1) {
               const server = data[1];
               window.location.assign(
@@ -507,7 +510,7 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
             type="button"
             variant="text"
             color="secondary"
-            onClick={() => (document.location.href = `${APP_BASE_URL}`)}
+            onClick={() => navigateToUrl(`${APP_BASE_URL}`)}
           >
             Cancel
           </Button>

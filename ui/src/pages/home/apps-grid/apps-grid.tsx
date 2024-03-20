@@ -1,14 +1,18 @@
 import { Box, Stack } from '@mui/material';
-import { JhApp, JhData } from '@src/types/jupyterhub';
+import { JhApp } from '@src/types/jupyterhub';
 import { UserState } from '@src/types/user';
 import axios from '@src/utils/axios';
 import { getApps } from '@src/utils/jupyterhub';
 import { useQuery } from '@tanstack/react-query';
 import React, { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
-import { currentJhData, currentNotification } from '../../../store';
+import {
+  currentNotification,
+  currentUser as defaultUser,
+} from '../../../store';
 import { Item } from '../../../styles/styled-item';
 import AppCard from '../app-card/app-card';
+
 interface AppsGridProps {
   appType?: 'My' | 'Shared';
   filter: string;
@@ -18,7 +22,7 @@ export const AppsGrid = ({
   appType = 'My',
   filter,
 }: AppsGridProps): React.ReactElement => {
-  const [jHData] = useRecoilState<JhData>(currentJhData);
+  const [currentUser] = useRecoilState<UserState | undefined>(defaultUser);
   const [, setCurrentNotification] = useRecoilState<string | undefined>(
     currentNotification,
   );
@@ -39,7 +43,7 @@ export const AppsGrid = ({
         .then((data) => {
           return data;
         }),
-    enabled: !!jHData.user,
+    enabled: !!currentUser,
   });
 
   useEffect(() => {

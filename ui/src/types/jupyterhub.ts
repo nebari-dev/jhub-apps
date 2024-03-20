@@ -6,6 +6,7 @@ export interface JhData {
   prefix: string;
   user: string;
   xsrf_token: string;
+  logo?: string;
 }
 
 export interface JhApp {
@@ -25,6 +26,7 @@ export interface JhService {
   description?: string;
   url: string;
   external: boolean;
+  pinned: boolean;
 }
 
 export interface JhServiceFull {

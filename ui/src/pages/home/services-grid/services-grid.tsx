@@ -1,15 +1,19 @@
 import { Box, Button, Stack } from '@mui/material';
-import { JhData, JhService, JhServiceFull } from '@src/types/jupyterhub';
+import { JhService, JhServiceFull } from '@src/types/jupyterhub';
+import { UserState } from '@src/types/user';
 import axios from '@src/utils/axios';
 import { getServices } from '@src/utils/jupyterhub';
 import { useQuery } from '@tanstack/react-query';
 import React, { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
-import { currentJhData, currentNotification } from '../../../store';
+import {
+  currentNotification,
+  currentUser as defaultUser,
+} from '../../../store';
 import { Item } from '../../../styles/styled-item';
 
 export const ServicesGrid = (): React.ReactElement => {
-  const [jHData] = useRecoilState<JhData>(currentJhData);
+  const [currentUser] = useRecoilState<UserState | undefined>(defaultUser);
   const [, setCurrentNotification] = useRecoilState<string | undefined>(
     currentNotification,
   );
@@ -29,7 +33,7 @@ export const ServicesGrid = (): React.ReactElement => {
         .then((data) => {
           return data;
         }),
-    enabled: !!jHData.user,
+    enabled: !!currentUser,
   });
 
   const handleButtonClick = (url: string, isExternal: boolean): void => {
@@ -41,10 +45,10 @@ export const ServicesGrid = (): React.ReactElement => {
   };
 
   useEffect(() => {
-    if (!isLoading && data) {
-      setServices(() => getServices(data, jHData.user));
+    if (!isLoading && data && currentUser) {
+      setServices(() => getServices(data, currentUser.name));
     }
-  }, [isLoading, data, jHData.user]);
+  }, [isLoading, data, currentUser]);
 
   useEffect(() => {
     if (error) {
