@@ -1,4 +1,5 @@
 import { app, environments, frameworks, profiles } from '@src/data/api';
+import { currentUser } from '@src/data/user';
 import axios from '@src/utils/axios';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, fireEvent, render } from '@testing-library/react';
@@ -6,6 +7,7 @@ import userEvent from '@testing-library/user-event';
 import MockAdapter from 'axios-mock-adapter';
 import { BrowserRouter } from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
+import { currentUser as defaultUser } from '../../store';
 import AppForm from './app-form';
 
 describe('AppForm', () => {
@@ -45,7 +47,7 @@ describe('AppForm', () => {
     queryClient.setQueryData(['app-environments'], null);
     queryClient.setQueryData(['app-profiles'], null);
     const { baseElement } = render(
-      <RecoilRoot>
+      <RecoilRoot initializeState={({ set }) => set(defaultUser, currentUser)}>
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
             <AppForm />

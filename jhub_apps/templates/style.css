@@ -243,6 +243,11 @@ a:focus {
     margin-left:10px;
 }
 
+.navbar {
+    height: 64px;
+    padding-top: 10px;
+}
+
 .navbar.navbar-default {
     background: var(--navbar-background-color);
     box-shadow: 0px 1.5px 3px 0px rgba(72, 74, 94, 0.16);
@@ -414,12 +419,16 @@ a:focus {
     color: var(--text-color) !important;
 }
 
+.MuiButton-textPrimary#profile-menu-btn {
+    color: var(--navbar-text-color) !important;
+}
+
 /* Misc */
 .version {
     position: fixed;
     bottom: 0;
     left: 0;
-    z-index: 99; /* Make sure it does not overlap */
+    z-index: 10001; /* Make sure it does not overlap */
     width: 100%;
     padding: 5px 20px;
     background-color: #fff;

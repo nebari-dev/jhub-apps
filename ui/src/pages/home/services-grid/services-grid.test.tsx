@@ -1,11 +1,12 @@
-import { jhData, servicesFull } from '@src/data/jupyterhub';
+import { servicesFull } from '@src/data/jupyterhub';
+import { currentUser } from '@src/data/user';
 import axios from '@src/utils/jupyterhub-axios';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import '@testing-library/jest-dom';
 import { fireEvent, render } from '@testing-library/react';
 import MockAdapter from 'axios-mock-adapter';
 import { RecoilRoot } from 'recoil';
-import { currentJhData } from '../../../store';
+import { currentUser as defaultUser } from '../../../store';
 import { ServicesGrid } from './services-grid';
 
 describe('ServicesGrid', () => {
@@ -62,7 +63,7 @@ describe('ServicesGrid', () => {
     mock.onGet(new RegExp('/services')).reply(200, servicesFull);
     queryClient.setQueryData(['service-data'], servicesFull);
     const { baseElement } = render(
-      <RecoilRoot initializeState={({ set }) => set(currentJhData, jhData)}>
+      <RecoilRoot initializeState={({ set }) => set(defaultUser, currentUser)}>
         <QueryClientProvider client={queryClient}>
           <ServicesGrid />
         </QueryClientProvider>
@@ -81,7 +82,7 @@ describe('ServicesGrid', () => {
     mock.onGet(new RegExp('/services')).reply(200, servicesFull);
     queryClient.setQueryData(['service-data'], servicesFull);
     const { baseElement } = render(
-      <RecoilRoot initializeState={({ set }) => set(currentJhData, jhData)}>
+      <RecoilRoot initializeState={({ set }) => set(defaultUser, currentUser)}>
         <QueryClientProvider client={queryClient}>
           <ServicesGrid />
         </QueryClientProvider>
@@ -109,7 +110,7 @@ describe('ServicesGrid', () => {
     mock.onGet(new RegExp('/services')).reply(200, servicesFull);
     queryClient.setQueryData(['service-data'], servicesFull);
     const { baseElement } = render(
-      <RecoilRoot initializeState={({ set }) => set(currentJhData, jhData)}>
+      <RecoilRoot initializeState={({ set }) => set(defaultUser, currentUser)}>
         <QueryClientProvider client={queryClient}>
           <ServicesGrid />
         </QueryClientProvider>

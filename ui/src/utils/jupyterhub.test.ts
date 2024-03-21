@@ -1,17 +1,18 @@
 import { serverApps } from '@src/data/api';
-import { jhData, servicesFull } from '@src/data/jupyterhub';
+import { servicesFull } from '@src/data/jupyterhub';
 import { JhServiceFull } from '@src/types/jupyterhub';
 import {
+  getAppLogoUrl,
   getApps,
   getFriendlyFrameworkName,
   getJhData,
   getServices,
-  storeJhData,
+  navigateToUrl,
 } from './jupyterhub';
 
 describe('JupyterHub utils', () => {
   test('returns empty object from no jhdata', () => {
-    window.jhdata = undefined;
+    window.jhdata = {};
     const result = getJhData();
     expect(result).toEqual({});
   });
@@ -45,6 +46,7 @@ describe('JupyterHub utils', () => {
       name: 'Service 1',
       url: 'http://service1.com/testUser',
       external: true,
+      pinned: false,
     });
   });
 
@@ -70,8 +72,14 @@ describe('JupyterHub utils', () => {
     expect(result).toBe('Python');
   });
 
-  test('should store JhData in localStorage', () => {
-    storeJhData(jhData);
-    expect(localStorage.getItem('jhdata')).toEqual(JSON.stringify(jhData));
+  test('gets app theme url window object', () => {
+    const result = getAppLogoUrl();
+    expect(result).toBe('/img/logo.png');
+  });
+
+  test('navigates to the specified URL', () => {
+    const mockUrl = 'http://localhost/';
+    navigateToUrl(mockUrl);
+    expect(document.location.href).toBe(mockUrl);
   });
 });

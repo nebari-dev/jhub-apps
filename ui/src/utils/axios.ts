@@ -5,6 +5,7 @@ import {
   serverApps,
   services,
 } from '@src/data/api';
+import { currentUser } from '@src/data/user';
 import axios from 'axios';
 
 const instance = axios.create({
@@ -26,6 +27,7 @@ instance.interceptors.response.use(
       const url = response.config.url;
       // url data maps for basic endpoints
       const urlPathResponseDataMap = {
+        '/user': currentUser,
         '/services/': services,
         '/server/': serverApps,
         '/frameworks/': frameworks,

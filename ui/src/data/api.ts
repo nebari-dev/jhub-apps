@@ -183,6 +183,30 @@ export const serverApps = {
 };
 
 export const services = {
+  JupyterLab: {
+    display: true,
+    info: {
+      name: 'JupyterLab',
+      url: '/hub/user/test',
+      external: true,
+    },
+  },
+  VSCode: {
+    display: true,
+    info: {
+      name: 'VSCode',
+      url: '/hub/user/test/vscode',
+      external: true,
+    },
+  },
+  Environments: {
+    display: true,
+    info: {
+      name: 'Environments',
+      url: '/hub/conda-store',
+      external: true,
+    },
+  },
   Argo: {
     display: true,
     info: {
@@ -196,14 +220,6 @@ export const services = {
     info: {
       name: 'User Management',
       url: '/auth/admin/nebari/console/',
-      external: true,
-    },
-  },
-  Environments: {
-    display: true,
-    info: {
-      name: 'Environments',
-      url: '/hub/conda-store',
       external: true,
     },
   },

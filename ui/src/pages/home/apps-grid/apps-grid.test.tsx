@@ -1,12 +1,12 @@
 import { serverApps } from '@src/data/api';
-import { jhData } from '@src/data/jupyterhub';
+import { currentUser } from '@src/data/user';
 import axios from '@src/utils/axios';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import '@testing-library/jest-dom';
 import { render } from '@testing-library/react';
 import MockAdapter from 'axios-mock-adapter';
 import { RecoilRoot } from 'recoil';
-import { currentJhData } from '../../../store';
+import { currentUser as defaultUser } from '../../../store';
 import { AppsGrid } from './apps-grid';
 
 describe('AppsGrid', () => {
@@ -79,7 +79,7 @@ describe('AppsGrid', () => {
     mock.onGet(new RegExp('/server/')).reply(200, serverApps);
     queryClient.setQueryData(['app-state'], serverApps);
     const { baseElement } = render(
-      <RecoilRoot initializeState={({ set }) => set(currentJhData, jhData)}>
+      <RecoilRoot initializeState={({ set }) => set(defaultUser, currentUser)}>
         <QueryClientProvider client={queryClient}>
           <AppsGrid filter="" />
         </QueryClientProvider>
@@ -92,7 +92,7 @@ describe('AppsGrid', () => {
     mock.onGet(new RegExp('/server/')).reply(200, serverApps);
     queryClient.setQueryData(['app-state'], serverApps);
     const { baseElement } = render(
-      <RecoilRoot initializeState={({ set }) => set(currentJhData, jhData)}>
+      <RecoilRoot initializeState={({ set }) => set(defaultUser, currentUser)}>
         <QueryClientProvider client={queryClient}>
           <AppsGrid filter="panel" />
         </QueryClientProvider>

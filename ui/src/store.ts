@@ -1,9 +1,9 @@
-import { User } from '@src/types/user';
+import { UserState } from '@src/types/user';
 import { atom } from 'recoil';
 import { AppFormInput } from './types/form';
 import { JhData } from './types/jupyterhub';
 
-const currentUser = atom<User | undefined>({
+const currentUser = atom<UserState | undefined>({
   key: 'currentUser',
   default: undefined,
 });

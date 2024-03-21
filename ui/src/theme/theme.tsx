@@ -62,6 +62,7 @@ const baseTheme = createTheme({
         disableRipple: true,
         style: {
           textTransform: 'none',
+          textWrap: 'nowrap',
         },
       },
     },
