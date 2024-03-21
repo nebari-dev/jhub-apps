@@ -50,7 +50,7 @@ describe('ServicesGrid', () => {
   test('renders a loading message', () => {
     queryClient.isFetching = jest.fn().mockReturnValue(true);
     const { baseElement } = render(
-      <RecoilRoot>
+      <RecoilRoot initializeState={({ set }) => set(defaultUser, currentUser)}>
         <QueryClientProvider client={queryClient}>
           <ServicesGrid />
         </QueryClientProvider>

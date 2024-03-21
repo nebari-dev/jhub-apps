@@ -50,9 +50,18 @@ export const ServerTypes = (): React.ReactElement => {
     data: serverTypes,
     isLoading,
     error,
-  } = useQuery(['serverTypes'], async () => {
-    const { data } = await axios.get('/spawner-profiles/');
-    return data;
+  } = useQuery<AppProfileProps[], { message: string }>({
+    queryKey: ['server-types'],
+    queryFn: () =>
+      axios
+        .get('/spawner-profiles/')
+        .then((response) => {
+          return response.data;
+        })
+        .then((data) => {
+          return data;
+        }),
+    enabled: !!currentUser,
   });
 
   const handleCardClick = (slug: string) => {

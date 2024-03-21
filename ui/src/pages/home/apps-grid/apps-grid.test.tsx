@@ -66,7 +66,7 @@ describe('AppsGrid', () => {
     queryClient.isFetching = jest.fn().mockReturnValue(true);
     mock.onGet(new RegExp('/server/')).reply(200, null);
     const { baseElement } = render(
-      <RecoilRoot>
+      <RecoilRoot initializeState={({ set }) => set(defaultUser, currentUser)}>
         <QueryClientProvider client={queryClient}>
           <AppsGrid filter="test" />
         </QueryClientProvider>
