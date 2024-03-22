@@ -2,11 +2,10 @@ name: Build UI
 
 on:
   pull_request:
-    branches: [main]
+    branches: ["main"]
 
 permissions:
   contents: write
-  pull-requests: write
 
 jobs:
   build:
@@ -17,7 +16,7 @@ jobs:
         uses: actions/checkout@v4.1.1
         with:
           ref: ${{ github.head_ref }}
-          fetch-depth: 1
+          fetch-depth: 2
 
       - id: check_label
         name: Check PL labels
@@ -40,16 +39,21 @@ jobs:
         run: npm run buildCopy
         working-directory: ui
 
-      - name: Commit static files if dependencies label
-        if: steps.check_label.outputs.label_check == 'success'
+      - name: Get Last Commit
+        id: last_commit
         run: |
-          if [[ $(git status --porcelain) ]]; then
-            git config user.name 'github-actions[bot]'
-            git config user.email 'github-actions[bot]@users.noreply.github.com'
-            git add .
-            git commit --amend --no-edit
-            git push --force
-          fi
+          echo "message=$(git log -1 --pretty=%s)" >> $GITHUB_OUTPUT
+          echo "author=$(git log -1 --pretty=\"%an <%ae>\")" >> $GITHUB_OUTPUT
+
+      - name: Commit and push changes
+        if: steps.check_label.outputs.label_check == 'success'
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_author: ${{ steps.last_commit.outputs.author }}
+          commit_message: ${{ steps.last_commit.outputs.message }}
+          commit_options: "--amend --no-edit"
+          push_options: "--force"
+          skip_fetch: true
 
       - name: Check static files uncommitted
         run: |
