@@ -30,7 +30,6 @@ export const getServices = (services: JhServiceFull[], user: string) => {
 export const getApps = (servers: any, appType: string, username: string) => {
   const serverApps = [];
   const filteredApps: JhApp[] = [];
-  console.log('servers', servers);
   if (appType.toLowerCase() === 'shared') {
     serverApps.push(...servers.shared_apps);
   } else {
@@ -51,7 +50,7 @@ export const getApps = (servers: any, appType: string, username: string) => {
         username: username,
         ready: defaultApp.ready,
         public: false,
-        status: { stopped: false, pending: null, ready: true, started: false },
+        // status: '',
       });
     }
   }
@@ -59,6 +58,8 @@ export const getApps = (servers: any, appType: string, username: string) => {
   serverApps.forEach((server: any) => {
     if (server.user_options?.jhub_app) {
       const app = server.user_options;
+      console.log('APP', app);
+      const appStatus = getAppStatus(server);
       filteredApps.push({
         id: app.name,
         name: app.display_name,
@@ -68,8 +69,11 @@ export const getApps = (servers: any, appType: string, username: string) => {
         thumbnail: app.thumbnail,
         username: server.username || username,
         ready: server.ready,
+        pending: server.pending,
+        stopped: server.stopped,
+        started: server.started,
         public: app.public,
-        status: { stopped: false, pending: null, ready: true, started: false },
+        status: appStatus,
       });
     }
   });
@@ -91,14 +95,16 @@ export const navigateToUrl = (url: string) => {
   document.location.href = url;
 };
 
-export const getServerStatuses = (servers: any[]): JhApp['status'][] => {
-  const serverStatuses: JhApp['status'][] = [];
-
-  servers.forEach((server) => {
-    if (server && server.status && Object.values(server.status).some(Boolean)) {
-      serverStatuses.push(server.status);
-    }
-  });
-
-  return serverStatuses;
+export const getAppStatus = (app: JhApp): string => {
+  if (app.ready) {
+    return 'Ready';
+  } else if (app.started) {
+    return 'Started';
+  } else if (app.pending) {
+    return 'Pending';
+  } else if (app.stopped) {
+    return 'Stopped';
+  } else {
+    return 'Unknown'; // Fallback in case none of the conditions are met
+  }
 };

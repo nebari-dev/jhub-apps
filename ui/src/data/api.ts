@@ -86,7 +86,10 @@ export const serverApps = {
     {
       name: 'test-app',
       url: '/user/test/test-app/',
+      started: null,
+      pending: null,
       ready: true,
+      stopped: false,
       user_options: {
         name: 'test-app',
         jhub_app: true,
@@ -106,7 +109,10 @@ export const serverApps = {
     {
       name: 'test-app-2',
       url: '/user/test/test-app-2/',
+      started: true,
+      pending: null,
       ready: false,
+      stopped: false,
       user_options: {
         name: 'test-app-2',
         jhub_app: true,
@@ -125,7 +131,10 @@ export const serverApps = {
     {
       name: 'test-app-3',
       url: '/user/test/test-app-3/',
+      started: true,
+      pending: null,
       ready: false,
+      stopped: false,
       user_options: {
         name: 'test-app-3',
         jhub_app: true,
@@ -143,7 +152,10 @@ export const serverApps = {
     {
       name: 'test-app-4',
       url: '/user/test/test-app-4/',
+      started: null,
+      pending: null,
       ready: false,
+      stopped: true,
       user_options: {
         name: 'test-app-4',
         jhub_app: true,
@@ -162,7 +174,10 @@ export const serverApps = {
     {
       name: 'shared-app',
       url: '/shared/test/shared-app/',
+      started: null,
+      pending: null,
       ready: true,
+      stopped: false,
       user_options: {
         name: 'shared-app',
         jhub_app: true,

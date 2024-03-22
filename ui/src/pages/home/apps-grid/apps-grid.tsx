@@ -2,7 +2,7 @@ import { Box, Stack } from '@mui/material';
 import { JhApp } from '@src/types/jupyterhub';
 import { UserState } from '@src/types/user';
 import axios from '@src/utils/axios';
-import { getApps } from '@src/utils/jupyterhub';
+import { getAppStatus, getApps } from '@src/utils/jupyterhub';
 import { useQuery } from '@tanstack/react-query';
 import React, { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
@@ -46,12 +46,34 @@ export const AppsGrid = ({
     enabled: !!currentUser,
   });
 
+  // useEffect(() => {
+  //   if (!isLoading && serverData) {
+  //     console.log('serverDAta', serverData);
+  //     const filterToLower = filter.toLowerCase();
+  //     setApps(() =>
+  //       getApps(serverData, appType, currentUser?.name ?? '').filter(
+  //         (app) =>
+  //           app.name.toLowerCase().includes(filterToLower) ||
+  //           app.description?.toLowerCase().includes(filterToLower) ||
+  //           app.framework?.toLowerCase().includes(filterToLower),
+  //       ),
+  //     );
+  //   }
+  // }, [isLoading, serverData, appType, filter, currentUser?.name]);
   useEffect(() => {
     if (!isLoading && serverData) {
-      console.log('serverDAta', serverData);
       const filterToLower = filter.toLowerCase();
+      const appsWithStatus = getApps(
+        serverData,
+        appType,
+        currentUser?.name ?? '',
+      ).map((app) => ({
+        ...app,
+        status: getAppStatus(app), // Compute and assign the status here
+      }));
+
       setApps(() =>
-        getApps(serverData, appType, currentUser?.name ?? '').filter(
+        appsWithStatus.filter(
           (app) =>
             app.name.toLowerCase().includes(filterToLower) ||
             app.description?.toLowerCase().includes(filterToLower) ||

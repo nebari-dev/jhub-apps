@@ -30,7 +30,6 @@ interface AppCard {
   thumbnail?: string;
   url: string;
   username?: string;
-  permissions?: string;
   ready?: boolean;
   isPublic?: boolean;
   isShared?: boolean;
@@ -46,7 +45,6 @@ export const AppCard = ({
   thumbnail,
   url,
   username,
-  permissions,
   ready,
   isPublic = false,
   isShared,
@@ -90,41 +88,35 @@ export const AppCard = ({
       case 'Stopped':
         return {
           bgcolor: '#E60F66',
-          color: 'common.white',
+          color: 'white',
         };
       case 'Pending':
         return {
           bgcolor: '#EAB54E',
-          color: 'common.black',
+          color: 'black',
         };
       case 'Running':
         return {
           bgcolor: '#2E7D32',
-          color: 'common.white',
+          color: 'white',
         };
       case 'Unknown':
         return {
-          bgcolor: '##79797C',
-          color: 'common.black',
+          bgcolor: '#79797C', // Corrected color value
+          color: 'black',
         };
       default:
         return {
           bgcolor: '#F5F5F5',
-          color: 'common.black',
+          color: 'black',
         };
     }
   };
 
-  const getIcon = (permissions: unknown) => {
-    switch (permissions) {
-      case 'Shared':
-        return <GroupRoundedIcon />;
-      case 'Public':
-        return <PublicRoundedIcon />;
-      default:
-        // Default to 'Private'
-        return <LockRoundedIcon />;
-    }
+  const getIcon = () => {
+    if (isPublic) return <PublicRoundedIcon />;
+    if (isShared) return <GroupRoundedIcon />;
+    return <LockRoundedIcon />;
   };
 
   const startRequest = async ({ id }: AppQueryPostProps) => {
@@ -428,9 +420,7 @@ export const AppCard = ({
             </div>
             <div className="card-content-container">
               <CardContent className="card-inner-content">
-                <span className="inline relative iconic">
-                  {getIcon(permissions)}
-                </span>
+                <span className="inline relative iconic">{getIcon()}</span>
                 <Typography
                   gutterBottom
                   variant="h5"

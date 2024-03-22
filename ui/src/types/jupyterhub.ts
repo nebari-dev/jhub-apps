@@ -19,12 +19,10 @@ export interface JhApp {
   username?: string;
   ready: boolean;
   public: boolean;
-  status: {
-    stopped: boolean;
-    pending: any;
-    ready: boolean;
-    started: boolean;
-  };
+  pending?: boolean;
+  started?: boolean;
+  stopped?: boolean;
+  status: string;
 }
 
 export interface JhService {

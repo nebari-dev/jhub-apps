@@ -50,9 +50,9 @@ export const ContextMenu = ({
         anchorEl={anchorEl}
         open={open}
         onClose={handleClose}
-        PaperProps={{
-          sx: {
-            width: 151, // directly specify the width here
+        sx={{
+          '& .MuiPaper-root': {
+            width: '151px',
           },
         }}
         MenuListProps={{
@@ -64,6 +64,7 @@ export const ContextMenu = ({
           .map((item) => (
             <MenuItem
               key={`menu-item-${item.id}`}
+              sx={{ fontSize: '15px' }}
               onClick={(e) => {
                 if (!item.disabled && item.onClick) {
                   item.onClick(e);
