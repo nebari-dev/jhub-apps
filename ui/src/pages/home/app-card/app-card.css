@@ -1,20 +1,15 @@
-.card-new {
+.card {
   height: 241px;
   width: 225px;
-  border: 0.25px solid #ddd;
   border-radius: 0.25rem;
-  box-shadow: 0px 1px 1px #b2aeae;
-}
-
-.card-new .Mui-card {
-  height: 241px;
+  box-shadow: 0px 1px 2px rgba(210, 210, 207, 0.7);
 }
 
 #card-test-app {
   position: relative;
 }
 /* Card Header Section */
-.card-cont-header {
+.card-content-header {
   position: relative;
   display: flex;
   justify-content: center;
@@ -24,19 +19,20 @@
   overflow: hidden;
 }
 
-.card-cont-header img {
+.card-content-header img {
   max-width: 100%;
   max-height: 100%;
   object-fit: contain;
 }
 
-.card-cont-header .img-overlay {
+.card-content-header .img-overlay {
   position: relative;
   display: inline-block;
 }
 
-.card-cont-header .img-overlay::after {
+.card-content-header .img-overlay::after {
   content: '';
+  object-fit: contain;
   position: absolute;
   top: 0;
   left: 0;
@@ -46,7 +42,7 @@
   pointer-events: none; /* Allows click events to pass through to the underlying elements */
 }
 
-.card-cont-header .chip-container {
+.card-content-header .chip-container {
   position: absolute;
   display: flex;
   align-items: center;
@@ -56,11 +52,12 @@
 }
 
 /* Card Content Section */
-.card-cont-content {
+.card-content-content {
   position: relative;
   z-index: 111;
+  height: 110px;
 }
-.card-cont-content .chip-container {
+.card-content-content .chip-container {
   position: absolute;
   display: flex;
   align-items: center;
@@ -78,9 +75,14 @@
   position: relative;
   overflow: hidden;
   transition: all 0.5s ease-in-out;
-  top: 40px;
+  top: 48px;
+  padding: 0px;
 }
 
+.card-content-content .card-inner-content {
+  position: relative;
+  padding-top: 4px;
+}
 .card-content {
   transition: transform 0.5s ease-in-out;
 }
@@ -127,7 +129,7 @@
     max-height 0.5s ease-in-out;
 }
 
-.card-cont-content .content .MuiCardContent-root {
+.card-content-content .content {
   padding: 0.5rem 1rem 1rem;
 }
 
@@ -137,7 +139,9 @@
   top: 1px;
 }
 
-.card-cont-content .MuiCardContent-root .MuiTypography-root.MuiTypography-h5 {
+.card-content-content
+  .MuiCardContent-root
+  .MuiTypography-root.MuiTypography-h5 {
   font-size: 1rem !important;
   font-weight: bold !important;
   display: inline;
@@ -145,7 +149,7 @@
 
 /* Custom Chip colors */
 /* Override default Chip background and text color */
-.card-cont-header
+.card-content-header
   .chip-container
   .menu-chip
   .chip-chip.MuiChip-colorDefault.MuiChip-filledDefault {

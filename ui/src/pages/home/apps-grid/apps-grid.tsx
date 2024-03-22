@@ -48,9 +48,10 @@ export const AppsGrid = ({
 
   useEffect(() => {
     if (!isLoading && serverData) {
+      console.log('serverDAta', serverData);
       const filterToLower = filter.toLowerCase();
       setApps(() =>
-        getApps(serverData, appType).filter(
+        getApps(serverData, appType, currentUser?.name ?? '').filter(
           (app) =>
             app.name.toLowerCase().includes(filterToLower) ||
             app.description?.toLowerCase().includes(filterToLower) ||
@@ -58,7 +59,7 @@ export const AppsGrid = ({
         ),
       );
     }
-  }, [isLoading, serverData, appType, filter]);
+  }, [isLoading, serverData, appType, filter, currentUser?.name]);
 
   useEffect(() => {
     if (error) {
@@ -108,13 +109,13 @@ export const AppsGrid = ({
               <>
                 {apps.map((app: JhApp) => (
                   <AppCard
-                    name={userData.displayName || ''}
                     id={app.id}
                     key={`app-${app.id}`}
                     title={app.name}
                     description={app.description}
                     thumbnail={app.thumbnail}
                     framework={app.framework}
+                    permissions={app.public ? 'Public' : 'Private' || 'Shared'}
                     url={app.url}
                     ready={app.ready}
                     serverStatus={app.status}

@@ -3,6 +3,8 @@ import { JhData } from '@src/types/jupyterhub.ts';
 import { DEFAULT_APP_THUMBNAIL, DEFAULT_PINNED_SERVICES } from './constants';
 
 export const getJhData = (): JhData => {
+  const data = window.jhdata;
+  console.log('JhdData', data);
   return window.jhdata;
 };
 
@@ -25,9 +27,10 @@ export const getServices = (services: JhServiceFull[], user: string) => {
 };
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-export const getApps = (servers: any, appType: string) => {
+export const getApps = (servers: any, appType: string, username: string) => {
   const serverApps = [];
   const filteredApps: JhApp[] = [];
+  console.log('servers', servers);
   if (appType.toLowerCase() === 'shared') {
     serverApps.push(...servers.shared_apps);
   } else {
@@ -45,9 +48,10 @@ export const getApps = (servers: any, appType: string) => {
         framework: 'JupyterLab',
         url: defaultApp.url,
         thumbnail: DEFAULT_APP_THUMBNAIL,
+        username: username,
         ready: defaultApp.ready,
         public: false,
-        status: { stopped: false, pending: null, ready: true },
+        status: { stopped: false, pending: null, ready: true, started: false },
       });
     }
   }
@@ -62,10 +66,10 @@ export const getApps = (servers: any, appType: string) => {
         framework: getFriendlyFrameworkName(app.framework),
         url: server.url,
         thumbnail: app.thumbnail,
-        username: server.username,
+        username: server.username || username,
         ready: server.ready,
         public: app.public,
-        status: { stopped: false, pending: null, ready: true },
+        status: { stopped: false, pending: null, ready: true, started: false },
       });
     }
   });
@@ -85,4 +89,16 @@ export const getAppLogoUrl = () => {
 
 export const navigateToUrl = (url: string) => {
   document.location.href = url;
+};
+
+export const getServerStatuses = (servers: any[]): JhApp['status'][] => {
+  const serverStatuses: JhApp['status'][] = [];
+
+  servers.forEach((server) => {
+    if (server && server.status && Object.values(server.status).some(Boolean)) {
+      serverStatuses.push(server.status);
+    }
+  });
+
+  return serverStatuses;
 };

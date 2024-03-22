@@ -1,4 +1,6 @@
-import LockIcon from '@mui/icons-material/Lock';
+import GroupRoundedIcon from '@mui/icons-material/GroupRounded';
+import LockRoundedIcon from '@mui/icons-material/LockRounded';
+import PublicRoundedIcon from '@mui/icons-material/PublicRounded';
 import { Button } from '@mui/material';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -15,42 +17,40 @@ import { API_BASE_URL } from '@src/utils/constants';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import React, { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
-import ContMenu, {
-  ContMenuItem,
-} from '../../../components/cont-menu/cont-menu';
+import ContextMenu, {
+  ContextMenuItem,
+} from '../../../components/context-menu/context-menu';
 import { currentNotification } from '../../../store';
 import './app-card.css';
 interface AppCard {
   id: string;
   title: string;
-  name: string;
   description?: string;
   framework: string;
   thumbnail?: string;
   url: string;
   username?: string;
+  permissions?: string;
   ready?: boolean;
   isPublic?: boolean;
   isShared?: boolean;
-  serverStatus: {
-    stopped: boolean;
-    pending: boolean; // Adjust according to your actual type
-    ready: boolean;
-  };
+  serverStatus: string;
   sx?: object;
 }
 
 export const AppCard = ({
   id,
   title,
-  name,
   description,
   framework,
   thumbnail,
   url,
+  username,
+  permissions,
   ready,
   isPublic = false,
   isShared,
+  serverStatus,
 }: AppCard): React.ReactElement => {
   const [appStatus, setAppStatus] = useState('');
   const queryClient = useQueryClient();
@@ -62,61 +62,50 @@ export const AppCard = ({
   const [isStopOpen, setIsStopOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   // const [isEditOpen, setIsEditOpen] = useState(false);
-  useEffect(() => {
-    const serverStatus = {
-      stopped: false,
-      pending: false,
-      ready: false,
-    };
 
-    let status = '';
-    if (serverStatus.stopped === true) {
-      status = 'Stopped';
-    } else if (serverStatus.pending !== null) {
-      status = 'Pending';
-    } else if (serverStatus.ready === true) {
-      status = 'Running';
+  useEffect(() => {
+    if (!serverStatus) {
+      setNotification('Server status id undefined.');
     } else {
-      status = 'Unknown';
+      setAppStatus(serverStatus);
     }
-    setAppStatus(status);
-  }, []);
+  }, [serverStatus, setNotification]);
 
   // Map status to color
-  const getStatusColor = (status: string) => {
+  const getStatusName = (status: string) => {
     switch (status) {
       case 'Running':
-        return 'success';
+        return 'Running';
       case 'Stopped':
-        return 'error';
+        return 'Stopped';
       case 'Pending':
-        return 'warning';
+        return 'Pending';
       default:
-        return 'default';
+        return 'Ready';
     }
   };
 
-  const getStatusStyles = (status: {
-    stopped: boolean;
-    pending: null;
-    ready: boolean;
-  }) => {
-    switch (true) {
-      case status.stopped:
+  const getStatusStyles = (status: string) => {
+    switch (status) {
+      case 'Stopped':
         return {
           bgcolor: '#E60F66',
           color: 'common.white',
         };
-      case status.pending === null:
+      case 'Pending':
         return {
-          // bgcolor: '#EAB54E',
-          backgroundColor: '#EAB54E',
+          bgcolor: '#EAB54E',
           color: 'common.black',
         };
-      case status.ready:
+      case 'Running':
         return {
           bgcolor: '#2E7D32',
           color: 'common.white',
+        };
+      case 'Unknown':
+        return {
+          bgcolor: '##79797C',
+          color: 'common.black',
         };
       default:
         return {
@@ -126,31 +115,53 @@ export const AppCard = ({
     }
   };
 
-  const serverStatus = {
-    stopped: false,
-    pending: null,
-    ready: false,
+  const getIcon = (permissions: unknown) => {
+    switch (permissions) {
+      case 'Shared':
+        return <GroupRoundedIcon />;
+      case 'Public':
+        return <PublicRoundedIcon />;
+      default:
+        // Default to 'Private'
+        return <LockRoundedIcon />;
+    }
   };
-
-  const statusStyles = getStatusStyles(serverStatus);
 
   const startRequest = async ({ id }: AppQueryPostProps) => {
     try {
       const response = await axios.post(`/server/${id}`);
+      updateStatusAfterOperation('Running');
       return response;
     } catch (error) {
       console.error('There was an error!', error);
-      setAppStatus('Ready'); // Set status back to Ready if there's an error
+      setNotification((error as Error).toString());
+      setAppStatus('Error'); // Set status back to Ready if there's an error
     }
   };
 
   const deleteRequest = async ({ id, remove }: AppQueryDeleteProps) => {
-    const response = await axios.delete(`/server/${id}`, {
-      params: {
-        remove,
-      },
-    });
-    return response;
+    try {
+      const response = await axios.delete(`/server/${id}`, {
+        params: {
+          remove,
+        },
+      });
+      if (remove) {
+        updateStatusAfterOperation('Deleted'); // Handle based on your logic
+      } else {
+        updateStatusAfterOperation('Stopped'); // Assume or handle based on response
+      }
+      return response;
+    } catch (error) {
+      console.error('There was an error!', error);
+      setNotification((error as Error).toString());
+      setAppStatus('Error'); // Reflect an error state
+    }
+  };
+
+  // Handle status update after operations
+  const updateStatusAfterOperation = (newStatus: string) => {
+    setAppStatus(newStatus);
   };
 
   const { mutate: startQuery } = useMutation({
@@ -221,7 +232,7 @@ export const AppCard = ({
     );
   };
 
-  const menuItems: ContMenuItem[] = [
+  const menuItems: ContextMenuItem[] = [
     {
       id: 'start',
       title: 'Start',
@@ -335,30 +346,30 @@ export const AppCard = ({
     </>
   );
   return (
-    <div className="card-new" id={`card-${id}`} tabIndex={0}>
+    <div className="card" id={`card-${id}`} tabIndex={0}>
       <a href={url}>
         <Card id={`card-${id}`} tabIndex={0} className="Mui-card">
-          <div className="card-cont-header">
+          <div className="card-content-header">
             <div className="chip-container">
               <div className="menu-chip">
+                <h2></h2>
                 <Chip
-                  color={getStatusColor(appStatus)}
-                  label={appStatus}
+                  label={getStatusName(appStatus)}
                   aria-label="open menu"
                   id={id}
                   children={undefined}
                   size="small"
                   className="chip-chip"
                   sx={{
-                    ...statusStyles,
+                    ...getStatusStyles(appStatus),
                     '& .MuiChip-label': {
-                      color: statusStyles.color,
+                      color: getStatusStyles(appStatus).color,
                     },
                   }}
                 />
               </div>
             </div>
-            <ContMenu id={`card-menu-${id}`} items={menuItems} />
+            <ContextMenu id={`card-menu-${id}`} items={menuItems} />
             {isStartOpen && (
               <Dialog open={isStartOpen} onClose={setIsStartOpen}>
                 <DialogTitle>Start {title}</DialogTitle>
@@ -392,7 +403,7 @@ export const AppCard = ({
               )}
             </CardMedia>
           </div>
-          <div className="card-cont-content">
+          <div className="card-content-content">
             <div className="chip-container">
               <div className="menu-chip">
                 <Chip
@@ -418,8 +429,7 @@ export const AppCard = ({
             <div className="card-content-container">
               <CardContent className="card-inner-content">
                 <span className="inline relative iconic">
-                  {' '}
-                  <LockIcon />{' '}
+                  {getIcon(permissions)}
                 </span>
                 <Typography
                   gutterBottom
@@ -434,7 +444,7 @@ export const AppCard = ({
                   color="text.secondary"
                   className="card-author"
                 >
-                  Created by {name}
+                  Created by {username}
                 </Typography>
                 {description && (
                   <Typography

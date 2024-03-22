@@ -21,8 +21,9 @@ export interface JhApp {
   public: boolean;
   status: {
     stopped: boolean;
-    pending: any; // Adjust according to your actual type
+    pending: any;
     ready: boolean;
+    started: boolean;
   };
 }
 
