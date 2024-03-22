@@ -82,11 +82,13 @@ export const serverApps = {
       url: '/user/test',
       ready: true,
       user_options: {},
+      last_activity: new Date(),
     },
     {
       name: 'test-app',
       url: '/user/test/test-app/',
       ready: true,
+      last_activity: new Date().getHours() - 1,
       user_options: {
         name: 'test-app',
         jhub_app: true,
@@ -107,6 +109,7 @@ export const serverApps = {
       name: 'test-app-2',
       url: '/user/test/test-app-2/',
       ready: false,
+      last_activity: new Date().getHours() - 3,
       user_options: {
         name: 'test-app-2',
         jhub_app: true,
@@ -126,6 +129,7 @@ export const serverApps = {
       name: 'test-app-3',
       url: '/user/test/test-app-3/',
       ready: false,
+      last_activity: new Date().getHours() - 2,
       user_options: {
         name: 'test-app-3',
         jhub_app: true,
@@ -144,6 +148,7 @@ export const serverApps = {
       name: 'test-app-4',
       url: '/user/test/test-app-4/',
       ready: false,
+      last_activity: new Date().getHours() - 4,
       user_options: {
         name: 'test-app-4',
         jhub_app: true,
@@ -163,6 +168,7 @@ export const serverApps = {
       name: 'shared-app',
       url: '/shared/test/shared-app/',
       ready: true,
+      last_activity: new Date(),
       user_options: {
         name: 'shared-app',
         jhub_app: true,

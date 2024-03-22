@@ -19,6 +19,7 @@ export interface JhApp {
   username?: string;
   ready: boolean;
   public: boolean;
+  last_activity: Date;
 }
 
 export interface JhService {
