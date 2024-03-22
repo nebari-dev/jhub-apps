@@ -47,6 +47,7 @@ export const getApps = (servers: any, appType: string) => {
         thumbnail: DEFAULT_APP_THUMBNAIL,
         ready: defaultApp.ready,
         public: false,
+        last_activity: defaultApp.last_activity,
       });
     }
   }
@@ -64,6 +65,7 @@ export const getApps = (servers: any, appType: string) => {
         username: server.username,
         ready: server.ready,
         public: app.public,
+        last_activity: server.last_activity,
       });
     }
   });
