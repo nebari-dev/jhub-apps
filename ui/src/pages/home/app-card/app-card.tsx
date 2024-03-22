@@ -70,22 +70,10 @@ export const AppCard = ({
   }, [serverStatus, setNotification]);
 
   // Map status to color
-  const getStatusName = (status: string) => {
-    switch (status) {
-      case 'Running':
-        return 'Running';
-      case 'Stopped':
-        return 'Stopped';
-      case 'Pending':
-        return 'Pending';
-      default:
-        return 'Ready';
-    }
-  };
 
   const getStatusStyles = (status: string) => {
     switch (status) {
-      case 'Stopped':
+      case 'Ready':
         return {
           bgcolor: '#E60F66',
           color: 'white',
@@ -346,7 +334,7 @@ export const AppCard = ({
               <div className="menu-chip">
                 <h2></h2>
                 <Chip
-                  label={getStatusName(appStatus)}
+                  label={appStatus}
                   aria-label="open menu"
                   id={id}
                   children={undefined}

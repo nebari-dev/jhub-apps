@@ -20,7 +20,6 @@ export interface JhApp {
   ready: boolean;
   public: boolean;
   pending?: boolean;
-  started?: boolean;
   stopped?: boolean;
   status: string;
 }

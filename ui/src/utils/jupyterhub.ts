@@ -50,7 +50,7 @@ export const getApps = (servers: any, appType: string, username: string) => {
         username: username,
         ready: defaultApp.ready,
         public: false,
-        // status: '',
+        status: '',
       });
     }
   }
@@ -96,15 +96,13 @@ export const navigateToUrl = (url: string) => {
 };
 
 export const getAppStatus = (app: JhApp): string => {
-  if (app.ready) {
+  if (app.stopped) {
     return 'Ready';
-  } else if (app.started) {
-    return 'Started';
   } else if (app.pending) {
     return 'Pending';
-  } else if (app.stopped) {
-    return 'Stopped';
+  } else if (app.ready) {
+    return 'Running';
   } else {
-    return 'Unknown'; // Fallback in case none of the conditions are met
+    return 'Unknown';
   }
 };

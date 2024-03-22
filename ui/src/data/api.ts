@@ -53,7 +53,6 @@ export const profiles: AppProfileProps[] = [
 export const app: AppQueryGetProps = {
   name: 'app-1',
   last_activity: '',
-  started: null,
   pending: null,
   ready: true,
   stopped: false,
@@ -86,7 +85,7 @@ export const serverApps = {
     {
       name: 'test-app',
       url: '/user/test/test-app/',
-      started: null,
+
       pending: null,
       ready: true,
       stopped: false,
@@ -152,7 +151,7 @@ export const serverApps = {
     {
       name: 'test-app-4',
       url: '/user/test/test-app-4/',
-      started: null,
+
       pending: null,
       ready: false,
       stopped: true,
@@ -174,7 +173,7 @@ export const serverApps = {
     {
       name: 'shared-app',
       url: '/shared/test/shared-app/',
-      started: null,
+
       pending: null,
       ready: true,
       stopped: false,
