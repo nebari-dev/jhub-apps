@@ -4,6 +4,10 @@ on:
   pull_request:
     branches: [main]
 
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -11,6 +15,17 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4.1.1
+        with:
+          ref: ${{ github.head_ref }}
+          fetch-depth: 1
+
+      - id: check_label
+        name: Check PL labels
+        uses: docker://agilepathway/pull-request-label-checker:latest
+        with:
+          one_of: dependencies
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          allow_failure: true
 
       - name: Set up Node environment
         uses: actions/setup-node@v4.0.2
@@ -25,21 +40,16 @@ jobs:
         run: npm run buildCopy
         working-directory: ui
 
-      - id: check_label
-        name: Check PL labels
-        uses: docker://agilepathway/pull-request-label-checker:latest
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Commit static files if dependencies label
-        if: steps.check_label.outputs.label == 'dependencies'
+        if: steps.check_label.outputs.label_check == 'success'
         run: |
-          git config --global user.email "noreply@github.com"
-          git config --global user.name "dependabot"
-          git add .
-          git commit -m "Add new build files"
-          git push origin HEAD:${{ github.ref }}
-        working-directory: ui
+          if [[ $(git status --porcelain) ]]; then
+            git config user.name 'github-actions[bot]'
+            git config user.email 'github-actions[bot]@users.noreply.github.com'
+            git add .
+            git commit --amend --no-edit
+            git push --force
+          fi
 
       - name: Check static files uncommitted
         run: |
@@ -50,4 +60,3 @@ jobs:
           else
             echo "No uncommitted changes found."
           fi
-        working-directory: ui
