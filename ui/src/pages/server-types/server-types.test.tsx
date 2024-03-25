@@ -1,4 +1,5 @@
 import { profiles } from '@src/data/api';
+import { currentUser } from '@src/data/user';
 import axios from '@src/utils/axios';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import '@testing-library/jest-dom';
@@ -6,6 +7,7 @@ import { act, render, waitFor } from '@testing-library/react';
 import MockAdapter from 'axios-mock-adapter';
 import { BrowserRouter } from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
+import { currentUser as defaultUser } from '../../store';
 import { ServerTypes } from './server-types';
 
 describe('ServerTypes', () => {
@@ -26,7 +28,7 @@ describe('ServerTypes', () => {
     queryClient.isFetching = jest.fn().mockReturnValue(true);
     mock.onGet(new RegExp('/spawner-profiles/')).reply(200, null);
     const { baseElement } = render(
-      <RecoilRoot>
+      <RecoilRoot initializeState={({ set }) => set(defaultUser, currentUser)}>
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
             <ServerTypes />
@@ -39,7 +41,7 @@ describe('ServerTypes', () => {
 
   // Error state test
   test('renders a message when no servers', () => {
-    queryClient.setQueryData(['serverTypes'], null);
+    queryClient.setQueryData(['server-types'], null);
     mock.onGet(new RegExp('/server/')).reply(200, null);
     const { baseElement } = render(
       <RecoilRoot>
@@ -54,13 +56,13 @@ describe('ServerTypes', () => {
   });
 
   test('renders server types correctly', async () => {
-    queryClient.setQueryData(['serverTypes'], null);
+    queryClient.setQueryData(['server-types'], null);
     mock.onGet(new RegExp('/spawner-profiles/')).reply(200, [
       { slug: 'type1', display_name: 'Small', description: 'Description 1' },
       { slug: 'type2', display_name: 'Small', description: 'Description 2' },
     ]);
     const { baseElement } = render(
-      <RecoilRoot>
+      <RecoilRoot initializeState={({ set }) => set(defaultUser, currentUser)}>
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
             <ServerTypes />
@@ -72,7 +74,7 @@ describe('ServerTypes', () => {
   });
 
   test('selects a server type', async () => {
-    queryClient.setQueryData(['serverTypes'], profiles);
+    queryClient.setQueryData(['server-types'], profiles);
     mock.onGet(new RegExp('/spawner-profiles/')).reply(200, profiles);
     const { baseElement } = render(
       <RecoilRoot>
@@ -94,7 +96,7 @@ describe('ServerTypes', () => {
   });
 
   test('simulates loading with error', async () => {
-    queryClient.setQueryData(['serverTypes'], null);
+    queryClient.setQueryData(['server-types'], null);
     mock
       .onGet(new RegExp('/spawner-profiles/'))
       .reply(500, { message: 'Some error' });
@@ -112,7 +114,7 @@ describe('ServerTypes', () => {
   });
 
   test('simulates creating an app', async () => {
-    queryClient.setQueryData(['serverTypes'], profiles);
+    queryClient.setQueryData(['server-types'], profiles);
     mock.onGet(new RegExp('/spawner-profiles/')).reply(200, profiles);
     const { baseElement } = render(
       <RecoilRoot>
@@ -134,7 +136,7 @@ describe('ServerTypes', () => {
     const mockSearchParamsGet = jest.spyOn(URLSearchParams.prototype, 'get');
     mockSearchParamsGet.mockReturnValue('app-1');
 
-    queryClient.setQueryData(['serverTypes'], profiles);
+    queryClient.setQueryData(['server-types'], profiles);
     mock.onGet(new RegExp('/spawner-profiles/')).reply(200, profiles);
     const { baseElement } = render(
       <RecoilRoot>
@@ -205,7 +207,7 @@ describe('ServerTypes', () => {
   });
 
   test('clicks cancel to home', async () => {
-    queryClient.setQueryData(['serverTypes'], profiles);
+    queryClient.setQueryData(['server-types'], profiles);
     mock.onGet(new RegExp('/spawner-profiles/')).reply(200, profiles);
     const { baseElement } = render(
       <RecoilRoot>
