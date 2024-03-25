@@ -75,7 +75,7 @@
   position: relative;
   overflow: hidden;
   transition: all 0.5s ease-in-out;
-  top: 48px;
+  top: 42px;
   padding: 0px;
 }
 
@@ -133,27 +133,15 @@
   padding: 0.5rem 1rem 1rem;
 }
 
-.iconic .MuiSvgIcon-root.MuiSvgIcon-fontSizeMedium {
-  font-size: 1.125rem;
+.card-content-content .card-inner-content .iconic {
+  font-size: 1rem !important;
   position: relative;
-  top: 1px;
+  top: 3px;
+  margin-right: 5px;
 }
 
-.card-content-content
-  .MuiCardContent-root
-  .MuiTypography-root.MuiTypography-h5 {
+.card-content-content .card-content-container .card-title {
   font-size: 1rem !important;
   font-weight: bold !important;
   display: inline;
-}
-
-/* Custom Chip colors */
-/* Override default Chip background and text color */
-.card-content-header
-  .chip-container
-  .menu-chip
-  .chip-chip.MuiChip-colorDefault.MuiChip-filledDefault {
-  background-color: #fff !important; /* Example gray background */
-  color: #2e7d32 !important;
-  border: 1px solid #2e7d32; /* Example gray text color */
 }

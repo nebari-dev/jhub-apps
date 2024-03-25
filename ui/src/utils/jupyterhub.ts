@@ -71,7 +71,6 @@ export const getApps = (servers: any, appType: string, username: string) => {
         ready: server.ready,
         pending: server.pending,
         stopped: server.stopped,
-        started: server.started,
         public: app.public,
         status: appStatus,
       });

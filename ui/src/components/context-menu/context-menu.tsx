@@ -64,7 +64,7 @@ export const ContextMenu = ({
           .map((item) => (
             <MenuItem
               key={`menu-item-${item.id}`}
-              sx={{ fontSize: '15px' }}
+              sx={{ fontSize: '12px' }}
               onClick={(e) => {
                 if (!item.disabled && item.onClick) {
                   item.onClick(e);

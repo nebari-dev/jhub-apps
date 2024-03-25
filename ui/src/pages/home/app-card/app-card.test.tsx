@@ -5,7 +5,7 @@ import '@testing-library/jest-dom';
 import { act, render, waitFor } from '@testing-library/react';
 import MockAdapter from 'axios-mock-adapter';
 import { RecoilRoot } from 'recoil';
-import AppCard from './app-card'; // Updated import to match component name
+import AppCard from './app-card';
 
 describe('AppCard', () => {
   const queryClient = new QueryClient();
@@ -15,7 +15,7 @@ describe('AppCard', () => {
     mock.reset();
   });
 
-  test('renders sdefault app card successfully', async () => {
+  test('renders default app card successfully', async () => {
     const { baseElement } = render(
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
@@ -26,7 +26,7 @@ describe('AppCard', () => {
             framework="Some Framework"
             url="/some-url"
             ready={true}
-            serverStatus={{ stopped: false, pending: false, ready: false }}
+            serverStatus="ready"
           />
         </QueryClientProvider>
       </RecoilRoot>,
@@ -34,7 +34,7 @@ describe('AppCard', () => {
     expect(baseElement).toBeInTheDocument();
   });
 
-  test('renders sdefault app card not ready', async () => {
+  test('renders default app card not ready', async () => {
     const { baseElement } = render(
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
@@ -45,7 +45,7 @@ describe('AppCard', () => {
             framework="Some Framework"
             url="/some-url"
             ready={true}
-            serverStatus={{ stopped: false, pending: false, ready: false }}
+            serverStatus="ready"
           />
         </QueryClientProvider>
       </RecoilRoot>,
@@ -68,7 +68,7 @@ describe('AppCard', () => {
             url="/some-url"
             ready={true}
             thumbnail="/some-thumbnail.png"
-            serverStatus={{ stopped: false, pending: false, ready: false }}
+            serverStatus="ready"
           />
         </QueryClientProvider>
       </RecoilRoot>,
@@ -95,7 +95,7 @@ describe('AppCard', () => {
             url="/some-url"
             ready={true}
             thumbnail="/some-thumbnail.png"
-            serverStatus={{ stopped: false, pending: false, ready: false }}
+            serverStatus="ready"
           />
         </QueryClientProvider>
       </RecoilRoot>,
@@ -155,7 +155,7 @@ describe('AppCard', () => {
             url="/some-url"
             ready={true}
             thumbnail="/some-thumbnail.png"
-            serverStatus={{ stopped: false, pending: false, ready: false }}
+            serverStatus="ready"
           />
         </QueryClientProvider>
       </RecoilRoot>,
@@ -226,7 +226,7 @@ describe('AppCard', () => {
             url="/some-url"
             ready={true}
             thumbnail="/some-thumbnail.png"
-            serverStatus={{ stopped: false, pending: false, ready: false }}
+            serverStatus="ready"
           />
         </QueryClientProvider>
       </RecoilRoot>,
@@ -266,7 +266,7 @@ describe('AppCard', () => {
             url="/some-url"
             ready={true}
             thumbnail="/some-thumbnail.png"
-            serverStatus={{ stopped: false, pending: false, ready: false }}
+            serverStatus="ready"
           />
         </QueryClientProvider>
       </RecoilRoot>,
@@ -303,7 +303,7 @@ describe('AppCard', () => {
             url="/some-url"
             ready={true}
             thumbnail="/some-thumbnail.png"
-            serverStatus={{ stopped: false, pending: false, ready: false }}
+            serverStatus="ready"
           />
         </QueryClientProvider>
       </RecoilRoot>,
@@ -362,7 +362,7 @@ describe('AppCard', () => {
             url="/some-url"
             ready={true}
             thumbnail="/some-thumbnail.png"
-            serverStatus={{ stopped: false, pending: false, ready: false }}
+            serverStatus="ready"
           />
         </QueryClientProvider>
       </RecoilRoot>,

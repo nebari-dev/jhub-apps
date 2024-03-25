@@ -75,8 +75,8 @@ export const AppCard = ({
     switch (status) {
       case 'Ready':
         return {
-          bgcolor: '#E60F66',
-          color: 'white',
+          bgcolor: '#ffffff',
+          border: '1px solid #2E7D32',
         };
       case 'Pending':
         return {
@@ -129,7 +129,7 @@ export const AppCard = ({
       if (remove) {
         updateStatusAfterOperation('Deleted'); // Handle based on your logic
       } else {
-        updateStatusAfterOperation('Stopped'); // Assume or handle based on response
+        updateStatusAfterOperation('Ready'); // Assume or handle based on response
       }
       return response;
     } catch (error) {
@@ -332,7 +332,6 @@ export const AppCard = ({
           <div className="card-content-header">
             <div className="chip-container">
               <div className="menu-chip">
-                <h2></h2>
                 <Chip
                   label={appStatus}
                   aria-label="open menu"
