@@ -27,6 +27,7 @@ import { getApps } from '@src/utils/jupyterhub';
 import { useQuery } from '@tanstack/react-query';
 import React, { SyntheticEvent, useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
+import { StyledFilterButton } from 'src/styles/styled-filter-button';
 import {
   currentNotification,
   currentUser as defaultUser,
@@ -238,7 +239,7 @@ export const AppsGrid = (): React.ReactElement => {
           <Grid container spacing={2} paddingBottom="32px">
             <Grid item xs={12} md={4}>
               <Item>
-                <Button
+                <StyledFilterButton
                   id="filters-btn"
                   variant="outlined"
                   color="secondary"
@@ -252,10 +253,9 @@ export const AppsGrid = (): React.ReactElement => {
                     )
                   }
                   disabled={frameworksLoading}
-                  sx={{ mr: '16px' }}
                 >
                   Filters
-                </Button>
+                </StyledFilterButton>
                 <Menu
                   id="filters-list"
                   anchorEl={filtersAnchorEl}
@@ -325,6 +325,7 @@ export const AppsGrid = (): React.ReactElement => {
                     </Box>
                     <ButtonGroup>
                       <Button
+                        id="clear-filters-btn"
                         variant="text"
                         color="secondary"
                         size="small"
@@ -333,6 +334,7 @@ export const AppsGrid = (): React.ReactElement => {
                         Clear
                       </Button>
                       <Button
+                        id="apply-filters-btn"
                         variant="contained"
                         size="small"
                         onClick={handleApplyFilters}
@@ -342,7 +344,7 @@ export const AppsGrid = (): React.ReactElement => {
                     </ButtonGroup>
                   </Box>
                 </Menu>
-                <Button
+                <StyledFilterButton
                   id="bulk-actions-btn"
                   variant="outlined"
                   color="secondary"
@@ -359,7 +361,7 @@ export const AppsGrid = (): React.ReactElement => {
                   disabled={!hasBulkSelections}
                 >
                   Bulk Actions
-                </Button>
+                </StyledFilterButton>
                 <Menu
                   id="bulk-actions-list"
                   anchorEl={bulkActionsAnchorEl}
@@ -399,7 +401,12 @@ export const AppsGrid = (): React.ReactElement => {
                   <SortRounded sx={{ pr: '8px' }} />
                   <FormLabel
                     id="sort-by-label"
-                    sx={{ fontSize: '14px', fontWeight: 600, pr: '8px' }}
+                    sx={{
+                      fontSize: '14px',
+                      fontWeight: 500,
+                      pr: '8px',
+                      color: 'common.black',
+                    }}
                   >
                     Sort by:
                   </FormLabel>
@@ -410,9 +417,10 @@ export const AppsGrid = (): React.ReactElement => {
                     onClick={(event) => setSortByAnchorEl(event.currentTarget)}
                     sx={{
                       position: 'relative',
-                      bottom: '7px',
+                      bottom: '8px',
                       fontWeight: 600,
                       width: '180px',
+                      color: 'common.black',
                     }}
                     endIcon={
                       filtersOpen ? (
