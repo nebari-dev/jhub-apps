@@ -274,7 +274,7 @@ describe('AppsGrid', () => {
     });
     expect(frameworkItem).toBeTruthy();
 
-    let ownershipItem = baseElement.querySelectorAll(
+    const ownershipItem = baseElement.querySelectorAll(
       '.MuiFormControlLabel-root',
     )[6] as HTMLLabelElement;
     await act(async () => {
@@ -325,7 +325,7 @@ describe('AppsGrid', () => {
     });
     expect(frameworkItem).toBeTruthy();
 
-    let ownershipItem = baseElement.querySelectorAll(
+    const ownershipItem = baseElement.querySelectorAll(
       '.MuiFormControlLabel-root',
     )[7] as HTMLLabelElement;
     await act(async () => {
