@@ -27,11 +27,11 @@ import { getApps } from '@src/utils/jupyterhub';
 import { useQuery } from '@tanstack/react-query';
 import React, { SyntheticEvent, useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
-import { StyledFilterButton } from 'src/styles/styled-filter-button';
 import {
   currentNotification,
   currentUser as defaultUser,
 } from '../../../store';
+import { StyledFilterButton } from '../../../styles/styled-filter-button';
 import { Item } from '../../../styles/styled-item';
 import AppCard from '../app-card/app-card';
 
@@ -252,7 +252,7 @@ export const AppsGrid = (): React.ReactElement => {
                       <KeyboardArrowDownRoundedIcon />
                     )
                   }
-                  disabled={frameworksLoading}
+                  disabled={frameworksLoading || false}
                 >
                   Filters
                 </StyledFilterButton>

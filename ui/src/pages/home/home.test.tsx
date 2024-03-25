@@ -54,7 +54,7 @@ describe('Home', () => {
     const { getByText } = render(componentWrapper);
     await act(async () => {
       expect(getByText('Services')).toBeTruthy();
-      expect(getByText('My Apps')).toBeTruthy();
+      expect(getByText('Apps')).toBeTruthy();
     });
   });
 
