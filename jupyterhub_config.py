@@ -32,7 +32,6 @@ def service_for_jhub_apps(name, url):
             "url": url,
             "external": True,
         },
-        "oauth_no_confirm": True,
     }
 
 
