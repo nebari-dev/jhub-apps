@@ -3,8 +3,6 @@ import { JhData } from '@src/types/jupyterhub.ts';
 import { DEFAULT_APP_THUMBNAIL, DEFAULT_PINNED_SERVICES } from './constants';
 
 export const getJhData = (): JhData => {
-  const data = window.jhdata;
-  console.log('JhdData', data);
   return window.jhdata;
 };
 
@@ -40,6 +38,7 @@ export const getApps = (servers: any, appType: string, username: string) => {
     );
 
     if (defaultApp) {
+      const appStatus = getAppStatus(defaultApp);
       filteredApps.push({
         id: '',
         name: 'JupyterLab',
@@ -49,8 +48,10 @@ export const getApps = (servers: any, appType: string, username: string) => {
         thumbnail: DEFAULT_APP_THUMBNAIL,
         username: username,
         ready: defaultApp.ready,
+        pending: defaultApp.pending,
+        stopped: defaultApp.stopped,
         public: false,
-        status: '',
+        status: appStatus,
       });
     }
   }
@@ -58,7 +59,6 @@ export const getApps = (servers: any, appType: string, username: string) => {
   serverApps.forEach((server: any) => {
     if (server.user_options?.jhub_app) {
       const app = server.user_options;
-      console.log('APP', app);
       const appStatus = getAppStatus(server);
       filteredApps.push({
         id: app.name,

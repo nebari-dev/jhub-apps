@@ -46,20 +46,6 @@ export const AppsGrid = ({
     enabled: !!currentUser,
   });
 
-  // useEffect(() => {
-  //   if (!isLoading && serverData) {
-  //     console.log('serverDAta', serverData);
-  //     const filterToLower = filter.toLowerCase();
-  //     setApps(() =>
-  //       getApps(serverData, appType, currentUser?.name ?? '').filter(
-  //         (app) =>
-  //           app.name.toLowerCase().includes(filterToLower) ||
-  //           app.description?.toLowerCase().includes(filterToLower) ||
-  //           app.framework?.toLowerCase().includes(filterToLower),
-  //       ),
-  //     );
-  //   }
-  // }, [isLoading, serverData, appType, filter, currentUser?.name]);
   useEffect(() => {
     if (!isLoading && serverData) {
       const filterToLower = filter.toLowerCase();

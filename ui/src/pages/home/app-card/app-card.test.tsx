@@ -15,6 +15,10 @@ describe('AppCard', () => {
     mock.reset();
   });
 
+  afterAll(() => {
+    mock.restore();
+  });
+
   test('renders default app card successfully', async () => {
     const { baseElement } = render(
       <RecoilRoot>
@@ -81,8 +85,7 @@ describe('AppCard', () => {
     expect(body).toHaveTextContent('Some app description');
   });
 
-  test('simulates starting an app', async () => {
-    mock.onPost().reply(200);
+  test('simulates canceling starting an app', async () => {
     const { baseElement } = render(
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
@@ -121,14 +124,42 @@ describe('AppCard', () => {
     await act(async () => {
       cancelBtn.click();
     });
+  });
 
+  test('simulates starting an app', async () => {
+    mock.onPost().reply(200);
+    const { baseElement } = render(
+      <RecoilRoot>
+        <QueryClientProvider client={queryClient}>
+          <AppCard
+            id="1"
+            title="Test App"
+            description="Some app description"
+            name="Developer"
+            framework="Some Framework"
+            url="/some-url"
+            ready={true}
+            thumbnail="/some-thumbnail.png"
+            serverStatus="ready"
+          />
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+
+    const menu = baseElement.querySelectorAll(
+      '.MuiButtonBase-root',
+    )[0] as HTMLButtonElement;
     await act(async () => {
       menu.click();
     });
 
+    const btn = baseElement.querySelectorAll(
+      '.MuiList-root li.MuiButtonBase-root',
+    )[0] as HTMLAnchorElement;
     await act(async () => {
       btn.click();
     });
+
     // Start
     const startBtn = await waitFor(
       () => baseElement.querySelector('#start-btn') as HTMLButtonElement,
@@ -289,7 +320,7 @@ describe('AppCard', () => {
     expect(window.location.pathname).not.toBe('/edit-app/app-1');
   });
 
-  test('simulates deleting an app', async () => {
+  test('simulates canceling deleting an app', async () => {
     mock.onDelete().reply(200);
     const { baseElement } = render(
       <RecoilRoot>
@@ -329,6 +360,41 @@ describe('AppCard', () => {
     await act(async () => {
       cancelBtn.click();
     });
+  });
+
+  test('simulates deleting an app', async () => {
+    mock.onDelete().reply(200);
+    const { baseElement } = render(
+      <RecoilRoot>
+        <QueryClientProvider client={queryClient}>
+          <AppCard
+            id="1"
+            title="Test App"
+            description="Some app description"
+            name="Developer"
+            framework="Some Framework"
+            url="/some-url"
+            ready={true}
+            thumbnail="/some-thumbnail.png"
+            serverStatus="ready"
+          />
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+
+    const menu = baseElement.querySelectorAll(
+      '.MuiButtonBase-root',
+    )[0] as HTMLButtonElement;
+    await act(async () => {
+      menu.click();
+    });
+
+    const btn = baseElement.querySelectorAll(
+      '.MuiList-root li.MuiButtonBase-root',
+    )[0] as HTMLAnchorElement;
+    await act(async () => {
+      btn.click();
+    });
 
     await act(async () => {
       menu.click();
@@ -348,6 +414,7 @@ describe('AppCard', () => {
       });
     }
   });
+
   test('simulates deleting an app with an error', async () => {
     mock.onDelete().reply(500, { error: 'Some error' });
     const { baseElement } = render(
@@ -391,5 +458,39 @@ describe('AppCard', () => {
         deleteBtn.click();
       });
     }
+  });
+
+  // icon tests:
+  test('returns PublicRoundedIcon when isPublic is true', () => {
+    const { getByTestId } = render(
+      <RecoilRoot>
+        <QueryClientProvider client={queryClient}>
+          <AppCard isPublic={true} />
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+    expect(getByTestId('PublicRoundedIcon')).toBeInTheDocument();
+  });
+
+  test('returns GroupRoundedIcon when isShared is true', () => {
+    const { getByTestId } = render(
+      <RecoilRoot>
+        <QueryClientProvider client={queryClient}>
+          <AppCard isShared={true} />
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+    expect(getByTestId('GroupRoundedIcon')).toBeInTheDocument();
+  });
+
+  test('returns LockRoundedIcon when both isPublic and isShared are false', () => {
+    const { getByTestId } = render(
+      <RecoilRoot>
+        <QueryClientProvider client={queryClient}>
+          <AppCard />
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+    expect(getByTestId('LockRoundedIcon')).toBeInTheDocument();
   });
 });

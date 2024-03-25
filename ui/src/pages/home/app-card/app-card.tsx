@@ -45,7 +45,6 @@ export const AppCard = ({
   thumbnail,
   url,
   username,
-  ready,
   isPublic = false,
   isShared,
   serverStatus,
@@ -59,7 +58,6 @@ export const AppCard = ({
   const [isStartOpen, setIsStartOpen] = useState(false);
   const [isStopOpen, setIsStopOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
-  // const [isEditOpen, setIsEditOpen] = useState(false);
 
   useEffect(() => {
     if (!serverStatus) {
@@ -102,9 +100,9 @@ export const AppCard = ({
   };
 
   const getIcon = () => {
-    if (isPublic) return <PublicRoundedIcon />;
-    if (isShared) return <GroupRoundedIcon />;
-    return <LockRoundedIcon />;
+    if (isPublic) return <PublicRoundedIcon data-testid="PublicRoundedIcon" />;
+    if (isShared) return <GroupRoundedIcon data-testid="GroupRoundedIcon" />;
+    return <LockRoundedIcon data-testid="LockRoundedIcon" />;
   };
 
   const startRequest = async ({ id }: AppQueryPostProps) => {
@@ -218,14 +216,14 @@ export const AppCard = ({
       title: 'Start',
       onClick: () => setIsStartOpen(true),
       visible: true,
-      disabled: !ready,
+      disabled: serverStatus === 'Running',
     },
     {
       id: 'stop',
       title: 'Stop',
       onClick: () => setIsStopOpen(true),
       visible: true,
-      disabled: !ready || isShared,
+      disabled: serverStatus === 'Ready' || isShared,
     },
     {
       id: 'edit',
