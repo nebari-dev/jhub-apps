@@ -1,5 +1,6 @@
 import '@testing-library/jest-dom';
 import { fireEvent, render } from '@testing-library/react';
+import { act } from 'react-dom/test-utils';
 import ContextMenu from './context-menu'; // Adjust the import based on your file structure
 
 describe('ContextMenu', () => {
@@ -11,7 +12,9 @@ describe('ContextMenu', () => {
 
   test('opens menu on button click', () => {
     const { getByRole } = render(<ContextMenu id="menu-1" items={[]} />);
-    fireEvent.click(getByRole('button', { name: '...' }));
+    act(() => {
+      fireEvent.click(getByRole('button', { name: '...' }));
+    });
     expect(getByRole('menu')).toBeVisible();
   });
 
