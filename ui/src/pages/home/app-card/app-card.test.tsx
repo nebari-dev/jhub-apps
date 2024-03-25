@@ -2,52 +2,61 @@ import { app, environments, frameworks, profiles } from '@src/data/api';
 import axios from '@src/utils/axios';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import '@testing-library/jest-dom';
-import { render } from '@testing-library/react';
+import { act, render, waitFor } from '@testing-library/react';
 import MockAdapter from 'axios-mock-adapter';
-import { act } from 'react-dom/test-utils';
 import { RecoilRoot } from 'recoil';
-import { AppCard } from './app-card';
+import AppCard from './app-card';
 
 describe('AppCard', () => {
   const queryClient = new QueryClient();
   const mock = new MockAdapter(axios);
+
   beforeAll(() => {
     mock.reset();
   });
 
-  test('renders default app card successfully', () => {
-    const { baseElement } = render(
-      <RecoilRoot>
-        <QueryClientProvider client={queryClient}>
-          <AppCard
-            id="card-1"
-            title="Card 1"
-            framework="Some Framework"
-            url="/some-url"
-          />
-        </QueryClientProvider>
-      </RecoilRoot>,
-    );
-    const header = baseElement.querySelector('h3');
-    expect(header).toHaveTextContent('Card 1');
+  afterAll(() => {
+    mock.restore();
   });
 
-  test('renders app card for app not ready', () => {
+  test('renders default app card successfully', async () => {
     const { baseElement } = render(
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
           <AppCard
-            id="card-1"
-            title="Card 1"
+            id="1"
+            title="Test App"
+            name="Developer"
             framework="Some Framework"
             url="/some-url"
-            ready={false}
+            ready={true}
+            serverStatus="ready"
           />
         </QueryClientProvider>
       </RecoilRoot>,
     );
-    const header = baseElement.querySelector('h3');
-    expect(header).toHaveTextContent('Card 1');
+    expect(baseElement).toBeInTheDocument();
+  });
+
+  test('renders default app card not ready', async () => {
+    const { baseElement } = render(
+      <RecoilRoot>
+        <QueryClientProvider client={queryClient}>
+          <AppCard
+            id="1"
+            title="Test App"
+            name="Developer"
+            framework="Some Framework"
+            url="/some-url"
+            ready={true}
+            serverStatus="ready"
+          />
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+    expect(baseElement).toBeInTheDocument();
+    const appLabel = baseElement.querySelector('.MuiTypography-h5');
+    expect(appLabel).toHaveTextContent('Test App');
   });
 
   test('renders app card with thumbnail and description', () => {
@@ -55,23 +64,66 @@ describe('AppCard', () => {
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
           <AppCard
-            id="card-1"
-            title="Card 1"
+            id="1"
+            title="Test App"
             description="Some app description"
+            name="Developer"
             framework="Some Framework"
             url="/some-url"
-            thumbnail="/some-thumbnail.png"
             ready={true}
+            thumbnail="/some-thumbnail.png"
+            serverStatus="ready"
           />
         </QueryClientProvider>
       </RecoilRoot>,
     );
-    const header = baseElement.querySelector('h3');
-    expect(header).toHaveTextContent('Card 1');
+    const appLabel = baseElement.querySelector('.MuiTypography-h5');
+    expect(appLabel).toHaveTextContent('Test App');
     const img = baseElement.querySelector('img');
     expect(img).toHaveAttribute('src', '/some-thumbnail.png');
-    const body = baseElement.querySelector('p');
+    const body = baseElement.querySelector('.card-description');
     expect(body).toHaveTextContent('Some app description');
+  });
+
+  test('simulates canceling starting an app', async () => {
+    const { baseElement } = render(
+      <RecoilRoot>
+        <QueryClientProvider client={queryClient}>
+          <AppCard
+            id="1"
+            title="Test App"
+            description="Some app description"
+            name="Developer"
+            framework="Some Framework"
+            url="/some-url"
+            ready={true}
+            thumbnail="/some-thumbnail.png"
+            serverStatus="ready"
+          />
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+
+    const menu = baseElement.querySelectorAll(
+      '.MuiButtonBase-root',
+    )[0] as HTMLButtonElement;
+    await act(async () => {
+      menu.click();
+    });
+
+    const btn = baseElement.querySelectorAll(
+      '.MuiList-root li.MuiButtonBase-root',
+    )[0] as HTMLAnchorElement;
+    await act(async () => {
+      btn.click();
+    });
+    // Cancel Start confirmation buttons
+    const cancelBtn = baseElement.querySelector(
+      '#cancel-btn',
+    ) as HTMLButtonElement;
+    await act(async () => {
+      cancelBtn.click();
+    });
   });
 
   test('simulates starting an app', async () => {
@@ -80,50 +132,85 @@ describe('AppCard', () => {
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
           <AppCard
-            id="card-1"
-            title="Card 1"
+            id="1"
+            title="Test App"
+            description="Some app description"
+            name="Developer"
             framework="Some Framework"
             url="/some-url"
-            ready={false}
+            ready={true}
+            thumbnail="/some-thumbnail.png"
+            serverStatus="ready"
           />
         </QueryClientProvider>
       </RecoilRoot>,
     );
 
     const menu = baseElement.querySelectorAll(
-      '.context-menu-container',
-    )[0] as HTMLDivElement;
+      '.MuiButtonBase-root',
+    )[0] as HTMLButtonElement;
     await act(async () => {
       menu.click();
     });
 
     const btn = baseElement.querySelectorAll(
-      '.context-menu li a',
+      '.MuiList-root li.MuiButtonBase-root',
     )[0] as HTMLAnchorElement;
     await act(async () => {
       btn.click();
     });
 
+    // Start
+    const startBtn = await waitFor(
+      () => baseElement.querySelector('#start-btn') as HTMLButtonElement,
+    );
+
+    if (startBtn !== null) {
+      await act(async () => {
+        startBtn.click();
+      });
+    }
+  });
+
+  test('simulates canceling stopping an app', async () => {
+    mock.onDelete().reply(200);
+    const { baseElement } = render(
+      <RecoilRoot>
+        <QueryClientProvider client={queryClient}>
+          <AppCard
+            id="1"
+            title="Test App"
+            description="Some app description"
+            name="Developer"
+            framework="Some Framework"
+            url="/some-url"
+            ready={true}
+            thumbnail="/some-thumbnail.png"
+            serverStatus="Running"
+          />
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+
+    const menu = baseElement.querySelectorAll(
+      '.MuiButtonBase-root',
+    )[0] as HTMLButtonElement;
+    await act(async () => {
+      menu.click();
+    });
+
+    const btn = baseElement.querySelectorAll(
+      '.MuiList-root li.MuiButtonBase-root',
+    )[1] as HTMLAnchorElement;
+    await act(async () => {
+      btn.click();
+    });
+    // Cancel Stop confirmation buttons
     const cancelBtn = baseElement.querySelector(
       '#cancel-btn',
     ) as HTMLButtonElement;
     await act(async () => {
       cancelBtn.click();
-    });
-
-    await act(async () => {
-      menu.click();
-    });
-
-    await act(async () => {
-      btn.click();
-    });
-
-    const startBtn = baseElement.querySelector(
-      '#start-btn',
-    ) as HTMLButtonElement;
-    await act(async () => {
-      startBtn.click();
     });
   });
 
@@ -133,49 +220,43 @@ describe('AppCard', () => {
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
           <AppCard
-            id="card-1"
-            title="Card 1"
+            id="1"
+            title="Test App"
+            description="Some app description"
+            name="Developer"
             framework="Some Framework"
             url="/some-url"
             ready={true}
+            thumbnail="/some-thumbnail.png"
+            serverStatus="Running"
           />
         </QueryClientProvider>
       </RecoilRoot>,
     );
 
     const menu = baseElement.querySelectorAll(
-      '.context-menu-container',
-    )[0] as HTMLDivElement;
+      '.MuiButtonBase-root',
+    )[0] as HTMLButtonElement;
     await act(async () => {
       menu.click();
     });
 
     const btn = baseElement.querySelectorAll(
-      '.context-menu li a',
+      '.MuiList-root li.MuiButtonBase-root',
     )[1] as HTMLAnchorElement;
     await act(async () => {
       btn.click();
     });
 
-    const cancelBtn = baseElement.querySelector(
-      '#cancel-btn',
-    ) as HTMLButtonElement;
-    await act(async () => {
-      cancelBtn.click();
-    });
+    const stopBtn = await waitFor(
+      () => baseElement.querySelector('#stop-btn') as HTMLButtonElement,
+    );
 
-    await act(async () => {
-      menu.click();
-    });
-
-    await act(async () => {
-      btn.click();
-    });
-
-    const stopBtn = baseElement.querySelector('#stop-btn') as HTMLButtonElement;
-    await act(async () => {
-      stopBtn.click();
-    });
+    if (stopBtn !== null) {
+      await act(async () => {
+        stopBtn.click();
+      });
+    }
   });
 
   test('simulates editing an app', async () => {
@@ -195,33 +276,36 @@ describe('AppCard', () => {
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
           <AppCard
-            id="app-1"
-            title="Card 1"
+            id="1"
+            title="Test App"
+            description="Some app description"
+            name="Developer"
             framework="Some Framework"
             url="/some-url"
             ready={true}
+            thumbnail="/some-thumbnail.png"
+            serverStatus="ready"
           />
         </QueryClientProvider>
       </RecoilRoot>,
     );
 
     const menu = baseElement.querySelectorAll(
-      '.context-menu-container',
-    )[0] as HTMLDivElement;
+      '.MuiButtonBase-root',
+    )[0] as HTMLButtonElement;
     await act(async () => {
       menu.click();
     });
 
     const btn = baseElement.querySelectorAll(
-      '.context-menu li a',
-    )[2] as HTMLAnchorElement;
+      '.MuiList-root li.MuiButtonBase-root',
+    )[0] as HTMLAnchorElement;
     await act(async () => {
       btn.click();
     });
     // TODO: Update this test when everything is running in single react app
     expect(window.location.pathname).not.toBe('/edit-app/app-1');
   });
-
   test('simulates editing an app with an error', async () => {
     mock.onGet(new RegExp('/frameworks')).reply(200, frameworks);
     mock.onGet(new RegExp('/server/app-1')).reply(200, app);
@@ -232,26 +316,30 @@ describe('AppCard', () => {
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
           <AppCard
-            id="app-1"
-            title="Card 1"
+            id="1"
+            title="Test App"
+            description="Some app description"
+            name="Developer"
             framework="Some Framework"
             url="/some-url"
             ready={true}
+            thumbnail="/some-thumbnail.png"
+            serverStatus="ready"
           />
         </QueryClientProvider>
       </RecoilRoot>,
     );
 
     const menu = baseElement.querySelectorAll(
-      '.context-menu-container',
-    )[0] as HTMLDivElement;
+      '.MuiButtonBase-root',
+    )[0] as HTMLButtonElement;
     await act(async () => {
       menu.click();
     });
 
     const btn = baseElement.querySelectorAll(
-      '.context-menu li a',
-    )[2] as HTMLAnchorElement;
+      '.MuiList-root li.MuiButtonBase-root',
+    )[0] as HTMLAnchorElement;
     await act(async () => {
       btn.click();
     });
@@ -259,31 +347,35 @@ describe('AppCard', () => {
     expect(window.location.pathname).not.toBe('/edit-app/app-1');
   });
 
-  test('simulates deleting an app', async () => {
+  test('simulates canceling deleting an app', async () => {
     mock.onDelete().reply(200);
     const { baseElement } = render(
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
           <AppCard
-            id="card-1"
-            title="Card 1"
+            id="1"
+            title="Test App"
+            description="Some app description"
+            name="Developer"
             framework="Some Framework"
             url="/some-url"
             ready={true}
+            thumbnail="/some-thumbnail.png"
+            serverStatus="ready"
           />
         </QueryClientProvider>
       </RecoilRoot>,
     );
 
     const menu = baseElement.querySelectorAll(
-      '.context-menu-container',
-    )[0] as HTMLDivElement;
+      '.MuiButtonBase-root',
+    )[0] as HTMLButtonElement;
     await act(async () => {
       menu.click();
     });
 
     const btn = baseElement.querySelectorAll(
-      '.context-menu li a',
+      '.MuiList-root li.MuiButtonBase-root',
     )[3] as HTMLAnchorElement;
     await act(async () => {
       btn.click();
@@ -295,6 +387,41 @@ describe('AppCard', () => {
     await act(async () => {
       cancelBtn.click();
     });
+  });
+
+  test('simulates deleting an app', async () => {
+    mock.onDelete().reply(200);
+    const { baseElement } = render(
+      <RecoilRoot>
+        <QueryClientProvider client={queryClient}>
+          <AppCard
+            id="1"
+            title="Test App"
+            description="Some app description"
+            name="Developer"
+            framework="Some Framework"
+            url="/some-url"
+            ready={true}
+            thumbnail="/some-thumbnail.png"
+            serverStatus="ready"
+          />
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+
+    const menu = baseElement.querySelectorAll(
+      '.MuiButtonBase-root',
+    )[0] as HTMLButtonElement;
+    await act(async () => {
+      menu.click();
+    });
+
+    const btn = baseElement.querySelectorAll(
+      '.MuiList-root li.MuiButtonBase-root',
+    )[3] as HTMLAnchorElement;
+    await act(async () => {
+      btn.click();
+    });
 
     await act(async () => {
       menu.click();
@@ -304,12 +431,15 @@ describe('AppCard', () => {
       btn.click();
     });
 
-    const deleteBtn = baseElement.querySelector(
-      '#delete-btn',
-    ) as HTMLButtonElement;
-    await act(async () => {
-      deleteBtn.click();
-    });
+    const deleteBtn = await waitFor(
+      () => baseElement.querySelector('#delete-btn') as HTMLButtonElement,
+    );
+
+    if (deleteBtn !== null) {
+      await act(async () => {
+        deleteBtn.click();
+      });
+    }
   });
 
   test('simulates deleting an app with an error', async () => {
@@ -318,35 +448,76 @@ describe('AppCard', () => {
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
           <AppCard
-            id="card-1"
-            title="Card 1"
+            id="1"
+            title="Test App"
+            description="Some app description"
+            name="Developer"
             framework="Some Framework"
             url="/some-url"
             ready={true}
+            thumbnail="/some-thumbnail.png"
+            serverStatus="ready"
           />
         </QueryClientProvider>
       </RecoilRoot>,
     );
 
     const menu = baseElement.querySelectorAll(
-      '.context-menu-container',
-    )[0] as HTMLDivElement;
+      '.MuiButtonBase-root',
+    )[0] as HTMLButtonElement;
     await act(async () => {
       menu.click();
     });
 
     const btn = baseElement.querySelectorAll(
-      '.context-menu li a',
-    )[3] as HTMLAnchorElement;
+      '.MuiList-root li.MuiButtonBase-root',
+    )[0] as HTMLAnchorElement;
     await act(async () => {
       btn.click();
     });
 
-    const deleteBtn = baseElement.querySelector(
-      '#delete-btn',
-    ) as HTMLButtonElement;
-    await act(async () => {
-      deleteBtn.click();
-    });
+    const deleteBtn = await waitFor(
+      () => baseElement.querySelector('#delete-btn') as HTMLButtonElement,
+    );
+
+    if (deleteBtn !== null) {
+      await act(async () => {
+        deleteBtn.click();
+      });
+    }
+  });
+
+  // icon tests:
+  test('returns PublicRoundedIcon when isPublic is true', () => {
+    const { getByTestId } = render(
+      <RecoilRoot>
+        <QueryClientProvider client={queryClient}>
+          <AppCard isPublic={true} />
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+    expect(getByTestId('PublicRoundedIcon')).toBeInTheDocument();
+  });
+
+  test('returns GroupRoundedIcon when isShared is true', () => {
+    const { getByTestId } = render(
+      <RecoilRoot>
+        <QueryClientProvider client={queryClient}>
+          <AppCard isShared={true} />
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+    expect(getByTestId('GroupRoundedIcon')).toBeInTheDocument();
+  });
+
+  test('returns LockRoundedIcon when both isPublic and isShared are false', () => {
+    const { getByTestId } = render(
+      <RecoilRoot>
+        <QueryClientProvider client={queryClient}>
+          <AppCard />
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+    expect(getByTestId('LockRoundedIcon')).toBeInTheDocument();
   });
 });

@@ -53,7 +53,6 @@ export const profiles: AppProfileProps[] = [
 export const app: AppQueryGetProps = {
   name: 'app-1',
   last_activity: '',
-  started: null,
   pending: null,
   ready: true,
   stopped: false,
@@ -87,8 +86,11 @@ export const serverApps = {
     {
       name: 'test-app',
       url: '/user/test/test-app/',
+
+      pending: null,
       ready: true,
       last_activity: new Date().getHours() - 1,
+      stopped: false,
       user_options: {
         name: 'test-app',
         jhub_app: true,
@@ -108,8 +110,11 @@ export const serverApps = {
     {
       name: 'test-app-2',
       url: '/user/test/test-app-2/',
+      started: true,
+      pending: null,
       ready: false,
       last_activity: new Date().getHours() - 3,
+      stopped: false,
       user_options: {
         name: 'test-app-2',
         jhub_app: true,
@@ -128,8 +133,11 @@ export const serverApps = {
     {
       name: 'test-app-3',
       url: '/user/test/test-app-3/',
+      started: true,
+      pending: null,
       ready: false,
       last_activity: new Date().getHours() - 2,
+      stopped: false,
       user_options: {
         name: 'test-app-3',
         jhub_app: true,
@@ -147,8 +155,11 @@ export const serverApps = {
     {
       name: 'test-app-4',
       url: '/user/test/test-app-4/',
+
+      pending: null,
       ready: false,
       last_activity: new Date().getHours() - 4,
+      stopped: true,
       user_options: {
         name: 'test-app-4',
         jhub_app: true,
@@ -167,8 +178,11 @@ export const serverApps = {
     {
       name: 'shared-app',
       url: '/shared/test/shared-app/',
+
+      pending: null,
       ready: true,
       last_activity: new Date(),
+      stopped: false,
       user_options: {
         name: 'shared-app',
         jhub_app: true,

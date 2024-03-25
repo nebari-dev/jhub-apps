@@ -29,7 +29,6 @@ export interface AppQueryDeleteProps {
 export interface AppQueryGetProps {
   name: string;
   last_activity: string;
-  started: null;
   pending: null;
   ready: boolean;
   stopped: boolean;

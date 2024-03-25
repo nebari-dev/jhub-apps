@@ -20,6 +20,9 @@ export interface JhApp {
   ready: boolean;
   public: boolean;
   last_activity: Date;
+  pending?: boolean;
+  stopped?: boolean;
+  status: string;
 }
 
 export interface JhService {

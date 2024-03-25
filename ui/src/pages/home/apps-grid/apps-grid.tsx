@@ -98,7 +98,7 @@ export const AppsGrid = (): React.ReactElement => {
           : 'all';
 
     // Get Apps based on ownership type and search value
-    const apps = getApps(serverData, ownershipType)
+    const apps = getApps(serverData, ownershipType, currentUser?.name ?? '')
       .filter(
         (app) =>
           app.name.toLowerCase().includes(searchToLower) ||
@@ -163,7 +163,7 @@ export const AppsGrid = (): React.ReactElement => {
     if (!isLoading && serverData) {
       const filterToLower = searchValue.toLowerCase();
       setApps(() =>
-        getApps(serverData, 'all').filter(
+        getApps(serverData, 'all', currentUser?.name || '').filter(
           (app) =>
             app.name.toLowerCase().includes(filterToLower) ||
             app.description?.toLowerCase().includes(filterToLower) ||
@@ -171,7 +171,7 @@ export const AppsGrid = (): React.ReactElement => {
         ),
       );
     }
-  }, [isLoading, serverData, searchValue]);
+  }, [isLoading, serverData, searchValue, currentUser]);
 
   useEffect(() => {
     if (error) {
@@ -491,8 +491,10 @@ export const AppsGrid = (): React.ReactElement => {
                     description={app.description}
                     thumbnail={app.thumbnail}
                     framework={app.framework}
+                    permissions={app.public ? 'Public' : 'Private' || 'Shared'}
                     url={app.url}
                     ready={app.ready}
+                    serverStatus={app.status}
                     username={app.username}
                     isPublic={app.public}
                     isShared={ownershipValue === 'Shared' ? true : false}
