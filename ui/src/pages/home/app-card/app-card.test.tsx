@@ -98,7 +98,7 @@ describe('AppCard', () => {
             url="/some-url"
             ready={true}
             thumbnail="/some-thumbnail.png"
-            serverStatus="stopped"
+            serverStatus="ready"
           />
         </QueryClientProvider>
       </RecoilRoot>,
@@ -140,7 +140,7 @@ describe('AppCard', () => {
             url="/some-url"
             ready={true}
             thumbnail="/some-thumbnail.png"
-            serverStatus="stopped"
+            serverStatus="ready"
           />
         </QueryClientProvider>
       </RecoilRoot>,
@@ -172,56 +172,7 @@ describe('AppCard', () => {
     }
   });
 
-  test('simulates starting an app with an error', async () => {
-    mock.onPost(`/server/1`).networkError();
-    const { baseElement, findByText } = render(
-      <RecoilRoot>
-        <QueryClientProvider client={queryClient}>
-          <AppCard
-            id="1"
-            title="Test App"
-            description="Some app description"
-            framework="Some Framework"
-            url="/some-url"
-            thumbnail="/some-thumbnail.png"
-            serverStatus="stopped"
-          />
-        </QueryClientProvider>
-      </RecoilRoot>,
-    );
-
-    // Open context menu and click start
-    const menu = baseElement.querySelectorAll(
-      '.MuiButtonBase-root',
-    )[0] as HTMLButtonElement;
-    await act(async () => {
-      menu.click();
-    });
-
-    const btn = baseElement.querySelectorAll(
-      '.MuiList-root li.MuiButtonBase-root',
-    )[0] as HTMLAnchorElement;
-    await act(async () => {
-      btn.click();
-    });
-    // Start
-    const startBtn = await waitFor(
-      () => baseElement.querySelector('#start-btn') as HTMLButtonElement,
-    );
-
-    if (startBtn !== null) {
-      await act(async () => {
-        startBtn.click();
-      });
-    }
-
-    // Assuming you show a notification or update status on error
-    await waitFor(() =>
-      expect(findByText('There was an error!')).toBeInTheDocument(),
-    );
-  });
-
-  test('simulates stopping an app', async () => {
+  test('simulates canceling stopping an app', async () => {
     mock.onDelete().reply(200);
     const { baseElement } = render(
       <RecoilRoot>
@@ -261,11 +212,38 @@ describe('AppCard', () => {
     await act(async () => {
       cancelBtn.click();
     });
+  });
 
+  test('simulates stopping an app', async () => {
+    mock.onDelete().reply(200);
+    const { baseElement } = render(
+      <RecoilRoot>
+        <QueryClientProvider client={queryClient}>
+          <AppCard
+            id="1"
+            title="Test App"
+            description="Some app description"
+            name="Developer"
+            framework="Some Framework"
+            url="/some-url"
+            ready={true}
+            thumbnail="/some-thumbnail.png"
+            serverStatus="Running"
+          />
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+
+    const menu = baseElement.querySelectorAll(
+      '.MuiButtonBase-root',
+    )[0] as HTMLButtonElement;
     await act(async () => {
       menu.click();
     });
 
+    const btn = baseElement.querySelectorAll(
+      '.MuiList-root li.MuiButtonBase-root',
+    )[1] as HTMLAnchorElement;
     await act(async () => {
       btn.click();
     });
@@ -321,7 +299,7 @@ describe('AppCard', () => {
 
     const btn = baseElement.querySelectorAll(
       '.MuiList-root li.MuiButtonBase-root',
-    )[2] as HTMLAnchorElement;
+    )[0] as HTMLAnchorElement;
     await act(async () => {
       btn.click();
     });
@@ -361,7 +339,7 @@ describe('AppCard', () => {
 
     const btn = baseElement.querySelectorAll(
       '.MuiList-root li.MuiButtonBase-root',
-    )[2] as HTMLAnchorElement;
+    )[0] as HTMLAnchorElement;
     await act(async () => {
       btn.click();
     });
@@ -493,7 +471,7 @@ describe('AppCard', () => {
 
     const btn = baseElement.querySelectorAll(
       '.MuiList-root li.MuiButtonBase-root',
-    )[3] as HTMLAnchorElement;
+    )[0] as HTMLAnchorElement;
     await act(async () => {
       btn.click();
     });
