@@ -2,7 +2,7 @@ import { Box, Stack } from '@mui/material';
 import { JhApp } from '@src/types/jupyterhub';
 import { UserState } from '@src/types/user';
 import axios from '@src/utils/axios';
-import { getApps } from '@src/utils/jupyterhub';
+import { getAppStatus, getApps } from '@src/utils/jupyterhub';
 import { useQuery } from '@tanstack/react-query';
 import React, { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
@@ -49,8 +49,17 @@ export const AppsGrid = ({
   useEffect(() => {
     if (!isLoading && serverData) {
       const filterToLower = filter.toLowerCase();
+      const appsWithStatus = getApps(
+        serverData,
+        appType,
+        currentUser?.name ?? '',
+      ).map((app) => ({
+        ...app,
+        status: getAppStatus(app), // Compute and assign the status here
+      }));
+
       setApps(() =>
-        getApps(serverData, appType).filter(
+        appsWithStatus.filter(
           (app) =>
             app.name.toLowerCase().includes(filterToLower) ||
             app.description?.toLowerCase().includes(filterToLower) ||
@@ -58,7 +67,7 @@ export const AppsGrid = ({
         ),
       );
     }
-  }, [isLoading, serverData, appType, filter]);
+  }, [isLoading, serverData, appType, filter, currentUser?.name]);
 
   useEffect(() => {
     if (error) {
@@ -114,8 +123,10 @@ export const AppsGrid = ({
                     description={app.description}
                     thumbnail={app.thumbnail}
                     framework={app.framework}
+                    permissions={app.public ? 'Public' : 'Private' || 'Shared'}
                     url={app.url}
                     ready={app.ready}
+                    serverStatus={app.status}
                     username={app.username}
                     isPublic={app.public}
                     isShared={appType === 'Shared' ? true : false}

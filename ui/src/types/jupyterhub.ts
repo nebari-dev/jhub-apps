@@ -19,6 +19,9 @@ export interface JhApp {
   username?: string;
   ready: boolean;
   public: boolean;
+  pending?: boolean;
+  stopped?: boolean;
+  status: string;
 }
 
 export interface JhService {

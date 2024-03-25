@@ -1,24 +1,28 @@
-import {
-  Button,
-  Chip,
-  Dialog,
-  DialogContent,
-  DialogTitle,
-} from '@mui/material';
+import GroupRoundedIcon from '@mui/icons-material/GroupRounded';
+import LockRoundedIcon from '@mui/icons-material/LockRounded';
+import PublicRoundedIcon from '@mui/icons-material/PublicRounded';
+import { Button } from '@mui/material';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import CardMedia from '@mui/material/CardMedia';
+import Chip from '@mui/material/Chip';
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import Typography from '@mui/material/Typography';
+import { ButtonGroup } from '@src/components';
 import { AppQueryDeleteProps, AppQueryPostProps } from '@src/types/api';
 import axios from '@src/utils/axios';
 import { API_BASE_URL } from '@src/utils/constants';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
-import { ButtonGroup } from '../../../components';
 import ContextMenu, {
   ContextMenuItem,
 } from '../../../components/context-menu/context-menu';
 import { currentNotification } from '../../../store';
 import './app-card.css';
-
-interface AppCardProps {
+interface AppCard {
   id: string;
   title: string;
   description?: string;
@@ -29,20 +33,23 @@ interface AppCardProps {
   ready?: boolean;
   isPublic?: boolean;
   isShared?: boolean;
+  serverStatus: string;
+  sx?: object;
 }
 
 export const AppCard = ({
   id,
   title,
   description,
-  thumbnail,
   framework,
+  thumbnail,
   url,
   username,
-  ready = false,
   isPublic = false,
-  isShared = false,
-}: AppCardProps): React.ReactElement => {
+  isShared,
+  serverStatus,
+}: AppCard): React.ReactElement => {
+  const [appStatus, setAppStatus] = useState('');
   const queryClient = useQueryClient();
   const [submitting, setSubmitting] = useState(false);
   const [, setNotification] = useRecoilState<string | undefined>(
@@ -52,18 +59,87 @@ export const AppCard = ({
   const [isStopOpen, setIsStopOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
+  useEffect(() => {
+    if (!serverStatus) {
+      setNotification('Server status id undefined.');
+    } else {
+      setAppStatus(serverStatus);
+    }
+  }, [serverStatus, setNotification]);
+
+  // Map status to color
+
+  const getStatusStyles = (status: string) => {
+    switch (status) {
+      case 'Ready':
+        return {
+          bgcolor: '#ffffff',
+          border: '1px solid #2E7D32',
+        };
+      case 'Pending':
+        return {
+          bgcolor: '#EAB54E',
+          color: 'black',
+        };
+      case 'Running':
+        return {
+          bgcolor: '#2E7D32',
+          color: 'white',
+        };
+      case 'Unknown':
+        return {
+          bgcolor: '#79797C', // Corrected color value
+          color: 'black',
+        };
+      default:
+        return {
+          bgcolor: '#F5F5F5',
+          color: 'black',
+        };
+    }
+  };
+
+  const getIcon = () => {
+    if (isPublic) return <PublicRoundedIcon data-testid="PublicRoundedIcon" />;
+    if (isShared) return <GroupRoundedIcon data-testid="GroupRoundedIcon" />;
+    return <LockRoundedIcon data-testid="LockRoundedIcon" />;
+  };
+
   const startRequest = async ({ id }: AppQueryPostProps) => {
-    const response = await axios.post(`/server/${id}`);
-    return response;
+    try {
+      const response = await axios.post(`/server/${id}`);
+      updateStatusAfterOperation('Running');
+      return response;
+    } catch (error) {
+      console.error('There was an error!', error);
+      setNotification((error as Error).toString());
+      setAppStatus('Error'); // Set status back to Ready if there's an error
+    }
   };
 
   const deleteRequest = async ({ id, remove }: AppQueryDeleteProps) => {
-    const response = await axios.delete(`/server/${id}`, {
-      params: {
-        remove,
-      },
-    });
-    return response;
+    try {
+      const response = await axios.delete(`/server/${id}`, {
+        params: {
+          remove,
+        },
+      });
+      if (remove) {
+        updateStatusAfterOperation('Deleted'); // Handle based on your logic
+      } else {
+        updateStatusAfterOperation('Ready'); // Assume or handle based on response
+      }
+      return response;
+    } catch (error) {
+      console.error('There was an error!', error);
+      setNotification((error as Error).toString());
+      setAppStatus('Error'); // Reflect an error state
+    }
+  };
+
+  // Handle status update after operations
+  const updateStatusAfterOperation = (newStatus: string) => {
+    setAppStatus(newStatus);
   };
 
   const { mutate: startQuery } = useMutation({
@@ -99,16 +175,17 @@ export const AppCard = ({
     setSubmitting(true);
     startQuery(
       { id },
+
       {
-        onSuccess: async () => {
+        onSuccess: () => {
           setSubmitting(false);
           setIsStartOpen(false);
           queryClient.invalidateQueries({ queryKey: ['app-state'] });
         },
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onError: async (error: any) => {
+        onError: (error: any) => {
           setSubmitting(false);
-          setNotification(error.message);
+          console.error(error.message);
         },
       },
     );
@@ -139,14 +216,14 @@ export const AppCard = ({
       title: 'Start',
       onClick: () => setIsStartOpen(true),
       visible: true,
-      disabled: ready,
+      disabled: serverStatus === 'Running',
     },
     {
       id: 'stop',
       title: 'Stop',
       onClick: () => setIsStopOpen(true),
       visible: true,
-      disabled: !ready || isShared,
+      disabled: serverStatus === 'Ready' || isShared,
     },
     {
       id: 'edit',
@@ -246,69 +323,118 @@ export const AppCard = ({
       </ButtonGroup>
     </>
   );
-
   return (
     <div className="card" id={`card-${id}`} tabIndex={0}>
-      <div className="card-header-media">
-        <div className="card-header-menu">
-          <ContextMenu id={`card-menu-${id}`} items={menuItems} />
-          {isStartOpen && (
-            <Dialog open={isStartOpen} onClose={setIsStartOpen}>
-              <DialogTitle>Start {title}</DialogTitle>
-              <DialogContent>{startModalBody}</DialogContent>
-            </Dialog>
-          )}
-          {isStopOpen && (
-            <Dialog open={isStopOpen} onClose={setIsStopOpen}>
-              <DialogTitle>Stop {title}</DialogTitle>
-              <DialogContent>{stopModalBody}</DialogContent>
-            </Dialog>
-          )}
-          {isDeleteOpen && (
-            <Dialog open={isDeleteOpen} onClose={setIsDeleteOpen}>
-              <DialogTitle>Delete {title}</DialogTitle>
-              <DialogContent>{deleteModalBody}</DialogContent>
-            </Dialog>
-          )}
-        </div>
-        <div className="card-header-img">
-          {thumbnail ? <img src={thumbnail} alt="App thumb" /> : <></>}
-        </div>
-      </div>
-      <div className="card-header">
-        <h3 className="font-bold">
-          <a href={url}>{title}</a>
-        </h3>
-      </div>
-      <div className="card-body">
-        <p>{description}</p>
-        {username ? (
-          <div>
-            <span className="font-bold">Author: </span>
-            {username}
+      <a href={url}>
+        <Card id={`card-${id}`} tabIndex={0} className="Mui-card">
+          <div className="card-content-header">
+            <div className="chip-container">
+              <div className="menu-chip">
+                <Chip
+                  label={appStatus}
+                  aria-label="open menu"
+                  id={id}
+                  children={undefined}
+                  size="small"
+                  className="chip-chip"
+                  sx={{
+                    ...getStatusStyles(appStatus),
+                    '& .MuiChip-label': {
+                      color: getStatusStyles(appStatus).color,
+                    },
+                  }}
+                />
+              </div>
+            </div>
+            <ContextMenu id={`card-menu-${id}`} items={menuItems} />
+            {isStartOpen && (
+              <Dialog open={isStartOpen} onClose={setIsStartOpen}>
+                <DialogTitle>Start {title}</DialogTitle>
+                <DialogContent>{startModalBody}</DialogContent>
+              </Dialog>
+            )}
+            {isStopOpen && (
+              <Dialog open={isStopOpen} onClose={setIsStopOpen}>
+                <DialogTitle>Stop {title}</DialogTitle>
+                <DialogContent>{stopModalBody}</DialogContent>
+              </Dialog>
+            )}
+            {isDeleteOpen && (
+              <Dialog open={isDeleteOpen} onClose={setIsDeleteOpen}>
+                <DialogTitle>Delete {title}</DialogTitle>
+                <DialogContent>{deleteModalBody}</DialogContent>
+              </Dialog>
+            )}
+            <CardMedia>
+              {thumbnail ? (
+                <div className="img-overlay">
+                  <img src={thumbnail} alt="App thumb" />
+                </div>
+              ) : (
+                <div className="img-overlay">
+                  <img
+                    src="/assets/images/app-placeholder.jpeg"
+                    alt="App thumb"
+                  />
+                </div>
+              )}
+            </CardMedia>
           </div>
-        ) : (
-          <></>
-        )}
-      </div>
-      <div className="card-footer">
-        <Chip
-          id={`tag-${id}`}
-          label={framework}
-          variant="outlined"
-          size="small"
-        />
-        {isPublic ? (
-          <Chip
-            id={`tag-${id}`}
-            label="Public"
-            variant="outlined"
-            size="small"
-          />
-        ) : (
-          <></>
-        )}
-      </div>
+          <div className="card-content-content">
+            <div className="chip-container">
+              <div className="menu-chip">
+                <Chip
+                  color="default"
+                  variant="outlined"
+                  label={framework}
+                  id={`chip-${id}`}
+                  size="small"
+                />
+              </div>
+              {isPublic && (
+                <div className="menu-chip">
+                  <Chip
+                    color="default"
+                    variant="outlined"
+                    label="Public"
+                    id={`chip-${id}-public`}
+                    size="small"
+                  />
+                </div>
+              )}
+            </div>
+            <div className="card-content-container">
+              <CardContent className="card-inner-content">
+                <span className="inline relative iconic">{getIcon()}</span>
+                <Typography
+                  gutterBottom
+                  variant="h5"
+                  component="div"
+                  className="card-title"
+                >
+                  {title}
+                </Typography>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  className="card-author"
+                >
+                  Created by {username}
+                </Typography>
+                {description && (
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    className="card-description"
+                  >
+                    {description}
+                  </Typography>
+                )}
+              </CardContent>
+            </div>
+          </div>
+        </Card>
+      </a>
     </div>
   );
 };

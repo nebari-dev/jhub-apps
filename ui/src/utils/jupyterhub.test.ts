@@ -58,12 +58,12 @@ describe('JupyterHub utils', () => {
   });
 
   test('returns an array of JhApp for shared apps', () => {
-    const result = getApps(serverApps, 'Shared');
+    const result = getApps(serverApps, 'Shared', 'testUser');
     expect(result.length).toEqual(1);
   });
 
   test('returns an array of JhApp for non-shared apps', () => {
-    const result = getApps(serverApps, 'My');
+    const result = getApps(serverApps, 'My', 'testUser');
     expect(result.length).toEqual(5);
   });
 

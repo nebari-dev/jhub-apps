@@ -25,7 +25,7 @@ export const getServices = (services: JhServiceFull[], user: string) => {
 };
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-export const getApps = (servers: any, appType: string) => {
+export const getApps = (servers: any, appType: string, username: string) => {
   const serverApps = [];
   const filteredApps: JhApp[] = [];
   if (appType.toLowerCase() === 'shared') {
@@ -38,6 +38,7 @@ export const getApps = (servers: any, appType: string) => {
     );
 
     if (defaultApp) {
+      const appStatus = getAppStatus(defaultApp);
       filteredApps.push({
         id: '',
         name: 'JupyterLab',
@@ -45,8 +46,12 @@ export const getApps = (servers: any, appType: string) => {
         framework: 'JupyterLab',
         url: defaultApp.url,
         thumbnail: DEFAULT_APP_THUMBNAIL,
+        username: username,
         ready: defaultApp.ready,
+        pending: defaultApp.pending,
+        stopped: defaultApp.stopped,
         public: false,
+        status: appStatus,
       });
     }
   }
@@ -54,6 +59,7 @@ export const getApps = (servers: any, appType: string) => {
   serverApps.forEach((server: any) => {
     if (server.user_options?.jhub_app) {
       const app = server.user_options;
+      const appStatus = getAppStatus(server);
       filteredApps.push({
         id: app.name,
         name: app.display_name,
@@ -61,9 +67,12 @@ export const getApps = (servers: any, appType: string) => {
         framework: getFriendlyFrameworkName(app.framework),
         url: server.url,
         thumbnail: app.thumbnail,
-        username: server.username,
+        username: server.username || username,
         ready: server.ready,
+        pending: server.pending,
+        stopped: server.stopped,
         public: app.public,
+        status: appStatus,
       });
     }
   });
@@ -83,4 +92,16 @@ export const getAppLogoUrl = () => {
 
 export const navigateToUrl = (url: string) => {
   document.location.href = url;
+};
+
+export const getAppStatus = (app: JhApp): string => {
+  if (app.stopped) {
+    return 'Ready';
+  } else if (app.pending) {
+    return 'Pending';
+  } else if (app.ready) {
+    return 'Running';
+  } else {
+    return 'Unknown';
+  }
 };
