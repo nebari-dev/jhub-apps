@@ -127,6 +127,7 @@ export const AppsGrid = (): React.ReactElement => {
   const handleSearch = (event: SyntheticEvent) => {
     const target = event.target as HTMLInputElement;
     setSearchValue(target.value);
+    filterAndSortApps();
   };
 
   const handleFrameworkChange = (event: SyntheticEvent) => {
@@ -161,17 +162,9 @@ export const AppsGrid = (): React.ReactElement => {
 
   useEffect(() => {
     if (!isLoading && serverData) {
-      const filterToLower = searchValue.toLowerCase();
-      setApps(() =>
-        getApps(serverData, 'all', currentUser?.name || '').filter(
-          (app) =>
-            app.name.toLowerCase().includes(filterToLower) ||
-            app.description?.toLowerCase().includes(filterToLower) ||
-            app.framework?.toLowerCase().includes(filterToLower),
-        ),
-      );
+      setApps(() => getApps(serverData, 'all', currentUser?.name || ''));
     }
-  }, [isLoading, serverData, searchValue, currentUser]);
+  }, [isLoading, serverData, currentUser]);
 
   useEffect(() => {
     if (error) {

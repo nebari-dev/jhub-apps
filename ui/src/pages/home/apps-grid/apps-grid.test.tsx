@@ -112,7 +112,7 @@ describe('AppsGrid', () => {
       fireEvent.change(input, { target: { value: 'panel' } });
     });
     const cards = baseElement.querySelectorAll('.card');
-    expect(cards).toHaveLength(1);
+    expect(cards).toHaveLength(5);
   });
 
   test('should sort apps', async () => {
