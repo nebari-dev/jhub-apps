@@ -22,5 +22,5 @@ dependencies:
   - cachetools
   - structlog
   - gradio
-  - pip
+  - pip:
     - jupyterhub @ git+https://github.com/jupyterhub/jupyterhub.git@ca6032381aa137f03cb9349265fa74ed5e4c5c19
