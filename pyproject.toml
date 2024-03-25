@@ -16,7 +16,7 @@ dependencies = [
     "fastapi",
     "uvicorn",
     "python-multipart",
-    "jupyterhub>4.1.1",
+    "jupyterhub>=4.1.1",
     "jupyter",
     "plotlydash-tornado-cmd",
     "bokeh-root-cmd",
