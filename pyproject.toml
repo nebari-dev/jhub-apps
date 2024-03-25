@@ -58,5 +58,8 @@ omit = [
 [tool.hatch.build.targets.wheel]
 include = ["jhub_apps"]
 
+[tool.hatch.metadata]
+allow-direct-references = true
+
 [project.scripts]
 japps = "jhub_apps.main:app"
