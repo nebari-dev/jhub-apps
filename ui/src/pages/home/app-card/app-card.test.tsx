@@ -98,7 +98,7 @@ describe('AppCard', () => {
             url="/some-url"
             ready={true}
             thumbnail="/some-thumbnail.png"
-            serverStatus="ready"
+            serverStatus="stopped"
           />
         </QueryClientProvider>
       </RecoilRoot>,
@@ -140,7 +140,7 @@ describe('AppCard', () => {
             url="/some-url"
             ready={true}
             thumbnail="/some-thumbnail.png"
-            serverStatus="ready"
+            serverStatus="stopped"
           />
         </QueryClientProvider>
       </RecoilRoot>,
@@ -172,6 +172,55 @@ describe('AppCard', () => {
     }
   });
 
+  test('simulates starting an app with an error', async () => {
+    mock.onPost(`/server/1`).networkError();
+    const { baseElement, findByText } = render(
+      <RecoilRoot>
+        <QueryClientProvider client={queryClient}>
+          <AppCard
+            id="1"
+            title="Test App"
+            description="Some app description"
+            framework="Some Framework"
+            url="/some-url"
+            thumbnail="/some-thumbnail.png"
+            serverStatus="stopped"
+          />
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+
+    // Open context menu and click start
+    const menu = baseElement.querySelectorAll(
+      '.MuiButtonBase-root',
+    )[0] as HTMLButtonElement;
+    await act(async () => {
+      menu.click();
+    });
+
+    const btn = baseElement.querySelectorAll(
+      '.MuiList-root li.MuiButtonBase-root',
+    )[0] as HTMLAnchorElement;
+    await act(async () => {
+      btn.click();
+    });
+    // Start
+    const startBtn = await waitFor(
+      () => baseElement.querySelector('#start-btn') as HTMLButtonElement,
+    );
+
+    if (startBtn !== null) {
+      await act(async () => {
+        startBtn.click();
+      });
+    }
+
+    // Assuming you show a notification or update status on error
+    await waitFor(() =>
+      expect(findByText('There was an error!')).toBeInTheDocument(),
+    );
+  });
+
   test('simulates stopping an app', async () => {
     mock.onDelete().reply(200);
     const { baseElement } = render(
@@ -186,7 +235,7 @@ describe('AppCard', () => {
             url="/some-url"
             ready={true}
             thumbnail="/some-thumbnail.png"
-            serverStatus="ready"
+            serverStatus="Running"
           />
         </QueryClientProvider>
       </RecoilRoot>,
@@ -201,7 +250,7 @@ describe('AppCard', () => {
 
     const btn = baseElement.querySelectorAll(
       '.MuiList-root li.MuiButtonBase-root',
-    )[0] as HTMLAnchorElement;
+    )[1] as HTMLAnchorElement;
     await act(async () => {
       btn.click();
     });
@@ -272,7 +321,7 @@ describe('AppCard', () => {
 
     const btn = baseElement.querySelectorAll(
       '.MuiList-root li.MuiButtonBase-root',
-    )[0] as HTMLAnchorElement;
+    )[2] as HTMLAnchorElement;
     await act(async () => {
       btn.click();
     });
@@ -312,7 +361,7 @@ describe('AppCard', () => {
 
     const btn = baseElement.querySelectorAll(
       '.MuiList-root li.MuiButtonBase-root',
-    )[0] as HTMLAnchorElement;
+    )[2] as HTMLAnchorElement;
     await act(async () => {
       btn.click();
     });
@@ -349,7 +398,7 @@ describe('AppCard', () => {
 
     const btn = baseElement.querySelectorAll(
       '.MuiList-root li.MuiButtonBase-root',
-    )[0] as HTMLAnchorElement;
+    )[3] as HTMLAnchorElement;
     await act(async () => {
       btn.click();
     });
@@ -391,7 +440,7 @@ describe('AppCard', () => {
 
     const btn = baseElement.querySelectorAll(
       '.MuiList-root li.MuiButtonBase-root',
-    )[0] as HTMLAnchorElement;
+    )[3] as HTMLAnchorElement;
     await act(async () => {
       btn.click();
     });
@@ -444,7 +493,7 @@ describe('AppCard', () => {
 
     const btn = baseElement.querySelectorAll(
       '.MuiList-root li.MuiButtonBase-root',
-    )[0] as HTMLAnchorElement;
+    )[3] as HTMLAnchorElement;
     await act(async () => {
       btn.click();
     });
