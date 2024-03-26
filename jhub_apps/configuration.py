@@ -87,6 +87,7 @@ def install_jhub_apps(c, spawner_to_subclass):
                 "access:services",
                 "list:services",
                 "read:services",  # read service models
+                "shares!user",
             ],
         },
         {
@@ -95,7 +96,14 @@ def install_jhub_apps(c, spawner_to_subclass):
             "scopes": [
                 "self",
                 "access:services",
-                "admin:auth_state"
+                "admin:auth_state",
+                # TODO: Remove this to more restricted, this is only for testing,
+                # don't grant share access to all users
+                # grant all users permission to share
+                # access to their servers:
+                "shares!user",
+                "read:users:name",
+                "read:groups:name"
             ],
         },
     ]
