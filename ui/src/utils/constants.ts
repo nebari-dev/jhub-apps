@@ -12,3 +12,6 @@ export const DEFAULT_APP_THUMBNAIL =
 
 // TODO: Add default services with service card updates: 'JupyterLab', 'VSCode', 'Environments'
 export const DEFAULT_PINNED_SERVICES: string[] = [];
+
+export const OWNERSHIP_TYPES = ['Any', 'Owned by me', 'Shared with me'];
+export const SORT_TYPES = ['Recently modified', 'Name: A-Z', 'Name: Z-A'];

@@ -17,10 +17,8 @@ import { API_BASE_URL } from '@src/utils/constants';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import React, { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
-import ContextMenu, {
-  ContextMenuItem,
-} from '../../../components/context-menu/context-menu';
-import { currentNotification } from '../../../store';
+import { currentNotification } from '../../store';
+import ContextMenu, { ContextMenuItem } from '../context-menu/context-menu';
 import './app-card.css';
 interface AppCard {
   id: string;

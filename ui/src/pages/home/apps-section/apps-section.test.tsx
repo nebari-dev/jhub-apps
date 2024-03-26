@@ -7,7 +7,7 @@ import { act, fireEvent, render, waitFor } from '@testing-library/react';
 import MockAdapter from 'axios-mock-adapter';
 import { RecoilRoot } from 'recoil';
 import { currentUser as defaultUser } from '../../../store';
-import { AppsGrid } from './apps-grid';
+import { AppsGrid } from './apps-section';
 
 describe('AppsGrid', () => {
   const queryClient = new QueryClient();
