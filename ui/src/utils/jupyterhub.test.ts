@@ -1,7 +1,9 @@
 import { serverApps } from '@src/data/api';
 import { servicesFull } from '@src/data/jupyterhub';
+import { currentUser } from '@src/data/user';
 import { JhServiceFull } from '@src/types/jupyterhub';
 import {
+  filterAndSortApps,
   getAppLogoUrl,
   getApps,
   getFriendlyFrameworkName,
@@ -58,13 +60,18 @@ describe('JupyterHub utils', () => {
   });
 
   test('returns an array of JhApp for shared apps', () => {
-    const result = getApps(serverApps, 'Shared', 'testUser');
+    const result = getApps(serverApps, 'shared', 'testUser');
     expect(result.length).toEqual(1);
   });
 
   test('returns an array of JhApp for non-shared apps', () => {
-    const result = getApps(serverApps, 'My', 'testUser');
+    const result = getApps(serverApps, 'mine', 'testUser');
     expect(result.length).toEqual(5);
+  });
+
+  test('returns an array of JhApp for all apps', () => {
+    const result = getApps(serverApps, 'all', 'testUser');
+    expect(result.length).toEqual(6);
   });
 
   test('returns the framework name with the first letter capitalized', () => {
@@ -81,5 +88,17 @@ describe('JupyterHub utils', () => {
     const mockUrl = 'http://localhost/';
     navigateToUrl(mockUrl);
     expect(document.location.href).toBe(mockUrl);
+  });
+
+  test('filters and sorts apps', () => {
+    const apps = filterAndSortApps(
+      serverApps,
+      currentUser,
+      '',
+      'all',
+      [],
+      'name',
+    );
+    expect(apps.length).toBe(6);
   });
 });

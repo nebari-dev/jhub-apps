@@ -1,5 +1,6 @@
 import { JhApp, JhService, JhServiceFull } from '@src/types/jupyterhub';
 import { JhData } from '@src/types/jupyterhub.ts';
+import { UserState } from '@src/types/user';
 import { DEFAULT_APP_THUMBNAIL, DEFAULT_PINNED_SERVICES } from './constants';
 
 export const getJhData = (): JhData => {
@@ -25,13 +26,25 @@ export const getServices = (services: JhServiceFull[], user: string) => {
 };
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-export const getApps = (servers: any, appType: string, username: string) => {
+export const getApps = (
+  servers: any,
+  ownershipType: string,
+  username: string,
+) => {
   const serverApps = [];
   const filteredApps: JhApp[] = [];
-  if (appType.toLowerCase() === 'shared') {
-    serverApps.push(...servers.shared_apps);
-  } else {
-    serverApps.push(...servers.user_apps);
+  if (ownershipType === 'shared' || ownershipType === 'all') {
+    serverApps.push(
+      ...servers.shared_apps.map((server: any) => ({
+        ...server,
+        shared: true,
+      })),
+    );
+  }
+  if (ownershipType === 'mine' || ownershipType === 'all') {
+    serverApps.push(
+      ...servers.user_apps.map((server: any) => ({ ...server, shared: false })),
+    );
     // Add default app manually
     const defaultApp = serverApps.find(
       (app: any) => app.name === '' && !app.user_options?.jhub_app,
@@ -51,6 +64,8 @@ export const getApps = (servers: any, appType: string, username: string) => {
         pending: defaultApp.pending,
         stopped: defaultApp.stopped,
         public: false,
+        shared: false,
+        last_activity: defaultApp.last_activity,
         status: appStatus,
       });
     }
@@ -72,6 +87,8 @@ export const getApps = (servers: any, appType: string, username: string) => {
         pending: server.pending,
         stopped: server.stopped,
         public: app.public,
+        shared: server.shared,
+        last_activity: server.last_activity,
         status: appStatus,
       });
     }
@@ -104,4 +121,48 @@ export const getAppStatus = (app: JhApp): string => {
   } else {
     return 'Unknown';
   }
+};
+
+/* eslint-disable @typescript-eslint/no-explicit-any */
+export const filterAndSortApps = (
+  data: any,
+  currentUser: UserState,
+  searchValue: string,
+  ownershipValue: string,
+  frameworkValues: string[],
+  sortByValue: string,
+) => {
+  const searchToLower = searchValue.toLowerCase();
+  const ownershipType =
+    ownershipValue === 'Owned by me'
+      ? 'mine'
+      : ownershipValue === 'Shared with me'
+        ? 'shared'
+        : 'all';
+
+  // Get Apps based on ownership type and search value
+  const apps = getApps(data, ownershipType, currentUser?.name ?? '')
+    .filter(
+      (app) =>
+        app.name.toLowerCase().includes(searchToLower) ||
+        app.description?.toLowerCase().includes(searchToLower) ||
+        app.framework?.toLowerCase().includes(searchToLower),
+    )
+    .filter((app) => {
+      if (frameworkValues.length > 0) {
+        return frameworkValues.includes(app.framework);
+      }
+      return true;
+    });
+
+  // Sort Apps based on sort value
+  apps.sort((a, b) => {
+    if (sortByValue === 'Recently modified') {
+      return a.last_activity > b.last_activity ? -1 : 1;
+    } else if (sortByValue === 'Name: A-Z') {
+      return a.name > b.name ? 1 : -1;
+    }
+    return a.name > b.name ? -1 : 1;
+  });
+  return apps;
 };

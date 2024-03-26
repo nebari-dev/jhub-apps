@@ -15,8 +15,9 @@ describe('AppCard', () => {
     mock.reset();
   });
 
-  afterAll(() => {
-    mock.restore();
+  beforeEach(() => {
+    queryClient.clear();
+    mock.reset();
   });
 
   test('renders default app card successfully', async () => {

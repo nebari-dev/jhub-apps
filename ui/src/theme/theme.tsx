@@ -213,6 +213,7 @@ export const theme = createTheme(baseTheme, {
         {
           props: { variant: 'text', color: 'secondary' },
           style: {
+            minWidth: '100px',
             color: gray[500],
             '&:focus': {
               backgroundColor: `${gray[100]}`,

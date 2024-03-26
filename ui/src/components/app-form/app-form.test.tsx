@@ -84,7 +84,7 @@ describe('AppForm', () => {
         btn.click();
       });
     }
-  }, 7000);
+  });
 
   test('simulates creating a standard app with thumbnail', async () => {
     mock.onGet(new RegExp('/frameworks')).reply(200, frameworks);
@@ -131,7 +131,7 @@ describe('AppForm', () => {
         btn.click();
       });
     }
-  }, 7000);
+  });
 
   test('simulates creating a standard app with onSubmit', async () => {
     mock.onGet(new RegExp('/frameworks')).reply(200, frameworks);
@@ -163,7 +163,7 @@ describe('AppForm', () => {
         btn.click();
       });
     }
-  }, 10000);
+  });
 
   test('simulates creating an app with additional fields', async () => {
     mock.onGet(new RegExp('/frameworks')).reply(200, frameworks);

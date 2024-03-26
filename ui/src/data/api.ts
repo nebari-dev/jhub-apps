@@ -3,6 +3,7 @@ import {
   AppProfileProps,
   AppQueryGetProps,
 } from '@src/types/api';
+import { JhApp } from '@src/types/jupyterhub';
 import { UserState } from '@src/types/user';
 
 export const frameworks: AppFrameworkProps[] = [
@@ -81,6 +82,7 @@ export const serverApps = {
       url: '/user/test',
       ready: true,
       user_options: {},
+      last_activity: new Date(),
     },
     {
       name: 'test-app',
@@ -88,6 +90,7 @@ export const serverApps = {
 
       pending: null,
       ready: true,
+      last_activity: new Date().getHours() - 1,
       stopped: false,
       user_options: {
         name: 'test-app',
@@ -111,6 +114,7 @@ export const serverApps = {
       started: true,
       pending: null,
       ready: false,
+      last_activity: new Date().getHours() - 3,
       stopped: false,
       user_options: {
         name: 'test-app-2',
@@ -133,6 +137,7 @@ export const serverApps = {
       started: true,
       pending: null,
       ready: false,
+      last_activity: new Date().getHours() - 2,
       stopped: false,
       user_options: {
         name: 'test-app-3',
@@ -154,6 +159,7 @@ export const serverApps = {
 
       pending: null,
       ready: false,
+      last_activity: new Date().getHours() - 4,
       stopped: true,
       user_options: {
         name: 'test-app-4',
@@ -176,6 +182,7 @@ export const serverApps = {
 
       pending: null,
       ready: true,
+      last_activity: new Date(),
       stopped: false,
       user_options: {
         name: 'shared-app',
@@ -195,6 +202,41 @@ export const serverApps = {
     },
   ],
 };
+
+export const apps: JhApp[] = [
+  {
+    id: 'test-app-1',
+    name: 'test-app-1',
+    description: 'Test App 1',
+    framework: 'streamlit',
+    url: '/user/test/test-app-1/',
+    thumbnail: '',
+    username: 'test',
+    ready: true,
+    public: false,
+    shared: false,
+    last_activity: new Date(),
+    pending: false,
+    stopped: false,
+    status: 'running',
+  },
+  {
+    id: 'test-app-2',
+    name: 'test-app-2',
+    description: 'Test App 2',
+    framework: 'panel',
+    url: '/user/test/test-app-2/',
+    thumbnail: '',
+    username: 'test',
+    ready: false,
+    public: false,
+    shared: false,
+    last_activity: new Date(),
+    pending: false,
+    stopped: false,
+    status: 'ready',
+  },
+];
 
 export const services = {
   JupyterLab: {
