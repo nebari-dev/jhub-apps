@@ -236,7 +236,7 @@ export const AppFilters = ({
             color="secondary"
             onClick={(event) => setBulkActionsAnchorEl(event.currentTarget)}
             endIcon={
-              filtersOpen ? (
+              bulkActionsOpen ? (
                 <KeyboardArrowUpRoundedIcon />
               ) : (
                 <KeyboardArrowDownRoundedIcon />
@@ -307,7 +307,7 @@ export const AppFilters = ({
                 color: 'common.black',
               }}
               endIcon={
-                filtersOpen ? (
+                sortByOpen ? (
                   <KeyboardArrowUpRoundedIcon />
                 ) : (
                   <KeyboardArrowDownRoundedIcon />
