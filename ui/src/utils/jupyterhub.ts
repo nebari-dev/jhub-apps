@@ -26,13 +26,25 @@ export const getServices = (services: JhServiceFull[], user: string) => {
 };
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-export const getApps = (servers: any, appType: string, username: string) => {
+export const getApps = (
+  servers: any,
+  ownershipType: string,
+  username: string,
+) => {
   const serverApps = [];
   const filteredApps: JhApp[] = [];
-  if (appType.toLowerCase() === 'shared') {
-    serverApps.push(...servers.shared_apps);
-  } else {
-    serverApps.push(...servers.user_apps);
+  if (ownershipType === 'shared' || ownershipType === 'all') {
+    serverApps.push(
+      ...servers.shared_apps.map((server: any) => ({
+        ...server,
+        shared: true,
+      })),
+    );
+  }
+  if (ownershipType === 'mine' || ownershipType === 'all') {
+    serverApps.push(
+      ...servers.user_apps.map((server: any) => ({ ...server, shared: false })),
+    );
     // Add default app manually
     const defaultApp = serverApps.find(
       (app: any) => app.name === '' && !app.user_options?.jhub_app,
@@ -52,6 +64,7 @@ export const getApps = (servers: any, appType: string, username: string) => {
         pending: defaultApp.pending,
         stopped: defaultApp.stopped,
         public: false,
+        shared: false,
         last_activity: defaultApp.last_activity,
         status: appStatus,
       });
@@ -74,6 +87,7 @@ export const getApps = (servers: any, appType: string, username: string) => {
         pending: server.pending,
         stopped: server.stopped,
         public: app.public,
+        shared: server.shared,
         last_activity: server.last_activity,
         status: appStatus,
       });
@@ -109,8 +123,9 @@ export const getAppStatus = (app: JhApp): string => {
   }
 };
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export const filterAndSortApps = (
-  data: UserState,
+  data: any,
   currentUser: UserState,
   searchValue: string,
   ownershipValue: string,

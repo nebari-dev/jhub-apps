@@ -33,8 +33,9 @@ import {
 import { StyledFilterButton } from '../../../../styles/styled-filter-button';
 import { Item } from '../../../../styles/styled-item';
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 interface AppFiltersProps {
-  data: UserState;
+  data: any;
   currentUser: UserState;
   setApps: React.Dispatch<React.SetStateAction<JhApp[]>>;
 }

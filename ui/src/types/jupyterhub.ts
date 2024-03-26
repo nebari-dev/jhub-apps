@@ -19,6 +19,7 @@ export interface JhApp {
   username?: string;
   ready: boolean;
   public: boolean;
+  shared: boolean;
   last_activity: Date;
   pending?: boolean;
   stopped?: boolean;
