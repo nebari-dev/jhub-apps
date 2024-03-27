@@ -26,6 +26,17 @@ export interface JhApp {
   status: string;
 }
 
+export interface JhServiceApp {
+  id: string;
+  name: string;
+  description?: string;
+  framework: string;
+  url: string;
+  thumbnail?: string;
+  username?: string;
+  status: string;
+}
+
 export interface JhService {
   name: string;
   description?: string;

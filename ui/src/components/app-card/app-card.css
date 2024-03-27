@@ -83,6 +83,15 @@
   padding: 0px;
 }
 
+.card-content-container.no-hover {
+  top: 15px;
+}
+
+.card-content-container.no-hover .card-title {
+  position: relative;
+  bottom: 3px;
+}
+
 .card-content-content .card-inner-content {
   position: relative;
   padding-top: 4px;
@@ -114,7 +123,7 @@
 }
 
 /* Hover effects */
-.card-content-container:hover {
+.card-content-container:hover:not(.no-hover) {
   transform: translateY(-36%);
   background: #fff;
   height: 111px;

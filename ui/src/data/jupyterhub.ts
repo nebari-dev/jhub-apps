@@ -1,12 +1,6 @@
-import { JhService, JhServiceFull } from '../types/jupyterhub';
+import { JhService, JhServiceApp, JhServiceFull } from '../types/jupyterhub';
 
 export const services: JhService[] = [
-  {
-    name: 'JupyterLab',
-    url: 'http://127.0.0.1:8000/user/jbouder/lab',
-    external: true,
-    pinned: true,
-  },
   {
     name: 'Argo Workflows',
     url: '/hub/argo',
@@ -30,6 +24,39 @@ export const services: JhService[] = [
     url: '/hub/monitoring',
     external: false,
     pinned: false,
+  },
+];
+
+export const serviceApps: JhServiceApp[] = [
+  {
+    id: '1',
+    name: 'Service 1',
+    description: 'Service 1 description',
+    thumbnail: 'service1.png',
+    framework: 'service',
+    url: 'http://service1.com/[USER]',
+    status: 'running',
+    username: 'test',
+  },
+  {
+    id: '2',
+    name: 'Service 2',
+    description: 'Service 2 description',
+    thumbnail: 'service2.png',
+    framework: 'service',
+    url: 'http://service2.com/[USER]',
+    status: 'running',
+    username: 'test',
+  },
+  {
+    id: '3',
+    name: 'Service 3',
+    description: 'Service 3 description',
+    thumbnail: 'service3.png',
+    framework: 'service',
+    url: 'http://service3.com/[USER]',
+    status: 'running',
+    username: 'test',
   },
 ];
 

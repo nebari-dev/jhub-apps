@@ -38,7 +38,6 @@ def service_for_jhub_apps(name, url):
 
 c.JupyterHub.services.extend(
     [
-        service_for_jhub_apps(name="JupyterLab", url="/user/[USER]/lab"),
         service_for_jhub_apps(name="Argo", url="/argo"),
         service_for_jhub_apps(name="Users", url="/auth/admin/nebari/console/"),
         service_for_jhub_apps(name="Environments", url="/conda-store"),
