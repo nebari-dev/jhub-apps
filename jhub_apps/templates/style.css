@@ -383,13 +383,13 @@ a:focus {
     background-color: var(--gray-color) !important;
 }
 
-.MuiButton-outlinedSecondary:not(:disabled) {
+.MuiButton-outlinedSecondary:not(:disabled):not(#filters-btn) {
     color: var(--secondary-color) !important;
     background-color: #ffffff !important;
     border-color: var(--secondary-color) !important;
 }
 
-.MuiButton-outlinedSecondary:hover {
+.MuiButton-outlinedSecondary:hover:not(#filters-btn) {
     color: var(--secondary-color-dark) !important;
     background-color: #ffffff !important;
     border-color: var(--secondary-color-dark) !important;
@@ -400,6 +400,10 @@ a:focus {
 }
 
 .MuiButton-textPrimary {
+    color: var(--primary-color) !important;
+}
+
+.MuiRadio-colorPrimary, .MuiCheckbox-colorPrimary {
     color: var(--primary-color) !important;
 }
 

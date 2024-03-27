@@ -3,13 +3,13 @@ import { currentUser } from '@src/data/user';
 import axios from '@src/utils/axios';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import '@testing-library/jest-dom';
-import { render } from '@testing-library/react';
+import { act, fireEvent, render } from '@testing-library/react';
 import MockAdapter from 'axios-mock-adapter';
 import { RecoilRoot } from 'recoil';
 import { currentUser as defaultUser } from '../../../store';
-import { AppsGrid } from './apps-grid';
+import { AppsSection } from './apps-section';
 
-describe('AppsGrid', () => {
+describe('AppsSection', () => {
   const queryClient = new QueryClient();
   const mock = new MockAdapter(axios);
   beforeAll(() => {
@@ -25,37 +25,36 @@ describe('AppsGrid', () => {
     const { baseElement } = render(
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
-          <AppsGrid filter="" />
+          <AppsSection />
         </QueryClientProvider>
       </RecoilRoot>,
     );
     const header = baseElement.querySelector('h2');
 
     expect(baseElement).toBeTruthy();
-    expect(header).toHaveTextContent('My Apps');
+    expect(header).toHaveTextContent('Apps');
   });
 
-  test('renders shared apps grid successfully', () => {
+  test('renders with mocked data', async () => {
+    mock.onGet(new RegExp('/server/')).reply(200, serverApps);
+    queryClient.setQueryData(['app-state'], serverApps);
     const { baseElement } = render(
-      <RecoilRoot>
+      <RecoilRoot initializeState={({ set }) => set(defaultUser, currentUser)}>
         <QueryClientProvider client={queryClient}>
-          <AppsGrid appType="Shared" filter="" />
+          <AppsSection />
         </QueryClientProvider>
       </RecoilRoot>,
     );
-    const header = baseElement.querySelector('h2');
-
-    expect(baseElement).toBeTruthy();
-    expect(header).toHaveTextContent('Shared Apps');
+    expect(baseElement.querySelectorAll('.card')).toHaveLength(6);
   });
 
-  test('renders a message when no apps and filter', () => {
+  test('renders a message when no apps', () => {
     queryClient.setQueryData(['app-state'], null);
     mock.onGet(new RegExp('/server/')).reply(200, null);
     const { baseElement } = render(
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
-          <AppsGrid filter="test" />
+          <AppsSection />
         </QueryClientProvider>
       </RecoilRoot>,
     );
@@ -66,39 +65,13 @@ describe('AppsGrid', () => {
     queryClient.isFetching = jest.fn().mockReturnValue(true);
     mock.onGet(new RegExp('/server/')).reply(200, null);
     const { baseElement } = render(
-      <RecoilRoot>
+      <RecoilRoot initializeState={({ set }) => set(defaultUser, currentUser)}>
         <QueryClientProvider client={queryClient}>
-          <AppsGrid filter="test" />
+          <AppsSection />
         </QueryClientProvider>
       </RecoilRoot>,
     );
     expect(baseElement).toHaveTextContent('Loading...');
-  });
-
-  test('renders with mocked data', async () => {
-    mock.onGet(new RegExp('/server/')).reply(200, serverApps);
-    queryClient.setQueryData(['app-state'], serverApps);
-    const { baseElement } = render(
-      <RecoilRoot initializeState={({ set }) => set(defaultUser, currentUser)}>
-        <QueryClientProvider client={queryClient}>
-          <AppsGrid filter="" />
-        </QueryClientProvider>
-      </RecoilRoot>,
-    );
-    expect(baseElement.querySelectorAll('.card')).toHaveLength(5);
-  });
-
-  test('renders with mocked data and filter', async () => {
-    mock.onGet(new RegExp('/server/')).reply(200, serverApps);
-    queryClient.setQueryData(['app-state'], serverApps);
-    const { baseElement } = render(
-      <RecoilRoot initializeState={({ set }) => set(defaultUser, currentUser)}>
-        <QueryClientProvider client={queryClient}>
-          <AppsGrid filter="panel" />
-        </QueryClientProvider>
-      </RecoilRoot>,
-    );
-    expect(baseElement.querySelectorAll('.card')).toHaveLength(1);
   });
 
   test('renders with data error', async () => {
@@ -107,10 +80,38 @@ describe('AppsGrid', () => {
     const { baseElement } = render(
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
-          <AppsGrid filter="test" />
+          <AppsSection />
         </QueryClientProvider>
       </RecoilRoot>,
     );
     expect(baseElement).toHaveTextContent('No apps available');
+  });
+
+  test('should search apps', async () => {
+    mock.onGet(new RegExp('/server/')).reply(200, serverApps);
+    queryClient.setQueryData(['app-state'], serverApps);
+    const { baseElement } = render(
+      <RecoilRoot initializeState={({ set }) => set(defaultUser, currentUser)}>
+        <QueryClientProvider client={queryClient}>
+          <AppsSection />
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+
+    const input = baseElement.querySelector('#search') as HTMLInputElement;
+    await act(async () => {
+      fireEvent.change(input, { target: { value: '' } });
+      fireEvent.change(input, { target: { value: 'test' } });
+    });
+    await act(async () => {
+      fireEvent.change(input, { target: { value: '' } });
+      fireEvent.change(input, { target: { value: 'cras' } });
+    });
+    await act(async () => {
+      fireEvent.change(input, { target: { value: '' } });
+      fireEvent.change(input, { target: { value: 'panel' } });
+    });
+    const cards = baseElement.querySelectorAll('.card');
+    expect(cards).toHaveLength(2);
   });
 });

@@ -3,6 +3,7 @@ import {
   AppProfileProps,
   AppQueryGetProps,
 } from '@src/types/api';
+import { JhApp } from '@src/types/jupyterhub';
 import { UserState } from '@src/types/user';
 
 export const frameworks: AppFrameworkProps[] = [
@@ -53,7 +54,6 @@ export const profiles: AppProfileProps[] = [
 export const app: AppQueryGetProps = {
   name: 'app-1',
   last_activity: '',
-  started: null,
   pending: null,
   ready: true,
   stopped: false,
@@ -82,11 +82,16 @@ export const serverApps = {
       url: '/user/test',
       ready: true,
       user_options: {},
+      last_activity: new Date(),
     },
     {
       name: 'test-app',
       url: '/user/test/test-app/',
+
+      pending: null,
       ready: true,
+      last_activity: new Date().getHours() - 1,
+      stopped: false,
       user_options: {
         name: 'test-app',
         jhub_app: true,
@@ -106,7 +111,11 @@ export const serverApps = {
     {
       name: 'test-app-2',
       url: '/user/test/test-app-2/',
+      started: true,
+      pending: null,
       ready: false,
+      last_activity: new Date().getHours() - 3,
+      stopped: false,
       user_options: {
         name: 'test-app-2',
         jhub_app: true,
@@ -125,7 +134,11 @@ export const serverApps = {
     {
       name: 'test-app-3',
       url: '/user/test/test-app-3/',
+      started: true,
+      pending: null,
       ready: false,
+      last_activity: new Date().getHours() - 2,
+      stopped: false,
       user_options: {
         name: 'test-app-3',
         jhub_app: true,
@@ -143,7 +156,11 @@ export const serverApps = {
     {
       name: 'test-app-4',
       url: '/user/test/test-app-4/',
+
+      pending: null,
       ready: false,
+      last_activity: new Date().getHours() - 4,
+      stopped: true,
       user_options: {
         name: 'test-app-4',
         jhub_app: true,
@@ -162,7 +179,11 @@ export const serverApps = {
     {
       name: 'shared-app',
       url: '/shared/test/shared-app/',
+
+      pending: null,
       ready: true,
+      last_activity: new Date(),
+      stopped: false,
       user_options: {
         name: 'shared-app',
         jhub_app: true,
@@ -181,6 +202,41 @@ export const serverApps = {
     },
   ],
 };
+
+export const apps: JhApp[] = [
+  {
+    id: 'test-app-1',
+    name: 'test-app-1',
+    description: 'Test App 1',
+    framework: 'streamlit',
+    url: '/user/test/test-app-1/',
+    thumbnail: '',
+    username: 'test',
+    ready: true,
+    public: false,
+    shared: false,
+    last_activity: new Date(),
+    pending: false,
+    stopped: false,
+    status: 'running',
+  },
+  {
+    id: 'test-app-2',
+    name: 'test-app-2',
+    description: 'Test App 2',
+    framework: 'panel',
+    url: '/user/test/test-app-2/',
+    thumbnail: '',
+    username: 'test',
+    ready: false,
+    public: false,
+    shared: false,
+    last_activity: new Date(),
+    pending: false,
+    stopped: false,
+    status: 'ready',
+  },
+];
 
 export const services = {
   JupyterLab: {

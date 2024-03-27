@@ -40,11 +40,35 @@ const currentFile = atom<File | undefined>({
   default: undefined,
 });
 
+const currentSearchValue = atom<string>({
+  key: 'currentSearchValue',
+  default: '',
+});
+
+const currentFrameworks = atom<string[]>({
+  key: 'currentFrameworks',
+  default: [],
+});
+
+const currentOwnershipValue = atom<string>({
+  key: 'currentOwnershipValue',
+  default: 'Any',
+});
+
+const currentSortValue = atom<string>({
+  key: 'currentSortValue',
+  default: 'Recently modified',
+});
+
 export {
   currentFile,
   currentFormInput,
+  currentFrameworks,
   currentImage,
   currentJhData,
   currentNotification,
+  currentOwnershipValue,
+  currentSearchValue,
+  currentSortValue,
   currentUser,
 };
