@@ -20,7 +20,7 @@ jobs:
 
       - id: check_label
         name: Check PL labels
-        uses: docker://agilepathway/pull-request-label-checker:latest
+        uses: docker://agilepathway/pull-request-label-checker:v1.6.21
         with:
           one_of: dependencies
           repo_token: ${{ secrets.GITHUB_TOKEN }}
