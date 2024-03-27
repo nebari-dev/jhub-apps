@@ -1,4 +1,4 @@
-import { servicesFull } from '@src/data/jupyterhub';
+import { serverApps, services } from '@src/data/api';
 import { currentUser } from '@src/data/user';
 import axios from '@src/utils/jupyterhub-axios';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -7,9 +7,9 @@ import { fireEvent, render } from '@testing-library/react';
 import MockAdapter from 'axios-mock-adapter';
 import { RecoilRoot } from 'recoil';
 import { currentUser as defaultUser } from '../../../store';
-import { ServicesGrid } from './services-grid';
+import { ServicesSection } from './services-section';
 
-describe('ServicesGrid', () => {
+describe('ServicesSection', () => {
   const queryClient = new QueryClient();
   const mock = new MockAdapter(axios);
   beforeAll(() => {
@@ -25,7 +25,7 @@ describe('ServicesGrid', () => {
     const { baseElement } = render(
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
-          <ServicesGrid />
+          <ServicesSection />
         </QueryClientProvider>
       </RecoilRoot>,
     );
@@ -40,7 +40,7 @@ describe('ServicesGrid', () => {
     const { baseElement } = render(
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
-          <ServicesGrid />
+          <ServicesSection />
         </QueryClientProvider>
       </RecoilRoot>,
     );
@@ -52,7 +52,7 @@ describe('ServicesGrid', () => {
     const { baseElement } = render(
       <RecoilRoot initializeState={({ set }) => set(defaultUser, currentUser)}>
         <QueryClientProvider client={queryClient}>
-          <ServicesGrid />
+          <ServicesSection />
         </QueryClientProvider>
       </RecoilRoot>,
     );
@@ -60,16 +60,18 @@ describe('ServicesGrid', () => {
   });
 
   test('renders with mocked data', async () => {
-    mock.onGet(new RegExp('/services')).reply(200, servicesFull);
-    queryClient.setQueryData(['service-data'], servicesFull);
+    mock.onGet(new RegExp('/services')).reply(200, services);
+    mock.onGet(new RegExp('/server/')).reply(200, serverApps);
+    queryClient.setQueryData(['service-data'], services);
+    queryClient.setQueryData(['app-state'], serverApps);
     const { baseElement } = render(
       <RecoilRoot initializeState={({ set }) => set(defaultUser, currentUser)}>
         <QueryClientProvider client={queryClient}>
-          <ServicesGrid />
+          <ServicesSection />
         </QueryClientProvider>
       </RecoilRoot>,
     );
-    expect(baseElement.querySelectorAll('button')).toHaveLength(2);
+    expect(baseElement.querySelectorAll('.card')).toHaveLength(3);
   });
 
   test('handles button click for external URL', () => {
@@ -79,12 +81,14 @@ describe('ServicesGrid', () => {
       writable: true,
     });
 
-    mock.onGet(new RegExp('/services')).reply(200, servicesFull);
-    queryClient.setQueryData(['service-data'], servicesFull);
+    mock.onGet(new RegExp('/services')).reply(200, services);
+    mock.onGet(new RegExp('/server/')).reply(200, serverApps);
+    queryClient.setQueryData(['service-data'], services);
+    queryClient.setQueryData(['app-state'], serverApps);
     const { baseElement } = render(
       <RecoilRoot initializeState={({ set }) => set(defaultUser, currentUser)}>
         <QueryClientProvider client={queryClient}>
-          <ServicesGrid />
+          <ServicesSection />
         </QueryClientProvider>
       </RecoilRoot>,
     );
@@ -107,12 +111,14 @@ describe('ServicesGrid', () => {
       writable: true,
     });
 
-    mock.onGet(new RegExp('/services')).reply(200, servicesFull);
-    queryClient.setQueryData(['service-data'], servicesFull);
+    mock.onGet(new RegExp('/services')).reply(200, services);
+    mock.onGet(new RegExp('/server/')).reply(200, serverApps);
+    queryClient.setQueryData(['service-data'], services);
+    queryClient.setQueryData(['app-state'], serverApps);
     const { baseElement } = render(
       <RecoilRoot initializeState={({ set }) => set(defaultUser, currentUser)}>
         <QueryClientProvider client={queryClient}>
-          <ServicesGrid />
+          <ServicesSection />
         </QueryClientProvider>
       </RecoilRoot>,
     );

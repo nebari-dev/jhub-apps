@@ -27,7 +27,7 @@ describe('AppCard', () => {
           <AppCard
             id="1"
             title="Test App"
-            name="Developer"
+            username="Developer"
             framework="Some Framework"
             url="/some-url"
             ready={true}
@@ -46,7 +46,7 @@ describe('AppCard', () => {
           <AppCard
             id="1"
             title="Test App"
-            name="Developer"
+            username="Developer"
             framework="Some Framework"
             url="/some-url"
             ready={true}
@@ -68,7 +68,7 @@ describe('AppCard', () => {
             id="1"
             title="Test App"
             description="Some app description"
-            name="Developer"
+            username="Developer"
             framework="Some Framework"
             url="/some-url"
             ready={true}
@@ -94,7 +94,7 @@ describe('AppCard', () => {
             id="1"
             title="Test App"
             description="Some app description"
-            name="Developer"
+            username="Developer"
             framework="Some Framework"
             url="/some-url"
             ready={true}
@@ -136,7 +136,7 @@ describe('AppCard', () => {
             id="1"
             title="Test App"
             description="Some app description"
-            name="Developer"
+            username="Developer"
             framework="Some Framework"
             url="/some-url"
             ready={true}
@@ -182,7 +182,7 @@ describe('AppCard', () => {
             id="1"
             title="Test App"
             description="Some app description"
-            name="Developer"
+            username="Developer"
             framework="Some Framework"
             url="/some-url"
             ready={true}
@@ -224,7 +224,7 @@ describe('AppCard', () => {
             id="1"
             title="Test App"
             description="Some app description"
-            name="Developer"
+            username="Developer"
             framework="Some Framework"
             url="/some-url"
             ready={true}
@@ -280,7 +280,7 @@ describe('AppCard', () => {
             id="1"
             title="Test App"
             description="Some app description"
-            name="Developer"
+            username="Developer"
             framework="Some Framework"
             url="/some-url"
             ready={true}
@@ -320,7 +320,7 @@ describe('AppCard', () => {
             id="1"
             title="Test App"
             description="Some app description"
-            name="Developer"
+            username="Developer"
             framework="Some Framework"
             url="/some-url"
             ready={true}
@@ -357,7 +357,7 @@ describe('AppCard', () => {
             id="1"
             title="Test App"
             description="Some app description"
-            name="Developer"
+            username="Developer"
             framework="Some Framework"
             url="/some-url"
             ready={true}
@@ -399,7 +399,7 @@ describe('AppCard', () => {
             id="1"
             title="Test App"
             description="Some app description"
-            name="Developer"
+            username="Developer"
             framework="Some Framework"
             url="/some-url"
             ready={true}
@@ -452,7 +452,7 @@ describe('AppCard', () => {
             id="1"
             title="Test App"
             description="Some app description"
-            name="Developer"
+            username="Developer"
             framework="Some Framework"
             url="/some-url"
             ready={true}
@@ -493,7 +493,14 @@ describe('AppCard', () => {
     const { getByTestId } = render(
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
-          <AppCard isPublic={true} />
+          <AppCard
+            id="app-1"
+            title="app-1"
+            framework="panel"
+            serverStatus="running"
+            url="http://localhost:3000/app-1"
+            isPublic={true}
+          />
         </QueryClientProvider>
       </RecoilRoot>,
     );
@@ -504,7 +511,14 @@ describe('AppCard', () => {
     const { getByTestId } = render(
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
-          <AppCard isShared={true} />
+          <AppCard
+            id="app-1"
+            title="app-1"
+            framework="panel"
+            serverStatus="running"
+            url="http://localhost:3000/app-1"
+            isShared={true}
+          />
         </QueryClientProvider>
       </RecoilRoot>,
     );
@@ -515,7 +529,13 @@ describe('AppCard', () => {
     const { getByTestId } = render(
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
-          <AppCard />
+          <AppCard
+            id="app-1"
+            title="app-1"
+            framework="panel"
+            serverStatus="running"
+            url="http://localhost:3000/app-1"
+          />
         </QueryClientProvider>
       </RecoilRoot>,
     );
