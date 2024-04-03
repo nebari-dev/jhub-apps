@@ -12,11 +12,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Checkout current repo head to support dependabot PRs
+        if: github.event.pull_request.head.repo.full_name == github.repository
         uses: actions/checkout@v4.1.1
         with:
           ref: ${{ github.head_ref }}
           fetch-depth: 2
+
+      - name: Checkout fork repo head to support forked PRs
+        if: github.event.pull_request.head.repo.full_name != github.repository
+        uses: actions/checkout@v4.1.1
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
 
       - id: check_label
         name: Check PL labels
