@@ -76,11 +76,12 @@ export const AppCard = ({
         return {
           bgcolor: '#ffffff',
           border: '1px solid #2E7D32',
+          color: '#2E7D32',
         };
       case 'Pending':
         return {
           bgcolor: '#EAB54E',
-          color: 'black',
+          color: 'white',
         };
       case 'Running':
         return {
@@ -89,7 +90,7 @@ export const AppCard = ({
         };
       case 'Unknown':
         return {
-          bgcolor: '#79797C', // Corrected color value
+          bgcolor: '#BDBDBD',
           color: 'black',
         };
       default:
@@ -103,17 +104,31 @@ export const AppCard = ({
   const getIcon = () => {
     if (!isAppCard)
       return (
-        <PushPinRoundedIcon fontSize="small" data-testid="PushPinRoundedIcon" />
+        <PushPinRoundedIcon
+          sx={{ fontSize: '18px', position: 'relative', bottom: '2px' }}
+          data-testid="PushPinRoundedIcon"
+        />
       );
     if (isPublic)
       return (
-        <PublicRoundedIcon fontSize="small" data-testid="PublicRoundedIcon" />
+        <PublicRoundedIcon
+          sx={{ fontSize: '18px' }}
+          data-testid="PublicRoundedIcon"
+        />
       );
     if (isShared)
       return (
-        <GroupRoundedIcon fontSize="small" data-testid="GroupRoundedIcon" />
+        <GroupRoundedIcon
+          sx={{ fontSize: '18px' }}
+          data-testid="GroupRoundedIcon"
+        />
       );
-    return <LockRoundedIcon fontSize="small" data-testid="LockRoundedIcon" />;
+    return (
+      <LockRoundedIcon
+        sx={{ fontSize: '18px' }}
+        data-testid="LockRoundedIcon"
+      />
+    );
   };
 
   const startRequest = async ({ id }: AppQueryPostProps) => {
@@ -227,14 +242,14 @@ export const AppCard = ({
       title: 'Start',
       onClick: () => setIsStartOpen(true),
       visible: true,
-      disabled: serverStatus === 'Running',
+      disabled: serverStatus !== 'Ready',
     },
     {
       id: 'stop',
       title: 'Stop',
       onClick: () => setIsStopOpen(true),
       visible: true,
-      disabled: serverStatus === 'Ready' || isShared,
+      disabled: serverStatus !== 'Running' || isShared,
     },
     {
       id: 'edit',
@@ -338,7 +353,9 @@ export const AppCard = ({
     <div className="card" id={`card-${id}`} tabIndex={0}>
       <a href={url}>
         <Card id={`card-${id}`} tabIndex={0} className="Mui-card">
-          <div className="card-content-header">
+          <div
+            className={`card-content-header ${isAppCard ? '' : 'card-content-header-service'}`}
+          >
             {framework ? (
               <>
                 <div className="chip-container">
@@ -352,6 +369,8 @@ export const AppCard = ({
                       className="chip-chip"
                       sx={{
                         ...getStatusStyles(appStatus),
+                        fontSize: '12px',
+                        fontWeight: 600,
                         '& .MuiChip-label': {
                           color: getStatusStyles(appStatus).color,
                         },
@@ -384,21 +403,18 @@ export const AppCard = ({
             )}
             <CardMedia>
               {thumbnail ? (
-                <div className="img-overlay">
+                <div
+                  className={isAppCard ? 'img-overlay' : 'img-overlay-service'}
+                >
                   <img src={thumbnail} alt="App thumb" />
                 </div>
               ) : (
-                <div className="img-overlay">
-                  <img
-                    src="/assets/images/app-placeholder.jpeg"
-                    alt="App thumb"
-                  />
-                </div>
+                <></>
               )}
             </CardMedia>
           </div>
           <div className="card-content-content">
-            {framework ? (
+            {framework && isAppCard ? (
               <div className="chip-container">
                 <div className="menu-chip">
                   <Chip
@@ -407,51 +423,66 @@ export const AppCard = ({
                     label={framework}
                     id={`chip-${id}`}
                     size="small"
+                    sx={{ mb: '8px' }}
                   />
                 </div>
               </div>
             ) : (
               <></>
             )}
-            <div
-              className={`card-content-container ${!isAppCard ? 'no-hover' : ''}`}
-            >
-              <CardContent className="card-inner-content">
-                <span className="inline relative iconic">{getIcon()}</span>
-                <Typography
-                  gutterBottom
-                  variant="h5"
-                  component="div"
-                  className="card-title"
-                >
-                  {title}
-                </Typography>
-                {isAppCard ? (
+            {isAppCard ? (
+              <div
+                className={`card-content-container ${!description ? 'no-hover' : ''}`}
+              >
+                <CardContent className="card-inner-content">
+                  <span className="inline relative iconic">{getIcon()}</span>
+                  <Typography
+                    gutterBottom
+                    variant="h5"
+                    component="div"
+                    className="card-title"
+                  >
+                    {title}
+                  </Typography>
                   <Typography
                     variant="body2"
                     color="text.secondary"
-                    className="card-author"
+                    className={`card-author ${!description ? 'no-hover' : ''}`}
+                    sx={{ mt: '5px' }}
                   >
                     Created by {username}
                   </Typography>
-                ) : (
-                  <></>
-                )}
-                {description && (
                   <Typography
                     variant="body2"
                     color="text.secondary"
-                    className={
-                      isAppCard
-                        ? 'card-description'
-                        : 'card-description-service'
-                    }
+                    className="card-description"
                   >
                     {description}
                   </Typography>
-                )}
-              </CardContent>
-            </div>
+                </CardContent>
+              </div>
+            ) : (
+              <div className="card-content-container app-service no-hover">
+                <CardContent className="card-inner-content">
+                  <span className="inline relative iconic">{getIcon()}</span>
+                  <Typography
+                    gutterBottom
+                    variant="h5"
+                    component="div"
+                    className="card-title"
+                  >
+                    {title}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    className="card-description-service"
+                  >
+                    {description}
+                  </Typography>
+                </CardContent>
+              </div>
+            )}
           </div>
         </Card>
       </a>

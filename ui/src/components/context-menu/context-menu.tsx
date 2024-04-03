@@ -1,3 +1,4 @@
+import MoreHorizRoundedIcon from '@mui/icons-material/MoreHorizRounded';
 import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
@@ -43,13 +44,28 @@ export const ContextMenu = ({
         aria-expanded={open ? 'true' : undefined}
         onClick={handleClick}
       >
-        ...
+        <MoreHorizRoundedIcon
+          sx={{
+            fontSize: '24px',
+            position: 'relative',
+            top: '4px',
+            color: '#000000',
+          }}
+        />
       </Button>
       <Menu
         id="basic-menu"
         anchorEl={anchorEl}
         open={open}
         onClose={handleClose}
+        anchorOrigin={{
+          vertical: 'top',
+          horizontal: 'left',
+        }}
+        transformOrigin={{
+          horizontal: 105,
+          vertical: -8,
+        }}
         sx={{
           '& .MuiPaper-root': {
             width: '151px',

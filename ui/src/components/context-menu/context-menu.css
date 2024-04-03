@@ -22,6 +22,11 @@
   right: 21px;
 }
 
+.context-menu button:hover,
+.context-menu button:focus {
+  background-color: transparent;
+}
+
 .context-menu-list {
   width: 151px;
 }
