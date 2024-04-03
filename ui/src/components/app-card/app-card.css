@@ -105,6 +105,10 @@
   overflow: hidden;
 }
 
+.card-author {
+  letter-spacing: 0.4px;
+}
+
 .card-description {
   max-height: 0;
   opacity: 0;

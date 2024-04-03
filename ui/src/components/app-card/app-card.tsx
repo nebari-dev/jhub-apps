@@ -470,6 +470,7 @@ export const AppCard = ({
                     variant="h5"
                     component="div"
                     className="card-title"
+                    sx={{ position: 'relative', bottom: '3px' }}
                   >
                     {title}
                   </Typography>
@@ -477,6 +478,7 @@ export const AppCard = ({
                     variant="body2"
                     color="text.secondary"
                     className="card-description-service"
+                    sx={{ mt: '5px' }}
                   >
                     {description}
                   </Typography>
