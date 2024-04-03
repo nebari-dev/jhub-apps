@@ -38,8 +38,9 @@ export const ContextMenu = ({
   return (
     <div className="context-menu" id={id} tabIndex={0} ref={menuRef}>
       <Button
-        id="basic-button"
-        aria-controls={open ? 'basic-menu' : undefined}
+        id={`context-menu-button-${id}`}
+        data-testid={`context-menu-button-${id}`}
+        aria-controls={open ? `context-menu-${id}` : undefined}
         aria-haspopup="true"
         aria-expanded={open ? 'true' : undefined}
         onClick={handleClick}
@@ -54,7 +55,7 @@ export const ContextMenu = ({
         />
       </Button>
       <Menu
-        id="basic-menu"
+        id={`context-menu-${id}`}
         anchorEl={anchorEl}
         open={open}
         onClose={handleClose}
@@ -72,7 +73,7 @@ export const ContextMenu = ({
           },
         }}
         MenuListProps={{
-          'aria-labelledby': 'basic-button',
+          'aria-labelledby': `context-menu-button-${id}`,
         }}
       >
         {items

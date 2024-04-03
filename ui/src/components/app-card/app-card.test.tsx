@@ -60,6 +60,51 @@ describe('AppCard', () => {
     expect(appLabel).toHaveTextContent('Test App');
   });
 
+  test('renders default app card with no server status', async () => {
+    const { baseElement } = render(
+      <RecoilRoot>
+        <QueryClientProvider client={queryClient}>
+          <AppCard
+            id="1"
+            title="Test App"
+            username="Developer"
+            framework="Some Framework"
+            url="/some-url"
+            ready={true}
+            serverStatus=""
+          />
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+    expect(baseElement).toBeInTheDocument();
+    const appLabel = baseElement.querySelector('.MuiTypography-h5');
+    expect(appLabel).toHaveTextContent('Test App');
+  });
+
+  test('renders service card', async () => {
+    const { baseElement } = render(
+      <RecoilRoot>
+        <QueryClientProvider client={queryClient}>
+          <AppCard
+            id="1"
+            title="Test App"
+            username="Developer"
+            framework="Some Framework"
+            url="/some-url"
+            ready={true}
+            serverStatus="ready"
+            isAppCard={false}
+          />
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+    expect(baseElement).toBeInTheDocument();
+    const appLabel = baseElement.querySelector('.MuiTypography-h5');
+    expect(appLabel).toHaveTextContent('Test App');
+    const author = baseElement.querySelector('.MuiTypography-body2');
+    expect(author).not.toHaveTextContent('Developer');
+  });
+
   test('renders app card with thumbnail and description', () => {
     const { baseElement } = render(
       <RecoilRoot>
@@ -99,7 +144,7 @@ describe('AppCard', () => {
             url="/some-url"
             ready={true}
             thumbnail="/some-thumbnail.png"
-            serverStatus="ready"
+            serverStatus="Ready"
           />
         </QueryClientProvider>
       </RecoilRoot>,
@@ -141,7 +186,7 @@ describe('AppCard', () => {
             url="/some-url"
             ready={true}
             thumbnail="/some-thumbnail.png"
-            serverStatus="ready"
+            serverStatus="Ready"
           />
         </QueryClientProvider>
       </RecoilRoot>,
@@ -285,7 +330,7 @@ describe('AppCard', () => {
             url="/some-url"
             ready={true}
             thumbnail="/some-thumbnail.png"
-            serverStatus="ready"
+            serverStatus="Ready"
           />
         </QueryClientProvider>
       </RecoilRoot>,
@@ -325,7 +370,7 @@ describe('AppCard', () => {
             url="/some-url"
             ready={true}
             thumbnail="/some-thumbnail.png"
-            serverStatus="ready"
+            serverStatus="Ready"
           />
         </QueryClientProvider>
       </RecoilRoot>,
@@ -362,7 +407,7 @@ describe('AppCard', () => {
             url="/some-url"
             ready={true}
             thumbnail="/some-thumbnail.png"
-            serverStatus="ready"
+            serverStatus="Ready"
           />
         </QueryClientProvider>
       </RecoilRoot>,
@@ -404,7 +449,7 @@ describe('AppCard', () => {
             url="/some-url"
             ready={true}
             thumbnail="/some-thumbnail.png"
-            serverStatus="ready"
+            serverStatus="Ready"
           />
         </QueryClientProvider>
       </RecoilRoot>,
@@ -457,7 +502,7 @@ describe('AppCard', () => {
             url="/some-url"
             ready={true}
             thumbnail="/some-thumbnail.png"
-            serverStatus="ready"
+            serverStatus="Ready"
           />
         </QueryClientProvider>
       </RecoilRoot>,
