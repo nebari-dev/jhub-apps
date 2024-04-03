@@ -22,8 +22,6 @@ jobs:
       - name: Checkout fork repo head to support forked PRs
         if: github.event.pull_request.head.repo.full_name != github.repository
         uses: actions/checkout@v4.1.1
-        with:
-          ref: ${{ github.event.pull_request.head.ref }}
 
       - id: check_label
         name: Check PL labels
