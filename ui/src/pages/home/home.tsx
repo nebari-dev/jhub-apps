@@ -10,7 +10,7 @@ export const Home = (): React.ReactElement => {
       <Grid container spacing={2} paddingBottom="48px">
         <Grid item xs={12} md={2}>
           <Item>
-            <h1>Home</h1>
+            <h1>Home!</h1>
           </Item>
         </Grid>
       </Grid>
