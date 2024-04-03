@@ -163,38 +163,34 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
         </ListItemButton>
       </ListItem>
       <Divider />
-      {pinnedServices.length > 0 ? (
-        <>
-          <List>
-            <ListItem disablePadding>
-              <StyledListItemTextHeader primary="Pinned" disableTypography />
+      <>
+        <List>
+          <ListItem disablePadding>
+            <StyledListItemTextHeader primary="Pinned" disableTypography />
+          </ListItem>
+          {pinnedApps.map((item, index) => (
+            <ListItem key={index} disablePadding>
+              <StyledListItemButton onClick={() => navigateToUrl(item.url)}>
+                <ListItemText primary={item.name} />
+                <ListItemIcon sx={{ minWidth: '32px' }}>
+                  <PushPinRoundedIcon fontSize="small" />
+                </ListItemIcon>
+              </StyledListItemButton>
             </ListItem>
-            {pinnedApps.map((item, index) => (
-              <ListItem key={index} disablePadding>
-                <StyledListItemButton onClick={() => navigateToUrl(item.url)}>
-                  <ListItemText primary={item.name} />
-                  <ListItemIcon sx={{ minWidth: '32px' }}>
-                    <PushPinRoundedIcon fontSize="small" />
-                  </ListItemIcon>
-                </StyledListItemButton>
-              </ListItem>
-            ))}
-            {pinnedServices.map((item, index) => (
-              <ListItem key={index} disablePadding>
-                <StyledListItemButton onClick={() => navigateToUrl(item.url)}>
-                  <ListItemText primary={item.name} />
-                  <ListItemIcon sx={{ minWidth: '32px' }}>
-                    <PushPinRoundedIcon fontSize="small" />
-                  </ListItemIcon>
-                </StyledListItemButton>
-              </ListItem>
-            ))}
-          </List>
-          <Divider />
-        </>
-      ) : (
-        <></>
-      )}
+          ))}
+          {pinnedServices.map((item, index) => (
+            <ListItem key={index} disablePadding>
+              <StyledListItemButton onClick={() => navigateToUrl(item.url)}>
+                <ListItemText primary={item.name} />
+                <ListItemIcon sx={{ minWidth: '32px' }}>
+                  <PushPinRoundedIcon fontSize="small" />
+                </ListItemIcon>
+              </StyledListItemButton>
+            </ListItem>
+          ))}
+        </List>
+        <Divider />
+      </>
       <List>
         <ListItem disablePadding>
           <StyledListItemTextHeader

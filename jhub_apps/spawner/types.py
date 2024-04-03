@@ -77,7 +77,7 @@ FRAMEWORKS = [
     FrameworkConf(
         name=Framework.custom.value,
         display_name="Custom Command",
-        logo="/services/japps/static/img/logos/jupyter.png",
+        logo="/services/japps/static/img/logos/custom.png",
     ),
 ]
 

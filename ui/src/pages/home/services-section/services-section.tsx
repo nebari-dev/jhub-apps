@@ -107,8 +107,7 @@ export const ServicesSection = (): React.ReactElement => {
           >
             {servicesLoading || appsLoading ? (
               <div className="font-bold">Loading...</div>
-            ) : services.length > 0 ? (
-              // Wrap the code block inside curly braces and return the JSX elements explicitly
+            ) : services.length > 0 || apps.length > 0 ? (
               <ServiceGrid services={services} apps={apps} />
             ) : (
               <div>No services available</div>

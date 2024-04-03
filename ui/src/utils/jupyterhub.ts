@@ -1,3 +1,4 @@
+import { CONDA_STORE_LOGO, JUPYTER_LOGO, VSCODE_LOGO } from '@src/data/logos';
 import {
   JhApp,
   JhService,
@@ -45,7 +46,7 @@ export const getPinnedServices = (
         description: 'This is conda-store, your environments manager.',
         framework: '',
         url: service.url,
-        thumbnail: '',
+        thumbnail: CONDA_STORE_LOGO,
         username: username,
         status: 'Ready',
       });
@@ -115,6 +116,7 @@ export const getPinnedApps = (servers: any, username: string) => {
       description: 'This is your default JupyterLab server.',
       framework: 'JupyterLab',
       url: `/hub/user/${username}/lab`,
+      thumbnail: JUPYTER_LOGO,
       username: username,
       ready: defaultApp.ready,
       public: false,
@@ -130,6 +132,7 @@ export const getPinnedApps = (servers: any, username: string) => {
       description: 'This is your default VSCode server.',
       framework: 'VSCode',
       url: `/hub/user/${username}/vscode`,
+      thumbnail: VSCODE_LOGO,
     });
   }
   return pinnedApps;
