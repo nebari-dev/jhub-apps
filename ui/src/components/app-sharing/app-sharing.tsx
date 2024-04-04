@@ -3,6 +3,7 @@ import GroupRoundedIcon from '@mui/icons-material/GroupRounded';
 import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 import PublicRoundedIcon from '@mui/icons-material/PublicRounded';
+import WarningRoundedIcon from '@mui/icons-material/WarningRounded';
 import {
   Alert,
   Autocomplete,
@@ -120,6 +121,7 @@ export const AppSharing = ({
   const [currentItems, setCurrentItems] = useState<AppSharingItem[]>([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [selectedValue, setSelectedValue] = useState<AppSharingItem[]>([]);
 
   const handleShare = () => {
     if (currentShare.length > 0) {
@@ -136,11 +138,8 @@ export const AppSharing = ({
           .map((item) => item.name),
       );
     }
+    setSelectedValue([]);
   };
-
-  // Avoid a layout jump when reaching the last page with empty rows.
-  const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - currentItems.length) : 0;
 
   const handleChangePage = (
     event: React.MouseEvent<HTMLButtonElement> | null,
@@ -203,13 +202,14 @@ export const AppSharing = ({
           <Alert
             id="sharing-notification"
             severity="warning"
+            icon={<WarningRoundedIcon />}
             sx={{ mb: '16px' }}
           >
             {message}
           </Alert>
         </Item>
         <Item sx={{ pb: '8px' }}>
-          <Typography variant="body1" sx={{ pb: '4px' }}>
+          <Typography variant="subtitle1" sx={{ pb: '4px' }}>
             Individuals and group access
           </Typography>
           <Box
@@ -239,6 +239,7 @@ export const AppSharing = ({
                 }
                 multiple
                 disableCloseOnSelect
+                clearOnBlur
                 limitTags={2}
                 sx={{ width: 470 }}
                 renderInput={(params) => (
@@ -247,9 +248,11 @@ export const AppSharing = ({
                     placeholder="Search one or more usernames or group names"
                   />
                 )}
+                value={selectedValue}
                 onChange={(event, value) => {
                   if (event && value) {
                     setCurrentShare(value);
+                    setSelectedValue(value);
                   }
                 }}
               />
@@ -259,6 +262,7 @@ export const AppSharing = ({
                 display: 'flex',
                 flexDirection: 'row',
                 justifyContent: 'flex-end',
+                margin: 'auto auto',
               }}
             >
               <Button
@@ -266,7 +270,7 @@ export const AppSharing = ({
                 color="primary"
                 onClick={handleShare}
                 disabled={currentShare.length === 0}
-                sx={{ height: '56px' }}
+                sx={{ height: '42px' }}
               >
                 Share
               </Button>
@@ -275,214 +279,220 @@ export const AppSharing = ({
         </Item>
         {currentItems.length > 0 ? (
           <Item sx={{ pb: '20px' }}>
-            <TableContainer component={Paper}>
-              <Table aria-label="Individuals and Groups" size="small">
-                <TableBody>
-                  {(rowsPerPage > 0
-                    ? currentItems.slice(
-                        page * rowsPerPage,
-                        page * rowsPerPage + rowsPerPage,
-                      )
-                    : rows
-                  ).map((item) => (
-                    <TableRow
-                      key={item.name}
-                      sx={{
-                        '&:last-child td, &:last-child th': { border: 0 },
-                      }}
-                    >
-                      <TableCell component="td" scope="row">
-                        {item.name} {item.type === 'group' ? ' (Group)' : <></>}
-                      </TableCell>
-                      <TableCell align="right">
-                        <Button
-                          variant="text"
-                          onClick={() => {
-                            setCurrentItems((prev) =>
-                              prev.filter((i) => i.name !== item.name),
-                            );
-                            if (item.type === 'group') {
-                              setCurrentGroupPermissions((prev) =>
-                                prev.filter((i) => i !== item.name),
+            <Paper elevation={0}>
+              <TableContainer>
+                <Table aria-label="Individuals and Groups" size="small">
+                  <TableBody>
+                    {(rowsPerPage > 0
+                      ? currentItems.slice(
+                          page * rowsPerPage,
+                          page * rowsPerPage + rowsPerPage,
+                        )
+                      : currentItems
+                    ).map((item) => (
+                      <TableRow
+                        key={item.name}
+                        sx={{
+                          '&:last-child td, &:last-child th': { border: 0 },
+                        }}
+                      >
+                        <TableCell component="td" scope="row">
+                          {item.name}{' '}
+                          {item.type === 'group' ? (
+                            <span style={{ fontWeight: 600 }}> (Group)</span>
+                          ) : (
+                            <></>
+                          )}
+                        </TableCell>
+                        <TableCell align="right">
+                          <Button
+                            variant="text"
+                            color="error"
+                            size="small"
+                            sx={{ fontWeight: '600' }}
+                            onClick={() => {
+                              setCurrentItems((prev) =>
+                                prev.filter((i) => i.name !== item.name),
                               );
-                            } else {
-                              setCurrentUserPermissions((prev) =>
-                                prev.filter((i) => i !== item.name),
-                              );
-                            }
-                          }}
-                        >
-                          Remove
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                  {emptyRows > 0 && (
-                    <TableRow style={{ height: 53 * emptyRows }}>
-                      <TableCell colSpan={5} />
-                    </TableRow>
-                  )}
-                </TableBody>
-                <TableFooter>
-                  <TableRow>
-                    <TablePagination
-                      colSpan={2}
-                      count={currentItems.length}
-                      rowsPerPage={rowsPerPage}
-                      rowsPerPageOptions={[
-                        5,
-                        10,
-                        25,
-                        { label: 'All', value: -1 },
-                      ]}
-                      page
-                      page={page}
-                      showFirstButton={false}
-                      showLastButton={false}
-                      width="500px"
-                      slotProps={{
-                        select: {
-                          inputProps: {
-                            'aria-label': 'rows per page',
-                            width: '500px',
+                              if (item.type === 'group') {
+                                setCurrentGroupPermissions((prev) =>
+                                  prev.filter((i) => i !== item.name),
+                                );
+                              } else {
+                                setCurrentUserPermissions((prev) =>
+                                  prev.filter((i) => i !== item.name),
+                                );
+                              }
+                            }}
+                          >
+                            Remove
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                  <TableFooter>
+                    <TableRow>
+                      <TablePagination
+                        colSpan={2}
+                        count={currentItems.length}
+                        rowsPerPage={rowsPerPage}
+                        rowsPerPageOptions={[
+                          5,
+                          10,
+                          25,
+                          { label: 'All', value: -1 },
+                        ]}
+                        page={page}
+                        showFirstButton={false}
+                        showLastButton={false}
+                        width="500px"
+                        slotProps={{
+                          select: {
+                            inputProps: {
+                              'aria-label': 'rows per page',
+                              width: '500px',
+                            },
+                            native: false,
                           },
-                          native: false,
-                        },
-                      }}
-                      onPageChange={handleChangePage}
-                      onRowsPerPageChange={handleChangeRowsPerPage}
-                      ActionsComponent={TablePaginationActions}
-                    />
-                  </TableRow>
-                </TableFooter>
-              </Table>
-            </TableContainer>
+                        }}
+                        onPageChange={handleChangePage}
+                        onRowsPerPageChange={handleChangeRowsPerPage}
+                        ActionsComponent={TablePaginationActions}
+                      />
+                    </TableRow>
+                  </TableFooter>
+                </Table>
+              </TableContainer>
+            </Paper>
           </Item>
         ) : (
           <></>
         )}
         <Item sx={{ pb: '16px' }}>
-          <Box component={Paper}>
-            <Stack direction="column">
-              <Item sx={{ pt: '8px' }}>
-                <FormControlLabel
-                  control={
-                    <Switch
-                      id="is_public"
-                      checked={isPublic}
-                      onChange={() => setIsPublic(!isPublic)}
-                    />
-                  }
-                  label="Public access"
-                  labelPlacement="start"
-                />
-              </Item>
-              <Item sx={{ px: '16px', pt: '16px', pb: '4px' }}>
-                <Box
-                  sx={{
-                    display: 'flex',
-                    flexDirection: 'row',
-                    gap: '8px',
-                    pb: '8px',
-                  }}
-                >
-                  {isPublic ? (
-                    <>
-                      <PublicRoundedIcon
-                        sx={{
-                          fontSize: '20px',
-                          position: 'relative',
-                          top: '1px',
-                        }}
+          <Box>
+            <Paper elevation={0}>
+              <Stack direction="column">
+                <Item sx={{ pt: '8px' }}>
+                  <FormControlLabel
+                    control={
+                      <Switch
+                        id="is_public"
+                        checked={isPublic}
+                        onChange={() => setIsPublic(!isPublic)}
                       />
-                      <Typography variant="body1">
-                        Link sharing public
-                      </Typography>
-                    </>
-                  ) : (
-                    <>
-                      <GroupRoundedIcon
-                        sx={{
-                          fontSize: '20px',
-                          position: 'relative',
-                          top: '1px',
-                        }}
-                      />
-                      <Typography variant="body1">
-                        Link sharing restricted
-                      </Typography>
-                    </>
-                  )}
-                </Box>
-              </Item>
-              <Item sx={{ pl: '16px', pb: '16px' }}>
-                {isPublic ? (
-                  <Typography variant="body2">
-                    This app is accessible to{' '}
-                    <Typography
-                      component="span"
-                      variant="body2"
-                      color="primary"
-                    >
-                      anyone via its link and sign in is not required.
-                    </Typography>
-                  </Typography>
-                ) : (
-                  <Typography variant="body2">
-                    This app is accessible to you and the people added above via
-                    its link.
-                  </Typography>
-                )}
-              </Item>
-              {url ? (
-                <Item sx={{ p: '16px', pt: 0 }}>
-                  <TextField
-                    id="sharing-link"
-                    placeholder="http://"
-                    aria-label="Sharing link"
-                    fullWidth
-                    InputProps={{
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <ClickAwayListener
-                            onClickAway={() => setTooltipOpen(false)}
-                          >
-                            <Tooltip
-                              PopperProps={{
-                                disablePortal: true,
-                              }}
-                              onClose={() => setTooltipOpen(false)}
-                              open={tooltipOpen}
-                              disableFocusListener
-                              disableHoverListener
-                              disableTouchListener
-                              title="Copied to clipboard!"
-                              placement="top"
-                            >
-                              <IconButton
-                                onClick={() => {
-                                  if (url) {
-                                    navigator.clipboard.writeText(
-                                      getFullAppUrl(url),
-                                    );
-                                    setTooltipOpen(true);
-                                  }
-                                }}
-                              >
-                                <ContentCopyRoundedIcon />
-                              </IconButton>
-                            </Tooltip>
-                          </ClickAwayListener>
-                        </InputAdornment>
-                      ),
-                    }}
-                    value={getFullAppUrl(url)}
+                    }
+                    label="Public access"
+                    labelPlacement="start"
                   />
                 </Item>
-              ) : (
-                <></>
-              )}
-            </Stack>
+                <Item sx={{ px: '16px', pt: '16px', pb: '4px' }}>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      flexDirection: 'row',
+                      gap: '8px',
+                      pb: '8px',
+                    }}
+                  >
+                    {isPublic ? (
+                      <>
+                        <PublicRoundedIcon
+                          sx={{
+                            fontSize: '20px',
+                            position: 'relative',
+                            top: '1px',
+                          }}
+                        />
+                        <Typography variant="body2">
+                          Link sharing public
+                        </Typography>
+                      </>
+                    ) : (
+                      <>
+                        <GroupRoundedIcon
+                          sx={{
+                            fontSize: '20px',
+                            position: 'relative',
+                            top: '1px',
+                          }}
+                        />
+                        <Typography variant="body2">
+                          Link sharing restricted
+                        </Typography>
+                      </>
+                    )}
+                  </Box>
+                </Item>
+                <Item sx={{ pl: '16px', pb: '16px' }}>
+                  {isPublic ? (
+                    <Typography variant="body2">
+                      This app is accessible to{' '}
+                      <Typography
+                        component="span"
+                        variant="body2"
+                        color="error"
+                      >
+                        anyone via its link and sign in is not required.
+                      </Typography>
+                    </Typography>
+                  ) : (
+                    <Typography variant="body2">
+                      This app is accessible to you and the people added above
+                      via its link.
+                    </Typography>
+                  )}
+                </Item>
+                {url ? (
+                  <Item sx={{ p: '16px', pt: 0 }}>
+                    <TextField
+                      id="sharing-link"
+                      placeholder="http://"
+                      aria-label="Sharing link"
+                      fullWidth
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <ClickAwayListener
+                              onClickAway={() => setTooltipOpen(false)}
+                            >
+                              <Tooltip
+                                PopperProps={{
+                                  disablePortal: true,
+                                }}
+                                onClose={() => setTooltipOpen(false)}
+                                open={tooltipOpen}
+                                disableFocusListener
+                                disableHoverListener
+                                disableTouchListener
+                                title="Copied to clipboard!"
+                                placement="top"
+                              >
+                                <IconButton
+                                  onClick={() => {
+                                    if (url) {
+                                      navigator.clipboard.writeText(
+                                        getFullAppUrl(url),
+                                      );
+                                      setTooltipOpen(true);
+                                    }
+                                  }}
+                                >
+                                  <ContentCopyRoundedIcon />
+                                </IconButton>
+                              </Tooltip>
+                            </ClickAwayListener>
+                          </InputAdornment>
+                        ),
+                      }}
+                      value={getFullAppUrl(url)}
+                    />
+                  </Item>
+                ) : (
+                  <></>
+                )}
+              </Stack>
+            </Paper>
           </Box>
         </Item>
       </Stack>
