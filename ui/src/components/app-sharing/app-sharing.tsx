@@ -424,12 +424,13 @@ export const AppSharing = ({
                       variant="body2"
                       color="primary"
                     >
-                      anyone with the link.
+                      anyone via its link and sign in is not required.
                     </Typography>
                   </Typography>
                 ) : (
                   <Typography variant="body2">
-                    This app is accessible to you and the people added above.
+                    This app is accessible to you and the people added above via
+                    its link.
                   </Typography>
                 )}
               </Item>
