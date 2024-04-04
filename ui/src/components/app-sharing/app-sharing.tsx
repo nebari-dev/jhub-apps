@@ -26,7 +26,6 @@ import {
   TextField,
   Tooltip,
   Typography,
-  useTheme,
 } from '@mui/material';
 import { SharePermissions } from '@src/types/api';
 import { AppSharingItem } from '@src/types/form';
@@ -49,7 +48,6 @@ interface TablePaginationActionsProps {
 }
 
 function TablePaginationActions(props: TablePaginationActionsProps) {
-  const theme = useTheme();
   const { count, page, rowsPerPage, onPageChange } = props;
 
   const handleBackButtonClick = (
@@ -70,23 +68,17 @@ function TablePaginationActions(props: TablePaginationActionsProps) {
         onClick={handleBackButtonClick}
         disabled={page === 0}
         aria-label="previous page"
+        data-testid="previous-page"
       >
-        {theme.direction === 'rtl' ? (
-          <KeyboardArrowRight />
-        ) : (
-          <KeyboardArrowLeft />
-        )}
+        <KeyboardArrowLeft />
       </IconButton>
       <IconButton
         onClick={handleNextButtonClick}
         disabled={page >= Math.ceil(count / rowsPerPage) - 1}
         aria-label="next page"
+        data-testid="next-page"
       >
-        {theme.direction === 'rtl' ? (
-          <KeyboardArrowLeft />
-        ) : (
-          <KeyboardArrowRight />
-        )}
+        <KeyboardArrowRight />
       </IconButton>
     </Box>
   );
@@ -120,7 +112,7 @@ export const AppSharing = ({
   const [currentShare, setCurrentShare] = useState<AppSharingItem[]>([]);
   const [currentItems, setCurrentItems] = useState<AppSharingItem[]>([]);
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage] = useState(5);
   const [selectedValue, setSelectedValue] = useState<AppSharingItem[]>([]);
 
   const handleShare = () => {
@@ -148,13 +140,6 @@ export const AppSharing = ({
     if (event) {
       setPage(newPage);
     }
-  };
-
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
   };
 
   // Get users and groups available to the current user
@@ -359,7 +344,6 @@ export const AppSharing = ({
                           },
                         }}
                         onPageChange={handleChangePage}
-                        onRowsPerPageChange={handleChangeRowsPerPage}
                         ActionsComponent={TablePaginationActions}
                       />
                     </TableRow>
@@ -379,7 +363,7 @@ export const AppSharing = ({
                   <FormControlLabel
                     control={
                       <Switch
-                        id="is_public"
+                        id="is-public"
                         checked={isPublic}
                         onChange={() => setIsPublic(!isPublic)}
                       />
@@ -471,8 +455,10 @@ export const AppSharing = ({
                                 placement="top"
                               >
                                 <IconButton
+                                  id="copy-to-clipboard"
                                   onClick={() => {
-                                    if (url) {
+                                    // istanbul ignore next
+                                    if (url && window.isSecureContext) {
                                       navigator.clipboard.writeText(
                                         getFullAppUrl(url),
                                       );

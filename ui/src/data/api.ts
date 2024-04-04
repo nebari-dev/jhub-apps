@@ -306,7 +306,7 @@ export const userState: UserState = {
   servers: [app],
   session_id: null,
   share_permissions: {
-    users: [],
-    groups: [],
+    users: ['admin'],
+    groups: ['developer', 'superadmin'],
   },
 };
