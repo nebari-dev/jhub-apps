@@ -91,6 +91,10 @@ export const ServerTypes = (): React.ReactElement => {
         custom_command: currentFormInput?.custom_command || '',
         profile: currentFormInput?.profile || '',
         public: currentFormInput?.is_public || false,
+        share_with: {
+          users: currentFormInput?.share_with.users || [],
+          groups: currentFormInput?.share_with.groups || [],
+        },
       },
     };
     setSubmitting(true);

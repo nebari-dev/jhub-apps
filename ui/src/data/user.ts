@@ -14,4 +14,8 @@ export const currentUser: UserState = {
   pending: null,
   kind: null,
   created: null,
+  share_permissions: {
+    users: ['alpha@example.com', 'admin', 'testuser', 'john@doe.com'],
+    groups: ['developer', 'superadmin'],
+  },
 };

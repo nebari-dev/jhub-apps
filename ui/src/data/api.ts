@@ -71,6 +71,10 @@ export const app: AppQueryGetProps = {
     profile: '',
     env: null,
     public: false,
+    share_with: {
+      users: [],
+      groups: [],
+    },
   },
   progress_url: '',
   state: {},
@@ -106,6 +110,10 @@ export const serverApps = {
         filepath: '/shared/users/panel_basic.py',
         env: null,
         public: true,
+        share_with: {
+          users: ['admin', 'john@doe.com'],
+          groups: ['developer', 'superadmin'],
+        },
       },
     },
     {
@@ -128,6 +136,10 @@ export const serverApps = {
         profile: 'small0',
         env: { key: 'value' },
         public: false,
+        share_with: {
+          users: [],
+          groups: [],
+        },
       },
     },
     {
@@ -150,6 +162,10 @@ export const serverApps = {
         profile: 'small0',
         env: null,
         public: false,
+        share_with: {
+          users: [],
+          groups: [],
+        },
       },
     },
     {
@@ -171,6 +187,10 @@ export const serverApps = {
         profile: 'small0',
         env: null,
         public: false,
+        share_with: {
+          users: [],
+          groups: [],
+        },
       },
     },
   ],
@@ -285,4 +305,8 @@ export const userState: UserState = {
   server: null,
   servers: [app],
   session_id: null,
+  share_permissions: {
+    users: [],
+    groups: [],
+  },
 };
