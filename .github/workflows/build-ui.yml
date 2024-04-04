@@ -19,7 +19,7 @@ jobs:
           ref: ${{ github.head_ref }}
           fetch-depth: 2
 
-      - name: Checkout default if not current repo
+      - name: Checkout default if not upstream repo
         if: github.event.pull_request.head.repo.full_name != github.repository
         uses: actions/checkout@v4.1.1
 
