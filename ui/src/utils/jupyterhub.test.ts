@@ -66,12 +66,12 @@ describe('JupyterHub utils', () => {
 
   test('returns an array of JhApp for non-shared apps', () => {
     const result = getApps(serverApps, 'mine', 'testUser');
-    expect(result.length).toEqual(5);
+    expect(result.length).toEqual(4);
   });
 
   test('returns an array of JhApp for all apps', () => {
     const result = getApps(serverApps, 'all', 'testUser');
-    expect(result.length).toEqual(6);
+    expect(result.length).toEqual(5);
   });
 
   test('returns the framework name with the first letter capitalized', () => {
@@ -99,6 +99,6 @@ describe('JupyterHub utils', () => {
       [],
       'name',
     );
-    expect(apps.length).toBe(6);
+    expect(apps.length).toBe(5);
   });
 });

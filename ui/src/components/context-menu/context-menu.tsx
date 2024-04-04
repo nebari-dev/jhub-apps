@@ -1,3 +1,4 @@
+import MoreHorizRoundedIcon from '@mui/icons-material/MoreHorizRounded';
 import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
@@ -37,26 +38,42 @@ export const ContextMenu = ({
   return (
     <div className="context-menu" id={id} tabIndex={0} ref={menuRef}>
       <Button
-        id="basic-button"
-        aria-controls={open ? 'basic-menu' : undefined}
+        id={`context-menu-button-${id}`}
+        data-testid={`context-menu-button-${id}`}
+        aria-controls={open ? `context-menu-${id}` : undefined}
         aria-haspopup="true"
         aria-expanded={open ? 'true' : undefined}
         onClick={handleClick}
       >
-        ...
+        <MoreHorizRoundedIcon
+          sx={{
+            fontSize: '24px',
+            position: 'relative',
+            top: '4px',
+            color: '#000000',
+          }}
+        />
       </Button>
       <Menu
-        id="basic-menu"
+        id={`context-menu-${id}`}
         anchorEl={anchorEl}
         open={open}
         onClose={handleClose}
+        anchorOrigin={{
+          vertical: 'top',
+          horizontal: 'left',
+        }}
+        transformOrigin={{
+          horizontal: 105,
+          vertical: -8,
+        }}
         sx={{
           '& .MuiPaper-root': {
             width: '151px',
           },
         }}
         MenuListProps={{
-          'aria-labelledby': 'basic-button',
+          'aria-labelledby': `context-menu-button-${id}`,
         }}
       >
         {items

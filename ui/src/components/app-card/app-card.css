@@ -18,9 +18,10 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  max-height: 130px;
-  min-height: 130px;
+  height: 130px;
+  padding: 33px 0;
   overflow: hidden;
+  background: linear-gradient(90deg, #fff 0%, #ece9e6 95.83%);
 }
 
 .card-content-header img {
@@ -29,7 +30,8 @@
   object-fit: contain;
 }
 
-.card-content-header .img-overlay {
+.card-content-header .img-overlay,
+.card-content-header .img-overlay-service {
   position: relative;
   display: inline-block;
 }
@@ -65,8 +67,8 @@
   position: absolute;
   display: flex;
   align-items: center;
-  left: 1rem !important;
-  top: 1rem !important;
+  left: 12px;
+  top: 12px;
 }
 
 .menu-chip {
@@ -74,6 +76,12 @@
 }
 
 /* Card content Hovering effect */
+.card-content-container:not(.no-hover) {
+  background: #fff;
+  position: relative;
+  overflow: hidden;
+}
+
 .card-content-container {
   background: #fff;
   position: relative;
@@ -83,12 +91,13 @@
   padding: 0px;
 }
 
+.card-content-container.app-service {
+  top: 15px;
+}
+
 .card-content-content .card-inner-content {
   position: relative;
   padding-top: 4px;
-}
-.card-content {
-  transition: transform 0.5s ease-in-out;
 }
 
 .card-title {
@@ -96,25 +105,19 @@
   overflow: hidden;
 }
 
-.card-title,
-.card-description,
 .card-author {
-  transition:
-    transform 0.5s ease-in-out,
-    opacity 0.5s ease-in-out;
+  letter-spacing: 0.4px;
 }
 
 .card-description {
   max-height: 0;
   opacity: 0;
-  transition:
-    max-height 0.5s ease-in-out,
-    opacity 0.5s ease-in-out;
+
   overflow: hidden;
 }
 
 /* Hover effects */
-.card-content-container:hover {
+.card-content-container:hover:not(.no-hover) {
   transform: translateY(-36%);
   background: #fff;
   height: 111px;
@@ -125,12 +128,9 @@
   max-height: 4rem;
 }
 
-.card-content-container:hover .card-author {
+.card-content-container:hover .card-author:not(.no-hover) {
   opacity: 0;
-  max-height: 0; /* You might not need this if .card-author doesn't need to hide */
-  transition:
-    opacity 0.5s ease-in-out,
-    max-height 0.5s ease-in-out;
+  max-height: 0;
 }
 
 .card-content-content .content {
@@ -141,7 +141,7 @@
   font-size: 1rem !important;
   position: relative;
   top: 3px;
-  margin-right: 5px;
+  margin-right: 8px;
 }
 
 .card-content-content .card-content-container .card-title {

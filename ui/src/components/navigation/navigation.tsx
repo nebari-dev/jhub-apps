@@ -21,12 +21,19 @@ import {
 } from '@mui/material';
 import { styled, useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import { JhService, JhServiceFull } from '@src/types/jupyterhub';
+import {
+  JhApp,
+  JhService,
+  JhServiceApp,
+  JhServiceFull,
+} from '@src/types/jupyterhub';
 import { UserState } from '@src/types/user';
 import axios from '@src/utils/axios';
-import { APP_BASE_URL } from '@src/utils/constants';
+import { APP_BASE_URL, DEFAULT_PINNED_SERVICES } from '@src/utils/constants';
 import {
   getAppLogoUrl,
+  getPinnedApps,
+  getPinnedServices,
   getServices,
   navigateToUrl,
 } from '@src/utils/jupyterhub';
@@ -59,12 +66,34 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
   const [, setCurrentNotification] = useRecoilState<string | undefined>(
     currentNotification,
   );
-  const [services, setServices] = useState<JhService[]>([]);
 
-  const { isLoading, error, data } = useQuery<
-    JhServiceFull[],
-    { message: string }
-  >({
+  const [services, setServices] = useState<JhService[]>([]);
+  const [pinnedApps, setPinnedApps] = useState<JhApp[]>([]);
+  const [pinnedServices, setPinnedServices] = useState<JhServiceApp[]>([]);
+
+  const {
+    isLoading: appsLoading,
+    error: appsError,
+    data: appsData,
+  } = useQuery<UserState, { message: string }>({
+    queryKey: ['app-state'],
+    queryFn: () =>
+      axios
+        .get(`/server/`)
+        .then((response) => {
+          return response.data;
+        })
+        .then((data) => {
+          return data;
+        }),
+    enabled: !!currentUser,
+  });
+
+  const {
+    isLoading: servicesLoading,
+    error: servicesError,
+    data: servicesData,
+  } = useQuery<JhServiceFull[], { message: string }>({
     queryKey: ['service-data'],
     queryFn: () =>
       axios
@@ -83,18 +112,34 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
   };
 
   useEffect(() => {
-    if (!isLoading && data && currentUser) {
-      setServices(() => getServices(data, currentUser.name));
+    if (!appsLoading && appsData && currentUser) {
+      setPinnedApps(() => getPinnedApps(appsData, currentUser.name));
     }
-  }, [isLoading, data, currentUser]);
+  }, [appsLoading, appsData, currentUser]);
 
   useEffect(() => {
-    if (error) {
-      setCurrentNotification(error.message);
+    if (!servicesLoading && servicesData && currentUser) {
+      setServices(() =>
+        getServices(servicesData, currentUser.name).filter(
+          (service: JhService) =>
+            !DEFAULT_PINNED_SERVICES.includes(service.name),
+        ),
+      );
+      setPinnedServices(() =>
+        getPinnedServices(servicesData, currentUser.name),
+      );
+    }
+  }, [servicesLoading, servicesData, currentUser]);
+
+  useEffect(() => {
+    if (servicesError) {
+      setCurrentNotification(servicesError.message);
+    } else if (appsError) {
+      setCurrentNotification(appsError.message);
     } else {
       setCurrentNotification(undefined);
     }
-  }, [error, setCurrentNotification]);
+  }, [servicesError, appsError, setCurrentNotification]);
 
   useEffect(() => {
     if (isMobileBreakpoint) {
@@ -118,30 +163,34 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
         </ListItemButton>
       </ListItem>
       <Divider />
-      {services.find((item) => item.pinned) ? (
-        <>
-          <List>
-            <ListItem disablePadding>
-              <StyledListItemTextHeader primary="Pinned" disableTypography />
+      <>
+        <List>
+          <ListItem disablePadding>
+            <StyledListItemTextHeader primary="Pinned" disableTypography />
+          </ListItem>
+          {pinnedApps.map((item, index) => (
+            <ListItem key={index} disablePadding>
+              <StyledListItemButton onClick={() => navigateToUrl(item.url)}>
+                <ListItemText primary={item.name} />
+                <ListItemIcon sx={{ minWidth: '32px' }}>
+                  <PushPinRoundedIcon fontSize="small" />
+                </ListItemIcon>
+              </StyledListItemButton>
             </ListItem>
-            {services
-              .filter((item) => item.pinned)
-              .map((item, index) => (
-                <ListItem key={index} disablePadding>
-                  <StyledListItemButton onClick={() => navigateToUrl(item.url)}>
-                    <ListItemText primary={item.name} />
-                    <ListItemIcon sx={{ minWidth: '32px' }}>
-                      <PushPinRoundedIcon />
-                    </ListItemIcon>
-                  </StyledListItemButton>
-                </ListItem>
-              ))}
-          </List>
-          <Divider />
-        </>
-      ) : (
-        <></>
-      )}
+          ))}
+          {pinnedServices.map((item, index) => (
+            <ListItem key={index} disablePadding>
+              <StyledListItemButton onClick={() => navigateToUrl(item.url)}>
+                <ListItemText primary={item.name} />
+                <ListItemIcon sx={{ minWidth: '32px' }}>
+                  <PushPinRoundedIcon fontSize="small" />
+                </ListItemIcon>
+              </StyledListItemButton>
+            </ListItem>
+          ))}
+        </List>
+        <Divider />
+      </>
       <List>
         <ListItem disablePadding>
           <StyledListItemTextHeader
@@ -222,16 +271,13 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
               >
                 Tokens
               </MenuItem>
-              {currentUser?.admin ? (
+              {currentUser?.admin && (
                 <MenuItem
                   onClick={() => navigateToUrl(`${APP_BASE_URL}/admin`)}
                 >
                   Admin
                 </MenuItem>
-              ) : (
-                <></>
               )}
-
               <MenuItem onClick={() => navigateToUrl(`${APP_BASE_URL}/logout`)}>
                 Logout
               </MenuItem>

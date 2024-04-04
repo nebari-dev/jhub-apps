@@ -27,7 +27,7 @@ describe('AppCard', () => {
           <AppCard
             id="1"
             title="Test App"
-            name="Developer"
+            username="Developer"
             framework="Some Framework"
             url="/some-url"
             ready={true}
@@ -46,7 +46,7 @@ describe('AppCard', () => {
           <AppCard
             id="1"
             title="Test App"
-            name="Developer"
+            username="Developer"
             framework="Some Framework"
             url="/some-url"
             ready={true}
@@ -60,6 +60,51 @@ describe('AppCard', () => {
     expect(appLabel).toHaveTextContent('Test App');
   });
 
+  test('renders default app card with no server status', async () => {
+    const { baseElement } = render(
+      <RecoilRoot>
+        <QueryClientProvider client={queryClient}>
+          <AppCard
+            id="1"
+            title="Test App"
+            username="Developer"
+            framework="Some Framework"
+            url="/some-url"
+            ready={true}
+            serverStatus=""
+          />
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+    expect(baseElement).toBeInTheDocument();
+    const appLabel = baseElement.querySelector('.MuiTypography-h5');
+    expect(appLabel).toHaveTextContent('Test App');
+  });
+
+  test('renders service card', async () => {
+    const { baseElement } = render(
+      <RecoilRoot>
+        <QueryClientProvider client={queryClient}>
+          <AppCard
+            id="1"
+            title="Test App"
+            username="Developer"
+            framework="Some Framework"
+            url="/some-url"
+            ready={true}
+            serverStatus="ready"
+            isAppCard={false}
+          />
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+    expect(baseElement).toBeInTheDocument();
+    const appLabel = baseElement.querySelector('.MuiTypography-h5');
+    expect(appLabel).toHaveTextContent('Test App');
+    const author = baseElement.querySelector('.MuiTypography-body2');
+    expect(author).not.toHaveTextContent('Developer');
+  });
+
   test('renders app card with thumbnail and description', () => {
     const { baseElement } = render(
       <RecoilRoot>
@@ -68,7 +113,7 @@ describe('AppCard', () => {
             id="1"
             title="Test App"
             description="Some app description"
-            name="Developer"
+            username="Developer"
             framework="Some Framework"
             url="/some-url"
             ready={true}
@@ -94,12 +139,12 @@ describe('AppCard', () => {
             id="1"
             title="Test App"
             description="Some app description"
-            name="Developer"
+            username="Developer"
             framework="Some Framework"
             url="/some-url"
             ready={true}
             thumbnail="/some-thumbnail.png"
-            serverStatus="ready"
+            serverStatus="Ready"
           />
         </QueryClientProvider>
       </RecoilRoot>,
@@ -136,12 +181,12 @@ describe('AppCard', () => {
             id="1"
             title="Test App"
             description="Some app description"
-            name="Developer"
+            username="Developer"
             framework="Some Framework"
             url="/some-url"
             ready={true}
             thumbnail="/some-thumbnail.png"
-            serverStatus="ready"
+            serverStatus="Ready"
           />
         </QueryClientProvider>
       </RecoilRoot>,
@@ -182,7 +227,7 @@ describe('AppCard', () => {
             id="1"
             title="Test App"
             description="Some app description"
-            name="Developer"
+            username="Developer"
             framework="Some Framework"
             url="/some-url"
             ready={true}
@@ -224,7 +269,7 @@ describe('AppCard', () => {
             id="1"
             title="Test App"
             description="Some app description"
-            name="Developer"
+            username="Developer"
             framework="Some Framework"
             url="/some-url"
             ready={true}
@@ -280,12 +325,12 @@ describe('AppCard', () => {
             id="1"
             title="Test App"
             description="Some app description"
-            name="Developer"
+            username="Developer"
             framework="Some Framework"
             url="/some-url"
             ready={true}
             thumbnail="/some-thumbnail.png"
-            serverStatus="ready"
+            serverStatus="Ready"
           />
         </QueryClientProvider>
       </RecoilRoot>,
@@ -320,12 +365,12 @@ describe('AppCard', () => {
             id="1"
             title="Test App"
             description="Some app description"
-            name="Developer"
+            username="Developer"
             framework="Some Framework"
             url="/some-url"
             ready={true}
             thumbnail="/some-thumbnail.png"
-            serverStatus="ready"
+            serverStatus="Ready"
           />
         </QueryClientProvider>
       </RecoilRoot>,
@@ -357,12 +402,12 @@ describe('AppCard', () => {
             id="1"
             title="Test App"
             description="Some app description"
-            name="Developer"
+            username="Developer"
             framework="Some Framework"
             url="/some-url"
             ready={true}
             thumbnail="/some-thumbnail.png"
-            serverStatus="ready"
+            serverStatus="Ready"
           />
         </QueryClientProvider>
       </RecoilRoot>,
@@ -399,12 +444,12 @@ describe('AppCard', () => {
             id="1"
             title="Test App"
             description="Some app description"
-            name="Developer"
+            username="Developer"
             framework="Some Framework"
             url="/some-url"
             ready={true}
             thumbnail="/some-thumbnail.png"
-            serverStatus="ready"
+            serverStatus="Ready"
           />
         </QueryClientProvider>
       </RecoilRoot>,
@@ -452,12 +497,12 @@ describe('AppCard', () => {
             id="1"
             title="Test App"
             description="Some app description"
-            name="Developer"
+            username="Developer"
             framework="Some Framework"
             url="/some-url"
             ready={true}
             thumbnail="/some-thumbnail.png"
-            serverStatus="ready"
+            serverStatus="Ready"
           />
         </QueryClientProvider>
       </RecoilRoot>,
@@ -493,7 +538,14 @@ describe('AppCard', () => {
     const { getByTestId } = render(
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
-          <AppCard isPublic={true} />
+          <AppCard
+            id="app-1"
+            title="app-1"
+            framework="panel"
+            serverStatus="running"
+            url="http://localhost:3000/app-1"
+            isPublic={true}
+          />
         </QueryClientProvider>
       </RecoilRoot>,
     );
@@ -504,7 +556,14 @@ describe('AppCard', () => {
     const { getByTestId } = render(
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
-          <AppCard isShared={true} />
+          <AppCard
+            id="app-1"
+            title="app-1"
+            framework="panel"
+            serverStatus="running"
+            url="http://localhost:3000/app-1"
+            isShared={true}
+          />
         </QueryClientProvider>
       </RecoilRoot>,
     );
@@ -515,7 +574,13 @@ describe('AppCard', () => {
     const { getByTestId } = render(
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
-          <AppCard />
+          <AppCard
+            id="app-1"
+            title="app-1"
+            framework="panel"
+            serverStatus="running"
+            url="http://localhost:3000/app-1"
+          />
         </QueryClientProvider>
       </RecoilRoot>,
     );

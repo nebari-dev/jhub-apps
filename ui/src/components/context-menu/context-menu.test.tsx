@@ -11,9 +11,11 @@ describe('ContextMenu', () => {
   });
 
   test('opens menu on button click', () => {
-    const { getByRole } = render(<ContextMenu id="menu-1" items={[]} />);
+    const { getByTestId, getByRole } = render(
+      <ContextMenu id="menu-1" items={[]} />,
+    );
     act(() => {
-      fireEvent.click(getByRole('button', { name: '...' }));
+      fireEvent.click(getByTestId('context-menu-button-menu-1'));
     });
     expect(getByRole('menu')).toBeVisible();
   });
@@ -24,20 +26,20 @@ describe('ContextMenu', () => {
       { id: 'item-2', title: 'Item 2', visible: false },
       { id: 'item-3', title: 'Item 3', visible: true },
     ];
-    const { getByRole, getAllByRole } = render(
+    const { getByTestId, getAllByRole } = render(
       <ContextMenu id="menu-1" items={items} />,
     );
-    fireEvent.click(getByRole('button', { name: '...' }));
+    fireEvent.click(getByTestId('context-menu-button-menu-1'));
     expect(getAllByRole('menuitem')).toHaveLength(2);
   });
 
   test('calls onClick when an enabled item is clicked', () => {
     const onClick = jest.fn();
     const items = [{ id: 'item-1', title: 'Item 1', visible: true, onClick }];
-    const { getByRole, getByText } = render(
+    const { getByTestId, getByText } = render(
       <ContextMenu id="menu-1" items={items} />,
     );
-    fireEvent.click(getByRole('button', { name: '...' }));
+    fireEvent.click(getByTestId('context-menu-button-menu-1'));
     fireEvent.click(getByText('Item 1'));
     expect(onClick).toHaveBeenCalled();
   });
@@ -47,10 +49,10 @@ describe('ContextMenu', () => {
     const items = [
       { id: 'item-1', title: 'Item 1', visible: true, disabled: true, onClick },
     ];
-    const { getByRole, getByText } = render(
+    const { getByTestId, getByText } = render(
       <ContextMenu id="menu-1" items={items} />,
     );
-    fireEvent.click(getByRole('button', { name: '...' }));
+    fireEvent.click(getByTestId('context-menu-button-menu-1'));
     fireEvent.click(getByText('Item 1'));
     expect(onClick).not.toHaveBeenCalled();
   });
@@ -58,10 +60,10 @@ describe('ContextMenu', () => {
   test('closes menu after item click', () => {
     const onClick = jest.fn();
     const items = [{ id: 'item-1', title: 'Item 1', visible: true, onClick }];
-    const { getByRole, getByText, queryByRole } = render(
+    const { getByText, queryByRole, getByTestId } = render(
       <ContextMenu id="menu-1" items={items} />,
     );
-    fireEvent.click(getByRole('button', { name: '...' }));
+    fireEvent.click(getByTestId('context-menu-button-menu-1'));
     fireEvent.click(getByText('Item 1'));
     expect(queryByRole('menu')).not.toBeInTheDocument();
   });

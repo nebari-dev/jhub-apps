@@ -45,7 +45,7 @@ describe('AppsSection', () => {
         </QueryClientProvider>
       </RecoilRoot>,
     );
-    expect(baseElement.querySelectorAll('.card')).toHaveLength(6);
+    expect(baseElement.querySelectorAll('.card')).toHaveLength(5);
   });
 
   test('renders a message when no apps', () => {

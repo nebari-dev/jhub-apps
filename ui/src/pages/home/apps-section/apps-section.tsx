@@ -72,14 +72,14 @@ export const AppsSection = (): React.ReactElement => {
 
   useEffect(() => {
     if (!isLoading && serverData) {
-      const appsWithStatus = getApps(
-        serverData,
-        'all',
-        currentUser?.name ?? '',
-      ).map((app) => ({
-        ...app,
-        status: getAppStatus(app), // Compute and assign the status here
-      }));
+      const appsWithStatus = getApps(serverData, 'all', currentUser?.name ?? '')
+        .map((app) => ({
+          ...app,
+          status: getAppStatus(app), // Compute and assign the status here
+        }))
+        .sort((a, b) => {
+          return a.last_activity > b.last_activity ? -1 : 1;
+        });
       setApps(appsWithStatus);
     }
   }, [isLoading, serverData, currentUser]);
