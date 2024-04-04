@@ -56,22 +56,23 @@ export const AppSharing = ({
   const [availablePermissions, setAvailablePermissions] = useState<
     AppSharingItem[]
   >([]);
-  const [currentShare, setCurrentShare] = useState('');
+  const [currentShare, setCurrentShare] = useState<AppSharingItem[]>([]);
   const [currentItems, setCurrentItems] = useState<AppSharingItem[]>([]);
 
   const handleShare = () => {
-    const currentShareName = currentShare.split(' ')[0];
-    if (currentShareName) {
-      const isGroup = currentShare.split(' ').length > 1;
-      setCurrentItems((prev) => [
-        ...prev,
-        { name: currentShareName, type: isGroup ? 'group' : 'user' },
-      ]);
-      if (isGroup) {
-        setCurrentGroupPermissions((prev) => [...prev, currentShareName]);
-      } else {
-        setCurrentUserPermissions((prev) => [...prev, currentShareName]);
-      }
+    if (currentShare.length > 0) {
+      const allItems = [...new Set([...currentItems, ...currentShare])];
+      setCurrentItems(allItems);
+      setCurrentGroupPermissions(() =>
+        allItems
+          .filter((item) => item.type === 'group')
+          .map((item) => item.name),
+      );
+      setCurrentUserPermissions(() =>
+        allItems
+          .filter((item) => item.type === 'user')
+          .map((item) => item.name),
+      );
     }
   };
 
@@ -156,6 +157,9 @@ export const AppSharing = ({
                     ? option.name
                     : `${option.name} (Group)`
                 }
+                multiple
+                disableCloseOnSelect
+                limitTags={2}
                 sx={{ width: 470 }}
                 renderInput={(params) => (
                   <TextField
@@ -163,7 +167,7 @@ export const AppSharing = ({
                     placeholder="Search one or more usernames or group names"
                   />
                 )}
-                onInputChange={(event, value) => {
+                onChange={(event, value) => {
                   if (event && value) {
                     setCurrentShare(value);
                   }
@@ -182,6 +186,7 @@ export const AppSharing = ({
                 color="primary"
                 onClick={handleShare}
                 disabled={!currentShare}
+                sx={{ height: '56px' }}
               >
                 Share
               </Button>
