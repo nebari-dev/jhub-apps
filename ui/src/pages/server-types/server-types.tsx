@@ -73,7 +73,6 @@ export const ServerTypes = (): React.ReactElement => {
       });
     }
   };
-
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const payload = {
@@ -87,7 +86,7 @@ export const ServerTypes = (): React.ReactElement => {
         thumbnail: currentFormInput?.thumbnail || '',
         filepath: currentFormInput?.filepath || '',
         conda_env: currentFormInput?.conda_env || '',
-        env: currentFormInput?.env || '',
+        env: currentFormInput?.env ? JSON.parse(currentFormInput.env) : null,
         custom_command: currentFormInput?.custom_command || '',
         profile: currentFormInput?.profile || '',
         public: currentFormInput?.is_public || false,
