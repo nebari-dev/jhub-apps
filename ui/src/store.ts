@@ -25,6 +25,11 @@ const currentNotification = atom<string | undefined>({
   default: undefined,
 });
 
+const currentServerName = atom<string | undefined>({
+  key: 'currentServerName',
+  default: undefined,
+});
+
 const currentFormInput = atom<AppFormInput | undefined>({
   key: 'currentFormInput',
   default: undefined,
@@ -69,6 +74,7 @@ export {
   currentNotification,
   currentOwnershipValue,
   currentSearchValue,
+  currentServerName,
   currentSortValue,
   currentUser,
 };
