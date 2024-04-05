@@ -141,7 +141,7 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
     if (profiles && profiles.length > 0) {
       const payload: AppFormInput = {
         jhub_app: true,
-        display_name: currentServerName || display_name,
+        display_name,
         description,
         framework,
         thumbnail,
