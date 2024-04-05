@@ -441,8 +441,16 @@ export const AppCard = ({
                     variant="h5"
                     component="div"
                     className="card-title"
+                    sx={{ position: 'relative', top: '5px' }}
                   >
-                    {title}
+                    <span
+                      className="card-content-truncate"
+                      style={{
+                        maxWidth: '165px',
+                      }}
+                    >
+                      {title}
+                    </span>
                   </Typography>
                   <Typography
                     variant="body2"
@@ -450,7 +458,14 @@ export const AppCard = ({
                     className={`card-author ${!description ? 'no-hover' : ''}`}
                     sx={{ mt: '5px' }}
                   >
-                    Created by {username}
+                    <span
+                      className="card-content-truncate"
+                      style={{
+                        maxWidth: '200px',
+                      }}
+                    >
+                      Created by {username}
+                    </span>
                   </Typography>
                   <Typography
                     variant="body2"
