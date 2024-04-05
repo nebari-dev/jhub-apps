@@ -22,6 +22,7 @@ import {
   currentFile as defaultFile,
   currentFormInput as defaultFormInput,
   currentImage as defaultImage,
+  currentServerName as defaultServerName,
   currentUser as defaultUser,
 } from '../../store';
 import './server-types.css';
@@ -35,6 +36,9 @@ export const ServerTypes = (): React.ReactElement => {
   const [currentFormInput, setCurrentFormInput] = useRecoilState<
     AppFormInput | undefined
   >(defaultFormInput);
+  const [currentServerName] = useRecoilState<string | undefined>(
+    defaultServerName,
+  );
   const [currentFile] = useRecoilState<File | undefined>(defaultFile);
   const [currentImage] = useRecoilState<string | undefined>(defaultImage);
   const [, setNotification] = useRecoilState<string | undefined>(
@@ -76,10 +80,10 @@ export const ServerTypes = (): React.ReactElement => {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const payload = {
-      servername: currentFormInput?.display_name || '',
+      servername: currentServerName || '',
       user_options: {
         jhub_app: true,
-        name: currentFormInput?.display_name || '',
+        name: currentServerName || '',
         display_name: currentFormInput?.display_name || '',
         description: currentFormInput?.description || '',
         framework: currentFormInput?.framework || '',
