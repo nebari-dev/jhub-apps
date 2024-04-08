@@ -85,6 +85,7 @@ class HubClient:
         logger.info("Creating new server", user=username)
         servername = self.normalize_server_name(servername)
         servername = f"{servername}-{uuid.uuid4().hex[:7]}"
+        logger.info("Normalized servername", servername=servername)
         return self._create_server(username, servername, user_options)
 
     def edit_server(self, username, servername, user_options=None):

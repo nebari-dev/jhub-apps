@@ -1,7 +1,13 @@
-import { JhApp, JhService, JhServiceFull } from '@src/types/jupyterhub';
+import { CONDA_STORE_LOGO, JUPYTER_LOGO, VSCODE_LOGO } from '@src/data/logos';
+import {
+  JhApp,
+  JhService,
+  JhServiceApp,
+  JhServiceFull,
+} from '@src/types/jupyterhub';
 import { JhData } from '@src/types/jupyterhub.ts';
 import { UserState } from '@src/types/user';
-import { DEFAULT_APP_THUMBNAIL, DEFAULT_PINNED_SERVICES } from './constants';
+import { DEFAULT_PINNED_SERVICES } from './constants';
 
 export const getJhData = (): JhData => {
   return window.jhdata;
@@ -25,6 +31,29 @@ export const getServices = (services: JhServiceFull[], user: string) => {
   return jhServices;
 };
 
+export const getPinnedServices = (
+  services: JhServiceFull[],
+  username: string,
+) => {
+  const jhServices = getServices(services, username);
+  const pinnedServices: JhServiceApp[] = [];
+  jhServices
+    .filter((service) => DEFAULT_PINNED_SERVICES.includes(service.name))
+    .forEach((service, index) => {
+      pinnedServices.push({
+        id: `service-${index}`,
+        name: service.name,
+        description: 'This is conda-store, your environments manager.',
+        framework: '',
+        url: service.url,
+        thumbnail: CONDA_STORE_LOGO,
+        username: username,
+        status: 'Ready',
+      });
+    });
+  return pinnedServices;
+};
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export const getApps = (
   servers: any,
@@ -45,30 +74,6 @@ export const getApps = (
     serverApps.push(
       ...servers.user_apps.map((server: any) => ({ ...server, shared: false })),
     );
-    // Add default app manually
-    const defaultApp = serverApps.find(
-      (app: any) => app.name === '' && !app.user_options?.jhub_app,
-    );
-
-    if (defaultApp) {
-      const appStatus = getAppStatus(defaultApp);
-      filteredApps.push({
-        id: '',
-        name: 'JupyterLab',
-        description: 'This is your default JupyterLab server.',
-        framework: 'JupyterLab',
-        url: defaultApp.url,
-        thumbnail: DEFAULT_APP_THUMBNAIL,
-        username: username,
-        ready: defaultApp.ready,
-        pending: defaultApp.pending,
-        stopped: defaultApp.stopped,
-        public: false,
-        shared: false,
-        last_activity: defaultApp.last_activity,
-        status: appStatus,
-      });
-    }
   }
 
   serverApps.forEach((server: any) => {
@@ -95,6 +100,42 @@ export const getApps = (
   });
 
   return filteredApps;
+};
+
+export const getPinnedApps = (servers: any, username: string) => {
+  const pinnedApps: JhApp[] = [];
+  const defaultApp = servers.user_apps.find(
+    (app: any) => app.name === '' && !app.user_options?.jhub_app,
+  );
+
+  if (defaultApp) {
+    const appStatus = getAppStatus(defaultApp);
+    const jupyterLabApp = {
+      id: '',
+      name: 'JupyterLab',
+      description: 'This is your default JupyterLab server.',
+      framework: 'JupyterLab',
+      url: `/hub/user/${username}/lab`,
+      thumbnail: JUPYTER_LOGO,
+      username: username,
+      ready: defaultApp.ready,
+      public: false,
+      shared: false,
+      last_activity: defaultApp.last_activity,
+      status: appStatus,
+    };
+    pinnedApps.push(jupyterLabApp);
+    pinnedApps.push({
+      ...jupyterLabApp,
+      id: 'vscode',
+      name: 'VSCode',
+      description: 'This is your default VSCode server.',
+      framework: 'VSCode',
+      url: `/hub/user/${username}/vscode`,
+      thumbnail: VSCODE_LOGO,
+    });
+  }
+  return pinnedApps;
 };
 
 export const getFriendlyFrameworkName = (framework: string) => {

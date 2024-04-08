@@ -1,13 +1,28 @@
 import typing
 from dataclasses import dataclass
 from enum import Enum
+from pathlib import Path
+
+HERE = Path(__file__).parent.parent.resolve()
+
+LOGO_BASE_PATH = "/services/japps/static/img/logos/",
+STATIC_PATH = HERE.joinpath("static/img/logos")
 
 
 @dataclass
 class FrameworkConf:
     name: str
     display_name: str
+    logo_path: Path
+    # logo url
     logo: str
+
+    def json(self):
+        return {
+            "name": self.name,
+            "display_name": self.display_name,
+            "logo": self.logo,
+        }
 
 
 @dataclass
@@ -42,42 +57,50 @@ FRAMEWORKS = [
     FrameworkConf(
         name=Framework.panel.value,
         display_name="Panel",
-        logo="/services/japps/static/img/logos/panel.png",
+        logo_path=STATIC_PATH.joinpath("panel.png"),
+        logo=f"{LOGO_BASE_PATH}/panel.png"
     ),
     FrameworkConf(
         name=Framework.bokeh.value,
         display_name="Bokeh",
-        logo="/services/japps/static/img/logos/bokeh.png",
+        logo_path=STATIC_PATH.joinpath("bokeh.png"),
+        logo=f"{LOGO_BASE_PATH}/bokeh.png"
     ),
     FrameworkConf(
         name=Framework.streamlit.value,
         display_name="Streamlit",
-        logo="/services/japps/static/img/logos/streamlit.png",
+        logo_path=STATIC_PATH.joinpath("streamlit.png"),
+        logo=f"{LOGO_BASE_PATH}/streamlit.png"
     ),
     FrameworkConf(
         name=Framework.voila.value,
         display_name="Voila",
-        logo="/services/japps/static/img/logos/voila.png",
+        logo_path=STATIC_PATH.joinpath("voila.png"),
+        logo=f"{LOGO_BASE_PATH}/voila.png"
     ),
     FrameworkConf(
         name=Framework.plotlydash.value,
         display_name="PlotlyDash",
-        logo="/services/japps/static/img/logos/plotly-dash.png",
+        logo_path=STATIC_PATH.joinpath("plotly-dash.png"),
+        logo=f"{LOGO_BASE_PATH}/plotly-dash.png"
     ),
     FrameworkConf(
         name=Framework.gradio.value,
         display_name="Gradio",
-        logo="/services/japps/static/img/logos/gradio.png",
+        logo_path=STATIC_PATH.joinpath("gradio.png"),
+        logo=f"{LOGO_BASE_PATH}/gradio.png"
     ),
     # FrameworkConf(
     #     name=Framework.jupyterlab.value,
     #     display_name="JupyterLab",
-    #     logo="https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Jupyter_logo.svg/1200px-Jupyter_logo.svg.png",
+    #     logo_path="",
+    #     logo="",
     # ),
     FrameworkConf(
         name=Framework.custom.value,
         display_name="Custom Command",
-        logo="/services/japps/static/img/logos/jupyter.png",
+        logo_path=STATIC_PATH.joinpath("custom.png"),
+        logo=f"{LOGO_BASE_PATH}/custom.png"
     ),
 ]
 

@@ -22,6 +22,7 @@ import {
   currentFile as defaultFile,
   currentFormInput as defaultFormInput,
   currentImage as defaultImage,
+  currentServerName as defaultServerName,
   currentUser as defaultUser,
 } from '../../store';
 import './server-types.css';
@@ -35,6 +36,9 @@ export const ServerTypes = (): React.ReactElement => {
   const [currentFormInput, setCurrentFormInput] = useRecoilState<
     AppFormInput | undefined
   >(defaultFormInput);
+  const [currentServerName] = useRecoilState<string | undefined>(
+    defaultServerName,
+  );
   const [currentFile] = useRecoilState<File | undefined>(defaultFile);
   const [currentImage] = useRecoilState<string | undefined>(defaultImage);
   const [, setNotification] = useRecoilState<string | undefined>(
@@ -73,21 +77,21 @@ export const ServerTypes = (): React.ReactElement => {
       });
     }
   };
-
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    const displayName = currentFormInput?.display_name || '';
     const payload = {
-      servername: currentFormInput?.display_name || '',
+      servername: currentServerName || displayName,
       user_options: {
         jhub_app: true,
-        name: currentFormInput?.display_name || '',
+        name: currentServerName || displayName,
         display_name: currentFormInput?.display_name || '',
         description: currentFormInput?.description || '',
         framework: currentFormInput?.framework || '',
         thumbnail: currentFormInput?.thumbnail || '',
         filepath: currentFormInput?.filepath || '',
         conda_env: currentFormInput?.conda_env || '',
-        env: currentFormInput?.env || '',
+        env: currentFormInput?.env ? JSON.parse(currentFormInput.env) : null,
         custom_command: currentFormInput?.custom_command || '',
         profile: currentFormInput?.profile || '',
         public: currentFormInput?.is_public || false,
@@ -98,6 +102,7 @@ export const ServerTypes = (): React.ReactElement => {
       updateQuery(payload, {
         onSuccess: async () => {
           queryClient.invalidateQueries({ queryKey: ['app-state'] });
+          window.location.assign(APP_BASE_URL);
         },
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         onError: async (error: any) => {
