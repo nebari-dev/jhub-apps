@@ -1,6 +1,7 @@
 import re
 import uuid
 
+import pytest
 import structlog
 from playwright.sync_api import Playwright, expect
 
@@ -29,7 +30,12 @@ def test_jupyterhub_loading(playwright: Playwright):
     context.close()
 
 
-def test_panel_app_creation(playwright: Playwright) -> None:
+@pytest.mark.parametrize(
+    ("with_server_options", ), [
+        pytest.param(True, marks=pytest.mark.with_server_options),
+    ]
+)
+def test_panel_app_creation(playwright: Playwright, with_server_options) -> None:
     browser, context, page = get_page(playwright)
     framework = Framework.panel.value
     app_suffix = uuid.uuid4().hex[:6]
@@ -39,7 +45,7 @@ def test_panel_app_creation(playwright: Playwright) -> None:
     try:
         page.goto(BASE_URL)
         sign_in_and_authorize(app_suffix, page)
-        create_app(app_name, page)
+        create_app(app_name, page, with_server_options)
         wait_for_element_in_app = "div.bk-slider-title >> text=Slider:"
         slider_text_element = page.wait_for_selector(wait_for_element_in_app)
         assert slider_text_element is not None, "Slider text element not found!"
