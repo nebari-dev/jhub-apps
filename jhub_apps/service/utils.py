@@ -115,22 +115,10 @@ def encode_file_to_data_url(filename, file_contents):
 
 def get_default_thumbnail(framework_name):
     framework: FrameworkConf = FRAMEWORKS_MAPPING.get(framework_name)
-    thumbnail_url = framework.logo
-    if thumbnail_url.startswith("/"):
-        base_url = os.environ["PUBLIC_HOST"]
-        thumbnail_url = f"{base_url}{thumbnail_url}"
-    try:
-        logger.info("Fetching thumbnail from url", url=thumbnail_url)
-        response = requests.get(thumbnail_url)
-    except Exception as e:
-        logger.info(f"Unable to fetch thumbnail from url: {thumbnail_url}:")
-        logger.exception(e)
-        return
-    if response.status_code == 200:
-        logger.info("Found thumbnail", response=response)
-        thumbnail_content = response.content
-        thumbnail_filename = thumbnail_url.split("/")[-1]
-        return encode_file_to_data_url(filename=thumbnail_filename, file_contents=thumbnail_content)
+    thumbnail_path = framework.logo
+    return encode_file_to_data_url(
+        filename=thumbnail_path.name, file_contents=thumbnail_path.read_bytes()
+    )
 
 
 async def get_thumbnail_data_url(framework_name, thumbnail):
