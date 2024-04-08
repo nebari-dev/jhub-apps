@@ -33,6 +33,7 @@ def test_jupyterhub_loading(playwright: Playwright):
 @pytest.mark.parametrize(
     ("with_server_options", ), [
         pytest.param(True, marks=pytest.mark.with_server_options),
+        pytest.param(False),
     ]
 )
 def test_panel_app_creation(playwright: Playwright, with_server_options) -> None:
@@ -69,11 +70,15 @@ def create_app(app_name, page, with_server_options=True):
     page.get_by_role("option", name="Panel").click()
     if with_server_options:
         logger.info("Selecting Server options")
-        page.get_by_role("button", name="Next").click()
-        page.url.endswith('server-types')
+        next_page_locator = page.get_by_role("button", name="Next")
+        expect(next_page_locator).to_be_visible()
+        next_page_locator.click()
+        assert page.url.endswith('server-types')
         page.get_by_label("Small Instance").check()
     logger.info("Click Submit")
-    page.get_by_role("button", name="Create App").click()
+    create_app_locator = page.get_by_role("button", name="Create App")
+    expect(create_app_locator).to_be_visible()
+    create_app_locator.click()
 
 
 def sign_in_and_authorize(app_suffix, page):
