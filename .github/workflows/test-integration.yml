@@ -82,14 +82,14 @@ jobs:
       if: always()
       uses: actions/upload-artifact@v4.3.0
       with:
-        name: ${{ matrix.os }}-playwright-videos
+        name: ${{ matrix.os }}-${{ matrix.test_type }}-playwright-videos
         path: videos
 
     - name: Upload JupyterHub logs
       if: always()
       uses: actions/upload-artifact@v4.3.0
       with:
-        name: ${{ matrix.os }}-jupyterhub-logs
+        name: ${{ matrix.os }}-${{ matrix.test_type }}-jupyterhub-logs
         path: jupyterhub-logs.txt
 
     - name: JupyterHub logs
