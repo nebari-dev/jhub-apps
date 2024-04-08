@@ -71,7 +71,7 @@ export const ContextMenu = ({
           horizontal: 'left',
         }}
         transformOrigin={{
-          horizontal: 105,
+          horizontal: 134,
           vertical: -8,
         }}
         sx={{
