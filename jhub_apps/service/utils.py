@@ -114,7 +114,7 @@ def encode_file_to_data_url(filename, file_contents):
 
 def get_default_thumbnail(framework_name):
     framework: FrameworkConf = FRAMEWORKS_MAPPING.get(framework_name)
-    thumbnail_path = framework.logo
+    thumbnail_path = framework.logo_path
     return encode_file_to_data_url(
         filename=thumbnail_path.name, file_contents=thumbnail_path.read_bytes()
     )
@@ -130,7 +130,11 @@ async def get_thumbnail_data_url(framework_name, thumbnail):
         )
     else:
         logger.info("Getting default thumbnail")
-        thumbnail_data_url = get_default_thumbnail(framework_name)
+        framework: FrameworkConf = FRAMEWORKS_MAPPING.get(framework_name)
+        thumbnail_path = framework.logo_path
+        thumbnail_data_url = encode_file_to_data_url(
+            filename=thumbnail_path.name, file_contents=thumbnail_path.read_bytes()
+        )
     return thumbnail_data_url
 
 
