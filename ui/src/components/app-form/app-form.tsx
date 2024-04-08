@@ -281,7 +281,6 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
   useEffect(() => {
     // istanbul ignore next
     if (currentFormInput) {
-      setCurrentServerName(currentFormInput.display_name);
       reset({
         display_name: currentFormInput.display_name || '',
         description: currentFormInput.description || '',
