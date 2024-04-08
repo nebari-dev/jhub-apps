@@ -95,7 +95,3 @@ jobs:
     - name: JupyterHub logs
       if: always()
       run: cat jupyterhub-logs.txt
-
-    - name: Debugging with tmate
-      if: always()
-      uses: mxschmitt/action-tmate@v3.17
