@@ -5,7 +5,6 @@ import os
 from cachetools import cached, TTLCache
 from unittest.mock import Mock
 
-import requests
 from jupyterhub.app import JupyterHub
 from traitlets.config import LazyConfigValue
 
