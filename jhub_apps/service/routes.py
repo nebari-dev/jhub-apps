@@ -163,7 +163,9 @@ async def create_server(
     thumbnail: typing.Optional[UploadFile] = File(None),
     user: User = Depends(get_current_user),
 ):
-    logger.info("Creating server", server_name=server.servername, user=user.name)
+    # server.servername is not necessary to supply for create server
+    server_name = server.user_options.display_name
+    logger.info("Creating server", server_name=server_name, user=user.name)
     server.user_options.thumbnail = await get_thumbnail_data_url(
         framework_name=server.user_options.framework, thumbnail=thumbnail
     )

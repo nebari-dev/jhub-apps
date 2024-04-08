@@ -1,7 +1,6 @@
 name: Test Integration
 
 on:
-  push:
   pull_request:
 
 jobs:
