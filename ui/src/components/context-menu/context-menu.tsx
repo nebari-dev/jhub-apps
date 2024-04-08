@@ -1,7 +1,10 @@
 import MoreHorizRoundedIcon from '@mui/icons-material/MoreHorizRounded';
+import { Divider } from '@mui/material';
 import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
+import { useTheme } from '@mui/material/styles';
+import { getFriendlyDateStr } from '@src/utils/jupyterhub';
 import * as React from 'react';
 import './context-menu.css';
 export interface ContextMenuItem {
@@ -9,20 +12,24 @@ export interface ContextMenuItem {
   title: string;
   disabled?: boolean;
   visible?: boolean;
+  danger?: boolean;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onClick?: (event: React.MouseEvent<any, MouseEvent>) => void;
 }
 
 export interface ContextMenuProps {
   id: string;
+  lastModified?: Date;
   items: ContextMenuItem[];
   sx?: object;
 }
 
 export const ContextMenu = ({
   id,
+  lastModified,
   items,
 }: ContextMenuProps): React.ReactElement => {
+  const theme = useTheme();
   const menuRef = React.useRef<HTMLDivElement>(null);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -69,19 +76,33 @@ export const ContextMenu = ({
         }}
         sx={{
           '& .MuiPaper-root': {
-            width: '151px',
+            width: '180px',
           },
         }}
         MenuListProps={{
           'aria-labelledby': `context-menu-button-${id}`,
         }}
       >
+        {lastModified && (
+          <MenuItem
+            sx={{
+              fontSize: '12px',
+              color: theme.palette.text.secondary,
+            }}
+          >
+            {`Modified ${getFriendlyDateStr(lastModified)}`}
+          </MenuItem>
+        )}
+        {lastModified && <Divider />}
         {items
           .filter((item) => item.visible)
           .map((item) => (
             <MenuItem
               key={`menu-item-${item.id}`}
-              sx={{ fontSize: '12px' }}
+              sx={{
+                fontSize: '12px',
+                color: item.danger ? theme.palette.error.main : 'inherit',
+              }}
               onClick={(e) => {
                 if (!item.disabled && item.onClick) {
                   item.onClick(e);
