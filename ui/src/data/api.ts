@@ -278,7 +278,7 @@ export const userState: UserState = {
   groups: ['group1', 'group2'],
   kind: 'user',
   last_activity: null,
-  name: 'test',
+  name: 'Longwaithe Dickenson',
   pending: null,
   roles: ['role1', 'role2'],
   scopes: ['scope1', 'scope2'],
