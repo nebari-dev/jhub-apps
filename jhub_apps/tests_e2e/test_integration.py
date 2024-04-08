@@ -69,15 +69,20 @@ def create_app(app_name, page, with_server_options=True):
     page.locator("id=framework").click()
     page.get_by_role("option", name="Panel").click()
     if with_server_options:
-        logger.info("Selecting Server options")
         next_page_locator = page.get_by_role("button", name="Next")
+        logger.info("Select Next Page for Server options")
         expect(next_page_locator).to_be_visible()
         next_page_locator.click()
         assert page.url.endswith('server-types')
-        page.get_by_label("Small Instance").check()
-    logger.info("Click Submit")
+        small_instance_radio_button = page.get_by_label("Small Instance")
+        logger.info("Expect Small Instance to be visible")
+        expect(small_instance_radio_button).to_be_visible()
+        small_instance_radio_button.check()
+
     create_app_locator = page.get_by_role("button", name="Create App")
+    logger.info("Expect Create App button to be visible")
     expect(create_app_locator).to_be_visible()
+    logger.info("Click Create App")
     create_app_locator.click()
 
 
