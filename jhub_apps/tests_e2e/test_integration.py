@@ -36,27 +36,11 @@ def test_panel_app_creation(playwright: Playwright) -> None:
     # for searching app with unique name in the UI
     app_name = f"{framework} app {app_suffix}"
     app_page_title = "Panel Test App"
-    wait_for_element_in_app = "div.bk-slider-title >> text=Slider:"
     try:
         page.goto(BASE_URL)
-        logger.info("Signing in")
-        page.get_by_label("Username:").click()
-        page.get_by_label("Username:").fill(f"admin-{app_suffix}")
-        page.get_by_label("Password:").fill("admin")
-        logger.info("Pressing Sign in button")
-        page.get_by_role("button", name="Sign in").click()
-        logger.info("Click Authorize button")
-        page.get_by_role("button", name="Authorize").click()
-        logger.info("Creating App")
-        page.get_by_role("button", name="Create App").click()
-        logger.info("Fill App display Name")
-        page.get_by_label("Name *").click()
-        page.get_by_label("Name *").fill(app_name)
-        logger.info("Select Framework")
-        page.locator("id=framework").click()
-        page.get_by_role("option", name="Panel").click()
-        logger.info("Click Submit")
-        page.get_by_role("button", name="Create App").click()
+        sign_in_and_authorize(app_suffix, page)
+        create_app(app_name, page)
+        wait_for_element_in_app = "div.bk-slider-title >> text=Slider:"
         slider_text_element = page.wait_for_selector(wait_for_element_in_app)
         assert slider_text_element is not None, "Slider text element not found!"
         logger.info("Checking page title")
@@ -66,3 +50,32 @@ def test_panel_app_creation(playwright: Playwright) -> None:
         context.close()
         browser.close()
         raise e
+
+
+def create_app(app_name, page, with_server_options=True):
+    logger.info("Creating App")
+    page.get_by_role("button", name="Create App").click()
+    logger.info("Fill App display Name")
+    page.get_by_label("Name *").click()
+    page.get_by_label("Name *").fill(app_name)
+    logger.info("Select Framework")
+    page.locator("id=framework").click()
+    page.get_by_role("option", name="Panel").click()
+    if with_server_options:
+        logger.info("Selecting Server options")
+        page.get_by_role("button", name="Next").click()
+        page.url.endswith('server-types')
+        page.get_by_label("Small Instance").check()
+    logger.info("Click Submit")
+    page.get_by_role("button", name="Create App").click()
+
+
+def sign_in_and_authorize(app_suffix, page):
+    logger.info("Signing in")
+    page.get_by_label("Username:").click()
+    page.get_by_label("Username:").fill(f"admin-{app_suffix}")
+    page.get_by_label("Password:").fill("admin")
+    logger.info("Pressing Sign in button")
+    page.get_by_role("button", name="Sign in").click()
+    logger.info("Click Authorize button")
+    page.get_by_role("button", name="Authorize").click()

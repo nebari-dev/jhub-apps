@@ -17,6 +17,18 @@ c.JAppsConfig.jupyterhub_config_path = "jupyterhub_config.py"
 c.JAppsConfig.conda_envs = []
 c.JAppsConfig.service_workers = 4
 c.JupyterHub.default_url = "/hub/home"
+c.KubeSpawner.profile_list = [
+    {
+        "description": "Stable environment with 0.5-1 cpu / 0.5-1 GB ram",
+        "display_name": "Micro Instance",
+        "slug": "micro-instance"
+    },
+    {
+        "description": "Stable environment with 1 cpu / 1 GB ram",
+        "display_name": "Small Instance",
+        "slug": "small-instance"
+    },
+]
 
 c = install_jhub_apps(c, spawner_to_subclass=SimpleLocalProcessSpawner)
 
