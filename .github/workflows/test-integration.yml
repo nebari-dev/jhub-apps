@@ -16,7 +16,8 @@ jobs:
         python-version:
           - "3.9"
         test_type:
-          - tests_e2e
+          - "with_server_options"
+          - "not with_server_options"
         os:
           - ubuntu-latest
     steps:
@@ -37,8 +38,26 @@ jobs:
     - name: Install chp
       run: npm install -g configurable-http-proxy
 
+    - name: Add server options if with server types
+      if: matrix.test_type == 'with_server_options'
+      run: |
+        cat >> jupyterhub_config.py <<- EOM
+        c.KubeSpawner.profile_list = [
+            {
+                "description": "Stable environment with 0.5-1 cpu / 0.5-1 GB ram",
+                "display_name": "Micro Instance",
+                "slug": "micro-instance"
+            },
+            {
+                "description": "Stable environment with 1 cpu / 1 GB ram",
+                "display_name": "Small Instance",
+                "slug": "small-instance"
+            },
+        ]
+        EOM
+        cat jupyterhub_config.py
+
     - name: Start JupyterHub on Ubuntu
-      if: matrix.test_type == 'tests_e2e' &&  matrix.os == 'ubuntu-latest'
       run: |
         nohup jupyterhub -f jupyterhub_config.py > jupyterhub-logs.txt 2>&1 &
         # Give it some to time to start properly
@@ -48,30 +67,29 @@ jobs:
         cat jupyterhub-logs.txt
 
     - name: Install Playwright
-      if: matrix.test_type == 'tests_e2e'
       run: |
         pip install pytest-playwright
 
     - name: Install Playwright Browser
-      if: matrix.test_type == 'tests_e2e'
       run: |
         playwright install
+
     - name: Run Tests
       run: |
-        pytest jhub_apps/${{ matrix.test_type }} -vvv
+        pytest jhub_apps/tests_e2e/ -vvv -m "${{ matrix.test_type }}"
 
     - name: Upload Playwright Videos
-      if: matrix.test_type == 'tests_e2e' && always()
+      if: always()
       uses: actions/upload-artifact@v4.3.0
       with:
-        name: ${{ matrix.os }}-playwright-videos
+        name: ${{ matrix.os }}-${{ matrix.test_type }}-playwright-videos
         path: videos
 
     - name: Upload JupyterHub logs
-      if: matrix.test_type == 'tests_e2e' && always()
+      if: always()
       uses: actions/upload-artifact@v4.3.0
       with:
-        name: ${{ matrix.os }}-jupyterhub-logs
+        name: ${{ matrix.os }}-${{ matrix.test_type }}-jupyterhub-logs
         path: jupyterhub-logs.txt
 
     - name: JupyterHub logs

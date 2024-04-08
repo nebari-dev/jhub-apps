@@ -1,4 +1,3 @@
-import dataclasses
 import os
 import typing
 from datetime import timedelta
@@ -256,7 +255,7 @@ async def get_frameworks(user: User = Depends(get_current_user)):
     logger.info("Getting all the frameworks")
     frameworks = []
     for framework in FRAMEWORKS:
-        frameworks.append(dataclasses.asdict(framework))
+        frameworks.append(framework.json())
     return frameworks
 
 
