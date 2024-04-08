@@ -179,7 +179,7 @@ export const serverApps = {
       user_options: {
         name: 'test-app-4',
         jhub_app: true,
-        display_name: 'Test App 4',
+        display_name: 'App with a long name that should be truncated',
         description: '',
         thumbnail: DEFAULT_APP_LOGO,
         framework: 'streamlit',

@@ -28,6 +28,7 @@ import {
   currentFile as defaultFile,
   currentFormInput as defaultFormInput,
   currentImage as defaultImage,
+  currentServerName as defaultServerName,
   currentUser as defaultUser,
 } from '../../store';
 import './app-form.css';
@@ -46,7 +47,9 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
   const [currentFormInput, setCurrentFormInput] = useRecoilState<
     AppFormInput | undefined
   >(defaultFormInput);
-  const [name, setName] = useState('');
+  const [currentServerName, setCurrentServerName] = useRecoilState<
+    string | undefined
+  >(defaultServerName);
   const [currentFile, setCurrentFile] = useRecoilState<File | undefined>(
     defaultFile,
   );
@@ -142,7 +145,7 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
     if (profiles && profiles.length > 0) {
       const payload: AppFormInput = {
         jhub_app: true,
-        display_name: name || display_name,
+        display_name,
         description,
         framework,
         thumbnail,
@@ -161,10 +164,10 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
       navigate(`/server-types${id ? `?id=${id}` : ''}`);
     } else {
       const payload = {
-        servername: name || display_name,
+        servername: currentServerName || display_name,
         user_options: {
           jhub_app: true,
-          name: name || display_name,
+          name: currentServerName || display_name,
           display_name,
           description: description || '',
           framework,
@@ -268,7 +271,7 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
   // Populate form with existing app data
   useEffect(() => {
     if (formData?.name && formData?.user_options) {
-      setName(formData.name);
+      setCurrentServerName(formData.name);
       reset({
         ...formData.user_options,
         env: formData.user_options.env
@@ -280,13 +283,18 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
       setCurrentUserPermissions(formData.user_options.share_with.users);
       setCurrentGroupPermissions(formData.user_options.share_with.groups);
     }
-  }, [formData?.name, formData?.user_options, reset, setCurrentImage]);
+  }, [
+    formData?.name,
+    formData?.user_options,
+    reset,
+    setCurrentImage,
+    setCurrentServerName,
+  ]);
 
   // Populate form when returning from server-types page
   useEffect(() => {
     // istanbul ignore next
     if (currentFormInput) {
-      setName(currentFormInput.display_name);
       reset({
         display_name: currentFormInput.display_name || '',
         description: currentFormInput.description || '',
@@ -304,7 +312,7 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
       setCurrentUserPermissions(currentFormInput.share_with.users);
       setCurrentGroupPermissions(currentFormInput.share_with.groups);
     }
-  }, [currentFormInput, reset, setCurrentImage]);
+  }, [currentFormInput, reset, setCurrentImage, setCurrentServerName]);
 
   useEffect(() => {
     if (formError) {
