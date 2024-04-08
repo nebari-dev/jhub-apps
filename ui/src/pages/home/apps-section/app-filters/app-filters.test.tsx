@@ -29,6 +29,10 @@ describe('AppFilters', () => {
             data={serverApps}
             currentUser={userState}
             setApps={jest.fn()}
+            isGridViewActive={false}
+            toggleView={function (): void {
+              throw new Error('Function not implemented.');
+            }}
           />
         </QueryClientProvider>
       </RecoilRoot>,
@@ -41,7 +45,15 @@ describe('AppFilters', () => {
     const { baseElement } = render(
       <RecoilRoot initializeState={({ set }) => set(defaultUser, currentUser)}>
         <QueryClientProvider client={queryClient}>
-          <AppFilters data={serverApps} currentUser={userState} setApps={spy} />
+          <AppFilters
+            data={serverApps}
+            currentUser={userState}
+            setApps={spy}
+            isGridViewActive={false}
+            toggleView={function (): void {
+              throw new Error('Function not implemented.');
+            }}
+          />
         </QueryClientProvider>
       </RecoilRoot>,
     );
@@ -109,7 +121,15 @@ describe('AppFilters', () => {
     const { baseElement } = render(
       <RecoilRoot initializeState={({ set }) => set(defaultUser, currentUser)}>
         <QueryClientProvider client={queryClient}>
-          <AppFilters data={serverApps} currentUser={userState} setApps={spy} />
+          <AppFilters
+            data={serverApps}
+            currentUser={userState}
+            setApps={spy}
+            isGridViewActive={false}
+            toggleView={function (): void {
+              throw new Error('Function not implemented.');
+            }}
+          />
         </QueryClientProvider>
       </RecoilRoot>,
     );
@@ -165,7 +185,15 @@ describe('AppFilters', () => {
     const { baseElement } = render(
       <RecoilRoot initializeState={({ set }) => set(defaultUser, currentUser)}>
         <QueryClientProvider client={queryClient}>
-          <AppFilters data={serverApps} currentUser={userState} setApps={spy} />
+          <AppFilters
+            data={serverApps}
+            currentUser={userState}
+            setApps={spy}
+            isGridViewActive={false}
+            toggleView={function (): void {
+              throw new Error('Function not implemented.');
+            }}
+          />
         </QueryClientProvider>
       </RecoilRoot>,
     );

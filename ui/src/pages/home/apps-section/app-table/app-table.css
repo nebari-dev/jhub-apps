@@ -1,0 +1,33 @@
+.icon-button {
+  padding: 0 20px !important;
+}
+
+.icon-text {
+  padding-left: 1rem;
+  position: relative;
+  top: 2px;
+}
+.actions {
+  padding: 0;
+}
+.actions .action-button {
+  min-width: 0px;
+  padding: 0px 24px;
+
+  &:hover {
+    background-color: transparent;
+  }
+}
+.actions button.button-icon {
+  min-width: 0px !important;
+  &:hover {
+    background-color: transparent;
+  }
+}
+
+.truncate {
+  width: 140px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

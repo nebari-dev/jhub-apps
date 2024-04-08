@@ -23,18 +23,20 @@ import {
 import { Item } from '../../../styles/styled-item';
 import { AppFilters } from './app-filters/app-filters';
 import { AppGrid } from './app-grid/app-grid';
+import { AppTable } from './app-table/app-table';
 
 export const AppsSection = (): React.ReactElement => {
   const [currentUser] = useRecoilState<UserState | undefined>(defaultUser);
   const [, setCurrentNotification] = useRecoilState<string | undefined>(
     currentNotification,
   );
+  const [isGridViewActive, setIsGridViewActive] = useState<boolean>(true);
   const [, setCurrentSearchValue] = useRecoilState<string>(currentSearchValue);
   const [currentFrameworks] = useRecoilState<string[]>(defaultFrameworks);
   const [currentOwnershipValue] = useRecoilState<string>(defaultOwnershipValue);
   const [currentSortValue] = useRecoilState<string>(defaultSortValue);
   const [apps, setApps] = useState<JhApp[]>([]);
-
+  const toggleView = () => setIsGridViewActive((prev) => !prev); // Added toggleView function
   const {
     isLoading,
     error,
@@ -152,6 +154,8 @@ export const AppsSection = (): React.ReactElement => {
               data={serverData}
               currentUser={currentUser}
               setApps={setApps}
+              isGridViewActive={isGridViewActive}
+              toggleView={toggleView} // Added toggleView function
             />
           ) : (
             <></>
@@ -171,7 +175,11 @@ export const AppsSection = (): React.ReactElement => {
             {isLoading ? (
               <div className="font-bold">Loading...</div>
             ) : apps.length > 0 ? (
-              <AppGrid apps={apps} />
+              isGridViewActive ? (
+                <AppGrid apps={apps} />
+              ) : (
+                <AppTable apps={apps} />
+              )
             ) : (
               <div>No apps available</div>
             )}
