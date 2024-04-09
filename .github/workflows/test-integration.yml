@@ -19,7 +19,7 @@ jobs:
           - "not with_server_options"
         os:
           - ubuntu-latest
-        jupyterhub_version:
+        jupyterhub:
           - "jupyterhub>4.1"
           - "git+https://github.com/jupyterhub/jupyterhub.git@ca6032381aa137f03cb9349265fa74ed5e4c5c19"
     steps:
@@ -35,7 +35,7 @@ jobs:
 
     - name: Install JupyterHub
       run: |
-        pip install ${{ matrix.test_type }}
+        pip install ${{ matrix.jupyterhub }}
 
     - name: Install JHub Apps
       run: |

@@ -33,7 +33,7 @@ jobs:
 
     - name: Install JupyterHub
       run: |
-        pip install ${{ matrix.test_type }}
+        pip install ${{ matrix.jupyterhub }}
 
     - name: conda list
       run: conda list
