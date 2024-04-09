@@ -1,4 +1,4 @@
-name: jhub-apps-dev5
+name: jhub-apps-dev
 channels:
   - conda-forge
 dependencies:
