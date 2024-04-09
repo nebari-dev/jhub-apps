@@ -17,11 +17,14 @@ jobs:
           - "3.9"
         test_type:
           - tests
+        jupyterhub:
+          - "jupyterhub>=4.1"
+          - "git+https://github.com/jupyterhub/jupyterhub.git@f9fb650a7b1cfbc5306cb674ec3038f1801f4e17"
     steps:
     - uses: actions/checkout@v4.1.1
 
     - name: Setup Python
-      uses: mamba-org/setup-micromamba@v1.8.0
+      uses: mamba-org/setup-micromamba@v1.8.1
       with:
         environment-file: environment-dev.yml
         create-args: >-
@@ -31,6 +34,16 @@ jobs:
     - name: Install JHub Apps
       run: |
         pip install .
+
+    - name: Install JupyterHub
+      run: |
+        pip install ${{ matrix.jupyterhub }}
+
+    - name: conda list
+      run: conda list
+
+    - name: pip freeze
+      run: pip freeze
 
     - name: Run Tests
       run: |
