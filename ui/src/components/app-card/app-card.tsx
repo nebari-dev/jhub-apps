@@ -469,9 +469,10 @@ export const AppCard = ({
                       className="card-content-truncate"
                       style={{
                         maxWidth: '200px',
+                        marginLeft: '2px',
                       }}
                     >
-                      Created by {username}
+                      {username}
                     </span>
                   </Typography>
                   <Typography
