@@ -86,7 +86,8 @@ class HubClient:
         servername = self.normalize_server_name(servername)
         servername = f"{servername}-{uuid.uuid4().hex[:7]}"
         logger.info("Normalized servername", servername=servername)
-        return self._create_server(username, servername, user_options)
+        status_code, _ = self._create_server(username, servername, user_options)
+        return self._share_server(username, servername, share_to_user="sumit")
 
     def edit_server(self, username, servername, user_options=None):
         logger.info("Editing server", server_name=servername)
@@ -107,6 +108,17 @@ class HubClient:
         logger.info("Creating new server", server_name=servername)
         r = requests.post(API_URL + url, headers=self._headers(), json=data)
         r.raise_for_status()
+        return r.status_code, servername
+
+    def _share_server(self, username, servername, share_to_user):
+        url = f"/shares/{username}/{servername}"
+        data = {
+            "user": share_to_user
+        }
+        r = requests.post(API_URL + url, headers=self._headers(), json=data)
+        logger.info("Sharing App response", response=r)
+        if r.status_code not in [200, 201]:
+            logger.error(f"Unable to share app {servername} with {share_to_user}", response_json=r.json())
         return r.status_code, servername
 
     def delete_server(self, username, server_name, remove=False):
