@@ -35,12 +35,15 @@ jobs:
       run: |
         pip install ${{ matrix.jupyterhub }}
 
-    - name: conda list
-      run: conda list
-
     - name: Install JHub Apps
       run: |
         pip install .
+
+    - name: conda list
+      run: conda list
+
+    - name: pip freeze
+      run: pip freeze
 
     - name: Run Tests
       run: |

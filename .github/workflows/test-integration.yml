@@ -44,6 +44,12 @@ jobs:
     - name: Install chp
       run: npm install -g configurable-http-proxy
 
+    - name: conda list
+      run: conda list
+
+    - name: pip freeze
+      run: pip freeze
+
     - name: Add server options if with server types
       if: matrix.test_type == 'with_server_options'
       run: |
