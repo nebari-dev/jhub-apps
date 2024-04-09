@@ -166,6 +166,16 @@ class HubClient:
         logger.info("Sharing response", response=user_group_and_response_map)
         return user_group_and_response_map
 
+    def _revoke_shared_access(self, username: str, servername: str):
+        """Revoke all shared access to a given server"""
+        url = f"/shares/{username}/{servername}"
+        return requests.delete(API_URL + url, headers=self._headers())
+
+    def _get_shared_servers(self, username: str):
+        """List shares granting access to any of username's servers."""
+        url = f"/shares/{username}"
+        return requests.get(API_URL + url, headers=self._headers())
+
     def delete_server(self, username, server_name, remove=False):
         if server_name is None:
             # Default server and not named server
