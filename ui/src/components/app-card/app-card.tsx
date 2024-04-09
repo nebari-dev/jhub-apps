@@ -2,7 +2,7 @@ import GroupRoundedIcon from '@mui/icons-material/GroupRounded';
 import LockRoundedIcon from '@mui/icons-material/LockRounded';
 import PublicRoundedIcon from '@mui/icons-material/PublicRounded';
 import PushPinRoundedIcon from '@mui/icons-material/PushPinRounded';
-import { Button } from '@mui/material';
+import { Button, Tooltip } from '@mui/material';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
@@ -450,14 +450,16 @@ export const AppCard = ({
                     className="card-title"
                     sx={{ position: 'relative', top: '5px' }}
                   >
-                    <span
-                      className="card-content-truncate"
-                      style={{
-                        maxWidth: '165px',
-                      }}
-                    >
-                      {title}
-                    </span>
+                    <Tooltip title={title} placement="top-start">
+                      <span
+                        className="card-content-truncate"
+                        style={{
+                          maxWidth: '165px',
+                        }}
+                      >
+                        {title}
+                      </span>
+                    </Tooltip>
                   </Typography>
                   <Typography
                     variant="body2"
