@@ -1,14 +1,14 @@
 ---
-sidebar_position: 5
+sidebar_position: 1
 ---
 
 # Create App Form
 
-The Create App form has over half a dozen fields, this doc describes the purpose of each of them.  
+The Create App form has over half a dozen fields, this doc describes the purpose of each of them.
 
 ### Display Name
 
-Name of the app to be created that is displayed to the user. 
+Name of the app to be created that is displayed to the user.
 
 ### Description
 

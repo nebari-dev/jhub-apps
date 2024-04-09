@@ -2,7 +2,7 @@
 sidebar_position: 5
 ---
 
-# Create a Custom App
+# Custom/Generic app
 
 You can create and deploy arbitrary apps with `jhub-apps`, like for example:
 
