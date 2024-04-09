@@ -16,7 +16,7 @@ dependencies = [
     "fastapi",
     "uvicorn",
     "python-multipart",
-    "jupyterhub@git+https://github.com/jupyterhub/jupyterhub.git#egg=ca6032381aa137f03cb9349265fa74ed5e4c5c19",
+    "jupyterhub>4",
     "jupyter",
     "plotlydash-tornado-cmd",
     "bokeh-root-cmd",
@@ -57,9 +57,6 @@ omit = [
 
 [tool.hatch.build.targets.wheel]
 include = ["jhub_apps"]
-
-[tool.hatch.metadata]
-allow-direct-references = true
 
 [project.scripts]
 japps = "jhub_apps.main:app"
