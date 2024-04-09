@@ -1,7 +1,6 @@
 name: Test Integration
 
 on:
-  push:
   pull_request:
 
 jobs:
@@ -16,14 +15,18 @@ jobs:
         python-version:
           - "3.9"
         test_type:
-          - tests_e2e
+          - "with_server_options"
+          - "not with_server_options"
         os:
           - ubuntu-latest
+        jupyterhub:
+          - "jupyterhub>=4.1"
+          - "git+https://github.com/jupyterhub/jupyterhub.git@f9fb650a7b1cfbc5306cb674ec3038f1801f4e17"
     steps:
     - uses: actions/checkout@v4.1.1
 
     - name: Setup Python
-      uses: mamba-org/setup-micromamba@v1.8.0
+      uses: mamba-org/setup-micromamba@v1.8.1
       with:
         environment-file: environment-dev.yml
         create-args: >-
@@ -34,11 +37,26 @@ jobs:
       run: |
         pip install .
 
+    - name: Install JupyterHub
+      run: |
+        pip install ${{ matrix.jupyterhub }}
+
     - name: Install chp
       run: npm install -g configurable-http-proxy
 
+    - name: conda list
+      run: conda list
+
+    - name: pip freeze
+      run: pip freeze
+
+    - name: Add server options if with server types
+      if: matrix.test_type == 'with_server_options'
+      run: |
+        cat jupyter_config_profile_list >> jupyterhub_config.py
+        cat jupyterhub_config.py
+
     - name: Start JupyterHub on Ubuntu
-      if: matrix.test_type == 'tests_e2e' &&  matrix.os == 'ubuntu-latest'
       run: |
         nohup jupyterhub -f jupyterhub_config.py > jupyterhub-logs.txt 2>&1 &
         # Give it some to time to start properly
@@ -48,30 +66,40 @@ jobs:
         cat jupyterhub-logs.txt
 
     - name: Install Playwright
-      if: matrix.test_type == 'tests_e2e'
       run: |
         pip install pytest-playwright
 
     - name: Install Playwright Browser
-      if: matrix.test_type == 'tests_e2e'
       run: |
         playwright install
+
     - name: Run Tests
       run: |
-        pytest jhub_apps/${{ matrix.test_type }} -vvv
+        pytest jhub_apps/tests_e2e/ -vvv -m "${{ matrix.test_type }}"
+
+    - name: Create artifact name
+      id: artifact-name
+      run: |
+        if [ "${{ matrix.jupyterhub }}" = "jupyterhub>=4.1" ]; then
+            jhub_suffix="4x"
+        else
+            jhub_suffix="5x"
+        fi
+        echo "playwright-artifact-name=${{ matrix.test_type }}-$jhub_suffix-playwright-videos" >> "$GITHUB_OUTPUT"
+        echo "jhub-logs-artifact-name=${{ matrix.test_type }}-$jhub_suffix-jupyterhub-logs" >> "$GITHUB_OUTPUT"
 
     - name: Upload Playwright Videos
-      if: matrix.test_type == 'tests_e2e' && always()
+      if: always()
       uses: actions/upload-artifact@v4.3.0
       with:
-        name: ${{ matrix.os }}-playwright-videos
+        name: ${{ steps.artifact-name.outputs.playwright-artifact-name }}
         path: videos
 
     - name: Upload JupyterHub logs
-      if: matrix.test_type == 'tests_e2e' && always()
+      if: always()
       uses: actions/upload-artifact@v4.3.0
       with:
-        name: ${{ matrix.os }}-jupyterhub-logs
+        name: ${{ steps.artifact-name.outputs.jhub-logs-artifact-name }}
         path: jupyterhub-logs.txt
 
     - name: JupyterHub logs
