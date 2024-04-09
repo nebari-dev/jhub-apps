@@ -2,6 +2,9 @@ name: Test Integration
 
 on:
   pull_request:
+    branches: [main]
+  push:
+    branches: [main]
 
 jobs:
   test:
@@ -19,11 +22,14 @@ jobs:
           - "not with_server_options"
         os:
           - ubuntu-latest
+        jupyterhub:
+          - "jupyterhub>=4.1"
+          - "git+https://github.com/jupyterhub/jupyterhub.git@f9fb650a7b1cfbc5306cb674ec3038f1801f4e17"
     steps:
     - uses: actions/checkout@v4.1.1
 
     - name: Setup Python
-      uses: mamba-org/setup-micromamba@v1.8.0
+      uses: mamba-org/setup-micromamba@v1.8.1
       with:
         environment-file: environment-dev.yml
         create-args: >-
@@ -34,26 +40,23 @@ jobs:
       run: |
         pip install .
 
+    - name: Install JupyterHub
+      run: |
+        pip install ${{ matrix.jupyterhub }}
+
     - name: Install chp
       run: npm install -g configurable-http-proxy
+
+    - name: conda list
+      run: conda list
+
+    - name: pip freeze
+      run: pip freeze
 
     - name: Add server options if with server types
       if: matrix.test_type == 'with_server_options'
       run: |
-        cat >> jupyterhub_config.py <<- EOM
-        c.KubeSpawner.profile_list = [
-            {
-                "description": "Stable environment with 0.5-1 cpu / 0.5-1 GB ram",
-                "display_name": "Micro Instance",
-                "slug": "micro-instance"
-            },
-            {
-                "description": "Stable environment with 1 cpu / 1 GB ram",
-                "display_name": "Small Instance",
-                "slug": "small-instance"
-            },
-        ]
-        EOM
+        cat jupyter_config_profile_list >> jupyterhub_config.py
         cat jupyterhub_config.py
 
     - name: Start JupyterHub on Ubuntu
@@ -77,18 +80,29 @@ jobs:
       run: |
         pytest jhub_apps/tests_e2e/ -vvv -m "${{ matrix.test_type }}"
 
+    - name: Create artifact name
+      id: artifact-name
+      run: |
+        if [ "${{ matrix.jupyterhub }}" = "jupyterhub>=4.1" ]; then
+            jhub_suffix="4x"
+        else
+            jhub_suffix="5x"
+        fi
+        echo "playwright-artifact-name=${{ matrix.test_type }}-$jhub_suffix-playwright-videos" >> "$GITHUB_OUTPUT"
+        echo "jhub-logs-artifact-name=${{ matrix.test_type }}-$jhub_suffix-jupyterhub-logs" >> "$GITHUB_OUTPUT"
+
     - name: Upload Playwright Videos
       if: always()
       uses: actions/upload-artifact@v4.3.0
       with:
-        name: ${{ matrix.os }}-${{ matrix.test_type }}-playwright-videos
+        name: ${{ steps.artifact-name.outputs.playwright-artifact-name }}
         path: videos
 
     - name: Upload JupyterHub logs
       if: always()
       uses: actions/upload-artifact@v4.3.0
       with:
-        name: ${{ matrix.os }}-${{ matrix.test_type }}-jupyterhub-logs
+        name: ${{ steps.artifact-name.outputs.jhub-logs-artifact-name }}
         path: jupyterhub-logs.txt
 
     - name: JupyterHub logs
