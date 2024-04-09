@@ -31,13 +31,13 @@ jobs:
           python=${{ matrix.python-version }}
           -c conda-forge
 
-    - name: Install JupyterHub
-      run: |
-        pip install ${{ matrix.jupyterhub }}
-
     - name: Install JHub Apps
       run: |
         pip install .
+
+    - name: Install JupyterHub
+      run: |
+        pip install ${{ matrix.jupyterhub }}
 
     - name: conda list
       run: conda list
