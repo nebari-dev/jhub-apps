@@ -21,7 +21,7 @@ jobs:
           - ubuntu-latest
         jupyterhub:
           - "jupyterhub>=4.1"
-          - "git+https://github.com/jupyterhub/jupyterhub.git@ca6032381aa137f03cb9349265fa74ed5e4c5c19"
+          - "git+https://github.com/jupyterhub/jupyterhub.git@f9fb650a7b1cfbc5306cb674ec3038f1801f4e17"
     steps:
     - uses: actions/checkout@v4.1.1
 
