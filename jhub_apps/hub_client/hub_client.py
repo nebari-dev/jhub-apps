@@ -107,8 +107,6 @@ class HubClient:
         logger.info("Creating new server", server_name=servername)
         r = requests.post(API_URL + url, headers=self._headers(), json=data)
         r.raise_for_status()
-        # share_api_response = self.share_server(username, servername)
-        # logger.info(f"Share server response: {share_api_response}")
         return r.status_code, servername
 
     def delete_server(self, username, server_name, remove=False):
@@ -121,15 +119,6 @@ class HubClient:
         r = requests.delete(API_URL + url, headers=self._headers(), json=params)
         r.raise_for_status()
         return r.status_code
-
-    def share_server(self, owner, server_name, user="sumit", group=None):
-        url = f"/shares/{owner}/{server_name}"
-        req_body = {
-            "user": user
-        }
-        r = requests.post(API_URL + url, headers=self._headers(), json=req_body)
-        r.raise_for_status()
-        return r
 
     def get_services(self):
         r = requests.get(API_URL + "/services", headers=self._headers())
