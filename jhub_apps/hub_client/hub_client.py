@@ -110,14 +110,17 @@ class HubClient:
         r.raise_for_status()
         return r.status_code, servername
 
-    def _share_server(self, username, servername, share_to_user):
+    def _share_server(self, username, servername, share_to_user=None, share_to_group=None):
         url = f"/shares/{username}/{servername}"
+        if not share_to_group and not share_to_user:
+            logger.info("Neither of share_to_user or share_to_group given, NOT sharing")
+            return
         data = {
             "user": share_to_user
         }
         r = requests.post(API_URL + url, headers=self._headers(), json=data)
         logger.info("Sharing App response", response=r)
-        if r.status_code not in [200, 201]:
+        if r.status_code != 200:
             logger.error(f"Unable to share app {servername} with {share_to_user}", response_json=r.json())
         return r.status_code, servername
 
