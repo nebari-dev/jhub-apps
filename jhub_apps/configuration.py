@@ -87,6 +87,7 @@ def install_jhub_apps(c, spawner_to_subclass):
                 "access:services",
                 "list:services",
                 "read:services",  # read service models
+                "shares",
             ],
         },
         {

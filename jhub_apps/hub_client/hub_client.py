@@ -1,3 +1,6 @@
+import typing
+from concurrent.futures import ThreadPoolExecutor
+
 import structlog
 import os
 import re
@@ -86,8 +89,7 @@ class HubClient:
         servername = self.normalize_server_name(servername)
         servername = f"{servername}-{uuid.uuid4().hex[:7]}"
         logger.info("Normalized servername", servername=servername)
-        status_code, _ = self._create_server(username, servername, user_options)
-        return self._share_server(username, servername, share_to_user="sumit")
+        return self._create_server(username, servername, user_options)
 
     def edit_server(self, username, servername, user_options=None):
         logger.info("Editing server", server_name=servername)
@@ -110,19 +112,59 @@ class HubClient:
         r.raise_for_status()
         return r.status_code, servername
 
-    def _share_server(self, username, servername, share_to_user=None, share_to_group=None):
+    def _share_server(
+            self,
+            username: str,
+            servername: str,
+            share_to_user: typing.Optional[str],
+            share_to_group: typing.Optional[str],
+    ):
         url = f"/shares/{username}/{servername}"
-        if not share_to_group and not share_to_user:
-            logger.info("Neither of share_to_user or share_to_group given, NOT sharing")
+        if share_to_user:
+            data = {"user": share_to_user}
+        elif share_to_group:
+            data = {"group": share_to_group}
+        else:
+            raise ValueError("None of share_to_user or share_to_group provided")
+        share_with = share_to_group or share_to_user
+        logger.info(f"Sharing {username}/{servername} with {share_with}")
+        return requests.post(API_URL + url, headers=self._headers(), json=data)
+
+    def _share_server_with_multiple_entities(
+            self,
+            username: str,
+            servername: str,
+            share_to_users: typing.Optional[typing.List[str]] = None,
+            share_to_groups: typing.Optional[typing.List[str]] = None,
+    ):
+        """
+        :param username: owner of the servername
+        :param servername: servername to share
+        :param share_to_users: list of users to share the server with
+        :param share_to_groups: list of groups to share the server with
+        :return: mapping of dict of users + group to corresponding response json from Hub API
+        """
+        logger.info(
+            f"Requested to share {username}/{servername}",
+            share_to_users=share_to_users, share_to_groups=share_to_groups
+        )
+        if not share_to_groups and not share_to_users:
+            logger.info("Neither of share_to_user or share_to_group provided, NOT sharing")
             return
-        data = {
-            "user": share_to_user
-        }
-        r = requests.post(API_URL + url, headers=self._headers(), json=data)
-        logger.info("Sharing App response", response=r)
-        if r.status_code != 200:
-            logger.error(f"Unable to share app {servername} with {share_to_user}", response_json=r.json())
-        return r.status_code, servername
+        users = share_to_users or []
+        groups = share_to_groups or []
+        share_to_user_args = [(username, servername, user, None,) for user in users]
+        share_to_group_args = [(username, servername, None, group,) for group in groups]
+        executor_arguments = share_to_user_args + share_to_group_args
+        with ThreadPoolExecutor(max_workers=10) as ex:
+            logger.info(f"Share executor arguments: {executor_arguments}")
+            response_results = list(ex.map(lambda p: self._share_server(*p), executor_arguments))
+
+        user_and_groups = users + groups
+        response_results_json = [resp.json() for resp in response_results]
+        user_group_and_response_map = dict(zip(user_and_groups, response_results_json))
+        logger.info("Sharing response", response=user_group_and_response_map)
+        return user_group_and_response_map
 
     def delete_server(self, username, server_name, remove=False):
         if server_name is None:
