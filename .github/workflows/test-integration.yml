@@ -75,9 +75,9 @@ jobs:
       id: artifact-name
       run: |
         if [ "${{ matrix.jupyterhub }}" = "jupyterhub>=4.1" ]; then
-            jhub_suffix = "4x"
+            jhub_suffix="4x"
         else
-            jhub_suffix = "5x"
+            jhub_suffix="5x"
         fi
         echo "playwright-artifact-name=${{ matrix.test_type }}-$jhub_suffix-playwright-videos" >> "$GITHUB_OUTPUT"
         echo "jhub-logs-artifact-name=${{ matrix.test_type }}-$jhub_suffix-jupyterhub-logs" >> "$GITHUB_OUTPUT"
