@@ -19,7 +19,7 @@ import {
   GridColDef,
   GridRenderCellParams,
 } from '@mui/x-data-grid';
-import { ButtonGroup } from '@src/components';
+import { ButtonGroup, StatusChip } from '@src/components';
 import { AppQueryDeleteProps, AppQueryPostProps } from '@src/types/api';
 import { JhApp } from '@src/types/jupyterhub';
 import axios from '@src/utils/axios';
@@ -34,36 +34,6 @@ import './app-table.css';
 interface AppTableProps {
   apps: JhApp[];
 }
-const getStatusStyles = (status: string) => {
-  switch (status) {
-    case 'Ready':
-      return {
-        bgcolor: '#ffffff',
-        border: '1px solid #2E7D32',
-        color: '#2E7D32',
-      };
-    case 'Pending':
-      return {
-        bgcolor: '#EAB54E',
-        color: 'black',
-      };
-    case 'Running':
-      return {
-        bgcolor: '#2E7D32',
-        color: 'white',
-      };
-    case 'Unknown':
-      return {
-        bgcolor: '#79797C',
-        color: 'white',
-      };
-    default:
-      return {
-        bgcolor: '#F5F5F5',
-        color: 'black',
-      };
-  }
-};
 
 export const AppTable = ({ apps }: AppTableProps): React.ReactElement => {
   const [, setAppStatus] = useState('');
@@ -85,6 +55,11 @@ export const AppTable = ({ apps }: AppTableProps): React.ReactElement => {
       setAppStatus(serverStatus.join(', ')); // Convert the array of strings to a single string
     }
   }, [serverStatus, setNotification]);
+
+  useEffect(() => {
+    setUpdatedApps(apps);
+  }, [apps]);
+
   const rows = updatedApps.map((app) => ({
     id: app.id, // DataGrid requires each row to have a unique 'id' property
     name: app.name,
@@ -93,13 +68,13 @@ export const AppTable = ({ apps }: AppTableProps): React.ReactElement => {
     status: app.status,
     public: app.public,
     shared: app.shared,
-    // Map other properties as needed
   }));
 
   const columns: GridColDef[] = [
     {
       field: 'name',
       headerName: 'Name',
+      sortable: false,
       width: 234,
       editable: false,
       renderCell: (params: GridRenderCellParams<JhApp>) => {
@@ -114,20 +89,18 @@ export const AppTable = ({ apps }: AppTableProps): React.ReactElement => {
     {
       field: 'status',
       headerName: 'Status',
+      sortable: false,
       width: 206,
       editable: false, // Status might not be directly editable
       renderCell: (params: GridRenderCellParams) => (
-        <Chip
-          label={params.value}
-          size="small"
-          sx={getStatusStyles(params.value)}
-        />
+        <StatusChip status={params.value} />
       ),
     },
     {
       field: 'username',
       headerName: 'Created by',
       width: 206,
+      sortable: false,
       editable: false,
       renderCell: (params: GridCellParams) => {
         return <div className="truncate">{params.row.username}</div>;
@@ -137,6 +110,7 @@ export const AppTable = ({ apps }: AppTableProps): React.ReactElement => {
       field: 'framework',
       headerName: 'Tags',
       width: 206,
+      sortable: false,
       editable: false,
       renderCell: (params: GridRenderCellParams) => (
         <Chip label={params.value} variant="outlined" size="small" />
@@ -477,6 +451,7 @@ export const AppTable = ({ apps }: AppTableProps): React.ReactElement => {
           rows={rows}
           columns={columns}
           checkboxSelection={false}
+          disableColumnFilter // Disabling filtering across all columns
           hideFooter
           sx={{
             '& .MuiDataGrid-main': {

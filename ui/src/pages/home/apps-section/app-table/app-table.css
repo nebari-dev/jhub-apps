@@ -7,22 +7,26 @@
   position: relative;
   top: 2px;
 }
+
 .actions {
   padding: 0;
 }
+
 .actions .action-button {
   min-width: 0px;
   padding: 0px 24px;
-
-  &:hover {
-    background-color: transparent;
-  }
 }
+
+.actions .action-button:hover {
+  background-color: transparent;
+}
+
 .actions button.button-icon {
   min-width: 0px !important;
-  &:hover {
-    background-color: transparent;
-  }
+}
+
+.actions button.button-icon:hover {
+  background-color: transparent;
 }
 
 .truncate {
@@ -30,4 +34,8 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.MuiDataGrid-menuIcon.base-Popper-root.MuiDataGrid-menu {
+  display: none;
 }

@@ -11,7 +11,7 @@ import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import Typography from '@mui/material/Typography';
-import { ButtonGroup } from '@src/components';
+import { ButtonGroup, StatusChip } from '@src/components';
 import { AppQueryDeleteProps, AppQueryPostProps } from '@src/types/api';
 import axios from '@src/utils/axios';
 import { API_BASE_URL } from '@src/utils/constants';
@@ -67,39 +67,6 @@ export const AppCard = ({
       setAppStatus(serverStatus);
     }
   }, [serverStatus, setNotification]);
-
-  // Map status to color
-
-  const getStatusStyles = (status: string) => {
-    switch (status) {
-      case 'Ready':
-        return {
-          bgcolor: '#ffffff',
-          border: '1px solid #2E7D32',
-          color: '#2E7D32',
-        };
-      case 'Pending':
-        return {
-          bgcolor: '#EAB54E',
-          color: 'white',
-        };
-      case 'Running':
-        return {
-          bgcolor: '#2E7D32',
-          color: 'white',
-        };
-      case 'Unknown':
-        return {
-          bgcolor: '#BDBDBD',
-          color: 'black',
-        };
-      default:
-        return {
-          bgcolor: '#F5F5F5',
-          color: 'black',
-        };
-    }
-  };
 
   const getIcon = () => {
     if (!isAppCard)
@@ -360,22 +327,7 @@ export const AppCard = ({
               <>
                 <div className="chip-container">
                   <div className="menu-chip">
-                    <Chip
-                      label={appStatus}
-                      aria-label="open menu"
-                      id={id}
-                      children={undefined}
-                      size="small"
-                      className="chip-chip"
-                      sx={{
-                        ...getStatusStyles(appStatus),
-                        fontSize: '12px',
-                        fontWeight: 600,
-                        '& .MuiChip-label': {
-                          color: getStatusStyles(appStatus).color,
-                        },
-                      }}
-                    />
+                    <StatusChip status={appStatus} />
                   </div>
                 </div>
                 <ContextMenu id={`card-menu-${id}`} items={menuItems} />
