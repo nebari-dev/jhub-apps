@@ -17,8 +17,8 @@ jobs:
           - "3.9"
         test_type:
           - tests
-        jupyterhub_version:
-          - "jupyterhub>4.1"
+        jupyterhub:
+          - "jupyterhub>=4.1"
           - "git+https://github.com/jupyterhub/jupyterhub.git@ca6032381aa137f03cb9349265fa74ed5e4c5c19"
     steps:
     - uses: actions/checkout@v4.1.1
