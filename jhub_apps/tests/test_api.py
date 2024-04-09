@@ -1,4 +1,3 @@
-import dataclasses
 import io
 import json
 from unittest.mock import patch
@@ -148,7 +147,7 @@ def test_api_frameworks(client):
     )
     frameworks = []
     for framework in FRAMEWORKS:
-        frameworks.append(dataclasses.asdict(framework))
+        frameworks.append(framework.json())
     assert response.json() == frameworks
 
 
