@@ -19,6 +19,9 @@ jobs:
           - "not with_server_options"
         os:
           - ubuntu-latest
+        jupyterhub_version:
+          - "jupyterhub>4.1"
+          - "git+https://github.com/jupyterhub/jupyterhub.git@ca6032381aa137f03cb9349265fa74ed5e4c5c19"
     steps:
     - uses: actions/checkout@v4.1.1
 
@@ -29,6 +32,10 @@ jobs:
         create-args: >-
           python=${{ matrix.python-version }}
           -c conda-forge
+
+    - name: Install JupyterHub
+      run: |
+        pip install ${{ matrix.test_type }}
 
     - name: Install JHub Apps
       run: |
