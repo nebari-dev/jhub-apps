@@ -5,7 +5,6 @@ import os
 from cachetools import cached, TTLCache
 from unittest.mock import Mock
 
-import requests
 from jupyterhub.app import JupyterHub
 from traitlets.config import LazyConfigValue
 
@@ -115,30 +114,27 @@ def encode_file_to_data_url(filename, file_contents):
 
 def get_default_thumbnail(framework_name):
     framework: FrameworkConf = FRAMEWORKS_MAPPING.get(framework_name)
-    thumbnail_url = framework.logo
-    if thumbnail_url.startswith("/"):
-        base_url = os.environ["PUBLIC_HOST"]
-        thumbnail_url = f"{base_url}{thumbnail_url}"
-    try:
-        response = requests.get(thumbnail_url)
-    except Exception as e:
-        logger.info(f"Unable to fetch thumbnail from url: {thumbnail_url}:")
-        logger.exception(e)
-        return
-    if response.status_code == 200:
-        thumbnail_content = response.content
-        thumbnail_filename = thumbnail_url.split("/")[-1]
-        return encode_file_to_data_url(filename=thumbnail_filename, file_contents=thumbnail_content)
+    thumbnail_path = framework.logo_path
+    return encode_file_to_data_url(
+        filename=thumbnail_path.name, file_contents=thumbnail_path.read_bytes()
+    )
 
 
 async def get_thumbnail_data_url(framework_name, thumbnail):
+    logger.info("Getting thumbnail data url", framework=framework_name)
     if thumbnail:
+        logger.info("Got user provided thumbnail")
         thumbnail_contents = await thumbnail.read()
         thumbnail_data_url = encode_file_to_data_url(
             thumbnail.filename, thumbnail_contents
         )
     else:
-        thumbnail_data_url = get_default_thumbnail(framework_name)
+        logger.info("Getting default thumbnail")
+        framework: FrameworkConf = FRAMEWORKS_MAPPING.get(framework_name)
+        thumbnail_path = framework.logo_path
+        thumbnail_data_url = encode_file_to_data_url(
+            filename=thumbnail_path.name, file_contents=thumbnail_path.read_bytes()
+        )
     return thumbnail_data_url
 
 
@@ -148,4 +144,3 @@ def get_theme(config):
         return config.JupyterHub.template_vars
     else:
         return None
-    

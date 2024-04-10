@@ -20,6 +20,7 @@ export const AppGrid = ({ apps }: AppsGridProps): React.ReactElement => {
           url={app.url}
           ready={app.ready}
           serverStatus={app.status}
+          lastModified={app.last_activity}
           username={app.username}
           isPublic={app.public}
           isShared={app.shared}
