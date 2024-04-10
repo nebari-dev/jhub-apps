@@ -37,7 +37,7 @@ export const AppTable = ({
   onDeleteOpen,
 }: AppTableProps): React.ReactElement => {
   const [, setAppStatus] = useState('');
-  // const [currentApp, setCurrentApp] = useState<JhApp | null>(null);
+  const [currentApp, setCurrentApp] = useState<JhApp | null>(null);
 
   const [updatedApps, setUpdatedApps] = useState<JhApp[]>(apps);
   const [, setNotification] = useRecoilState<string | undefined>(
