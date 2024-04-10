@@ -2,6 +2,7 @@ import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
 import KeyboardArrowDownRoundedIcon from '@mui/icons-material/KeyboardArrowDownRounded';
 import KeyboardArrowUpRoundedIcon from '@mui/icons-material/KeyboardArrowUpRounded';
 import MenuIcon from '@mui/icons-material/Menu';
+import MiscellaneousServicesRoundedIcon from '@mui/icons-material/MiscellaneousServicesRounded';
 import PushPinRoundedIcon from '@mui/icons-material/PushPinRounded';
 import {
   AppBar,
@@ -18,6 +19,7 @@ import {
   Menu,
   MenuItem,
   Toolbar,
+  Typography,
 } from '@mui/material';
 import { styled, useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -43,11 +45,21 @@ import { useRecoilState } from 'recoil';
 import { currentNotification, currentUser as defaultUser } from '../../store';
 
 export const StyledListItemTextHeader = styled(ListItemText)(({ theme }) => ({
-  fontWeight: 700,
+  fontWeight: 400,
+  fontSize: '16px',
   paddingLeft: theme.spacing(4),
   paddingTop: theme.spacing(1),
   paddingBottom: theme.spacing(1),
 }));
+
+export const StyledListItemTextHeaderWithIcon = styled(ListItemText)(
+  ({ theme }) => ({
+    fontWeight: 400,
+    fontSize: '16px',
+    paddingTop: theme.spacing(1),
+    paddingBottom: theme.spacing(1),
+  }),
+);
 
 export const StyledListItemButton = styled(ListItemButton)(({ theme }) => ({
   paddingLeft: theme.spacing(4),
@@ -159,21 +171,44 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
           <ListItemIcon>
             <HomeRoundedIcon />
           </ListItemIcon>
-          <ListItemText primary="Home" />
+          <ListItemText
+            primary={<Typography variant="body1">Home</Typography>}
+          />
         </ListItemButton>
       </ListItem>
       <Divider />
       <>
         <List>
           <ListItem disablePadding>
-            <StyledListItemTextHeader primary="Pinned" disableTypography />
+            <StyledListItemTextHeader
+              primary="Pinned"
+              disableTypography
+              sx={{
+                color: `${theme.palette.common.black}99`,
+                fontWeight: 600,
+                fontSize: '14px',
+              }}
+            />
           </ListItem>
           {pinnedApps.map((item, index) => (
             <ListItem key={index} disablePadding>
               <StyledListItemButton onClick={() => navigateToUrl(item.url)}>
-                <ListItemText primary={item.name} />
-                <ListItemIcon sx={{ minWidth: '32px' }}>
-                  <PushPinRoundedIcon fontSize="small" />
+                <ListItemText
+                  primary={<Typography variant="body2">{item.name}</Typography>}
+                />
+                <ListItemIcon
+                  sx={{
+                    minWidth: '32px',
+                    color: `${theme.palette.common.black}DE`,
+                  }}
+                >
+                  <PushPinRoundedIcon
+                    sx={{
+                      fontSize: '20px',
+                      position: 'relative',
+                      bottom: '2px',
+                    }}
+                  />
                 </ListItemIcon>
               </StyledListItemButton>
             </ListItem>
@@ -181,9 +216,19 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
           {pinnedServices.map((item, index) => (
             <ListItem key={index} disablePadding>
               <StyledListItemButton onClick={() => navigateToUrl(item.url)}>
-                <ListItemText primary={item.name} />
-                <ListItemIcon sx={{ minWidth: '32px' }}>
-                  <PushPinRoundedIcon fontSize="small" />
+                <ListItemText
+                  primary={<Typography variant="body2">{item.name}</Typography>}
+                />
+                <ListItemIcon
+                  sx={{ minWidth: '32px', color: theme.palette.common.black }}
+                >
+                  <PushPinRoundedIcon
+                    sx={{
+                      fontSize: '20px',
+                      position: 'relative',
+                      bottom: '2px',
+                    }}
+                  />
                 </ListItemIcon>
               </StyledListItemButton>
             </ListItem>
@@ -193,16 +238,31 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
       </>
       <List>
         <ListItem disablePadding>
-          <StyledListItemTextHeader
+          <ListItemIcon
+            sx={{
+              minWidth: '32px',
+              color: theme.palette.common.black,
+              pl: theme.spacing(4),
+              pr: '32px',
+            }}
+          >
+            <MiscellaneousServicesRoundedIcon
+              sx={{
+                fontSize: '24px',
+              }}
+            />
+          </ListItemIcon>
+          <StyledListItemTextHeaderWithIcon
             primary="Services"
             disableTypography
-            sx={{ pt: 2 }}
           />
         </ListItem>
         {services.map((item, index) => (
           <ListItem key={index} disablePadding>
             <StyledListItemButton onClick={() => navigateToUrl(item.url)}>
-              <ListItemText primary={item.name} />
+              <ListItemText
+                primary={<Typography variant="body2">{item.name}</Typography>}
+              />
             </StyledListItemButton>
           </ListItem>
         ))}
