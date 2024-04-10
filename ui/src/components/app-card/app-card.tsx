@@ -2,7 +2,7 @@ import GroupRoundedIcon from '@mui/icons-material/GroupRounded';
 import LockRoundedIcon from '@mui/icons-material/LockRounded';
 import PublicRoundedIcon from '@mui/icons-material/PublicRounded';
 import PushPinRoundedIcon from '@mui/icons-material/PushPinRounded';
-import { Button, Tooltip } from '@mui/material';
+import { Tooltip } from '@mui/material';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
@@ -10,9 +10,17 @@ import Chip from '@mui/material/Chip';
 import Typography from '@mui/material/Typography';
 import { StatusChip } from '@src/components';
 import { API_BASE_URL } from '@src/utils/constants';
+
+import { JhApp } from '@src/types/jupyterhub';
 import React, { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
-import { currentNotification } from '../../store';
+import {
+  currentApp,
+  currentNotification,
+  isDeleteOpen,
+  isStartOpen,
+  isStopOpen,
+} from '../../store';
 import ContextMenu, { ContextMenuItem } from '../context-menu/context-menu';
 import './app-card.css';
 interface AppCardProps {
@@ -29,10 +37,8 @@ interface AppCardProps {
   serverStatus: string;
   lastModified?: Date;
   sx?: object;
-  isAppCard?: boolean; // Use this to determine if it's an app or service
-  onStartOpen: () => void;
-  onStopOpen: () => void;
-  onDeleteOpen: () => void;
+  isAppCard?: boolean;
+  app?: JhApp;
 }
 
 export const AppCard = ({
@@ -48,14 +54,16 @@ export const AppCard = ({
   serverStatus,
   lastModified,
   isAppCard = true,
-  onStartOpen,
-  onStopOpen,
-  onDeleteOpen,
+  app,
 }: AppCardProps): React.ReactElement => {
   const [appStatus, setAppStatus] = useState('');
+  const [, setCurrentApp] = useRecoilState<JhApp | undefined>(currentApp);
   const [, setNotification] = useRecoilState<string | undefined>(
     currentNotification,
   );
+  const [, setIsStartOpen] = useRecoilState<boolean>(isStartOpen);
+  const [, setIsStopOpen] = useRecoilState<boolean>(isStopOpen);
+  const [, setIsDeleteOpen] = useRecoilState<boolean>(isDeleteOpen);
 
   useEffect(() => {
     if (!serverStatus) {
@@ -99,14 +107,20 @@ export const AppCard = ({
     {
       id: 'start',
       title: 'Start',
-      onClick: () => onStartOpen(true),
+      onClick: () => {
+        setIsStartOpen(true);
+        setCurrentApp(app!); // Add the non-null assertion operator (!) to ensure that app is not undefined
+      },
       visible: true,
       disabled: serverStatus !== 'Ready',
     },
     {
       id: 'stop',
       title: 'Stop',
-      onClick: () => onStopOpen(true),
+      onClick: () => {
+        setIsStopOpen(true);
+        setCurrentApp(app!);
+      },
       visible: true,
       disabled: serverStatus !== 'Running' || isShared,
     },
@@ -121,94 +135,16 @@ export const AppCard = ({
     {
       id: 'delete',
       title: 'Delete',
-      onClick: () => onDeleteOpen(true),
+      onClick: () => {
+        setIsDeleteOpen(true);
+        setCurrentApp(app!);
+      },
       visible: true,
       disabled: isShared || id === '' || !isAppCard,
       danger: true,
     },
   ];
 
-  const startModalBody = (
-    <>
-      <p className="card-dialog-body">
-        Are you sure you want to start <b>{title}</b>?
-      </p>
-      <ButtonGroup>
-        <Button
-          id="cancel-btn"
-          variant="text"
-          color="secondary"
-          onClick={() => setIsStartOpen(false)}
-        >
-          Cancel
-        </Button>
-        <Button
-          id="start-btn"
-          variant="contained"
-          color="primary"
-          onClick={() => handleStart()}
-          disabled={submitting}
-        >
-          Start
-        </Button>
-      </ButtonGroup>
-    </>
-  );
-
-  const stopModalBody = (
-    <>
-      <p className="card-dialog-body">
-        Are you sure you want to stop <b>{title}</b>?
-      </p>
-      <ButtonGroup>
-        <Button
-          id="cancel-btn"
-          variant="text"
-          color="secondary"
-          onClick={() => setIsStopOpen(false)}
-        >
-          Cancel
-        </Button>
-        <Button
-          id="stop-btn"
-          variant="contained"
-          color="primary"
-          onClick={() => handleStop()}
-          disabled={submitting}
-        >
-          Stop
-        </Button>
-      </ButtonGroup>
-    </>
-  );
-
-  const deleteModalBody = (
-    <>
-      <p className="card-dialog-body">
-        Are you sure you want to delete <b>{title}</b>? This action is permanent
-        and cannot be reversed.
-      </p>
-      <ButtonGroup>
-        <Button
-          id="cancel-btn"
-          variant="text"
-          color="secondary"
-          onClick={() => setIsDeleteOpen(false)}
-        >
-          Cancel
-        </Button>
-        <Button
-          id="delete-btn"
-          variant="contained"
-          color="primary"
-          onClick={() => handleDelete()}
-          disabled={submitting}
-        >
-          Delete
-        </Button>
-      </ButtonGroup>
-    </>
-  );
   return (
     <div className="card" id={`card-${id}`} tabIndex={0}>
       <a href={url}>
@@ -228,24 +164,6 @@ export const AppCard = ({
                   lastModified={lastModified}
                   items={menuItems}
                 />
-                {isStartOpen && (
-                  <Dialog open={isStartOpen} onClose={setIsStartOpen}>
-                    <DialogTitle>Start {title}</DialogTitle>
-                    <DialogContent>{startModalBody}</DialogContent>
-                  </Dialog>
-                )}
-                {isStopOpen && (
-                  <Dialog open={isStopOpen} onClose={setIsStopOpen}>
-                    <DialogTitle>Stop {title}</DialogTitle>
-                    <DialogContent>{stopModalBody}</DialogContent>
-                  </Dialog>
-                )}
-                {isDeleteOpen && (
-                  <Dialog open={isDeleteOpen} onClose={setIsDeleteOpen}>
-                    <DialogTitle>Delete {title}</DialogTitle>
-                    <DialogContent>{deleteModalBody}</DialogContent>
-                  </Dialog>
-                )}
               </>
             ) : (
               <></>

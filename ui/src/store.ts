@@ -1,7 +1,7 @@
 import { UserState } from '@src/types/user';
 import { atom } from 'recoil';
 import { AppFormInput } from './types/form';
-import { JhData } from './types/jupyterhub';
+import { JhApp, JhData } from './types/jupyterhub';
 
 const currentUser = atom<UserState | undefined>({
   key: 'currentUser',
@@ -24,7 +24,14 @@ const currentNotification = atom<string | undefined>({
   key: 'currentNotification',
   default: undefined,
 });
-
+const currentApp = atom<JhApp | undefined>({
+  key: 'currentApp',
+  default: undefined,
+});
+// const currentApp = atom<JhApp | null>({
+//   key: 'currentApp',
+//   default: null,
+// });
 const currentServerName = atom<string | undefined>({
   key: 'currentServerName',
   default: undefined,
@@ -64,8 +71,23 @@ const currentSortValue = atom<string>({
   key: 'currentSortValue',
   default: 'Recently modified',
 });
+const isStartOpen = atom<boolean>({
+  key: 'isStartOpen',
+  default: false,
+});
+
+const isStopOpen = atom<boolean>({
+  key: 'isStopOpen',
+  default: false,
+});
+
+const isDeleteOpen = atom<boolean>({
+  key: 'isDeleteOpen',
+  default: false,
+});
 
 export {
+  currentApp,
   currentFile,
   currentFormInput,
   currentFrameworks,
@@ -77,4 +99,7 @@ export {
   currentServerName,
   currentSortValue,
   currentUser,
+  isDeleteOpen,
+  isStartOpen,
+  isStopOpen,
 };

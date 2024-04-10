@@ -163,13 +163,6 @@ describe('AppCard', () => {
     await act(async () => {
       btn.click();
     });
-    // Cancel Start confirmation buttons
-    const cancelBtn = baseElement.querySelector(
-      '#cancel-btn',
-    ) as HTMLButtonElement;
-    await act(async () => {
-      cancelBtn.click();
-    });
   });
 
   test('simulates starting an app', async () => {
@@ -250,13 +243,6 @@ describe('AppCard', () => {
     )[1] as HTMLAnchorElement;
     await act(async () => {
       btn.click();
-    });
-    // Cancel Stop confirmation buttons
-    const cancelBtn = baseElement.querySelector(
-      '#cancel-btn',
-    ) as HTMLButtonElement;
-    await act(async () => {
-      cancelBtn.click();
     });
   });
 
@@ -425,13 +411,6 @@ describe('AppCard', () => {
     )[3] as HTMLAnchorElement;
     await act(async () => {
       btn.click();
-    });
-
-    const cancelBtn = baseElement.querySelector(
-      '#cancel-btn',
-    ) as HTMLButtonElement;
-    await act(async () => {
-      cancelBtn.click();
     });
   });
 

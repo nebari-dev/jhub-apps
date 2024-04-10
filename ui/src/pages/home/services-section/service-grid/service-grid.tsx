@@ -26,6 +26,7 @@ export const ServiceGrid = ({
           serverStatus={app.status}
           username={app.username}
           isAppCard={false}
+          app={app}
         />
       ))}
       {services.map((service: JhServiceApp) => (
