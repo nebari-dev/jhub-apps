@@ -79,11 +79,12 @@ export const ServerTypes = (): React.ReactElement => {
   };
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    const displayName = currentFormInput?.display_name || '';
     const payload = {
-      servername: currentServerName || '',
+      servername: currentServerName || displayName,
       user_options: {
         jhub_app: true,
-        name: currentServerName || '',
+        name: currentServerName || displayName,
         display_name: currentFormInput?.display_name || '',
         description: currentFormInput?.description || '',
         framework: currentFormInput?.framework || '',
@@ -101,6 +102,7 @@ export const ServerTypes = (): React.ReactElement => {
       updateQuery(payload, {
         onSuccess: async () => {
           queryClient.invalidateQueries({ queryKey: ['app-state'] });
+          window.location.assign(APP_BASE_URL);
         },
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         onError: async (error: any) => {

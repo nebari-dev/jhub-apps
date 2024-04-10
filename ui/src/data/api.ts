@@ -7,6 +7,12 @@ import { JhApp } from '@src/types/jupyterhub';
 import { UserState } from '@src/types/user';
 import { DEFAULT_APP_LOGO } from './logos';
 
+const currentDate = new Date();
+
+const getMockDate = (hours: number): Date => {
+  return new Date(currentDate.setHours(currentDate.getHours() - hours));
+};
+
 export const frameworks: AppFrameworkProps[] = [
   { name: 'panel', display_name: 'Panel', logo: '' },
   { name: 'bokeh', display_name: 'Bokeh', logo: '' },
@@ -83,7 +89,7 @@ export const serverApps = {
       url: '/user/test',
       ready: true,
       user_options: {},
-      last_activity: new Date(),
+      last_activity: getMockDate(0),
     },
     {
       name: 'test-app',
@@ -91,7 +97,7 @@ export const serverApps = {
       started: '2021-07-01T00:00:00',
       pending: false,
       ready: true,
-      last_activity: new Date().getHours() - 1,
+      last_activity: getMockDate(1),
       stopped: false,
       user_options: {
         name: 'test-app',
@@ -114,7 +120,7 @@ export const serverApps = {
       started: null,
       pending: true,
       ready: false,
-      last_activity: new Date().getHours() - 2,
+      last_activity: getMockDate(4),
       stopped: false,
       user_options: {
         name: 'test-app-2',
@@ -136,7 +142,7 @@ export const serverApps = {
       started: null,
       pending: false,
       ready: false,
-      last_activity: new Date().getHours() - 3,
+      last_activity: getMockDate(12),
       stopped: true,
       user_options: {
         name: 'test-app-3',
@@ -158,7 +164,7 @@ export const serverApps = {
       started: null,
       pending: false,
       ready: false,
-      last_activity: new Date().getHours() - 4,
+      last_activity: getMockDate(24),
       stopped: false,
       user_options: {
         name: 'test-app-4',
@@ -181,7 +187,7 @@ export const serverApps = {
       started: '2021-01-01T00:00:00.000Z',
       pending: null,
       ready: true,
-      last_activity: new Date().getHours() - 8,
+      last_activity: getMockDate(48),
       stopped: false,
       user_options: {
         name: 'shared-app',

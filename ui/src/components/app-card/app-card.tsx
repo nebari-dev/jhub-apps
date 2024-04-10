@@ -2,7 +2,7 @@ import GroupRoundedIcon from '@mui/icons-material/GroupRounded';
 import LockRoundedIcon from '@mui/icons-material/LockRounded';
 import PublicRoundedIcon from '@mui/icons-material/PublicRounded';
 import PushPinRoundedIcon from '@mui/icons-material/PushPinRounded';
-import { Button } from '@mui/material';
+import { Button, Tooltip } from '@mui/material';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
@@ -33,6 +33,7 @@ interface AppCardProps {
   isPublic?: boolean;
   isShared?: boolean;
   serverStatus: string;
+  lastModified?: Date;
   sx?: object;
   isAppCard?: boolean; // Use this to determine if it's an app or service
 }
@@ -48,6 +49,7 @@ export const AppCard = ({
   isPublic = false,
   isShared,
   serverStatus,
+  lastModified,
   isAppCard = true,
 }: AppCardProps): React.ReactElement => {
   const [appStatus, setAppStatus] = useState('');
@@ -265,6 +267,7 @@ export const AppCard = ({
       onClick: () => setIsDeleteOpen(true),
       visible: true,
       disabled: isShared || id === '' || !isAppCard,
+      danger: true,
     },
   ];
 
@@ -378,7 +381,11 @@ export const AppCard = ({
                     />
                   </div>
                 </div>
-                <ContextMenu id={`card-menu-${id}`} items={menuItems} />
+                <ContextMenu
+                  id={`card-menu-${id}`}
+                  lastModified={lastModified}
+                  items={menuItems}
+                />
                 {isStartOpen && (
                   <Dialog open={isStartOpen} onClose={setIsStartOpen}>
                     <DialogTitle>Start {title}</DialogTitle>
@@ -443,14 +450,16 @@ export const AppCard = ({
                     className="card-title"
                     sx={{ position: 'relative', top: '5px' }}
                   >
-                    <span
-                      className="card-content-truncate"
-                      style={{
-                        maxWidth: '165px',
-                      }}
-                    >
-                      {title}
-                    </span>
+                    <Tooltip title={title} placement="top-start">
+                      <span
+                        className="card-content-truncate"
+                        style={{
+                          maxWidth: '165px',
+                        }}
+                      >
+                        {title}
+                      </span>
+                    </Tooltip>
                   </Typography>
                   <Typography
                     variant="body2"
@@ -462,9 +471,10 @@ export const AppCard = ({
                       className="card-content-truncate"
                       style={{
                         maxWidth: '200px',
+                        marginLeft: '2px',
                       }}
                     >
-                      Created by {username}
+                      {username}
                     </span>
                   </Typography>
                   <Typography
