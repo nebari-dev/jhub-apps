@@ -84,7 +84,6 @@ export const ServerTypes = (): React.ReactElement => {
       servername: currentServerName || displayName,
       user_options: {
         jhub_app: true,
-        name: currentServerName || displayName,
         display_name: currentFormInput?.display_name || '',
         description: currentFormInput?.description || '',
         framework: currentFormInput?.framework || '',

@@ -159,7 +159,6 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
         servername: currentServerName || display_name,
         user_options: {
           jhub_app: true,
-          name: currentServerName || display_name,
           display_name,
           description: description || '',
           framework,
