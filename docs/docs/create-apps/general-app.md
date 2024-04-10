@@ -55,4 +55,8 @@ Example:
     <img src="/img/panel_app.png" style={{width: "80%"}} />
 </p>
 
-You can now access, and manage (start, stop, edit, and delete) this app from the JHub Apps Homescreen.
+You can now access and manage (start, stop, edit, and delete) this app from the JHub Apps Homepage, under "My Apps".
+
+<p align="center">
+    <img src="/img/app_management.png" style={{width: "40%"}} />
+</p>
