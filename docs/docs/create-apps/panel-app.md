@@ -6,6 +6,8 @@ sidebar_position: 2
 
 ## Environment requirements
 
+Your conda environment (used in JHub Apps Launcher's App creation form) must have the following packages for successful app deployment:
+
 * `jhsingle-native-proxy` >= 0.8.2
 * `panel`
 * `bokeh-root-cmd` >= 0.1.2
@@ -18,9 +20,9 @@ In some cases, you may need `ipywidgets` and `ipywidgets-bokeh`
 
 ## Code requirements
 
-If you use templates, make sure to use it through `pn.template.MaterialTemplate()` instead of `pn.extension(design='material', template='material')`.
+If you use Panel templates, for example the Material template, make sure to use it through `pn.template.MaterialTemplate()` instead of `pn.extension(design='material', template='material')`.
 
-You can write Panel apps in Jupyter Notebooks or Python scripts, both work. You'll need to include `nbconvert` in your environment if you use Jupyter Notebooks.
+You can write Panel apps in Jupyter Notebooks or Python scripts. If you use Jupyter Notebooks, you need to include `nbconvert` in your conda environment.
 
 ## Next steps
 

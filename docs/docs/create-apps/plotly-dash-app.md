@@ -1,20 +1,17 @@
 ---
-sidebar_position: 4
+sidebar_position: 5
 ---
 
-# Bokeh apps
+# Plotly Dash apps
 
 ## Environment requirements
 
 Your conda environment (used in JHub Apps Launcher's App creation form) must have the following packages for successful app deployment:
 
 * `jhsingle-native-proxy` >= 0.8.2
-* `bokeh`
+* `dash`
+* `plotlydash-tornado-cmd`
 * Other libraries used in the app
-
-:::note
-In some cases, you may need `bokeh-root-cmd`, `ipywidgets`, and `ipywidgets-bokeh`.
-:::
 
 ## Next steps
 

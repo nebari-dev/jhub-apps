@@ -6,13 +6,15 @@ sidebar_position: 3
 
 ## Environment requirements
 
+Your conda environment (used in JHub Apps Launcher's App creation form) must have the following packages for successful app deployment:
+
 * `jhsingle-native-proxy` >= 0.8.2
 * `gradio`
 * Other libraries used in the app
 
 ## Code requirements
 
-Write your code in a Python script and add the following following additional arguments to your launch function:
+Write your application code in a Python script, and add the following following additional arguments to your launch function:
 
 ```python
 import argparse
@@ -22,7 +24,7 @@ parser.add_argument(
 parser.add_argument("--root-path", type=str, help="root_path for gradio", default=None)
 cli_args = parser.parse_args()
 
-demo.launch(your_kwargs_here, server_port=int(cli_args.server_port), root_path=cli_args.root_path)
+demo.launch(<your_kwargs_here>, server_port=int(cli_args.server_port), root_path=cli_args.root_path)
 ```
 
 ## Next steps
