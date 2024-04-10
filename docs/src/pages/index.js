@@ -111,7 +111,7 @@ function Framework({ image, title, description }) {
     <div className={clsx("col col--4")}>
       <div className="text--center padding--md">
         <img
-          alt="logo"
+          alt={`${title} logo`}
           src={image}
         />
         {/* <h3>{title}</h3> */}
