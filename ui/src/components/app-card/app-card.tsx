@@ -83,22 +83,22 @@ export const AppCard = ({
       case 'Pending':
         return {
           bgcolor: '#EAB54E',
-          color: 'white',
+          color: '#0F1015',
         };
       case 'Running':
         return {
           bgcolor: '#2E7D32',
-          color: 'white',
+          color: '#FFFFFF',
         };
       case 'Unknown':
         return {
           bgcolor: '#BDBDBD',
-          color: 'black',
+          color: '#0F1015',
         };
       default:
         return {
           bgcolor: '#F5F5F5',
-          color: 'black',
+          color: '#0F1015',
         };
     }
   };
