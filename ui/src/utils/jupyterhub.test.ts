@@ -13,6 +13,10 @@ import {
   navigateToUrl,
 } from './jupyterhub';
 
+jest.mock('./jupyterhub', () => ({
+  ...jest.requireActual('./jupyterhub'),
+  navigateToUrl: jest.fn(),
+}));
 describe('JupyterHub utils', () => {
   test('returns empty object from no jhdata', () => {
     window.jhdata = {};
