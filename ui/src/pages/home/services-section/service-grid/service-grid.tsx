@@ -13,10 +13,10 @@ export const ServiceGrid = ({
 }: ServiceGridProps): React.ReactElement => {
   return (
     <>
-      {apps.map((app: JhApp) => (
+      {apps.map((app: JhApp, index: number) => (
         <AppCard
           id={app.id}
-          key={app.id}
+          key={`app-${app.id}-${index}`}
           title={app.name}
           description={app.description}
           thumbnail={app.thumbnail}
@@ -26,12 +26,13 @@ export const ServiceGrid = ({
           serverStatus={app.status}
           username={app.username}
           isAppCard={false}
+          app={app}
         />
       ))}
-      {services.map((service: JhServiceApp) => (
+      {services.map((service: JhServiceApp, index: number) => (
         <AppCard
           id={service.id}
-          key={service.id}
+          key={`app-${service.id}-${index}`}
           title={service.name}
           description={service.description}
           thumbnail={service.thumbnail}
