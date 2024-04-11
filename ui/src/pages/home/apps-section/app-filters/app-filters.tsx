@@ -365,6 +365,7 @@ export const AppFilters = ({
             <Button
               onClick={toggleView}
               disabled={isGridViewActive}
+              aria-label="Grid View"
               sx={{
                 color: 'inherit',
                 backgroundColor: isGridViewActive ? '#E8E8EA' : 'transparent',
@@ -386,6 +387,7 @@ export const AppFilters = ({
             <Button
               onClick={toggleView}
               disabled={!isGridViewActive}
+              aria-label="Table View"
               sx={{
                 color: 'inherit',
                 backgroundColor: !isGridViewActive ? '#E8E8EA' : 'transparent',
