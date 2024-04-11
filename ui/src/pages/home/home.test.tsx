@@ -27,6 +27,11 @@ describe('Home', () => {
     mock.reset();
   });
 
+  beforeEach(() => {
+    queryClient.clear();
+    mock.reset();
+  });
+
   const componentWrapper = (
     <RecoilRoot>
       <QueryClientProvider client={queryClient}>
@@ -70,6 +75,7 @@ describe('Home', () => {
       expect(getByText('Apps')).toBeTruthy();
     });
   });
+
   test('should render with start modal', async () => {
     const { baseElement } = render(
       <RecoilRoot initializeState={({ set }) => set(isStartOpen, true)}>
@@ -94,8 +100,32 @@ describe('Home', () => {
     });
   });
 
+  test('should render with start modal and click away', async () => {
+    const { baseElement } = render(
+      <RecoilRoot initializeState={({ set }) => set(isStartOpen, true)}>
+        <QueryClientProvider client={queryClient}>
+          <BrowserRouter>
+            <Home />
+          </BrowserRouter>
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+
+    await waitFor(() => {
+      const startModal = within(baseElement).getByTestId('StartModal');
+      expect(startModal).toBeInTheDocument();
+    });
+
+    const backdrop = baseElement.querySelector(
+      '.MuiBackdrop-root',
+    ) as HTMLElement;
+    await act(async () => {
+      backdrop.click();
+    });
+  });
+
   test('should render with start modal and submit', async () => {
-    mock.onPost(`/server/testId`).reply(200); // Mock the delete API endpoint
+    mock.onPost(`/server/test-app-1`).reply(200); // Mock the delete API endpoint
     const { baseElement } = render(
       <RecoilRoot
         initializeState={({ set }) => {
@@ -147,8 +177,33 @@ describe('Home', () => {
       cancelBtn.click();
     });
   });
+
+  test('should render with stop modal and click away', async () => {
+    const { baseElement } = render(
+      <RecoilRoot initializeState={({ set }) => set(isStopOpen, true)}>
+        <QueryClientProvider client={queryClient}>
+          <BrowserRouter>
+            <Home />
+          </BrowserRouter>
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+
+    await waitFor(() => {
+      const startModal = within(baseElement).getByTestId('StopModal');
+      expect(startModal).toBeInTheDocument();
+    });
+
+    const backdrop = baseElement.querySelector(
+      '.MuiBackdrop-root',
+    ) as HTMLElement;
+    await act(async () => {
+      backdrop.click();
+    });
+  });
+
   test('should render with stop modal and submit', async () => {
-    mock.onPost(`/server/testId/stop`).reply(200); // Mock the delete API endpoint
+    mock.onPost(`/server/test-app-1/stop`).reply(200); // Mock the delete API endpoint
     const { baseElement } = render(
       <RecoilRoot
         initializeState={({ set }) => {
@@ -199,8 +254,32 @@ describe('Home', () => {
     });
   });
 
+  test('should render with delete modal and click away', async () => {
+    const { baseElement } = render(
+      <RecoilRoot initializeState={({ set }) => set(isDeleteOpen, true)}>
+        <QueryClientProvider client={queryClient}>
+          <BrowserRouter>
+            <Home />
+          </BrowserRouter>
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+
+    await waitFor(() => {
+      const startModal = within(baseElement).getByTestId('DeleteModal');
+      expect(startModal).toBeInTheDocument();
+    });
+
+    const backdrop = baseElement.querySelector(
+      '.MuiBackdrop-root',
+    ) as HTMLElement;
+    await act(async () => {
+      backdrop.click();
+    });
+  });
+
   test('should render with delete modal and submit', async () => {
-    mock.onDelete(`/server/testId`).reply(200); // Mock the delete API endpoint
+    mock.onDelete(`/server/test-app-1`).reply(200); // Mock the delete API endpoint
     const { baseElement } = render(
       <RecoilRoot
         initializeState={({ set }) => {

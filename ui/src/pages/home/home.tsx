@@ -9,8 +9,8 @@ import {
 import { ButtonGroup } from '@src/components';
 import { AppQueryDeleteProps, AppQueryPostProps } from '@src/types/api';
 import { JhApp } from '@src/types/jupyterhub';
+import axios from '@src/utils/axios';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
 import React, { useState } from 'react';
 import { useRecoilState } from 'recoil';
 import {
@@ -34,7 +34,8 @@ export const Home = (): React.ReactElement => {
   const [isDeleteOpen, setIsDeleteOpen] = useRecoilState(isDeleteOpenState);
   const [submitting, setSubmitting] = useState(false);
   const queryClient = useQueryClient();
-  const handleStartRequst = async ({ id }: AppQueryPostProps) => {
+
+  const handleStartRequest = async ({ id }: AppQueryPostProps) => {
     try {
       const response = await axios.post(`/server/${id}`);
       return response;
@@ -44,7 +45,7 @@ export const Home = (): React.ReactElement => {
     }
   };
 
-  const handleDeleteRequst = async ({ id, remove }: AppQueryDeleteProps) => {
+  const handleDeleteRequest = async ({ id, remove }: AppQueryDeleteProps) => {
     try {
       const response = await axios.delete(`/server/${id}`, {
         params: {
@@ -58,50 +59,28 @@ export const Home = (): React.ReactElement => {
     }
   };
 
-  const handleStopRequst = async (id: string) => {
-    try {
-      const response = await axios.post(`/server/${id}/stop`);
-      return response;
-    } catch (error) {
-      console.error('There was an error!', error);
-      setNotification((error as Error).toString());
-    }
-  };
-
   // Mutations
   const { mutate: startQuery } = useMutation({
-    mutationFn: handleStartRequst,
+    mutationFn: handleStartRequest,
     retry: 1,
   });
 
   const { mutate: deleteQuery } = useMutation({
-    mutationFn: handleDeleteRequst,
+    mutationFn: handleDeleteRequest,
     retry: 1,
   });
 
-  const { mutate: stopQuery } = useMutation({
-    mutationFn: handleStopRequst,
-    retry: 1,
-  });
-
-  const handleDelete = (id: string) => {
+  const handleDelete = () => {
+    const appId = currentApp?.id || '';
     setSubmitting(true);
     deleteQuery(
-      { id, remove: true },
+      { id: appId, remove: true },
       {
         onSuccess: async () => {
           setSubmitting(false);
           setIsDeleteOpen(false);
           // Invalidate the 'app-state' query to refetch the apps
           queryClient.invalidateQueries({ queryKey: ['app-state'] });
-
-          // Fetch the apps again
-          const apps = await queryClient.getQueryData<JhApp[]>(['app-state']);
-
-          // Check if the deleted app still exists in the list
-          if (apps && !apps.find((app) => app.id === id)) {
-            // Add conditions here
-          }
         },
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         onError: async (error: any) => {
@@ -112,10 +91,8 @@ export const Home = (): React.ReactElement => {
     );
   };
 
-  const handleStart = async (id?: string) => {
-    const appId = id || currentApp?.id;
-    // istanbul ignore next
-    if (!appId) return;
+  const handleStart = async () => {
+    const appId = currentApp?.id || '';
     try {
       setSubmitting(true);
       await startQuery(
@@ -139,21 +116,22 @@ export const Home = (): React.ReactElement => {
     }
   };
 
-  const handleStop = async (id?: string) => {
-    const appId = id || currentApp?.id;
-    // istanbul ignore next
-    if (!appId) return;
+  const handleStop = async () => {
+    const appId = currentApp?.id || '';
     setSubmitting(true);
     try {
-      stopQuery(appId, {
-        onSuccess: () => {
-          setIsStopOpen(false);
-          queryClient.invalidateQueries({ queryKey: ['app-state'] });
+      deleteQuery(
+        { id: appId, remove: false },
+        {
+          onSuccess: () => {
+            setIsStopOpen(false);
+            queryClient.invalidateQueries({ queryKey: ['app-state'] });
+          },
+          onError: (error: unknown) => {
+            setNotification((error as Error).message);
+          },
         },
-        onError: (error: unknown) => {
-          setNotification((error as Error).message);
-        },
-      });
+      );
     } catch (error) {
       if (error instanceof Error) {
         setNotification(error.message);
@@ -185,7 +163,7 @@ export const Home = (): React.ReactElement => {
           data-testid="start-btn"
           variant="contained"
           color="primary"
-          onClick={() => handleStart(currentApp?.id || undefined)}
+          onClick={handleStart}
           disabled={submitting}
         >
           Start
@@ -212,7 +190,7 @@ export const Home = (): React.ReactElement => {
           id="stop-btn"
           variant="contained"
           color="primary"
-          onClick={() => handleStop(currentApp?.id || '')}
+          onClick={handleStop}
           disabled={submitting}
         >
           Stop
@@ -243,7 +221,7 @@ export const Home = (): React.ReactElement => {
           data-testid="delete-btn"
           variant="contained"
           color="primary"
-          onClick={() => handleDelete(currentApp?.id ?? '')}
+          onClick={handleDelete}
           disabled={submitting}
         >
           Delete
@@ -285,7 +263,7 @@ export const Home = (): React.ReactElement => {
       {isDeleteOpen && (
         <Dialog
           open={isDeleteOpen}
-          onClose={setIsDeleteOpen}
+          onClose={() => setIsDeleteOpen(false)}
           data-testid="DeleteModal"
         >
           <DialogTitle>Delete {currentApp?.name}</DialogTitle>
