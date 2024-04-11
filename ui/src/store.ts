@@ -28,10 +28,6 @@ const currentApp = atom<JhApp | undefined>({
   key: 'currentApp',
   default: undefined,
 });
-// const currentApp = atom<JhApp | null>({
-//   key: 'currentApp',
-//   default: null,
-// });
 const currentServerName = atom<string | undefined>({
   key: 'currentServerName',
   default: undefined,

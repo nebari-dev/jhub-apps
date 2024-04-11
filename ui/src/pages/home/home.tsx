@@ -29,7 +29,6 @@ export const Home = (): React.ReactElement => {
     currentNotification,
   );
   const [currentApp] = useRecoilState<JhApp | undefined>(defaultApp);
-  // const [updatedApps, setUpdatedApps] = useState<JhApp[]>(apps); // Added updatedApps state
   const [isStartOpen, setIsStartOpen] = useRecoilState(isStartOpenState);
   const [isStopOpen, setIsStopOpen] = useRecoilState(isStopOpenState);
   const [isDeleteOpen, setIsDeleteOpen] = useRecoilState(isDeleteOpenState);
@@ -42,7 +41,6 @@ export const Home = (): React.ReactElement => {
     } catch (error) {
       console.error('There was an error!', error);
       setNotification((error as Error).toString());
-      // setAppStatus('Error'); // Set status back to Ready if there's an error
     }
   };
 
@@ -57,7 +55,6 @@ export const Home = (): React.ReactElement => {
     } catch (error) {
       console.error('There was an error!', error);
       setNotification((error as Error).toString());
-      // setAppStatus('Error'); // Reflect an error state
     }
   };
 
@@ -68,7 +65,6 @@ export const Home = (): React.ReactElement => {
     } catch (error) {
       console.error('There was an error!', error);
       setNotification((error as Error).toString());
-      // setAppStatus('Error'); // Reflect an error state
     }
   };
 
@@ -104,9 +100,7 @@ export const Home = (): React.ReactElement => {
 
           // Check if the deleted app still exists in the list
           if (apps && !apps.find((app) => app.id === id)) {
-            console.log(`App with ID: ${id} has been successfully deleted.`);
-          } else {
-            console.log(`Failed to delete app with ID: ${id}.`);
+            // Add conditions here
           }
         },
         // eslint-disable-next-line @typescript-eslint/no-explicit-any

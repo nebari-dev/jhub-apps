@@ -107,20 +107,7 @@ export const AppTable = ({ apps }: AppTableProps): React.ReactElement => {
                     />
                   </TableCell>
                   <TableCell>
-                    {app.status === 'Stopped' || app.status === 'Ready' ? (
-                      <Button
-                        onClick={() => {
-                          setIsStartOpen(true);
-                          setCurrentApp(app);
-                        }}
-                        color="inherit"
-                        size="small"
-                        className="action-button"
-                        data-testid="PlayCircleRoundedIcon"
-                      >
-                        <PlayCircleRoundedIcon />
-                      </Button>
-                    ) : (
+                    {app.status === 'Running' ? (
                       <Button
                         onClick={() => {
                           setIsStopOpen(true);
@@ -130,8 +117,25 @@ export const AppTable = ({ apps }: AppTableProps): React.ReactElement => {
                         size="small"
                         className="action-button"
                         data-testid="StopCircleRoundedIcon"
+                        disabled={app.shared}
                       >
                         <StopCircleRoundedIcon />
+                      </Button>
+                    ) : (
+                      <Button
+                        onClick={() => {
+                          setIsStartOpen(true);
+                          setCurrentApp(app);
+                        }}
+                        color="inherit"
+                        size="small"
+                        className="action-button"
+                        data-testid="PlayCircleRoundedIcon"
+                        disabled={
+                          app.status === 'Pending' || app.status === 'Unknown'
+                        }
+                      >
+                        <PlayCircleRoundedIcon />
                       </Button>
                     )}
                     <Button
@@ -142,6 +146,7 @@ export const AppTable = ({ apps }: AppTableProps): React.ReactElement => {
                       size="small"
                       className="action-button"
                       data-testid="EditRoundedIcon"
+                      disabled={app.shared}
                     >
                       <EditRoundedIcon />
                     </Button>
@@ -154,6 +159,7 @@ export const AppTable = ({ apps }: AppTableProps): React.ReactElement => {
                       size="small"
                       className="action-button"
                       data-testid="DeleteRoundedIcon"
+                      disabled={app.shared}
                     >
                       <DeleteRoundedIcon />
                     </Button>

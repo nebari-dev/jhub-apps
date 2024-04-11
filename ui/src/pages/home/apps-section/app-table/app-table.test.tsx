@@ -210,7 +210,6 @@ describe('AppTable', () => {
     const editButtons = Array.from(
       within(baseElement).queryAllByTestId('EditRoundedIcon'),
     ) as HTMLButtonElement[];
-    console.log('EDIT BUTTON LENGTH', editButtons.length);
     expect(editButtons.length).toBe(4);
   });
 

@@ -47,7 +47,6 @@ export const AppsSection = (): React.ReactElement => {
 
   useEffect(() => {
     const serverStatus = apps ? apps.map((app) => app.status) : [];
-    console.log('APPSa', apps);
     if (!serverStatus) {
       setNotification('Server status id undefined.');
     } else {
