@@ -127,7 +127,7 @@ export const getPinnedApps = (servers: any, username: string) => {
     pinnedApps.push(jupyterLabApp);
     pinnedApps.push({
       ...jupyterLabApp,
-      id: 'vscode',
+      id: '',
       name: 'VSCode',
       description: 'This is your default VSCode server.',
       framework: 'VSCode',

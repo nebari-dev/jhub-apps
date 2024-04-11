@@ -2,6 +2,8 @@ import FilterAltRoundedIcon from '@mui/icons-material/FilterAltRounded';
 import KeyboardArrowDownRoundedIcon from '@mui/icons-material/KeyboardArrowDownRounded';
 import KeyboardArrowUpRoundedIcon from '@mui/icons-material/KeyboardArrowUpRounded';
 import SortRounded from '@mui/icons-material/SortRounded';
+import SpaceDashboardIcon from '@mui/icons-material/SpaceDashboard';
+import TableRowsIcon from '@mui/icons-material/TableRows';
 import {
   Box,
   Button,
@@ -22,7 +24,7 @@ import axios from '@src/utils/axios';
 import { OWNERSHIP_TYPES, SORT_TYPES } from '@src/utils/constants';
 import { filterAndSortApps } from '@src/utils/jupyterhub';
 import { useQuery } from '@tanstack/react-query';
-import React, { SyntheticEvent, useState } from 'react';
+import React, { SyntheticEvent } from 'react';
 import { useRecoilState } from 'recoil';
 import {
   currentFrameworks as defaultFrameworks,
@@ -38,22 +40,26 @@ interface AppFiltersProps {
   data: any;
   currentUser: UserState;
   setApps: React.Dispatch<React.SetStateAction<JhApp[]>>;
+  isGridViewActive: boolean;
+  toggleView: () => void;
 }
 
 export const AppFilters = ({
   data,
   currentUser,
+  isGridViewActive,
+  toggleView,
   setApps,
 }: AppFiltersProps): React.ReactElement => {
   const [currentSearchValue] = useRecoilState<string>(defaultSearchValue);
   const [filtersAnchorEl, setFiltersAnchorEl] =
     React.useState<null | HTMLElement>(null);
-  const [bulkActionsAnchorEl, setBulkActionsAnchorEl] =
-    React.useState<null | HTMLElement>(null);
+  // const [bulkActionsAnchorEl, setBulkActionsAnchorEl] =
+  // React.useState<null | HTMLElement>(null); // Not using now, may in the future
   const [sortByAnchorEl, setSortByAnchorEl] =
     React.useState<null | HTMLElement>(null);
   const filtersOpen = Boolean(filtersAnchorEl);
-  const bulkActionsOpen = Boolean(bulkActionsAnchorEl);
+  // const bulkActionsOpen = Boolean(bulkActionsAnchorEl); // Not using now, may in the future
   const sortByOpen = Boolean(sortByAnchorEl);
   const [currentFrameworks, setCurrentFrameworks] =
     useRecoilState<string[]>(defaultFrameworks);
@@ -62,7 +68,7 @@ export const AppFilters = ({
   );
   const [currentSortValue, setCurrentSortValue] =
     useRecoilState(defaultSortValue);
-  const [hasBulkSelections] = useState(false);
+  // const [hasBulkSelections] = useState(false); // Not using now, may in the future
 
   const { data: frameworks, isLoading: frameworksLoading } = useQuery<
     AppFrameworkProps[],
@@ -117,7 +123,6 @@ export const AppFilters = ({
       ),
     );
   };
-
   const handleClearFilters = () => {
     setCurrentFrameworks([]);
     setCurrentOwnershipValue('Any');
@@ -230,7 +235,7 @@ export const AppFilters = ({
               </ButtonGroup>
             </Box>
           </Menu>
-          <StyledFilterButton
+          {/* <StyledFilterButton   // Not using now, may in the future
             id="bulk-actions-btn"
             variant="outlined"
             color="secondary"
@@ -260,7 +265,7 @@ export const AppFilters = ({
               name="bulk-actions-form"
               sx={{ px: '16px', py: '8px' }}
             ></Box>
-          </Menu>
+          </Menu> */}
         </Item>
       </Grid>
       <Grid
@@ -343,6 +348,63 @@ export const AppFilters = ({
                 </RadioGroup>
               </Box>
             </Menu>
+          </Box>
+        </Item>
+        <Item>
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-around',
+              border: '1px solid #DFDFE0',
+              borderRadius: '4px',
+              position: 'relative',
+              top: '-6px',
+            }}
+          >
+            <Button
+              onClick={toggleView}
+              disabled={isGridViewActive}
+              sx={{
+                color: 'inherit',
+                backgroundColor: isGridViewActive ? '#E8E8EA' : 'transparent',
+                boxShadow: 'none',
+                padding: '5px',
+                minWidth: 'auto',
+                borderRadius: '4px 0px 0px 4px',
+                borderRight: '1px solid #DFDFE0',
+                '&:hover': {
+                  backgroundColor: isGridViewActive ? '#E8E8EA' : 'transparent',
+                  boxShadow: 'none',
+                },
+              }}
+            >
+              <SpaceDashboardIcon
+                sx={{ color: isGridViewActive ? '#2E2F33' : '#76777B' }}
+              />
+            </Button>
+            <Button
+              onClick={toggleView}
+              disabled={!isGridViewActive}
+              sx={{
+                color: 'inherit',
+                backgroundColor: !isGridViewActive ? '#E8E8EA' : 'transparent',
+                boxShadow: 'none',
+                borderRadius: '0px 4px 4px 0px',
+                padding: '5px',
+                minWidth: 'auto',
+                '&:hover': {
+                  backgroundColor: !isGridViewActive
+                    ? '#E8E8EA'
+                    : 'transparent',
+                  boxShadow: 'none',
+                },
+              }}
+            >
+              <TableRowsIcon
+                sx={{ color: !isGridViewActive ? '#2E2F33' : '#76777B' }}
+              />
+            </Button>
           </Box>
         </Item>
       </Grid>

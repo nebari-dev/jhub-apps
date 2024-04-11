@@ -23,17 +23,36 @@ import {
 import { Item } from '../../../styles/styled-item';
 import { AppFilters } from './app-filters/app-filters';
 import { AppGrid } from './app-grid/app-grid';
+import { AppTable } from './app-table/app-table';
 
 export const AppsSection = (): React.ReactElement => {
+  const [apps, setApps] = useState<JhApp[]>([]);
+  const [, setAppStatus] = useState('');
   const [currentUser] = useRecoilState<UserState | undefined>(defaultUser);
+
   const [, setCurrentNotification] = useRecoilState<string | undefined>(
     currentNotification,
   );
+
+  const [isGridViewActive, setIsGridViewActive] = useState<boolean>(true);
   const [, setCurrentSearchValue] = useRecoilState<string>(currentSearchValue);
   const [currentFrameworks] = useRecoilState<string[]>(defaultFrameworks);
   const [currentOwnershipValue] = useRecoilState<string>(defaultOwnershipValue);
+  const [, setNotification] = useRecoilState<string | undefined>(
+    currentNotification,
+  );
   const [currentSortValue] = useRecoilState<string>(defaultSortValue);
-  const [apps, setApps] = useState<JhApp[]>([]);
+
+  const toggleView = () => setIsGridViewActive((prev) => !prev); // Added toggleView function
+
+  useEffect(() => {
+    const serverStatus = apps ? apps.map((app) => app.status) : [];
+    if (!serverStatus) {
+      setNotification('Server status id undefined.');
+    } else {
+      setAppStatus(serverStatus.join(', ')); // Convert the array of strings to a single string
+    }
+  }, [apps, setNotification, setAppStatus]);
 
   const {
     isLoading,
@@ -52,6 +71,17 @@ export const AppsSection = (): React.ReactElement => {
         }),
     enabled: !!currentUser,
   });
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const serverStatus = apps ? apps.map((app) => app.status) : [];
+
+  useEffect(() => {
+    if (!serverStatus) {
+      setNotification('Server status id undefined.');
+    } else {
+      setAppStatus(serverStatus.join(', ')); // Convert the array of strings to a single string
+    }
+  }, [serverStatus, setNotification]);
 
   const handleSearch = (event: SyntheticEvent) => {
     const target = event.target as HTMLInputElement;
@@ -93,91 +123,99 @@ export const AppsSection = (): React.ReactElement => {
   }, [error, setCurrentNotification]);
 
   return (
-    <Box>
-      <Stack>
-        <Item>
-          <Grid container spacing={2}>
-            <Grid item xs={12} md={4}>
-              <Item>
-                <h2>Apps</h2>
-              </Item>
+    <>
+      <Box>
+        <Stack>
+          <Item>
+            <Grid container spacing={2}>
+              <Grid item xs={12} md={4}>
+                <Item>
+                  <h2>Apps</h2>
+                </Item>
+              </Grid>
+              <Grid
+                container
+                item
+                xs={8}
+                md={8}
+                direction="row"
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'flex-end',
+                  flexWrap: 'nowrap',
+                }}
+              >
+                <Item>
+                  <TextField
+                    id="search"
+                    size="small"
+                    placeholder="Search..."
+                    aria-label="Search for an app"
+                    onChange={handleSearch}
+                    sx={{
+                      width: { sm: '200px', md: '300px', lg: '600px' },
+                      pr: '16px',
+                    }}
+                  />
+                </Item>
+                <Item>
+                  <Button
+                    id="create-app"
+                    variant="contained"
+                    color="primary"
+                    startIcon={<AddIcon />}
+                    onClick={() => {
+                      window.location.href = `${API_BASE_URL}/create-app`;
+                    }}
+                  >
+                    Create App
+                  </Button>
+                </Item>
+              </Grid>
             </Grid>
-            <Grid
-              container
-              item
-              xs={8}
-              md={8}
-              direction="row"
+          </Item>
+          <Item sx={{ pt: '16px', pb: '24px' }}>
+            <Divider />
+          </Item>
+          <Item>
+            {serverData && currentUser ? (
+              <AppFilters
+                data={serverData}
+                currentUser={currentUser}
+                setApps={setApps}
+                isGridViewActive={isGridViewActive}
+                toggleView={toggleView} // Added toggleView function
+              />
+            ) : (
+              <></>
+            )}
+          </Item>
+          <Item>
+            <Box
               sx={{
                 display: 'flex',
-                justifyContent: 'flex-end',
-                flexWrap: 'nowrap',
+                flexDirection: 'row',
+                flexWrap: 'wrap',
+                gap: '16px',
+                justifyContent: 'flex-start',
+                paddingBottom: '48px',
               }}
             >
-              <Item>
-                <TextField
-                  id="search"
-                  size="small"
-                  placeholder="Search..."
-                  aria-label="Search for an app"
-                  onChange={handleSearch}
-                  sx={{
-                    width: { sm: '200px', md: '300px', lg: '600px' },
-                    pr: '16px',
-                  }}
-                />
-              </Item>
-              <Item>
-                <Button
-                  id="create-app"
-                  variant="contained"
-                  color="primary"
-                  startIcon={<AddIcon />}
-                  onClick={() => {
-                    window.location.href = `${API_BASE_URL}/create-app`;
-                  }}
-                >
-                  Create App
-                </Button>
-              </Item>
-            </Grid>
-          </Grid>
-        </Item>
-        <Item sx={{ pt: '16px', pb: '24px' }}>
-          <Divider />
-        </Item>
-        <Item>
-          {serverData && currentUser ? (
-            <AppFilters
-              data={serverData}
-              currentUser={currentUser}
-              setApps={setApps}
-            />
-          ) : (
-            <></>
-          )}
-        </Item>
-        <Item>
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: 'row',
-              flexWrap: 'wrap',
-              gap: '16px',
-              justifyContent: 'flex-start',
-              paddingBottom: '48px',
-            }}
-          >
-            {isLoading ? (
-              <div className="font-bold">Loading...</div>
-            ) : apps.length > 0 ? (
-              <AppGrid apps={apps} />
-            ) : (
-              <div>No apps available</div>
-            )}
-          </Box>
-        </Item>
-      </Stack>
-    </Box>
+              {isLoading ? (
+                <div className="font-bold">Loading...</div>
+              ) : apps.length > 0 ? (
+                isGridViewActive ? (
+                  <AppGrid apps={apps} />
+                ) : (
+                  <AppTable apps={apps} />
+                )
+              ) : (
+                <div>No apps available</div>
+              )}
+            </Box>
+          </Item>
+        </Stack>
+      </Box>
+    </>
   );
 };
