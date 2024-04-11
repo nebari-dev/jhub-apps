@@ -113,6 +113,7 @@ export const AppTable = ({ apps }: AppTableProps): React.ReactElement => {
                           setIsStopOpen(true);
                           setCurrentApp(app);
                         }}
+                        aria-label="Stop"
                         color="inherit"
                         size="small"
                         className="action-button"
@@ -127,6 +128,7 @@ export const AppTable = ({ apps }: AppTableProps): React.ReactElement => {
                           setIsStartOpen(true);
                           setCurrentApp(app);
                         }}
+                        aria-label="Start"
                         color="inherit"
                         size="small"
                         className="action-button"
@@ -142,6 +144,7 @@ export const AppTable = ({ apps }: AppTableProps): React.ReactElement => {
                       onClick={() =>
                         (window.location.href = `${API_BASE_URL}/edit-app?id=${app.id}`)
                       }
+                      aria-label="Edit"
                       color="inherit"
                       size="small"
                       className="action-button"
@@ -155,6 +158,7 @@ export const AppTable = ({ apps }: AppTableProps): React.ReactElement => {
                         setIsDeleteOpen(true);
                         setCurrentApp(app);
                       }}
+                      aria-label="Delete"
                       color="inherit"
                       size="small"
                       className="action-button"

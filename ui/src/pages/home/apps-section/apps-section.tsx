@@ -136,13 +136,13 @@ export const AppsSection = (): React.ReactElement => {
               <Grid
                 container
                 item
-                xs={8}
+                xs={12}
                 md={8}
                 direction="row"
                 sx={{
                   display: 'flex',
-                  justifyContent: 'flex-end',
                   flexWrap: 'nowrap',
+                  justifyContent: { xs: 'flex-start', md: 'flex-end' },
                 }}
               >
                 <Item>
