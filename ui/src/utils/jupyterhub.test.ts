@@ -6,6 +6,7 @@ import {
   filterAndSortApps,
   getAppLogoUrl,
   getApps,
+  getFriendlyDisplayName,
   getFriendlyFrameworkName,
   getJhData,
   getServices,
@@ -76,6 +77,16 @@ describe('JupyterHub utils', () => {
   test('returns an array of JhApp for all apps', () => {
     const result = getApps(serverApps, 'all', 'testUser');
     expect(result.length).toEqual(5);
+  });
+
+  test('returns a friendly display name with no trailing spaces', () => {
+    const result = getFriendlyDisplayName('Test App 1 ');
+    expect(result).toBe('Test App 1');
+  });
+
+  test('returns a friendly display name with no forward slashes', () => {
+    const result = getFriendlyDisplayName('Test App 1 //');
+    expect(result).toBe('Test App 1');
   });
 
   test('returns the framework name with the first letter capitalized', () => {

@@ -18,7 +18,7 @@ import { AppFormInput } from '@src/types/form';
 import { UserState } from '@src/types/user';
 import axios from '@src/utils/axios';
 import { APP_BASE_URL, REQUIRED_FORM_FIELDS_RULES } from '@src/utils/constants';
-import { navigateToUrl } from '@src/utils/jupyterhub';
+import { getFriendlyDisplayName, navigateToUrl } from '@src/utils/jupyterhub';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
@@ -138,10 +138,11 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
     custom_command,
     profile,
   }) => {
+    const displayName = getFriendlyDisplayName(display_name);
     if (profiles && profiles.length > 0) {
       const payload: AppFormInput = {
         jhub_app: true,
-        display_name,
+        display_name: displayName,
         description,
         framework,
         thumbnail,
@@ -156,10 +157,11 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
       navigate(`/server-types${id ? `?id=${id}` : ''}`);
     } else {
       const payload = {
-        servername: currentServerName || display_name,
+        servername: currentServerName || displayName,
         user_options: {
           jhub_app: true,
-          display_name,
+          name: currentServerName || displayName,
+          display_name: displayName,
           description: description || '',
           framework,
           thumbnail: thumbnail || '',
@@ -323,11 +325,11 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
                 {...field}
                 id="display_name"
                 label="Name"
-                placeholder="Add app name (max. 16 characters)"
+                placeholder="Add app name (max. 255 characters)"
                 autoFocus
                 required
                 error={errors.display_name?.message ? true : false}
-                inputProps={{ maxLength: 16 }}
+                inputProps={{ maxLength: 255 }}
               />
             </FormControl>
           )}

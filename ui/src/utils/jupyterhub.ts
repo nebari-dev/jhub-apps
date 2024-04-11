@@ -138,6 +138,10 @@ export const getPinnedApps = (servers: any, username: string) => {
   return pinnedApps;
 };
 
+export const getFriendlyDisplayName = (name: string) => {
+  return name.replace(/\//g, '').trim();
+};
+
 export const getFriendlyFrameworkName = (framework: string) => {
   return framework.charAt(0).toUpperCase() + framework.slice(1);
 };
