@@ -13,6 +13,7 @@ import { ServerTypes } from './server-types';
 describe('ServerTypes', () => {
   const queryClient = new QueryClient();
   const mock = new MockAdapter(axios);
+  const originalHref = window.location.href;
 
   beforeAll(() => {
     mock.reset();
@@ -21,6 +22,7 @@ describe('ServerTypes', () => {
   beforeEach(() => {
     queryClient.clear();
     mock.reset();
+    window.history.replaceState({}, '', decodeURIComponent(originalHref));
   });
 
   // Loading state test
