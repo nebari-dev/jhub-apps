@@ -7,7 +7,10 @@ import { act, render, waitFor } from '@testing-library/react';
 import MockAdapter from 'axios-mock-adapter';
 import { BrowserRouter } from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
-import { currentUser as defaultUser } from '../../store';
+import {
+  currentFormInput as defaultFormInput,
+  currentUser as defaultUser,
+} from '../../store';
 import { ServerTypes } from './server-types';
 
 describe('ServerTypes', () => {
@@ -150,6 +153,50 @@ describe('ServerTypes', () => {
       </RecoilRoot>,
     );
     await waitFor(() => expect(baseElement).toHaveTextContent('Small'));
+    const btn = baseElement.querySelector('#submit-btn') as HTMLButtonElement;
+    await act(async () => {
+      btn.click();
+    });
+
+    expect(mockSearchParamsGet).toHaveBeenCalledWith('id');
+    mockSearchParamsGet.mockRestore();
+  });
+
+  test('simulates editing an app with current form input', async () => {
+    const mockSearchParamsGet = jest.spyOn(URLSearchParams.prototype, 'get');
+    mockSearchParamsGet.mockReturnValue('app-1');
+
+    queryClient.setQueryData(['server-types'], profiles);
+    mock.onGet(new RegExp('/spawner-profiles/')).reply(200, profiles);
+    const { baseElement } = render(
+      <RecoilRoot
+        initializeState={({ set }) => {
+          set(defaultUser, currentUser);
+          set(defaultFormInput, {
+            jhub_app: true,
+            display_name: 'App 1',
+            framework: 'type1',
+            is_public: false,
+            env: '{ "key": "value" }',
+          });
+        }}
+      >
+        <QueryClientProvider client={queryClient}>
+          <BrowserRouter>
+            <ServerTypes />
+          </BrowserRouter>
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+    await waitFor(() => expect(baseElement).toHaveTextContent('Small'));
+    const cards = baseElement.querySelectorAll('.server-type-card');
+    if (cards) {
+      const radio = cards[0] as HTMLElement;
+      await act(async () => {
+        radio.click();
+      });
+    }
+
     const btn = baseElement.querySelector('#submit-btn') as HTMLButtonElement;
     await act(async () => {
       btn.click();
