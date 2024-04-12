@@ -499,31 +499,29 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
               }}
             />
           </Tooltip>
-          <Box>
-            <Controller
-              name="keep_alive"
-              control={control}
-              // eslint-disable-next-line @typescript-eslint/no-unused-vars
-              render={({ field: { ref: _, value, onChange, ...field } }) => (
-                <FormControl>
-                  <FormControlLabel
-                    control={
-                      <Switch
-                        {...field}
-                        id="keep_alive"
-                        checked={keepAlive}
-                        onChange={() => {
-                          setKeepAlive(!keepAlive);
-                        }}
-                      />
-                    }
-                    label="Keep app alive"
-                    labelPlacement="start"
-                  />
-                </FormControl>
-              )}
-            />
-          </Box>
+          <Controller
+            name="keep_alive"
+            control={control}
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            render={({ field: { ref: _, value, onChange, ...field } }) => (
+              <FormControl sx={{ flexDirection: 'row' }}>
+                <FormControlLabel
+                  control={
+                    <Switch
+                      {...field}
+                      id="keep_alive"
+                      checked={keepAlive}
+                      onChange={() => {
+                        setKeepAlive(!keepAlive);
+                      }}
+                    />
+                  }
+                  label="Keep app alive"
+                  labelPlacement="start"
+                />
+              </FormControl>
+            )}
+          />
         </Box>
       </div>
       <hr />
@@ -534,7 +532,7 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
           control={control}
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
           render={({ field: { ref: _, value, onChange, ...field } }) => (
-            <FormControl>
+            <FormControl sx={{ flexDirection: 'row' }}>
               <FormControlLabel
                 control={
                   <Switch
@@ -546,7 +544,9 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
                     }}
                   />
                 }
-                label="Allow Public Access"
+                label="Allow public access"
+                labelPlacement="start"
+                sx={{ marginLeft: '10px' }}
               />
             </FormControl>
           )}
