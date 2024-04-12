@@ -77,6 +77,7 @@ export const app: AppQueryGetProps = {
     profile: '',
     env: null,
     public: false,
+    keep_alive: false,
   },
   progress_url: '',
   state: {},
@@ -112,6 +113,7 @@ export const serverApps = {
         filepath: '/shared/users/panel_basic.py',
         env: null,
         public: true,
+        keep_alive: false,
       },
     },
     {
@@ -134,6 +136,7 @@ export const serverApps = {
         profile: 'small0',
         env: { key: 'value' },
         public: false,
+        keep_alive: true,
       },
     },
     {
@@ -147,7 +150,7 @@ export const serverApps = {
       user_options: {
         name: 'test-app-3',
         jhub_app: true,
-        display_name: 'Test App 3',
+        display_name: 'TEST App 3',
         description:
           'Lorem ipsum dolor sit amet consectetur. Sit vestibulum facilisis auctor pulvinar ac. Dras.',
         thumbnail: DEFAULT_APP_LOGO,
@@ -156,6 +159,7 @@ export const serverApps = {
         profile: 'small0',
         env: null,
         public: false,
+        keep_alive: false,
       },
     },
     {
@@ -177,6 +181,7 @@ export const serverApps = {
         profile: 'small0',
         env: null,
         public: false,
+        keep_alive: false,
       },
     },
   ],
@@ -201,6 +206,7 @@ export const serverApps = {
         profile: 'small0',
         env: null,
         public: false,
+        keep_alive: false,
         username: 'Test User',
       },
     },
