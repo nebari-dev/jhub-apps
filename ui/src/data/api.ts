@@ -147,7 +147,7 @@ export const serverApps = {
       user_options: {
         name: 'test-app-3',
         jhub_app: true,
-        display_name: 'Test App 3',
+        display_name: 'TEST App 3',
         description:
           'Lorem ipsum dolor sit amet consectetur. Sit vestibulum facilisis auctor pulvinar ac. Dras.',
         thumbnail: DEFAULT_APP_LOGO,
