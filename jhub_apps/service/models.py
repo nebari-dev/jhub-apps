@@ -63,6 +63,8 @@ class UserOptions(BaseModel):
     profile: typing.Optional[str] = str()
     # Make app available to public (unauthenticated Hub users)
     public: typing.Optional[bool] = False
+    # Keep app alive, even when there is no activity
+    # So that it's not killed by idle culler
     keep_alive: typing.Optional[bool] = False
 
 
