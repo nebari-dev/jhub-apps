@@ -63,6 +63,7 @@ class UserOptions(BaseModel):
     profile: typing.Optional[str] = str()
     # Make app available to public (unauthenticated Hub users)
     public: typing.Optional[bool] = False
+    keep_alive: typing.Optional[bool] = False
 
 
 class ServerCreation(BaseModel):
