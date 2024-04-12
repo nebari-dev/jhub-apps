@@ -363,6 +363,10 @@ a:focus {
     outline-color: var(--primary-color) !important;
 }
 
+.form-section .thumbnail, .form-section .thumbnail-body.selected {
+    background-color: transparent !important;
+}
+
 /* Misc MUI */
 .MuiButton-containedPrimary:not(:disabled) {
     color: var(--light-text-color);
