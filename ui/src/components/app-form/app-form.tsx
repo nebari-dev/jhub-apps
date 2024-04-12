@@ -480,7 +480,7 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
           }}
         >
           <Tooltip
-            placement="top-start"
+            placement="bottom-start"
             title={
               <Typography sx={{ fontSize: '10px', fontWeight: 600 }}>
                 Keep alive prevents the app from being suspended even when not
