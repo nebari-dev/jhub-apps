@@ -102,8 +102,9 @@ def subclass_spawner(base_spawner):
                     python_exec=self.config.JAppsConfig.python_exec,
                     authtype=auth_type,
                 )
+                env = self.user_options.get("env", {})
                 # Only for non-JupyterLab apps
-                if self.user_options.get("keep_alive"):
+                if self.user_options.get("keep_alive") or env.get("JH_APPS_KEEP_ALIVE"):
                     logger.info(
                         "Flag set to force keep alive, will not be deleted by idle culler",
                         app=self.user_options.get("display_name"),
