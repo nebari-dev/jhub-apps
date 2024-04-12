@@ -94,6 +94,7 @@ export const ServerTypes = (): React.ReactElement => {
         custom_command: currentFormInput?.custom_command || '',
         profile: currentFormInput?.profile || '',
         public: currentFormInput?.is_public || false,
+        keep_alive: currentFormInput?.keep_alive || false,
       },
     };
     setSubmitting(true);

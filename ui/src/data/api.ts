@@ -77,6 +77,7 @@ export const app: AppQueryGetProps = {
     profile: '',
     env: null,
     public: false,
+    keep_alive: false,
   },
   progress_url: '',
   state: {},
@@ -112,6 +113,7 @@ export const serverApps = {
         filepath: '/shared/users/panel_basic.py',
         env: null,
         public: true,
+        keep_alive: false,
       },
     },
     {
@@ -134,6 +136,7 @@ export const serverApps = {
         profile: 'small0',
         env: { key: 'value' },
         public: false,
+        keep_alive: true,
       },
     },
     {
@@ -156,6 +159,7 @@ export const serverApps = {
         profile: 'small0',
         env: null,
         public: false,
+        keep_alive: false,
       },
     },
     {
@@ -177,6 +181,7 @@ export const serverApps = {
         profile: 'small0',
         env: null,
         public: false,
+        keep_alive: false,
       },
     },
   ],
@@ -201,6 +206,7 @@ export const serverApps = {
         profile: 'small0',
         env: null,
         public: false,
+        keep_alive: false,
         username: 'Test User',
       },
     },

@@ -1,4 +1,6 @@
+import InfoRoundedIcon from '@mui/icons-material/InfoRounded';
 import {
+  Box,
   Button,
   FormControl,
   FormControlLabel,
@@ -7,6 +9,8 @@ import {
   Select,
   Switch,
   TextField,
+  Tooltip,
+  Typography,
 } from '@mui/material';
 import {
   AppFrameworkProps,
@@ -59,6 +63,7 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
     defaultImage,
   );
   const [isPublic, setIsPublic] = useState(false);
+  const [keepAlive, setKeepAlive] = useState(false);
   // Get the app data if we're editing an existing app
   const { data: formData, error: formError } = useQuery<
     AppQueryGetProps,
@@ -123,6 +128,7 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
       custom_command: '',
       profile: '',
       is_public: false,
+      keep_alive: false,
     },
   });
   const currentFramework = watch('framework');
@@ -152,6 +158,7 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
         custom_command,
         profile,
         is_public: isPublic,
+        keep_alive: keepAlive,
       };
       setCurrentFormInput(payload);
       navigate(`/server-types${id ? `?id=${id}` : ''}`);
@@ -171,6 +178,7 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
           custom_command: custom_command || '',
           profile: profile || '',
           public: isPublic,
+          keep_alive: keepAlive,
         },
       };
 
@@ -268,6 +276,7 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
           : undefined,
       });
       setIsPublic(formData.user_options.public);
+      setKeepAlive(formData.user_options.keep_alive);
       setCurrentImage(formData.user_options.thumbnail);
     }
   }, [
@@ -295,6 +304,7 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
         profile: currentFormInput.profile || '',
       });
       setIsPublic(currentFormInput.is_public);
+      setKeepAlive(currentFormInput.keep_alive);
       setCurrentImage(currentFormInput.thumbnail);
     }
   }, [currentFormInput, reset, setCurrentImage, setCurrentServerName]);
@@ -463,6 +473,58 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
             </FormControl>
           )}
         />
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'row',
+          }}
+        >
+          <Tooltip
+            placement="top-start"
+            title={
+              <Typography sx={{ fontSize: '10px', fontWeight: 600 }}>
+                Keep alive prevents the app from being suspended even when not
+                in active use. Your app will be instantly available, but it will
+                consume resources until manually stopped.
+              </Typography>
+            }
+          >
+            <InfoRoundedIcon
+              fontSize="small"
+              sx={{
+                position: 'relative',
+                top: '9px',
+                left: '2px',
+                color: '#0F10158F',
+              }}
+            />
+          </Tooltip>
+          <Box>
+            <Controller
+              name="keep_alive"
+              control={control}
+              // eslint-disable-next-line @typescript-eslint/no-unused-vars
+              render={({ field: { ref: _, value, onChange, ...field } }) => (
+                <FormControl>
+                  <FormControlLabel
+                    control={
+                      <Switch
+                        {...field}
+                        id="keep_alive"
+                        checked={keepAlive}
+                        onChange={() => {
+                          setKeepAlive(!keepAlive);
+                        }}
+                      />
+                    }
+                    label="Keep app alive"
+                    labelPlacement="start"
+                  />
+                </FormControl>
+              )}
+            />
+          </Box>
+        </Box>
       </div>
       <hr />
       <div className="form-section">
