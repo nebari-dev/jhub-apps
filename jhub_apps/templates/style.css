@@ -415,6 +415,10 @@ a:focus {
     background-color: var(--white) !important;
 }
 
+.Mui-checked + .MuiSwitch-track {
+    background-color: var(--primary-color) !important;
+}
+
 .MuiOutlinedInput-root.Mui-focused > fieldset {
     border-color: var(--primary-color) !important;
 }
