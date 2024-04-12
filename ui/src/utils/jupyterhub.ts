@@ -207,7 +207,7 @@ export const filterAndSortApps = (
         : 'all';
 
   // Get Apps based on ownership type and search value
-  const apps = getApps(data, ownershipType, currentUser?.name ?? '')
+  const apps = getApps(data, ownershipType, currentUser.name)
     .filter(
       (app) =>
         app.name.toLowerCase().includes(searchToLower) ||
@@ -226,9 +226,9 @@ export const filterAndSortApps = (
     if (sortByValue === 'Recently modified') {
       return a.last_activity > b.last_activity ? -1 : 1;
     } else if (sortByValue === 'Name: A-Z') {
-      return a.name > b.name ? 1 : -1;
+      return a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1;
     }
-    return a.name > b.name ? -1 : 1;
+    return a.name.toLowerCase() > b.name.toLowerCase() ? -1 : 1;
   });
   return apps;
 };
