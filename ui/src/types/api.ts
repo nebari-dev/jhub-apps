@@ -9,6 +9,7 @@ export interface UserOptions {
   conda_env: string;
   profile: string;
   public: boolean;
+  keep_alive: boolean;
   env: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
