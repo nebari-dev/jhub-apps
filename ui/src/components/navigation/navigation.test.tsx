@@ -111,6 +111,9 @@ describe('Navigation', () => {
     expect(baseElement.querySelectorAll('#profile-menu-list li')).toHaveLength(
       3,
     );
+
+    // Nav error expected, disable console.error
+    jest.spyOn(console, 'error').mockImplementation(() => {});
     const items = baseElement.querySelectorAll('#profile-menu-list li');
     await act(async () => {
       fireEvent.click(items[0]);

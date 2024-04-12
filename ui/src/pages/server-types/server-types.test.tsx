@@ -177,6 +177,7 @@ describe('ServerTypes', () => {
             display_name: 'App 1',
             framework: 'type1',
             is_public: false,
+            keep_alive: false,
             env: '{ "key": "value" }',
           });
         }}
