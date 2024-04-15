@@ -124,5 +124,7 @@ describe('Navigation', () => {
     await act(async () => {
       fireEvent.click(items[2]);
     });
+
+    expect(window.location.pathname).toBe('/');
   });
 });
