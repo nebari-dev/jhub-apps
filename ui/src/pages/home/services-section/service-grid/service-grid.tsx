@@ -22,7 +22,6 @@ export const ServiceGrid = ({
           thumbnail={app.thumbnail}
           framework={app.framework}
           url={app.url}
-          ready={app.ready}
           serverStatus={app.status}
           username={app.username}
           isAppCard={false}

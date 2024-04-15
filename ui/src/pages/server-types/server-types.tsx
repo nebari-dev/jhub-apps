@@ -14,7 +14,7 @@ import axios from '@src/utils/axios';
 import { APP_BASE_URL } from '@src/utils/constants';
 import { navigateToUrl } from '@src/utils/jupyterhub';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import {
@@ -33,6 +33,9 @@ export const ServerTypes = (): React.ReactElement => {
   const queryClient = useQueryClient();
   const [submitting, setSubmitting] = useState(false);
   const [currentUser] = useRecoilState<UserState | undefined>(defaultUser);
+  const [, setCurrentNotification] = useRecoilState<string | undefined>(
+    currentNotification,
+  );
   const [currentFormInput, setCurrentFormInput] = useRecoilState<
     AppFormInput | undefined
   >(defaultFormInput);
@@ -178,6 +181,14 @@ export const ServerTypes = (): React.ReactElement => {
     retry: 1,
   });
 
+  useEffect(() => {
+    if (error) {
+      setCurrentNotification(error.message);
+    } else {
+      setCurrentNotification(undefined);
+    }
+  }, [error, setCurrentNotification]);
+
   return (
     <div className="container">
       <div className="form-breadcrumb">
@@ -210,9 +221,7 @@ export const ServerTypes = (): React.ReactElement => {
           .
         </p>
       </div>
-      {error ? (
-        <div>An error occurred: {(error as Error).message}</div>
-      ) : isLoading ? (
+      {isLoading ? (
         <div className="font-bold center">Loading...</div>
       ) : serverTypes && serverTypes.length > 0 ? (
         <form className="form" onSubmit={handleSubmit}>

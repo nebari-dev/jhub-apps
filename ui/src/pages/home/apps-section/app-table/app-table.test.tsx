@@ -41,37 +41,6 @@ const mockApps: JhApp[] = [
   },
 ];
 
-function getStatusStyles(status: string): unknown {
-  switch (status) {
-    case 'Ready':
-      return {
-        bgcolor: '#ffffff',
-        border: '1px solid #2E7D32',
-        color: '#2E7D32',
-      };
-    case 'Pending':
-      return {
-        bgcolor: '#EAB54E',
-        color: 'black',
-      };
-    case 'Running':
-      return {
-        bgcolor: '#2E7D32',
-        color: 'white',
-      };
-    case 'Unknown':
-      return {
-        bgcolor: '#79797C',
-        color: 'white',
-      };
-    default:
-      return {
-        bgcolor: '#F5F5F5',
-        color: 'black',
-      };
-  }
-}
-
 describe('AppTable', () => {
   const queryClient = new QueryClient();
   const mock = new MockAdapter(axios);
@@ -95,47 +64,6 @@ describe('AppTable', () => {
       </RecoilRoot>,
     );
     expect(baseElement).toBeInTheDocument();
-  });
-
-  test('returns correct styles for "Ready" status', () => {
-    const result = getStatusStyles('Ready');
-    expect(result).toEqual({
-      bgcolor: '#ffffff',
-      border: '1px solid #2E7D32',
-      color: '#2E7D32',
-    });
-  });
-
-  test('returns correct styles for "Pending" status', () => {
-    const result = getStatusStyles('Pending');
-    expect(result).toEqual({
-      bgcolor: '#EAB54E',
-      color: 'black',
-    });
-  });
-
-  test('returns correct styles for "Running" status', () => {
-    const result = getStatusStyles('Running');
-    expect(result).toEqual({
-      bgcolor: '#2E7D32',
-      color: 'white',
-    });
-  });
-
-  test('returns correct styles for "Unknown" status', () => {
-    const result = getStatusStyles('Unknown');
-    expect(result).toEqual({
-      bgcolor: '#79797C',
-      color: 'white',
-    });
-  });
-
-  test('returns default styles for any other status', () => {
-    const result = getStatusStyles('AnyOtherStatus');
-    expect(result).toEqual({
-      bgcolor: '#F5F5F5',
-      color: 'black',
-    });
   });
 
   test('renders correct number of rows', () => {
@@ -226,6 +154,7 @@ describe('AppTable', () => {
     const deleteButtons = await waitFor(() => {
       return within(baseElement).getAllByTestId('DeleteRoundedIcon');
     });
+    expect(deleteButtons.length).toBe(4);
     if (deleteButtons.length > 0) {
       // Select the first delete button
       const deleteButton = deleteButtons[0];
@@ -234,6 +163,7 @@ describe('AppTable', () => {
       });
     }
   });
+
   test('renders start modal on start button click', async () => {
     const { baseElement } = render(
       <RecoilRoot>
@@ -247,6 +177,7 @@ describe('AppTable', () => {
       within(baseElement).queryAllByTestId('PlayCircleRoundedIcon'),
     ) as HTMLButtonElement[];
 
+    expect(startButtons.length).toBe(2);
     for (const startButton of startButtons) {
       await act(async () => {
         fireEvent.click(startButton);
@@ -326,6 +257,7 @@ describe('AppTable', () => {
       within(baseElement).queryAllByTestId('StopCircleRoundedIcon'),
     ) as HTMLButtonElement[];
 
+    expect(stopButtons.length).toBe(2);
     for (const stopButton of stopButtons) {
       await act(async () => {
         fireEvent.click(stopButton);
@@ -347,12 +279,14 @@ describe('AppTable', () => {
       if (index === 0) return; // Skip the header row
 
       const buttons = within(row as HTMLElement).getAllByRole('button');
+      expect(buttons.length).toBe(4);
       buttons.forEach((button) => {
         fireEvent.click(button);
         // Add assertions here to check that the appropriate actions were triggered
       });
     });
   });
+
   test('clicking the Cancel button cancels the Start action', () => {
     const setIsStartOpen = jest.fn();
 
@@ -364,6 +298,7 @@ describe('AppTable', () => {
 
     expect(setIsStartOpen).toHaveBeenCalledWith(false);
   });
+
   test('renders delete modal on delete button click', async () => {
     const { baseElement } = render(
       <RecoilRoot>
@@ -376,13 +311,14 @@ describe('AppTable', () => {
     const deleteButtons = Array.from(
       within(baseElement).queryAllByTestId('DeleteRoundedIcon'),
     ) as HTMLButtonElement[];
-
+    expect(deleteButtons.length).toBe(4);
     for (const deleteButton of deleteButtons) {
       await act(async () => {
         fireEvent.click(deleteButton);
       });
     }
   });
+
   test('clicking Cancel closes Delete Modal', () => {
     const setIsDeleteOpen = jest.fn();
 
@@ -394,6 +330,7 @@ describe('AppTable', () => {
 
     expect(setIsDeleteOpen).toHaveBeenCalledWith(false);
   });
+
   test('clicking Cancel closes the Stop modal', () => {
     const setIsStopOpen = jest.fn();
 
@@ -405,6 +342,7 @@ describe('AppTable', () => {
 
     expect(setIsStopOpen).toHaveBeenCalledWith(false);
   });
+
   test('renders correct number of rows', () => {
     const { getAllByRole } = render(
       <RecoilRoot>
@@ -442,13 +380,5 @@ describe('AppTable', () => {
     const rows = queryAllByRole('row');
     // Subtract 1 for the header row
     expect(rows.length - 1).toBe(0);
-  });
-
-  test('getStatusStyles handles unknown status', () => {
-    const styles = getStatusStyles('Unknown');
-    expect(styles).toEqual({
-      bgcolor: '#79797C',
-      color: 'white',
-    });
   });
 });

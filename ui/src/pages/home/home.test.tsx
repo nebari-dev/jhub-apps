@@ -98,6 +98,7 @@ describe('Home', () => {
     await act(async () => {
       cancelBtn.click();
     });
+    expect(document.location.pathname).toBe('/');
   });
 
   test('should render with start modal and click away', async () => {
@@ -122,6 +123,7 @@ describe('Home', () => {
     await act(async () => {
       backdrop.click();
     });
+    expect(document.location.pathname).toBe('/');
   });
 
   test('should render with start modal and submit', async () => {
@@ -152,6 +154,7 @@ describe('Home', () => {
     await act(async () => {
       startBtn.click();
     });
+    expect(document.location.pathname).toBe('/');
   });
 
   test('should render with stop modal', async () => {
@@ -176,6 +179,7 @@ describe('Home', () => {
     await act(async () => {
       cancelBtn.click();
     });
+    expect(document.location.pathname).toBe('/');
   });
 
   test('should render with stop modal and click away', async () => {
@@ -200,6 +204,7 @@ describe('Home', () => {
     await act(async () => {
       backdrop.click();
     });
+    expect(document.location.pathname).toBe('/');
   });
 
   test('should render with stop modal and submit', async () => {
@@ -228,6 +233,7 @@ describe('Home', () => {
     await act(async () => {
       stopBtn.click();
     });
+    expect(document.location.pathname).toBe('/');
   });
 
   test('should render with delete modal', async () => {
@@ -252,6 +258,7 @@ describe('Home', () => {
     await act(async () => {
       cancelBtn.click();
     });
+    expect(document.location.pathname).toBe('/');
   });
 
   test('should render with delete modal and click away', async () => {
@@ -276,6 +283,7 @@ describe('Home', () => {
     await act(async () => {
       backdrop.click();
     });
+    expect(document.location.pathname).toBe('/');
   });
 
   test('should render with delete modal and submit', async () => {
@@ -306,5 +314,6 @@ describe('Home', () => {
     await act(async () => {
       deleteBtn.click();
     });
+    expect(document.location.pathname).toBe('/');
   });
 });

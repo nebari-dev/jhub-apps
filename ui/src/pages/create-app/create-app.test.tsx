@@ -45,6 +45,9 @@ describe('CreateApp', () => {
       </RecoilRoot>,
     );
     const btn = baseElement.querySelector('#back-btn') as HTMLButtonElement;
+    expect(btn).toBeInTheDocument();
+    expect(btn).toHaveTextContent('Back');
+    expect(btn).not.toHaveAttribute('disabled', 'disabled');
     await act(async () => {
       btn.click();
     });
