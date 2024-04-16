@@ -6,6 +6,7 @@ import {
   filterAndSortApps,
   getAppLogoUrl,
   getApps,
+  getEncodedServerUrl,
   getFriendlyDateStr,
   getFriendlyDisplayName,
   getFriendlyFrameworkName,
@@ -51,10 +52,10 @@ describe('JupyterHub utils', () => {
     const result = getServices(servicesFull, user);
     expect(result.length).toEqual(2);
     expect(result[0]).toEqual({
-      name: 'Service 1',
-      url: 'http://service1.com/testUser',
+      name: 'Environments',
+      url: 'http://service1.com/service1',
       external: true,
-      pinned: false,
+      pinned: true,
     });
   });
 
@@ -78,6 +79,26 @@ describe('JupyterHub utils', () => {
   test('returns an array of JhApp for all apps', () => {
     const result = getApps(serverApps, 'all', 'testUser');
     expect(result.length).toEqual(5);
+  });
+
+  test('returns a jupyterhub friendly url for JupyterLab with no encoding needed', () => {
+    const result = getEncodedServerUrl('testuser', 'lab');
+    expect(result).toBe('/hub/user/testuser/lab');
+  });
+
+  test('returns a jupyterhub friendly url for JupyterLab with encoding needed', () => {
+    const result = getEncodedServerUrl('testuser+123@email.com', 'lab');
+    expect(result).toBe('/hub/user/testuser%2B123@email.com/lab');
+  });
+
+  test('returns a jupyterhub friendly url for VSCode with no encoding needed', () => {
+    const result = getEncodedServerUrl('testuser', 'vscode');
+    expect(result).toBe('/hub/user/testuser/vscode');
+  });
+
+  test('returns a jupyterhub friendly url for VSCode with encoding needed', () => {
+    const result = getEncodedServerUrl('testuser+123@email.com', 'vscode');
+    expect(result).toBe('/hub/user/testuser%2B123@email.com/vscode');
   });
 
   test('returns a friendly display name with no trailing spaces', () => {
