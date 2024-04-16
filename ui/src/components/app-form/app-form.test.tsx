@@ -2,6 +2,7 @@ import { app, environments, frameworks, profiles } from '@src/data/api';
 import { currentUser } from '@src/data/user';
 import axios from '@src/utils/axios';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import '@testing-library/jest-dom';
 import { act, fireEvent, render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import MockAdapter from 'axios-mock-adapter';
@@ -37,7 +38,7 @@ describe('AppForm', () => {
         </QueryClientProvider>
       </RecoilRoot>,
     );
-    expect(baseElement.querySelector('div')).toBeTruthy();
+    expect(baseElement.querySelector('#app-form')).toBeTruthy();
   });
 
   test('simulates creating a standard app', async () => {
@@ -68,6 +69,9 @@ describe('AppForm', () => {
     if (displayNameField && frameworkField && envVariableField) {
       // Attempt submitting without filling in required fields
       const btn = baseElement.querySelector('#submit-btn') as HTMLButtonElement;
+      expect(btn).toBeInTheDocument();
+      expect(btn).toHaveTextContent('Create App');
+      expect(btn).not.toHaveAttribute('disabled', 'disabled');
       await act(async () => {
         btn.click();
       });
@@ -83,6 +87,8 @@ describe('AppForm', () => {
       await act(async () => {
         btn.click();
       });
+      // TODO: Update this test when everything is running in single react app
+      expect(window.location.pathname).not.toBe('/create-app');
     }
   });
 
@@ -114,6 +120,9 @@ describe('AppForm', () => {
     if (displayNameField && thumbnailField && frameworkField) {
       // Attempt submitting without filling in required fields
       const btn = baseElement.querySelector('#submit-btn') as HTMLButtonElement;
+      expect(btn).toBeInTheDocument();
+      expect(btn).toHaveTextContent('Create App');
+      expect(btn).not.toHaveAttribute('disabled', 'disabled');
       await act(async () => {
         btn.click();
       });
@@ -130,38 +139,8 @@ describe('AppForm', () => {
       await act(async () => {
         btn.click();
       });
-    }
-  });
-
-  test('simulates creating a standard app with onSubmit', async () => {
-    mock.onGet(new RegExp('/frameworks')).reply(200, frameworks);
-    mock.onPost(new RegExp('/server')).reply(200);
-    queryClient.setQueryData(['app-frameworks'], frameworks);
-    queryClient.setQueryData(['app-environments'], null);
-    queryClient.setQueryData(['app-profiles'], null);
-    const { baseElement } = render(
-      <RecoilRoot>
-        <QueryClientProvider client={queryClient}>
-          <BrowserRouter>
-            <AppForm />
-          </BrowserRouter>
-        </QueryClientProvider>
-      </RecoilRoot>,
-    );
-
-    const displayNameField = baseElement.querySelector(
-      '#display_name',
-    ) as HTMLInputElement;
-    const frameworkField = baseElement.querySelector(
-      '[name="framework"]',
-    ) as HTMLSelectElement;
-    if (displayNameField && frameworkField) {
-      const btn = baseElement.querySelector('#submit-btn') as HTMLButtonElement;
-      await userEvent.type(displayNameField, 'App 1');
-      fireEvent.change(frameworkField, { target: { value: 'panel' } });
-      await act(async () => {
-        btn.click();
-      });
+      // TODO: Update this test when everything is running in single react app
+      expect(window.location.pathname).not.toBe('/create-app');
     }
   });
 
@@ -211,6 +190,9 @@ describe('AppForm', () => {
     ) {
       // Attempt submitting without filling in required fields
       const btn = baseElement.querySelector('#submit-btn') as HTMLButtonElement;
+      expect(btn).toBeInTheDocument();
+      expect(btn).toHaveTextContent('Create App');
+      expect(btn).not.toHaveAttribute('disabled', 'disabled');
       await act(async () => {
         btn.click();
       });
@@ -232,6 +214,8 @@ describe('AppForm', () => {
       await act(async () => {
         btn.click();
       });
+      // TODO: Update this test when everything is running in single react app
+      expect(window.location.pathname).not.toBe('/create-app');
     }
   });
 
@@ -263,9 +247,14 @@ describe('AppForm', () => {
       fireEvent.change(frameworkField, { target: { value: 'panel' } });
 
       const btn = baseElement.querySelector('#submit-btn') as HTMLButtonElement;
+      expect(btn).toBeInTheDocument();
+      expect(btn).toHaveTextContent('Create App');
+      expect(btn).not.toHaveAttribute('disabled', 'disabled');
       await act(async () => {
         btn.click();
       });
+      // TODO: Update this test when everything is running in single react app
+      expect(window.location.pathname).not.toBe('/create-app');
     }
   });
 
@@ -302,9 +291,14 @@ describe('AppForm', () => {
       fireEvent.change(frameworkField, { target: { value: 'panel' } });
 
       const btn = baseElement.querySelector('#submit-btn') as HTMLButtonElement;
+      expect(btn).toBeInTheDocument();
+      expect(btn).toHaveTextContent('Save');
+      expect(btn).not.toHaveAttribute('disabled', 'disabled');
       await act(async () => {
         btn.click();
       });
+      // TODO: Update this test when everything is running in single react app
+      expect(window.location.pathname).not.toBe('/edit-app');
     }
   });
 
@@ -339,9 +333,14 @@ describe('AppForm', () => {
       fireEvent.change(frameworkField, { target: { value: 'panel' } });
 
       const btn = baseElement.querySelector('#submit-btn') as HTMLButtonElement;
+      expect(btn).toBeInTheDocument();
+      expect(btn).toHaveTextContent('Save');
+      expect(btn).not.toHaveAttribute('disabled', 'disabled');
       await act(async () => {
         btn.click();
       });
+      // TODO: Update this test when everything is running in single react app
+      expect(window.location.pathname).not.toBe('/edit-app');
     }
   });
 
@@ -358,6 +357,9 @@ describe('AppForm', () => {
       </RecoilRoot>,
     );
     const btn = baseElement.querySelector('#cancel-btn') as HTMLButtonElement;
+    expect(btn).toBeInTheDocument();
+    expect(btn).toHaveTextContent('Cancel');
+    expect(btn).not.toHaveAttribute('disabled', 'disabled');
     await act(async () => {
       btn.click();
     });

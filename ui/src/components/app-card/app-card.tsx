@@ -31,7 +31,6 @@ interface AppCardProps {
   thumbnail?: string;
   url: string;
   username?: string;
-  ready?: boolean;
   isPublic?: boolean;
   isShared?: boolean;
   serverStatus: string;
