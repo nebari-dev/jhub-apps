@@ -64,8 +64,8 @@ export const servicesFull: JhServiceFull[] = [
   {
     display: true,
     info: {
-      name: 'Service 1',
-      url: 'http://service1.com/[USER]',
+      name: 'Environments',
+      url: 'http://service1.com/service1',
       external: true,
     },
     prefix: '/services',
@@ -80,8 +80,8 @@ export const servicesFull: JhServiceFull[] = [
   {
     display: false,
     info: {
-      name: 'Service 2',
-      url: 'http://service2.com/[USER]',
+      name: 'JupyterLab',
+      url: 'http://service2.com/service2',
       external: false,
     },
     prefix: '/services',
@@ -96,8 +96,8 @@ export const servicesFull: JhServiceFull[] = [
   {
     display: true,
     info: {
-      name: 'Service 3',
-      url: 'http://service3.com/[USER]',
+      name: 'VSCode',
+      url: 'http://service3.com/service3',
       external: false,
     },
     prefix: '/services',
