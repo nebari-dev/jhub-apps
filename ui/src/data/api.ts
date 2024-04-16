@@ -105,7 +105,7 @@ export const serverApps = {
         jhub_app: true,
         display_name: 'Test App',
         description:
-          'Lorem ipsum dolor sit amet consectetur. Sit vestibulum facilisis auctor pulvinar ac. Cras.',
+          'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Id consectetur purus ut faucibus. Nullam vel eget ipsum malesuada fermentum.',
         thumbnail: DEFAULT_APP_LOGO,
         framework: 'panel',
         conda_env: 'env-1',
@@ -129,7 +129,7 @@ export const serverApps = {
         jhub_app: true,
         display_name: 'Test App 2',
         description:
-          'Lorem ipsum dolor sit amet consectetur. Sit vestibulum facilisis auctor pulvinar ac. Bras.',
+          'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Id consectetur purus ut faucibus.',
         thumbnail: DEFAULT_APP_LOGO,
         framework: 'streamlit',
         conda_env: 'env-2',

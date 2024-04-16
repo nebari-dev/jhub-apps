@@ -354,10 +354,10 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
                 {...field}
                 id="description"
                 label="Description"
-                placeholder="Add app description (max. 75 characters)"
+                placeholder="Add app description (max. 200 characters)"
                 multiline
                 rows={4}
-                inputProps={{ maxLength: 75 }}
+                inputProps={{ maxLength: 200 }}
               />
             </FormControl>
           )}

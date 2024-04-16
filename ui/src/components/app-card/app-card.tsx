@@ -213,7 +213,7 @@ export const AppCard = ({
                       <span
                         className="card-content-truncate"
                         style={{
-                          maxWidth: '165px',
+                          maxWidth: '220px',
                         }}
                       >
                         {title}
@@ -229,7 +229,7 @@ export const AppCard = ({
                     <span
                       className="card-content-truncate"
                       style={{
-                        maxWidth: '200px',
+                        maxWidth: '220px',
                         marginLeft: '2px',
                       }}
                     >
@@ -240,6 +240,9 @@ export const AppCard = ({
                     variant="body2"
                     color="text.secondary"
                     className="card-description"
+                    sx={{
+                      fontSize: '12px',
+                    }}
                   >
                     {description}
                   </Typography>
@@ -262,7 +265,7 @@ export const AppCard = ({
                     variant="body2"
                     color="text.secondary"
                     className="card-description-service"
-                    sx={{ mt: '5px' }}
+                    sx={{ fontSize: '12px', mt: '8px' }}
                   >
                     {description}
                   </Typography>
