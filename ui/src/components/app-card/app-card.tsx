@@ -2,7 +2,7 @@ import GroupRoundedIcon from '@mui/icons-material/GroupRounded';
 import LockRoundedIcon from '@mui/icons-material/LockRounded';
 import PublicRoundedIcon from '@mui/icons-material/PublicRounded';
 import PushPinRoundedIcon from '@mui/icons-material/PushPinRounded';
-import { Tooltip } from '@mui/material';
+import { Box, Link, Tooltip } from '@mui/material';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
@@ -145,8 +145,8 @@ export const AppCard = ({
   ];
 
   return (
-    <div className="card" id={`card-${id}`} tabIndex={0}>
-      <a href={url}>
+    <Box className="card" id={`card-${id}`} tabIndex={0}>
+      <Link href={url}>
         <Card id={`card-${id}`} tabIndex={0} className="Mui-card">
           <div
             className={`card-content-header ${isAppCard ? '' : 'card-content-header-service'}`}
@@ -246,7 +246,7 @@ export const AppCard = ({
                 </CardContent>
               </div>
             ) : (
-              <div className="card-content-container app-service no-hover">
+              <Box className="card-content-container app-service no-hover">
                 <CardContent className="card-inner-content">
                   <span className="inline relative iconic">{getIcon()}</span>
                   <Typography
@@ -267,12 +267,12 @@ export const AppCard = ({
                     {description}
                   </Typography>
                 </CardContent>
-              </div>
+              </Box>
             )}
           </div>
         </Card>
-      </a>
-    </div>
+      </Link>
+    </Box>
   );
 };
 

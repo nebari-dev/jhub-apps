@@ -131,13 +131,14 @@ export const AppFilters = ({
   return (
     <Grid container spacing={2} paddingBottom="32px">
       <Grid item xs={12} md={4}>
-        <Item>
+        <Item sx={{ pb: 0 }}>
           <StyledFilterButton
             id="filters-btn"
             variant="outlined"
             color="secondary"
             onClick={(event) => setFiltersAnchorEl(event.currentTarget)}
             startIcon={<FilterAltRoundedIcon />}
+            sx={{ fontSize: '16px', fontWeight: 600, top: '-8px' }}
             endIcon={
               filtersOpen ? (
                 <KeyboardArrowUpRoundedIcon />
@@ -156,18 +157,29 @@ export const AppFilters = ({
             onClose={() => setFiltersAnchorEl(null)}
             MenuListProps={{
               'aria-labelledby': 'filters-btn',
+              style: { paddingTop: 0, paddingBottom: 0 },
+              sx: {
+                '.MuiFormLabel-root': { fontSize: '14px' },
+                '.MuiFormControlLabel-label': {
+                  fontSize: '14px', // Targets labels within FormControlLabel
+                },
+              },
             }}
           >
             <Box
               component="form"
               name="filters-form"
-              sx={{ width: '450px', px: '16px', py: '8px' }}
+              sx={{
+                width: '450px',
+                px: '16px',
+                pb: 0,
+                mt: 3,
+              }}
             >
               <FormLabel
                 id="frameworks-label"
                 sx={{
                   py: '16px',
-                  fontSize: '14px',
                   fontWeight: 600,
                 }}
               >
@@ -177,9 +189,21 @@ export const AppFilters = ({
                 {frameworks?.map((framework) => (
                   <FormControlLabel
                     key={framework.name}
-                    control={<Checkbox value={framework.display_name} />}
+                    control={
+                      <Checkbox
+                        value={framework.display_name}
+                        sx={{
+                          color: 'pin#20AAA1',
+                          '&.Mui-checked': {
+                            color: '#20AAA1',
+                          },
+                        }}
+                      />
+                    }
                     label={framework.display_name}
-                    sx={{ width: '120px' }}
+                    sx={{
+                      width: '120px',
+                    }}
                     onClick={handleFrameworkChange}
                     checked={currentFrameworks.includes(framework.display_name)}
                   />
@@ -206,7 +230,15 @@ export const AppFilters = ({
                   {OWNERSHIP_TYPES.map((value) => (
                     <FormControlLabel
                       key={value}
-                      control={<Radio value={value} />}
+                      control={
+                        <Radio
+                          value={value}
+                          sx={{
+                            color: 'pin#20AAA1',
+                            '&.Mui-checked': { color: '#20AAA1' },
+                          }}
+                        />
+                      }
                       label={value}
                       onClick={() => handleOwnershipTypeChange(value)}
                       checked={currentOwnershipValue === value}
@@ -214,25 +246,41 @@ export const AppFilters = ({
                   ))}
                 </RadioGroup>
               </Box>
-              <ButtonGroup>
-                <Button
-                  id="clear-filters-btn"
-                  variant="text"
-                  color="secondary"
-                  size="small"
-                  onClick={handleClearFilters}
-                >
-                  Clear
-                </Button>
-                <Button
-                  id="apply-filters-btn"
-                  variant="contained"
-                  size="small"
-                  onClick={handleApplyFilters}
-                >
-                  Apply
-                </Button>
-              </ButtonGroup>
+              <Box
+                sx={{
+                  mt: 2,
+                  backgroundColor: '#EEE',
+                  p: 1,
+                  mx: -2,
+                  width: 'auto',
+                  fontSize: '14px',
+                }}
+              >
+                <ButtonGroup>
+                  <Button
+                    id="clear-filters-btn"
+                    variant="text"
+                    sx={{
+                      color: '#0F1015',
+                      display: 'flex',
+                      alignItems: 'center',
+                    }}
+                    size="small"
+                    onClick={handleClearFilters}
+                  >
+                    Clear
+                  </Button>
+                  <Button
+                    id="apply-filters-btn"
+                    variant="contained"
+                    size="small"
+                    onClick={handleApplyFilters}
+                    sx={{ px: 'none !important', minWidth: '20px' }}
+                  >
+                    Apply
+                  </Button>
+                </ButtonGroup>
+              </Box>
             </Box>
           </Menu>
           {/* <StyledFilterButton   // Not using now, may in the future
@@ -287,13 +335,14 @@ export const AppFilters = ({
               flexDirection: 'row',
             }}
           >
-            <SortRounded sx={{ pr: '8px' }} />
+            <SortRounded
+              sx={{ position: 'relative', top: '-.5px', marginRight: '4px' }}
+            />
             <FormLabel
               id="sort-by-label"
               sx={{
-                fontSize: '14px',
-                fontWeight: 500,
-                pr: '8px',
+                fontSize: '16px',
+                fontWeight: 400,
                 color: 'common.black',
               }}
             >
@@ -307,9 +356,11 @@ export const AppFilters = ({
               sx={{
                 position: 'relative',
                 bottom: '8px',
+                fontSize: '16px',
                 fontWeight: 600,
                 width: '180px',
                 color: 'common.black',
+                pl: 0,
               }}
               endIcon={
                 sortByOpen ? (
@@ -329,8 +380,26 @@ export const AppFilters = ({
               MenuListProps={{
                 'aria-labelledby': 'sort-by-btn',
               }}
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'left',
+              }}
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'left',
+              }}
+              sx={{
+                transform: 'translateX(-85px)', // Move menu left/right
+                '.MuiFormControlLabel-label': {
+                  fontSize: '14px', // Applies to all labels in the FormControlLabel within this Menu
+                },
+              }}
             >
-              <Box component="form" name="sort-by-form" sx={{ px: '16px' }}>
+              <Box
+                component="form"
+                name="sort-by-form"
+                sx={{ px: '16px', width: '220px' }}
+              >
                 <RadioGroup
                   defaultValue="any"
                   name="sort-by-group"
@@ -339,7 +408,15 @@ export const AppFilters = ({
                   {SORT_TYPES.map((value) => (
                     <FormControlLabel
                       key={value}
-                      control={<Radio value={value} />}
+                      control={
+                        <Radio
+                          value={value}
+                          sx={{
+                            color: 'pin#20AAA1',
+                            '&.Mui-checked': { color: '#20AAA1' },
+                          }}
+                        />
+                      }
                       label={value}
                       onClick={() => handleSortByClick(value)}
                       checked={currentSortValue === value}
