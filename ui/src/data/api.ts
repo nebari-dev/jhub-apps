@@ -152,7 +152,7 @@ export const serverApps = {
         jhub_app: true,
         display_name: 'TEST App 3',
         description:
-          'Lorem ipsum dolor sit amet consectetur. Sit vestibulum facilisis auctor pulvinar ac. Dras.',
+          'Lorem ipsum dolor sit amet consectetur. Sit vestibulum facilisis auctor pulvinar ac. Dras. Id consectetur purus ut faucibus.',
         thumbnail: DEFAULT_APP_LOGO,
         framework: 'jupyterlab',
         conda_env: 'env-1',
@@ -174,7 +174,8 @@ export const serverApps = {
         name: 'test-app-4',
         jhub_app: true,
         display_name: 'App with a long name that should be truncated',
-        description: '',
+        description:
+          'Lorem ipsum dolor sit amet consectetur. Sit vestibulum facilisis auctor pulvinar ac. Cras.',
         thumbnail: DEFAULT_APP_LOGO,
         framework: 'streamlit',
         conda_env: 'env-1',

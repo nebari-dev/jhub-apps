@@ -144,6 +144,31 @@ export const AppCard = ({
     },
   ];
 
+  const getHoverClass = (id: string) => {
+    const element = document.querySelector(
+      `#card-content-container-${id}`,
+    ) as HTMLElement;
+    if (!element) {
+      return;
+    }
+
+    const description = element.querySelector(`.card-description`);
+    if (description) {
+      const contentLength = description.textContent?.length || 0;
+      if (contentLength > 160) {
+        return 'card-content-container-hover-5';
+      } else if (contentLength > 130) {
+        return 'card-content-container-hover-4';
+      } else if (contentLength > 90) {
+        return 'card-content-container-hover-3';
+      } else if (contentLength > 60) {
+        return 'card-content-container-hover-2';
+      } else {
+        return 'card-content-container-hover-1';
+      }
+    }
+  };
+
   return (
     <div className="card" id={`card-${id}`} tabIndex={0}>
       <a href={url}>
@@ -180,27 +205,28 @@ export const AppCard = ({
             </CardMedia>
           </div>
           <div className="card-content-content">
-            {framework && isAppCard ? (
-              <div className="chip-container">
-                <div className="menu-chip">
-                  <Chip
-                    color="default"
-                    variant="outlined"
-                    label={framework}
-                    id={`chip-${id}`}
-                    size="small"
-                    sx={{ mb: '8px' }}
-                  />
-                </div>
-              </div>
-            ) : (
-              <></>
-            )}
             {isAppCard ? (
               <div
-                className={`card-content-container ${!description ? 'no-hover' : ''}`}
+                id={`card-content-container-${id}`}
+                className={`card-content-container ${getHoverClass(id)}`}
               >
                 <CardContent className="card-inner-content">
+                  {framework ? (
+                    <div className="chip-container">
+                      <div className="menu-chip">
+                        <Chip
+                          color="default"
+                          variant="outlined"
+                          label={framework}
+                          id={`chip-${id}`}
+                          size="small"
+                          sx={{ mb: '8px' }}
+                        />
+                      </div>
+                    </div>
+                  ) : (
+                    <></>
+                  )}
                   <span className="inline relative iconic">{getIcon()}</span>
                   <Typography
                     gutterBottom
@@ -223,28 +249,28 @@ export const AppCard = ({
                   <Typography
                     variant="body2"
                     color="text.secondary"
-                    className={`card-author ${!description ? 'no-hover' : ''}`}
-                    sx={{ mt: '5px' }}
+                    className="card-description"
+                    sx={{
+                      fontSize: '12px',
+                      mt: '8px',
+                    }}
+                  >
+                    {description}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    color="text.primary"
+                    className="card-author"
+                    sx={{ mt: '3px' }}
                   >
                     <span
                       className="card-content-truncate"
                       style={{
                         maxWidth: '220px',
-                        marginLeft: '2px',
                       }}
                     >
                       {username}
                     </span>
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    color="text.secondary"
-                    className="card-description"
-                    sx={{
-                      fontSize: '12px',
-                    }}
-                  >
-                    {description}
                   </Typography>
                 </CardContent>
               </div>
