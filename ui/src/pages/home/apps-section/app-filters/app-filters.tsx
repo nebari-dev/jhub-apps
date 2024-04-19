@@ -34,6 +34,7 @@ import {
 } from '../../../../store';
 import { StyledFilterButton } from '../../../../styles/styled-filter-button';
 import { Item } from '../../../../styles/styled-item';
+import './app-filters.css';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface AppFiltersProps {
@@ -138,7 +139,12 @@ export const AppFilters = ({
             color="secondary"
             onClick={(event) => setFiltersAnchorEl(event.currentTarget)}
             startIcon={<FilterAltRoundedIcon />}
-            sx={{ fontSize: '16px', fontWeight: 600, top: '-8px' }}
+            sx={{
+              fontSize: '16px',
+              fontWeight: 600,
+              top: '-8px',
+              background: 'none',
+            }}
             endIcon={
               filtersOpen ? (
                 <KeyboardArrowUpRoundedIcon />
@@ -189,20 +195,13 @@ export const AppFilters = ({
                 {frameworks?.map((framework) => (
                   <FormControlLabel
                     key={framework.name}
-                    control={
-                      <Checkbox
-                        value={framework.display_name}
-                        sx={{
-                          color: 'pin#20AAA1',
-                          '&.Mui-checked': {
-                            color: '#20AAA1',
-                          },
-                        }}
-                      />
-                    }
+                    control={<Checkbox value={framework.display_name} />}
                     label={framework.display_name}
                     sx={{
                       width: '120px',
+                      '& > :last-child': {
+                        minWidth: '100%',
+                      },
                     }}
                     onClick={handleFrameworkChange}
                     checked={currentFrameworks.includes(framework.display_name)}
@@ -220,7 +219,7 @@ export const AppFilters = ({
               >
                 Ownership
               </FormLabel>
-              <Box sx={{ pb: '24px' }}>
+              <Box>
                 <RadioGroup
                   aria-labelledby="ownership-label"
                   defaultValue="any"
@@ -230,15 +229,7 @@ export const AppFilters = ({
                   {OWNERSHIP_TYPES.map((value) => (
                     <FormControlLabel
                       key={value}
-                      control={
-                        <Radio
-                          value={value}
-                          sx={{
-                            color: 'pin#20AAA1',
-                            '&.Mui-checked': { color: '#20AAA1' },
-                          }}
-                        />
-                      }
+                      control={<Radio value={value} />}
                       label={value}
                       onClick={() => handleOwnershipTypeChange(value)}
                       checked={currentOwnershipValue === value}
@@ -248,9 +239,9 @@ export const AppFilters = ({
               </Box>
               <Box
                 sx={{
-                  mt: 2,
                   backgroundColor: '#EEE',
                   p: 1,
+                  pt: 0.75,
                   mx: -2,
                   width: 'auto',
                   fontSize: '14px',
@@ -335,13 +326,12 @@ export const AppFilters = ({
               flexDirection: 'row',
             }}
           >
-            <SortRounded
-              sx={{ position: 'relative', top: '-.5px', marginRight: '4px' }}
-            />
+            <SortRounded sx={{ position: 'relative', marginRight: '4px' }} />
             <FormLabel
               id="sort-by-label"
               sx={{
                 fontSize: '16px',
+                pr: '6px',
                 fontWeight: 400,
                 color: 'common.black',
               }}
@@ -360,7 +350,8 @@ export const AppFilters = ({
                 fontWeight: 600,
                 width: '180px',
                 color: 'common.black',
-                pl: 0,
+                px: 0,
+                mr: 1.5,
               }}
               endIcon={
                 sortByOpen ? (
@@ -408,15 +399,7 @@ export const AppFilters = ({
                   {SORT_TYPES.map((value) => (
                     <FormControlLabel
                       key={value}
-                      control={
-                        <Radio
-                          value={value}
-                          sx={{
-                            color: 'pin#20AAA1',
-                            '&.Mui-checked': { color: '#20AAA1' },
-                          }}
-                        />
-                      }
+                      control={<Radio value={value} />}
                       label={value}
                       onClick={() => handleSortByClick(value)}
                       checked={currentSortValue === value}
