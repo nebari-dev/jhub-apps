@@ -335,7 +335,7 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
                 {...field}
                 id="display_name"
                 label="Name"
-                placeholder="Add app name (max. 255 characters)"
+                placeholder="Add app name"
                 autoFocus
                 required
                 error={errors.display_name?.message ? true : false}
@@ -354,10 +354,10 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
                 {...field}
                 id="description"
                 label="Description"
-                placeholder="Add app description (max. 75 characters)"
+                placeholder="Add app description (max. 200 characters)"
                 multiline
                 rows={4}
-                inputProps={{ maxLength: 75 }}
+                inputProps={{ maxLength: 200 }}
               />
             </FormControl>
           )}
