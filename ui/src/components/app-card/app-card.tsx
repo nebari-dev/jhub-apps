@@ -155,13 +155,13 @@ export const AppCard = ({
     const description = element.querySelector(`.card-description`);
     if (description) {
       const contentLength = description.textContent?.length || 0;
-      if (contentLength > 160) {
+      if (contentLength > 170) {
         return 'card-content-container-hover-5';
-      } else if (contentLength > 130) {
+      } else if (contentLength > 125) {
         return 'card-content-container-hover-4';
       } else if (contentLength > 90) {
         return 'card-content-container-hover-3';
-      } else if (contentLength > 60) {
+      } else if (contentLength > 45) {
         return 'card-content-container-hover-2';
       } else {
         return 'card-content-container-hover-1';
@@ -261,12 +261,13 @@ export const AppCard = ({
                     variant="body2"
                     color="text.primary"
                     className="card-author"
-                    sx={{ mt: '3px' }}
+                    sx={{ mt: '6px' }}
                   >
                     <span
                       className="card-content-truncate"
                       style={{
                         maxWidth: '220px',
+                        fontSize: '12px',
                       }}
                     >
                       {username}
