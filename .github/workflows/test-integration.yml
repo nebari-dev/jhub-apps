@@ -90,8 +90,8 @@ jobs:
         else
             jhub_suffix="5x"
         fi
-        echo "playwright-artifact-name=${{ matrix.test_type }}-$jhub_suffix-playwright-videos" >> "$GITHUB_OUTPUT"
-        echo "jhub-logs-artifact-name=${{ matrix.test_type }}-$jhub_suffix-jupyterhub-logs" >> "$GITHUB_OUTPUT"
+        echo "playwright-artifact-name=${{ matrix.test_type }}-$jhub_suffix-python${{ matrix.python-version }}-playwright-videos" >> "$GITHUB_OUTPUT"
+        echo "jhub-logs-artifact-name=${{ matrix.test_type }}-$jhub_suffix-python${{ matrix.python-version }}-jupyterhub-logs" >> "$GITHUB_OUTPUT"
 
     - name: Upload Playwright Videos
       if: always()
