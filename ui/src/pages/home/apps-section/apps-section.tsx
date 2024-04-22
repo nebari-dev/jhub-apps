@@ -1,4 +1,7 @@
 import AddIcon from '@mui/icons-material/AddRounded';
+import SearchIcon from '@mui/icons-material/Search';
+import InputAdornment from '@mui/material/InputAdornment';
+
 import { Box, Button, Divider, Grid, Stack, TextField } from '@mui/material';
 import { JhApp } from '@src/types/jupyterhub';
 import { UserState } from '@src/types/user';
@@ -29,7 +32,7 @@ export const AppsSection = (): React.ReactElement => {
   const [apps, setApps] = useState<JhApp[]>([]);
   const [, setAppStatus] = useState('');
   const [currentUser] = useRecoilState<UserState | undefined>(defaultUser);
-
+  const [focused, setFocused] = useState(false);
   const [, setCurrentNotification] = useRecoilState<string | undefined>(
     currentNotification,
   );
@@ -149,12 +152,21 @@ export const AppsSection = (): React.ReactElement => {
                   <TextField
                     id="search"
                     size="small"
-                    placeholder="Search..."
+                    placeholder="Search Apps..."
                     aria-label="Search for an app"
                     onChange={handleSearch}
+                    onFocus={() => setFocused(true)}
+                    onBlur={() => setFocused(false)}
                     sx={{
                       width: { sm: '200px', md: '300px', lg: '600px' },
                       pr: '16px',
+                    }}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          {!focused && <SearchIcon />}
+                        </InputAdornment>
+                      ),
                     }}
                   />
                 </Item>
@@ -196,7 +208,8 @@ export const AppsSection = (): React.ReactElement => {
                 display: 'flex',
                 flexDirection: 'row',
                 flexWrap: 'wrap',
-                gap: '16px',
+                gap: 2,
+                rowGap: 3,
                 justifyContent: 'flex-start',
                 paddingBottom: '48px',
               }}
