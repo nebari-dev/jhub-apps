@@ -2,6 +2,8 @@ import FilterAltRoundedIcon from '@mui/icons-material/FilterAltRounded';
 import KeyboardArrowDownRoundedIcon from '@mui/icons-material/KeyboardArrowDownRounded';
 import KeyboardArrowUpRoundedIcon from '@mui/icons-material/KeyboardArrowUpRounded';
 import SortRounded from '@mui/icons-material/SortRounded';
+import SpaceDashboardIcon from '@mui/icons-material/SpaceDashboard';
+import TableRowsIcon from '@mui/icons-material/TableRows';
 import {
   Box,
   Button,
@@ -22,7 +24,7 @@ import axios from '@src/utils/axios';
 import { OWNERSHIP_TYPES, SORT_TYPES } from '@src/utils/constants';
 import { filterAndSortApps } from '@src/utils/jupyterhub';
 import { useQuery } from '@tanstack/react-query';
-import React, { SyntheticEvent, useState } from 'react';
+import React, { SyntheticEvent } from 'react';
 import { useRecoilState } from 'recoil';
 import {
   currentFrameworks as defaultFrameworks,
@@ -32,28 +34,33 @@ import {
 } from '../../../../store';
 import { StyledFilterButton } from '../../../../styles/styled-filter-button';
 import { Item } from '../../../../styles/styled-item';
+import './app-filters.css';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface AppFiltersProps {
   data: any;
   currentUser: UserState;
   setApps: React.Dispatch<React.SetStateAction<JhApp[]>>;
+  isGridViewActive: boolean;
+  toggleView: () => void;
 }
 
 export const AppFilters = ({
   data,
   currentUser,
+  isGridViewActive,
+  toggleView,
   setApps,
 }: AppFiltersProps): React.ReactElement => {
   const [currentSearchValue] = useRecoilState<string>(defaultSearchValue);
   const [filtersAnchorEl, setFiltersAnchorEl] =
     React.useState<null | HTMLElement>(null);
-  const [bulkActionsAnchorEl, setBulkActionsAnchorEl] =
-    React.useState<null | HTMLElement>(null);
+  // const [bulkActionsAnchorEl, setBulkActionsAnchorEl] =
+  // React.useState<null | HTMLElement>(null); // Not using now, may in the future
   const [sortByAnchorEl, setSortByAnchorEl] =
     React.useState<null | HTMLElement>(null);
   const filtersOpen = Boolean(filtersAnchorEl);
-  const bulkActionsOpen = Boolean(bulkActionsAnchorEl);
+  // const bulkActionsOpen = Boolean(bulkActionsAnchorEl); // Not using now, may in the future
   const sortByOpen = Boolean(sortByAnchorEl);
   const [currentFrameworks, setCurrentFrameworks] =
     useRecoilState<string[]>(defaultFrameworks);
@@ -62,7 +69,7 @@ export const AppFilters = ({
   );
   const [currentSortValue, setCurrentSortValue] =
     useRecoilState(defaultSortValue);
-  const [hasBulkSelections] = useState(false);
+  // const [hasBulkSelections] = useState(false); // Not using now, may in the future
 
   const { data: frameworks, isLoading: frameworksLoading } = useQuery<
     AppFrameworkProps[],
@@ -117,7 +124,6 @@ export const AppFilters = ({
       ),
     );
   };
-
   const handleClearFilters = () => {
     setCurrentFrameworks([]);
     setCurrentOwnershipValue('Any');
@@ -126,13 +132,19 @@ export const AppFilters = ({
   return (
     <Grid container spacing={2} paddingBottom="32px">
       <Grid item xs={12} md={4}>
-        <Item>
+        <Item sx={{ pb: 0 }}>
           <StyledFilterButton
             id="filters-btn"
             variant="outlined"
             color="secondary"
             onClick={(event) => setFiltersAnchorEl(event.currentTarget)}
             startIcon={<FilterAltRoundedIcon />}
+            sx={{
+              fontSize: '16px',
+              fontWeight: 600,
+              top: '-8px',
+              background: 'none',
+            }}
             endIcon={
               filtersOpen ? (
                 <KeyboardArrowUpRoundedIcon />
@@ -151,18 +163,29 @@ export const AppFilters = ({
             onClose={() => setFiltersAnchorEl(null)}
             MenuListProps={{
               'aria-labelledby': 'filters-btn',
+              style: { paddingTop: 0, paddingBottom: 0 },
+              sx: {
+                '.MuiFormLabel-root': { fontSize: '14px' },
+                '.MuiFormControlLabel-label': {
+                  fontSize: '14px', // Targets labels within FormControlLabel
+                },
+              },
             }}
           >
             <Box
               component="form"
               name="filters-form"
-              sx={{ width: '450px', px: '16px', py: '8px' }}
+              sx={{
+                width: '450px',
+                px: '16px',
+                pb: 0,
+                mt: 3,
+              }}
             >
               <FormLabel
                 id="frameworks-label"
                 sx={{
                   py: '16px',
-                  fontSize: '14px',
                   fontWeight: 600,
                 }}
               >
@@ -174,7 +197,12 @@ export const AppFilters = ({
                     key={framework.name}
                     control={<Checkbox value={framework.display_name} />}
                     label={framework.display_name}
-                    sx={{ width: '120px' }}
+                    sx={{
+                      width: '120px',
+                      '& > :last-child': {
+                        minWidth: '100%',
+                      },
+                    }}
                     onClick={handleFrameworkChange}
                     checked={currentFrameworks.includes(framework.display_name)}
                   />
@@ -191,7 +219,7 @@ export const AppFilters = ({
               >
                 Ownership
               </FormLabel>
-              <Box sx={{ pb: '24px' }}>
+              <Box>
                 <RadioGroup
                   aria-labelledby="ownership-label"
                   defaultValue="any"
@@ -209,28 +237,44 @@ export const AppFilters = ({
                   ))}
                 </RadioGroup>
               </Box>
-              <ButtonGroup>
-                <Button
-                  id="clear-filters-btn"
-                  variant="text"
-                  color="secondary"
-                  size="small"
-                  onClick={handleClearFilters}
-                >
-                  Clear
-                </Button>
-                <Button
-                  id="apply-filters-btn"
-                  variant="contained"
-                  size="small"
-                  onClick={handleApplyFilters}
-                >
-                  Apply
-                </Button>
-              </ButtonGroup>
+              <Box
+                sx={{
+                  backgroundColor: '#EEE',
+                  p: 1,
+                  pt: 0.75,
+                  mx: -2,
+                  width: 'auto',
+                  fontSize: '14px',
+                }}
+              >
+                <ButtonGroup>
+                  <Button
+                    id="clear-filters-btn"
+                    variant="text"
+                    sx={{
+                      color: '#0F1015',
+                      display: 'flex',
+                      alignItems: 'center',
+                    }}
+                    size="small"
+                    onClick={handleClearFilters}
+                  >
+                    Clear
+                  </Button>
+                  <Button
+                    id="apply-filters-btn"
+                    variant="contained"
+                    size="small"
+                    onClick={handleApplyFilters}
+                    sx={{ px: 'none !important', minWidth: '20px' }}
+                  >
+                    Apply
+                  </Button>
+                </ButtonGroup>
+              </Box>
             </Box>
           </Menu>
-          <StyledFilterButton
+          {/* <StyledFilterButton   // Not using now, may in the future
             id="bulk-actions-btn"
             variant="outlined"
             color="secondary"
@@ -260,7 +304,7 @@ export const AppFilters = ({
               name="bulk-actions-form"
               sx={{ px: '16px', py: '8px' }}
             ></Box>
-          </Menu>
+          </Menu> */}
         </Item>
       </Grid>
       <Grid
@@ -282,13 +326,13 @@ export const AppFilters = ({
               flexDirection: 'row',
             }}
           >
-            <SortRounded sx={{ pr: '8px' }} />
+            <SortRounded sx={{ position: 'relative', marginRight: '4px' }} />
             <FormLabel
               id="sort-by-label"
               sx={{
-                fontSize: '14px',
-                fontWeight: 500,
-                pr: '8px',
+                fontSize: '16px',
+                pr: '6px',
+                fontWeight: 400,
                 color: 'common.black',
               }}
             >
@@ -302,9 +346,12 @@ export const AppFilters = ({
               sx={{
                 position: 'relative',
                 bottom: '8px',
+                fontSize: '16px',
                 fontWeight: 600,
                 width: '180px',
                 color: 'common.black',
+                px: 0,
+                mr: 1.5,
               }}
               endIcon={
                 sortByOpen ? (
@@ -324,8 +371,26 @@ export const AppFilters = ({
               MenuListProps={{
                 'aria-labelledby': 'sort-by-btn',
               }}
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'left',
+              }}
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'left',
+              }}
+              sx={{
+                transform: 'translateX(-85px)', // Move menu left/right
+                '.MuiFormControlLabel-label': {
+                  fontSize: '14px', // Applies to all labels in the FormControlLabel within this Menu
+                },
+              }}
             >
-              <Box component="form" name="sort-by-form" sx={{ px: '16px' }}>
+              <Box
+                component="form"
+                name="sort-by-form"
+                sx={{ px: '16px', width: '220px' }}
+              >
                 <RadioGroup
                   defaultValue="any"
                   name="sort-by-group"
@@ -343,6 +408,65 @@ export const AppFilters = ({
                 </RadioGroup>
               </Box>
             </Menu>
+          </Box>
+        </Item>
+        <Item>
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-around',
+              border: '1px solid #DFDFE0',
+              borderRadius: '4px',
+              position: 'relative',
+              top: '-6px',
+            }}
+          >
+            <Button
+              onClick={toggleView}
+              disabled={isGridViewActive}
+              aria-label="Grid View"
+              sx={{
+                color: 'inherit',
+                backgroundColor: isGridViewActive ? '#E8E8EA' : 'transparent',
+                boxShadow: 'none',
+                padding: '5px',
+                minWidth: 'auto',
+                borderRadius: '4px 0px 0px 4px',
+                borderRight: '1px solid #DFDFE0',
+                '&:hover': {
+                  backgroundColor: isGridViewActive ? '#E8E8EA' : 'transparent',
+                  boxShadow: 'none',
+                },
+              }}
+            >
+              <SpaceDashboardIcon
+                sx={{ color: isGridViewActive ? '#2E2F33' : '#76777B' }}
+              />
+            </Button>
+            <Button
+              onClick={toggleView}
+              disabled={!isGridViewActive}
+              aria-label="Table View"
+              sx={{
+                color: 'inherit',
+                backgroundColor: !isGridViewActive ? '#E8E8EA' : 'transparent',
+                boxShadow: 'none',
+                borderRadius: '0px 4px 4px 0px',
+                padding: '5px',
+                minWidth: 'auto',
+                '&:hover': {
+                  backgroundColor: !isGridViewActive
+                    ? '#E8E8EA'
+                    : 'transparent',
+                  boxShadow: 'none',
+                },
+              }}
+            >
+              <TableRowsIcon
+                sx={{ color: !isGridViewActive ? '#2E2F33' : '#76777B' }}
+              />
+            </Button>
           </Box>
         </Item>
       </Grid>

@@ -30,7 +30,6 @@ describe('AppCard', () => {
             username="Developer"
             framework="Some Framework"
             url="/some-url"
-            ready={true}
             serverStatus="ready"
           />
         </QueryClientProvider>
@@ -49,8 +48,7 @@ describe('AppCard', () => {
             username="Developer"
             framework="Some Framework"
             url="/some-url"
-            ready={true}
-            serverStatus="ready"
+            serverStatus="Pending"
           />
         </QueryClientProvider>
       </RecoilRoot>,
@@ -58,6 +56,7 @@ describe('AppCard', () => {
     expect(baseElement).toBeInTheDocument();
     const appLabel = baseElement.querySelector('.MuiTypography-h5');
     expect(appLabel).toHaveTextContent('Test App');
+    expect(baseElement).toHaveTextContent('Pending');
   });
 
   test('renders default app card with no server status', async () => {
@@ -70,7 +69,6 @@ describe('AppCard', () => {
             username="Developer"
             framework="Some Framework"
             url="/some-url"
-            ready={true}
             serverStatus=""
           />
         </QueryClientProvider>
@@ -91,8 +89,7 @@ describe('AppCard', () => {
             username="Developer"
             framework="Some Framework"
             url="/some-url"
-            ready={true}
-            serverStatus="ready"
+            serverStatus="Ready"
             isAppCard={false}
           />
         </QueryClientProvider>
@@ -116,9 +113,8 @@ describe('AppCard', () => {
             username="Developer"
             framework="Some Framework"
             url="/some-url"
-            ready={true}
             thumbnail="/some-thumbnail.png"
-            serverStatus="ready"
+            serverStatus="Ready"
           />
         </QueryClientProvider>
       </RecoilRoot>,
@@ -142,7 +138,6 @@ describe('AppCard', () => {
             username="Developer"
             framework="Some Framework"
             url="/some-url"
-            ready={true}
             thumbnail="/some-thumbnail.png"
             serverStatus="Ready"
           />
@@ -153,6 +148,7 @@ describe('AppCard', () => {
     const menu = baseElement.querySelectorAll(
       '.MuiButtonBase-root',
     )[0] as HTMLButtonElement;
+    expect(menu).toBeInTheDocument();
     await act(async () => {
       menu.click();
     });
@@ -160,15 +156,9 @@ describe('AppCard', () => {
     const btn = baseElement.querySelectorAll(
       '.MuiList-root li.MuiButtonBase-root',
     )[0] as HTMLAnchorElement;
+    expect(btn).toBeInTheDocument();
     await act(async () => {
       btn.click();
-    });
-    // Cancel Start confirmation buttons
-    const cancelBtn = baseElement.querySelector(
-      '#cancel-btn',
-    ) as HTMLButtonElement;
-    await act(async () => {
-      cancelBtn.click();
     });
   });
 
@@ -184,7 +174,6 @@ describe('AppCard', () => {
             username="Developer"
             framework="Some Framework"
             url="/some-url"
-            ready={true}
             thumbnail="/some-thumbnail.png"
             serverStatus="Ready"
           />
@@ -202,6 +191,9 @@ describe('AppCard', () => {
     const btn = baseElement.querySelectorAll(
       '.MuiList-root li.MuiButtonBase-root',
     )[0] as HTMLAnchorElement;
+    expect(btn).toBeInTheDocument();
+    expect(btn).toHaveTextContent('Start');
+    expect(btn).not.toHaveAttribute('disabled', 'disabled');
     await act(async () => {
       btn.click();
     });
@@ -230,7 +222,6 @@ describe('AppCard', () => {
             username="Developer"
             framework="Some Framework"
             url="/some-url"
-            ready={true}
             thumbnail="/some-thumbnail.png"
             serverStatus="Running"
           />
@@ -251,13 +242,6 @@ describe('AppCard', () => {
     await act(async () => {
       btn.click();
     });
-    // Cancel Stop confirmation buttons
-    const cancelBtn = baseElement.querySelector(
-      '#cancel-btn',
-    ) as HTMLButtonElement;
-    await act(async () => {
-      cancelBtn.click();
-    });
   });
 
   test('simulates stopping an app', async () => {
@@ -272,7 +256,6 @@ describe('AppCard', () => {
             username="Developer"
             framework="Some Framework"
             url="/some-url"
-            ready={true}
             thumbnail="/some-thumbnail.png"
             serverStatus="Running"
           />
@@ -290,6 +273,9 @@ describe('AppCard', () => {
     const btn = baseElement.querySelectorAll(
       '.MuiList-root li.MuiButtonBase-root',
     )[1] as HTMLAnchorElement;
+    expect(btn).toBeInTheDocument();
+    expect(btn).toHaveTextContent('Stop');
+    expect(btn).not.toHaveAttribute('disabled', 'disabled');
     await act(async () => {
       btn.click();
     });
@@ -328,7 +314,6 @@ describe('AppCard', () => {
             username="Developer"
             framework="Some Framework"
             url="/some-url"
-            ready={true}
             thumbnail="/some-thumbnail.png"
             serverStatus="Ready"
           />
@@ -345,13 +330,17 @@ describe('AppCard', () => {
 
     const btn = baseElement.querySelectorAll(
       '.MuiList-root li.MuiButtonBase-root',
-    )[0] as HTMLAnchorElement;
+    )[2] as HTMLAnchorElement;
+    expect(btn).toBeInTheDocument();
+    expect(btn).toHaveTextContent('Edit');
+    expect(btn).not.toHaveAttribute('disabled', 'disabled');
     await act(async () => {
       btn.click();
     });
     // TODO: Update this test when everything is running in single react app
     expect(window.location.pathname).not.toBe('/edit-app/app-1');
   });
+
   test('simulates editing an app with an error', async () => {
     mock.onGet(new RegExp('/frameworks')).reply(200, frameworks);
     mock.onGet(new RegExp('/server/app-1')).reply(200, app);
@@ -368,7 +357,6 @@ describe('AppCard', () => {
             username="Developer"
             framework="Some Framework"
             url="/some-url"
-            ready={true}
             thumbnail="/some-thumbnail.png"
             serverStatus="Ready"
           />
@@ -385,7 +373,10 @@ describe('AppCard', () => {
 
     const btn = baseElement.querySelectorAll(
       '.MuiList-root li.MuiButtonBase-root',
-    )[0] as HTMLAnchorElement;
+    )[2] as HTMLAnchorElement;
+    expect(btn).toBeInTheDocument();
+    expect(btn).toHaveTextContent('Edit');
+    expect(btn).not.toHaveAttribute('disabled', 'disabled');
     await act(async () => {
       btn.click();
     });
@@ -405,7 +396,6 @@ describe('AppCard', () => {
             username="Developer"
             framework="Some Framework"
             url="/some-url"
-            ready={true}
             thumbnail="/some-thumbnail.png"
             serverStatus="Ready"
           />
@@ -423,15 +413,11 @@ describe('AppCard', () => {
     const btn = baseElement.querySelectorAll(
       '.MuiList-root li.MuiButtonBase-root',
     )[3] as HTMLAnchorElement;
+    expect(btn).toBeInTheDocument();
+    expect(btn).toHaveTextContent('Delete');
+    expect(btn).not.toHaveAttribute('disabled', 'disabled');
     await act(async () => {
       btn.click();
-    });
-
-    const cancelBtn = baseElement.querySelector(
-      '#cancel-btn',
-    ) as HTMLButtonElement;
-    await act(async () => {
-      cancelBtn.click();
     });
   });
 
@@ -447,7 +433,6 @@ describe('AppCard', () => {
             username="Developer"
             framework="Some Framework"
             url="/some-url"
-            ready={true}
             thumbnail="/some-thumbnail.png"
             serverStatus="Ready"
           />
@@ -465,6 +450,9 @@ describe('AppCard', () => {
     const btn = baseElement.querySelectorAll(
       '.MuiList-root li.MuiButtonBase-root',
     )[3] as HTMLAnchorElement;
+    expect(btn).toBeInTheDocument();
+    expect(btn).toHaveTextContent('Delete');
+    expect(btn).not.toHaveAttribute('disabled', 'disabled');
     await act(async () => {
       btn.click();
     });
@@ -500,7 +488,6 @@ describe('AppCard', () => {
             username="Developer"
             framework="Some Framework"
             url="/some-url"
-            ready={true}
             thumbnail="/some-thumbnail.png"
             serverStatus="Ready"
           />

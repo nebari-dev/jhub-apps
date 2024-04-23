@@ -15,6 +15,7 @@ export interface UserOptions {
   profile: string;
   public: boolean;
   share_with: SharePermissions;
+  keep_alive: boolean;
   env: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 

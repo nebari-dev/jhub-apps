@@ -29,6 +29,10 @@ describe('AppFilters', () => {
             data={serverApps}
             currentUser={userState}
             setApps={jest.fn()}
+            isGridViewActive={false}
+            toggleView={function (): void {
+              throw new Error('Function not implemented.');
+            }}
           />
         </QueryClientProvider>
       </RecoilRoot>,
@@ -41,7 +45,15 @@ describe('AppFilters', () => {
     const { baseElement } = render(
       <RecoilRoot initializeState={({ set }) => set(defaultUser, currentUser)}>
         <QueryClientProvider client={queryClient}>
-          <AppFilters data={serverApps} currentUser={userState} setApps={spy} />
+          <AppFilters
+            data={serverApps}
+            currentUser={userState}
+            setApps={spy}
+            isGridViewActive={false}
+            toggleView={function (): void {
+              throw new Error('Function not implemented.');
+            }}
+          />
         </QueryClientProvider>
       </RecoilRoot>,
     );
@@ -109,7 +121,15 @@ describe('AppFilters', () => {
     const { baseElement } = render(
       <RecoilRoot initializeState={({ set }) => set(defaultUser, currentUser)}>
         <QueryClientProvider client={queryClient}>
-          <AppFilters data={serverApps} currentUser={userState} setApps={spy} />
+          <AppFilters
+            data={serverApps}
+            currentUser={userState}
+            setApps={spy}
+            isGridViewActive={false}
+            toggleView={function (): void {
+              throw new Error('Function not implemented.');
+            }}
+          />
         </QueryClientProvider>
       </RecoilRoot>,
     );
@@ -165,7 +185,15 @@ describe('AppFilters', () => {
     const { baseElement } = render(
       <RecoilRoot initializeState={({ set }) => set(defaultUser, currentUser)}>
         <QueryClientProvider client={queryClient}>
-          <AppFilters data={serverApps} currentUser={userState} setApps={spy} />
+          <AppFilters
+            data={serverApps}
+            currentUser={userState}
+            setApps={spy}
+            isGridViewActive={false}
+            toggleView={function (): void {
+              throw new Error('Function not implemented.');
+            }}
+          />
         </QueryClientProvider>
       </RecoilRoot>,
     );
@@ -205,5 +233,47 @@ describe('AppFilters', () => {
     });
 
     expect(spy).toHaveBeenCalled();
+  });
+
+  test('should clear filters', async () => {
+    const spy = jest.fn();
+    mock.onGet(new RegExp('/frameworks')).reply(200, frameworks);
+    queryClient.setQueryData(['app-frameworks'], frameworks);
+    const { baseElement } = render(
+      <RecoilRoot initializeState={({ set }) => set(defaultUser, currentUser)}>
+        <QueryClientProvider client={queryClient}>
+          <AppFilters
+            data={serverApps}
+            currentUser={userState}
+            setApps={spy}
+            isGridViewActive={false}
+            toggleView={function (): void {
+              throw new Error('Function not implemented.');
+            }}
+          />
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+
+    const btn = baseElement.querySelector('#filters-btn') as HTMLButtonElement;
+    await act(async () => {
+      btn.click();
+    });
+
+    waitFor(() => {
+      const form = baseElement.querySelector(
+        '#filters-form',
+      ) as HTMLFormElement;
+      expect(form).toBeTruthy();
+    });
+
+    const clearButton = baseElement.querySelector(
+      '#clear-filters-btn',
+    ) as HTMLButtonElement;
+    await act(async () => {
+      clearButton.click();
+    });
+
+    expect(spy).not.toHaveBeenCalled();
   });
 });

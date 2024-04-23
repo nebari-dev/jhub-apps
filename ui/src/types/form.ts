@@ -14,6 +14,7 @@ export interface AppFormInput {
   filepath?: string;
   framework: string;
   is_public: boolean;
+  keep_alive: boolean;
   jhub_app: boolean;
   profile?: string;
   thumbnail?: string;

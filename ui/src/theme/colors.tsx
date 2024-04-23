@@ -38,4 +38,4 @@ export const orange = '#F66A0A';
 
 export const white = '#FFFFFF';
 
-export const black = '#000000';
+export const black = '#0F1015';

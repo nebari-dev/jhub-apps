@@ -1,3 +1,4 @@
+import { serverApps } from '@src/data/api';
 import { servicesFull } from '@src/data/jupyterhub';
 import { currentUser } from '@src/data/user';
 import axios from '@src/utils/axios';
@@ -56,6 +57,28 @@ describe('Navigation', () => {
     );
   });
 
+  test('renders side navigation with apps and services', async () => {
+    mock.onGet(new RegExp('/services')).reply(200, servicesFull);
+    mock.onGet(new RegExp('/server/')).reply(200, serverApps);
+    queryClient.setQueryData(['service-data'], servicesFull);
+    queryClient.setQueryData(['app-state'], serverApps);
+
+    const { baseElement } = render(
+      <RecoilRoot initializeState={({ set }) => set(defaultUser, currentUser)}>
+        <QueryClientProvider client={queryClient}>
+          <BrowserRouter>
+            <Navigation />
+          </BrowserRouter>
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+
+    expect(baseElement.querySelector('.MuiDrawer-root')).toBeTruthy();
+    expect(baseElement.querySelectorAll('.MuiListItem-root')).not.toHaveLength(
+      0,
+    );
+  });
+
   test('renders with data error', async () => {
     mock.onGet(new RegExp('/services')).reply(500, { message: 'Some error' });
     queryClient.setQueryData(['service-data'], null);
@@ -88,6 +111,9 @@ describe('Navigation', () => {
     expect(baseElement.querySelectorAll('#profile-menu-list li')).toHaveLength(
       3,
     );
+
+    // Nav error expected, disable console.error
+    jest.spyOn(console, 'error').mockImplementation(() => {});
     const items = baseElement.querySelectorAll('#profile-menu-list li');
     await act(async () => {
       fireEvent.click(items[0]);
@@ -98,5 +124,7 @@ describe('Navigation', () => {
     await act(async () => {
       fireEvent.click(items[2]);
     });
+
+    expect(window.location.pathname).toBe('/');
   });
 });
