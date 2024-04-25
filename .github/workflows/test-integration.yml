@@ -25,8 +25,8 @@ jobs:
         os:
           - ubuntu-latest
         jupyterhub:
-          - ">=4.1"
-          - ">=5.0.0b1"
+          - "4.1"
+          - "5.0.0b1"
     steps:
     - uses: actions/checkout@v4.1.1
 
@@ -44,7 +44,7 @@ jobs:
 
     - name: Install JupyterHub
       run: |
-        pip install jupyterhub${{ matrix.jupyterhub }}
+        pip install "jupyterhub>=${{ matrix.jupyterhub }}"
 
     - name: Install chp
       run: npm install -g configurable-http-proxy
@@ -54,6 +54,14 @@ jobs:
 
     - name: pip freeze
       run: pip freeze
+
+    - name: Verify JupyterHub Version
+      run: |
+        # Check if the installed version matches the expected version
+        if [ "$(jupyterhub -V)" != "${{ matrix.jupyterhub }}" ]; then
+            echo "JupyterHub version $(jupyterhub -V) != ${{ matrix.jupyterhub }}"
+            exit 1
+        fi
 
     - name: Add server options if with server types
       if: matrix.test_type == 'with_server_options'
@@ -85,7 +93,7 @@ jobs:
     - name: Create artifact name
       id: artifact-name
       run: |
-        if [ "${{ matrix.jupyterhub }}" = ">=4.1" ]; then
+        if [ "${{ matrix.jupyterhub }}" = "4.1" ]; then
             jhub_suffix="4x"
         else
             jhub_suffix="5x"
