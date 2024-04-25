@@ -98,8 +98,8 @@ export const ServerTypes = (): React.ReactElement => {
         profile: currentFormInput?.profile || '',
         public: currentFormInput?.is_public || false,
         share_with: {
-          users: currentFormInput?.share_with.users || [],
-          groups: currentFormInput?.share_with.groups || [],
+          users: currentFormInput?.share_with?.users || [],
+          groups: currentFormInput?.share_with?.groups || [],
         },
         keep_alive: currentFormInput?.keep_alive || false,
       },

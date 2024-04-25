@@ -292,8 +292,8 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
       setIsPublic(formData.user_options.public);
       setKeepAlive(formData.user_options.keep_alive);
       setCurrentImage(formData.user_options.thumbnail);
-      setCurrentUserPermissions(formData.user_options.share_with.users);
-      setCurrentGroupPermissions(formData.user_options.share_with.groups);
+      setCurrentUserPermissions(formData.user_options.share_with?.users);
+      setCurrentGroupPermissions(formData.user_options.share_with?.groups);
     }
   }, [
     formData?.name,
@@ -322,8 +322,8 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
       setIsPublic(currentFormInput.is_public);
       setKeepAlive(currentFormInput.keep_alive);
       setCurrentImage(currentFormInput.thumbnail);
-      setCurrentUserPermissions(currentFormInput.share_with.users);
-      setCurrentGroupPermissions(currentFormInput.share_with.groups);
+      setCurrentUserPermissions(currentFormInput.share_with?.users);
+      setCurrentGroupPermissions(currentFormInput.share_with?.groups);
     }
   }, [currentFormInput, reset, setCurrentImage, setCurrentServerName]);
 

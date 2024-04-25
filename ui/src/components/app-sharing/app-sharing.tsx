@@ -144,7 +144,7 @@ export const AppSharing = ({
 
   // Get users and groups available to the current user
   useEffect(() => {
-    if (currentUser) {
+    if (currentUser && currentUser.share_permissions) {
       const usersAndGroups: AppSharingItem[] = [];
       usersAndGroups.push(
         ...(currentUser.share_permissions.users.map((user) => ({
