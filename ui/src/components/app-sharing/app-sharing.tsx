@@ -185,173 +185,182 @@ export const AppSharing = ({
   return (
     <Box id="app-sharing">
       <Stack direction="column">
-        <Item>
-          <Alert
-            id="sharing-notification"
-            severity="warning"
-            icon={<WarningRoundedIcon />}
-            sx={{ mb: '16px' }}
-          >
-            {message}
-          </Alert>
-        </Item>
-        <Item sx={{ pb: '8px' }}>
-          <Typography variant="subtitle1" sx={{ pb: '4px' }}>
-            Individuals and group access
-          </Typography>
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: 'row',
-              width: '100%',
-              gap: '8px',
-              pb: '16px',
-            }}
-          >
-            <Box
-              sx={{
-                display: 'flex',
-                flexDirection: 'row',
-                justifyContent: 'flex-start',
-              }}
-            >
-              <Autocomplete
-                disablePortal
-                id="share-permissions-autocomplete"
-                options={availablePermissions}
-                getOptionLabel={(option) =>
-                  option.type === 'user'
-                    ? option.name
-                    : `${option.name} (Group)`
-                }
-                multiple
-                disableCloseOnSelect
-                clearOnBlur
-                limitTags={2}
-                sx={{ width: 470 }}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    placeholder="Search one or more usernames or group names"
-                  />
-                )}
-                value={selectedValue}
-                onChange={(event, value) => {
-                  if (event && value) {
-                    setCurrentShare(value);
-                    setSelectedValue(value);
-                  }
-                }}
-              />
-            </Box>
-            <Box
-              sx={{
-                display: 'flex',
-                flexDirection: 'row',
-                justifyContent: 'flex-end',
-                margin: 'auto auto',
-              }}
-            >
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={handleShare}
-                disabled={currentShare.length === 0}
-                sx={{ height: '42px' }}
+        {currentUser?.share_permissions ? (
+          <>
+            <Item>
+              <Alert
+                id="sharing-notification"
+                severity="warning"
+                icon={<WarningRoundedIcon />}
+                sx={{ mb: '16px' }}
               >
-                Share
-              </Button>
-            </Box>
-          </Box>
-        </Item>
-        {currentItems.length > 0 ? (
-          <Item sx={{ pb: '20px' }}>
-            <Paper elevation={0}>
-              <TableContainer>
-                <Table aria-label="Individuals and Groups" size="small">
-                  <TableBody>
-                    {(rowsPerPage > 0
-                      ? currentItems.slice(
-                          page * rowsPerPage,
-                          page * rowsPerPage + rowsPerPage,
-                        )
-                      : currentItems
-                    ).map((item) => (
-                      <TableRow
-                        key={item.name}
-                        sx={{
-                          '&:last-child td, &:last-child th': { border: 0 },
-                        }}
-                      >
-                        <TableCell component="td" scope="row">
-                          {item.name}{' '}
-                          {item.type === 'group' ? (
-                            <span style={{ fontWeight: 600 }}> (Group)</span>
-                          ) : (
-                            <></>
-                          )}
-                        </TableCell>
-                        <TableCell align="right">
-                          <Button
-                            variant="text"
-                            color="error"
-                            size="small"
-                            sx={{ fontWeight: '600' }}
-                            onClick={() => {
-                              setCurrentItems((prev) =>
-                                prev.filter((i) => i.name !== item.name),
-                              );
-                              if (item.type === 'group') {
-                                setCurrentGroupPermissions((prev) =>
-                                  prev.filter((i) => i !== item.name),
-                                );
-                              } else {
-                                setCurrentUserPermissions((prev) =>
-                                  prev.filter((i) => i !== item.name),
-                                );
-                              }
+                {message}
+              </Alert>
+            </Item>
+            <Item sx={{ pb: '8px' }}>
+              <Typography variant="subtitle1" sx={{ pb: '4px' }}>
+                Individuals and group access
+              </Typography>
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  width: '100%',
+                  gap: '8px',
+                  pb: '16px',
+                }}
+              >
+                <Box
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    justifyContent: 'flex-start',
+                  }}
+                >
+                  <Autocomplete
+                    disablePortal
+                    id="share-permissions-autocomplete"
+                    options={availablePermissions}
+                    getOptionLabel={(option) =>
+                      option.type === 'user'
+                        ? option.name
+                        : `${option.name} (Group)`
+                    }
+                    multiple
+                    disableCloseOnSelect
+                    clearOnBlur
+                    limitTags={2}
+                    sx={{ width: 470 }}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        placeholder="Search one or more usernames or group names"
+                      />
+                    )}
+                    value={selectedValue}
+                    onChange={(event, value) => {
+                      if (event && value) {
+                        setCurrentShare(value);
+                        setSelectedValue(value);
+                      }
+                    }}
+                  />
+                </Box>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    justifyContent: 'flex-end',
+                    margin: 'auto auto',
+                  }}
+                >
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handleShare}
+                    disabled={currentShare.length === 0}
+                    sx={{ height: '42px' }}
+                  >
+                    Share
+                  </Button>
+                </Box>
+              </Box>
+            </Item>
+            {currentItems.length > 0 ? (
+              <Item sx={{ pb: '20px' }}>
+                <Paper elevation={0}>
+                  <TableContainer>
+                    <Table aria-label="Individuals and Groups" size="small">
+                      <TableBody>
+                        {(rowsPerPage > 0
+                          ? currentItems.slice(
+                              page * rowsPerPage,
+                              page * rowsPerPage + rowsPerPage,
+                            )
+                          : currentItems
+                        ).map((item) => (
+                          <TableRow
+                            key={item.name}
+                            sx={{
+                              '&:last-child td, &:last-child th': { border: 0 },
                             }}
                           >
-                            Remove
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                  <TableFooter>
-                    <TableRow>
-                      <TablePagination
-                        colSpan={2}
-                        count={currentItems.length}
-                        rowsPerPage={rowsPerPage}
-                        rowsPerPageOptions={[
-                          5,
-                          10,
-                          25,
-                          { label: 'All', value: -1 },
-                        ]}
-                        page={page}
-                        showFirstButton={false}
-                        showLastButton={false}
-                        width="500px"
-                        slotProps={{
-                          select: {
-                            inputProps: {
-                              'aria-label': 'rows per page',
-                              width: '500px',
-                            },
-                            native: false,
-                          },
-                        }}
-                        onPageChange={handleChangePage}
-                        ActionsComponent={TablePaginationActions}
-                      />
-                    </TableRow>
-                  </TableFooter>
-                </Table>
-              </TableContainer>
-            </Paper>
-          </Item>
+                            <TableCell component="td" scope="row">
+                              {item.name}{' '}
+                              {item.type === 'group' ? (
+                                <span style={{ fontWeight: 600 }}>
+                                  {' '}
+                                  (Group)
+                                </span>
+                              ) : (
+                                <></>
+                              )}
+                            </TableCell>
+                            <TableCell align="right">
+                              <Button
+                                variant="text"
+                                color="error"
+                                size="small"
+                                sx={{ fontWeight: '600' }}
+                                onClick={() => {
+                                  setCurrentItems((prev) =>
+                                    prev.filter((i) => i.name !== item.name),
+                                  );
+                                  if (item.type === 'group') {
+                                    setCurrentGroupPermissions((prev) =>
+                                      prev.filter((i) => i !== item.name),
+                                    );
+                                  } else {
+                                    setCurrentUserPermissions((prev) =>
+                                      prev.filter((i) => i !== item.name),
+                                    );
+                                  }
+                                }}
+                              >
+                                Remove
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                      <TableFooter>
+                        <TableRow>
+                          <TablePagination
+                            colSpan={2}
+                            count={currentItems.length}
+                            rowsPerPage={rowsPerPage}
+                            rowsPerPageOptions={[
+                              5,
+                              10,
+                              25,
+                              { label: 'All', value: -1 },
+                            ]}
+                            page={page}
+                            showFirstButton={false}
+                            showLastButton={false}
+                            width="500px"
+                            slotProps={{
+                              select: {
+                                inputProps: {
+                                  'aria-label': 'rows per page',
+                                  width: '500px',
+                                },
+                                native: false,
+                              },
+                            }}
+                            onPageChange={handleChangePage}
+                            ActionsComponent={TablePaginationActions}
+                          />
+                        </TableRow>
+                      </TableFooter>
+                    </Table>
+                  </TableContainer>
+                </Paper>
+              </Item>
+            ) : (
+              <></>
+            )}
+          </>
         ) : (
           <></>
         )}

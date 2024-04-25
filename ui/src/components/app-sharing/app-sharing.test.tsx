@@ -14,7 +14,7 @@ describe('AppSharing', () => {
 
   test('renders default component successfully', () => {
     const { baseElement } = render(
-      <RecoilRoot>
+      <RecoilRoot initializeState={({ set }) => set(defaultUser, currentUser)}>
         <QueryClientProvider client={queryClient}>
           <AppSharing
             isPublic={false}
@@ -31,7 +31,7 @@ describe('AppSharing', () => {
 
   test('renders with mock data', () => {
     const { baseElement } = render(
-      <RecoilRoot>
+      <RecoilRoot initializeState={({ set }) => set(defaultUser, currentUser)}>
         <QueryClientProvider client={queryClient}>
           <AppSharing
             url="http://localhost:3000/"
@@ -53,7 +53,7 @@ describe('AppSharing', () => {
 
   test('renders with mock data and pages table', async () => {
     const { baseElement, getByTestId } = render(
-      <RecoilRoot>
+      <RecoilRoot initializeState={({ set }) => set(defaultUser, currentUser)}>
         <QueryClientProvider client={queryClient}>
           <AppSharing
             url="http://localhost:3000/"
@@ -151,7 +151,7 @@ describe('AppSharing', () => {
 
   test('removes existing permission', async () => {
     const { baseElement, getAllByText } = render(
-      <RecoilRoot>
+      <RecoilRoot initializeState={({ set }) => set(defaultUser, currentUser)}>
         <QueryClientProvider client={queryClient}>
           <AppSharing
             url="http://localhost:3000/"
