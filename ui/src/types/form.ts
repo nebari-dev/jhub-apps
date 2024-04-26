@@ -1,3 +1,5 @@
+import { SharePermissions } from './api';
+
 export interface FormInput {
   username: string;
   password: string;
@@ -12,7 +14,14 @@ export interface AppFormInput {
   filepath?: string;
   framework: string;
   is_public: boolean;
+  keep_alive: boolean;
   jhub_app: boolean;
   profile?: string;
   thumbnail?: string;
+  share_with: SharePermissions;
+}
+
+export interface AppSharingItem {
+  name: string;
+  type: 'user' | 'group';
 }

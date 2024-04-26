@@ -169,7 +169,11 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
           onClick={() => navigateToUrl(`${APP_BASE_URL}`)}
         >
           <ListItemIcon>
-            <HomeRoundedIcon />
+            <HomeRoundedIcon
+              sx={{
+                color: theme.palette.common.black,
+              }}
+            />
           </ListItemIcon>
           <ListItemText
             primary={<Typography variant="body1">Home</Typography>}

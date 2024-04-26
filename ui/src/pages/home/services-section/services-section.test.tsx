@@ -74,6 +74,21 @@ describe('ServicesSection', () => {
     expect(baseElement.querySelectorAll('.card')).toHaveLength(3);
   });
 
+  test('renders with data error', async () => {
+    mock.onGet(new RegExp('/services')).reply(500, { message: 'Some error' });
+    mock.onGet(new RegExp('/server/')).reply(500, { message: 'Some error' });
+    queryClient.setQueryData(['service-data'], null);
+    queryClient.setQueryData(['app-state'], null);
+    const { baseElement } = render(
+      <RecoilRoot initializeState={({ set }) => set(defaultUser, currentUser)}>
+        <QueryClientProvider client={queryClient}>
+          <ServicesSection />
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+    expect(baseElement.querySelectorAll('.card')).toHaveLength(0);
+  });
+
   test('handles button click for external URL', () => {
     const mockResponse = jest.fn();
     Object.defineProperty(window, 'open', {

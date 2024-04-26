@@ -1,4 +1,6 @@
+import InfoRoundedIcon from '@mui/icons-material/InfoRounded';
 import {
+  Box,
   Button,
   FormControl,
   FormControlLabel,
@@ -7,6 +9,8 @@ import {
   Select,
   Switch,
   TextField,
+  Tooltip,
+  Typography,
 } from '@mui/material';
 import {
   AppFrameworkProps,
@@ -18,13 +22,13 @@ import { AppFormInput } from '@src/types/form';
 import { UserState } from '@src/types/user';
 import axios from '@src/utils/axios';
 import { APP_BASE_URL, REQUIRED_FORM_FIELDS_RULES } from '@src/utils/constants';
-import { navigateToUrl } from '@src/utils/jupyterhub';
+import { getFriendlyDisplayName, navigateToUrl } from '@src/utils/jupyterhub';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
-import { Thumbnail } from '..';
+import { AppSharing, Thumbnail } from '..';
 import {
   currentNotification,
   currentFile as defaultFile,
@@ -59,6 +63,13 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
     defaultImage,
   );
   const [isPublic, setIsPublic] = useState(false);
+  const [currentUserPermissions, setCurrentUserPermissions] = useState<
+    string[]
+  >([]);
+  const [currentGroupPermissions, setCurrentGroupPermissions] = useState<
+    string[]
+  >([]);
+  const [keepAlive, setKeepAlive] = useState(false);
   // Get the app data if we're editing an existing app
   const { data: formData, error: formError } = useQuery<
     AppQueryGetProps,
@@ -123,6 +134,7 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
       custom_command: '',
       profile: '',
       is_public: false,
+      keep_alive: false,
     },
   });
   const currentFramework = watch('framework');
@@ -138,10 +150,11 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
     custom_command,
     profile,
   }) => {
+    const displayName = getFriendlyDisplayName(display_name);
     if (profiles && profiles.length > 0) {
       const payload: AppFormInput = {
         jhub_app: true,
-        display_name,
+        display_name: displayName,
         description,
         framework,
         thumbnail,
@@ -151,16 +164,21 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
         custom_command,
         profile,
         is_public: isPublic,
+        share_with: {
+          users: currentUserPermissions,
+          groups: currentGroupPermissions,
+        },
+        keep_alive: keepAlive,
       };
       setCurrentFormInput(payload);
       navigate(`/server-types${id ? `?id=${id}` : ''}`);
     } else {
       const payload = {
-        servername: currentServerName || display_name,
+        servername: currentServerName || displayName,
         user_options: {
           jhub_app: true,
-          name: currentServerName || display_name,
-          display_name,
+          name: currentServerName || displayName,
+          display_name: displayName,
           description: description || '',
           framework,
           thumbnail: thumbnail || '',
@@ -170,6 +188,11 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
           custom_command: custom_command || '',
           profile: profile || '',
           public: isPublic,
+          share_with: {
+            users: currentUserPermissions,
+            groups: currentGroupPermissions,
+          },
+          keep_alive: keepAlive,
         },
       };
 
@@ -267,7 +290,10 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
           : undefined,
       });
       setIsPublic(formData.user_options.public);
+      setKeepAlive(formData.user_options.keep_alive);
       setCurrentImage(formData.user_options.thumbnail);
+      setCurrentUserPermissions(formData.user_options.share_with?.users);
+      setCurrentGroupPermissions(formData.user_options.share_with?.groups);
     }
   }, [
     formData?.name,
@@ -294,7 +320,10 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
         profile: currentFormInput.profile || '',
       });
       setIsPublic(currentFormInput.is_public);
+      setKeepAlive(currentFormInput.keep_alive);
       setCurrentImage(currentFormInput.thumbnail);
+      setCurrentUserPermissions(currentFormInput.share_with?.users);
+      setCurrentGroupPermissions(currentFormInput.share_with?.groups);
     }
   }, [currentFormInput, reset, setCurrentImage, setCurrentServerName]);
 
@@ -324,11 +353,11 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
                 {...field}
                 id="display_name"
                 label="Name"
-                placeholder="Add app name (max. 16 characters)"
+                placeholder="Add app name"
                 autoFocus
                 required
                 error={errors.display_name?.message ? true : false}
-                inputProps={{ maxLength: 16 }}
+                inputProps={{ maxLength: 255 }}
               />
             </FormControl>
           )}
@@ -343,10 +372,10 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
                 {...field}
                 id="description"
                 label="Description"
-                placeholder="Add app description (max. 75 characters)"
+                placeholder="Add app description (max. 200 characters)"
                 multiline
                 rows={4}
-                inputProps={{ maxLength: 75 }}
+                inputProps={{ maxLength: 200 }}
               />
             </FormControl>
           )}
@@ -462,31 +491,67 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
             </FormControl>
           )}
         />
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'row',
+          }}
+        >
+          <Tooltip
+            placement="bottom-start"
+            title={
+              <Typography sx={{ fontSize: '10px', fontWeight: 600 }}>
+                Keep alive prevents the app from being suspended even when not
+                in active use. Your app will be instantly available, but it will
+                consume resources until manually stopped.
+              </Typography>
+            }
+          >
+            <InfoRoundedIcon
+              fontSize="small"
+              sx={{
+                position: 'relative',
+                top: '9px',
+                left: '2px',
+                color: '#0F10158F',
+              }}
+            />
+          </Tooltip>
+          <Controller
+            name="keep_alive"
+            control={control}
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            render={({ field: { ref: _, value, onChange, ...field } }) => (
+              <FormControl sx={{ flexDirection: 'row' }}>
+                <FormControlLabel
+                  control={
+                    <Switch
+                      {...field}
+                      id="keep_alive"
+                      checked={keepAlive}
+                      onChange={() => {
+                        setKeepAlive(!keepAlive);
+                      }}
+                    />
+                  }
+                  label="Keep app alive"
+                  labelPlacement="start"
+                />
+              </FormControl>
+            )}
+          />
+        </Box>
       </div>
       <hr />
       <div className="form-section">
         <h2>Sharing</h2>
-        <Controller
-          name="is_public"
-          control={control}
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          render={({ field: { ref: _, value, onChange, ...field } }) => (
-            <FormControl>
-              <FormControlLabel
-                control={
-                  <Switch
-                    {...field}
-                    id="is_public"
-                    checked={isPublic}
-                    onChange={() => {
-                      setIsPublic(!isPublic);
-                    }}
-                  />
-                }
-                label="Allow Public Access"
-              />
-            </FormControl>
-          )}
+        <AppSharing
+          url={formData?.url}
+          permissions={formData?.user_options?.share_with}
+          isPublic={isPublic}
+          setCurrentUserPermissions={setCurrentUserPermissions}
+          setCurrentGroupPermissions={setCurrentGroupPermissions}
+          setIsPublic={setIsPublic}
         />
       </div>
       <hr />

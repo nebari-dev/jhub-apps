@@ -1,0 +1,9 @@
+#app-sharing .MuiTablePagination-selectLabel,
+#app-sharing .MuiTablePagination-input,
+#app-sharing .MuiTablePagination-displayedRows {
+  display: none;
+}
+
+.MuiTablePagination-root {
+  border-bottom: 0 !important;
+}

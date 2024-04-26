@@ -48,6 +48,7 @@ export const ContextMenu = ({
         id={`context-menu-button-${id}`}
         data-testid={`context-menu-button-${id}`}
         aria-controls={open ? `context-menu-${id}` : undefined}
+        title="Menu options"
         aria-haspopup="true"
         aria-expanded={open ? 'true' : undefined}
         onClick={handleClick}
