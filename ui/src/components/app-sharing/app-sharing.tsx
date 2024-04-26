@@ -191,14 +191,14 @@ export const AppSharing = ({
               <Alert
                 id="sharing-notification"
                 severity="warning"
-                icon={<WarningRoundedIcon />}
+                icon={<WarningRoundedIcon sx={{ color: '#EAB54E' }} />}
                 sx={{ mb: '16px' }}
               >
                 {message}
               </Alert>
             </Item>
             <Item sx={{ pb: '8px' }}>
-              <Typography variant="subtitle1" sx={{ pb: '4px' }}>
+              <Typography variant="subtitle1">
                 Individuals and group access
               </Typography>
               <Box
@@ -207,7 +207,7 @@ export const AppSharing = ({
                   flexDirection: 'row',
                   width: '100%',
                   gap: '8px',
-                  pb: '16px',
+                  py: '16px',
                 }}
               >
                 <Box
@@ -234,7 +234,11 @@ export const AppSharing = ({
                     renderInput={(params) => (
                       <TextField
                         {...params}
-                        placeholder="Search one or more usernames or group names"
+                        placeholder={
+                          selectedValue.length > 0
+                            ? undefined
+                            : 'Search one or more usernames or group names'
+                        }
                       />
                     )}
                     value={selectedValue}
@@ -285,7 +289,11 @@ export const AppSharing = ({
                               '&:last-child td, &:last-child th': { border: 0 },
                             }}
                           >
-                            <TableCell component="td" scope="row">
+                            <TableCell
+                              component="td"
+                              scope="row"
+                              sx={{ fontSize: '16px' }}
+                            >
                               {item.name}{' '}
                               {item.type === 'group' ? (
                                 <span style={{ fontWeight: 600 }}>
@@ -301,7 +309,7 @@ export const AppSharing = ({
                                 variant="text"
                                 color="error"
                                 size="small"
-                                sx={{ fontWeight: '600' }}
+                                sx={{ fontWeight: '600', fontSize: '14px' }}
                                 onClick={() => {
                                   setCurrentItems((prev) =>
                                     prev.filter((i) => i.name !== item.name),
@@ -394,12 +402,10 @@ export const AppSharing = ({
                       <>
                         <PublicRoundedIcon
                           sx={{
-                            fontSize: '20px',
-                            position: 'relative',
-                            top: '1px',
+                            fontSize: '24px',
                           }}
                         />
-                        <Typography variant="body2">
+                        <Typography variant="body1">
                           Link sharing public
                         </Typography>
                       </>
@@ -407,12 +413,10 @@ export const AppSharing = ({
                       <>
                         <GroupRoundedIcon
                           sx={{
-                            fontSize: '20px',
-                            position: 'relative',
-                            top: '1px',
+                            fontSize: '24px',
                           }}
                         />
-                        <Typography variant="body2">
+                        <Typography variant="body1">
                           Link sharing restricted
                         </Typography>
                       </>

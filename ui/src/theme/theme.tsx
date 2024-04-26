@@ -222,5 +222,15 @@ export const theme = createTheme(baseTheme, {
         },
       ],
     },
+    // MuiAlert: {
+    //   variants: [
+    //     {
+    //       props: { severity: 'warning' },
+    //       style: {
+    //         backgroundColor: `${orange}`,
+    //       },
+    //     },
+    //   ],
+    // },
   },
 });
