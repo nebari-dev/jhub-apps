@@ -18,6 +18,7 @@ Write your application code in a Python script, and add the following following 
 
 ```python
 import argparse
+parser = argparse.ArgumentParser(description="Process CLI args for gradio")
 parser.add_argument(
     "--server-port", type=str, help="server_port for gradio app", default=8500
 )
@@ -77,7 +78,7 @@ channels:
   - conda-forge
 dependencies:
   - gradio
-  - jhsingle-native-proxy
+  - jhsingle-native-proxy >= 0.8.2
   - ipykernel
   - ipywidgets
   - nbconvert

@@ -14,8 +14,8 @@ Before deploying/launching your app with JHub Apps Launcher, you'll need:
 - environment with all the necessary packages.
 
 :::note
-For all frameworks, you need to include the `jhsingle-native-proxy` package in your environment along with the framework itself (e.g., bokeh, panel, etc.)
-
+For all frameworks, you need to include the `jhsingle-native-proxy >= 0.8.2` package in your environment along with the framework itself (e.g., bokeh, panel, etc.)
+Also, be aware that `jhub-apps` may be launching your app from a different directory than you used during development. Therefore, its important to always define absolute paths in your apps. For example, if you use `pathlib` to define a path, you'll need to call `.resolve()` in order to make it absolute. 
 Some frameworks may have additional package or code requirements.
 Check out their specific documentation pages for details.
 :::
