@@ -1,0 +1,41 @@
+.icon-button {
+  padding: 0 20px !important;
+}
+
+.icon-text {
+  padding-left: 1rem;
+  position: relative;
+  top: -3px;
+}
+
+.actions {
+  padding: 0;
+}
+
+.actions .action-button {
+  min-width: 0px;
+  padding: 0px 24px;
+}
+
+.actions .action-button:hover {
+  background-color: transparent;
+}
+
+.actions button.button-icon {
+  min-width: 0px !important;
+}
+
+.actions button.button-icon:hover {
+  background-color: transparent;
+}
+
+.truncate {
+  width: 140px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.MuiDataGrid-menuIcon.base-Popper-root.MuiDataGrid-menu {
+  display: none;
+}

@@ -6,12 +6,19 @@ import {
   filterAndSortApps,
   getAppLogoUrl,
   getApps,
+  getEncodedServerUrl,
+  getFriendlyDateStr,
+  getFriendlyDisplayName,
   getFriendlyFrameworkName,
   getJhData,
   getServices,
   navigateToUrl,
 } from './jupyterhub';
 
+jest.mock('./jupyterhub', () => ({
+  ...jest.requireActual('./jupyterhub'),
+  navigateToUrl: jest.fn(),
+}));
 describe('JupyterHub utils', () => {
   test('returns empty object from no jhdata', () => {
     window.jhdata = {};
@@ -45,10 +52,10 @@ describe('JupyterHub utils', () => {
     const result = getServices(servicesFull, user);
     expect(result.length).toEqual(2);
     expect(result[0]).toEqual({
-      name: 'Service 1',
-      url: 'http://service1.com/testUser',
+      name: 'Environments',
+      url: 'http://service1.com/service1',
       external: true,
-      pinned: false,
+      pinned: true,
     });
   });
 
@@ -74,9 +81,76 @@ describe('JupyterHub utils', () => {
     expect(result.length).toEqual(5);
   });
 
+  test('returns a jupyterhub friendly url for JupyterLab with no encoding needed', () => {
+    const result = getEncodedServerUrl('testuser', 'lab');
+    expect(result).toBe('/hub/user/testuser/lab');
+  });
+
+  test('returns a jupyterhub friendly url for JupyterLab with encoding needed', () => {
+    const result = getEncodedServerUrl('testuser+123@email.com', 'lab');
+    expect(result).toBe('/hub/user/testuser%2B123@email.com/lab');
+  });
+
+  test('returns a jupyterhub friendly url for VSCode with no encoding needed', () => {
+    const result = getEncodedServerUrl('testuser', 'vscode');
+    expect(result).toBe('/hub/user/testuser/vscode');
+  });
+
+  test('returns a jupyterhub friendly url for VSCode with encoding needed', () => {
+    const result = getEncodedServerUrl('testuser+123@email.com', 'vscode');
+    expect(result).toBe('/hub/user/testuser%2B123@email.com/vscode');
+  });
+
+  test('returns a friendly display name with no trailing spaces', () => {
+    const result = getFriendlyDisplayName('Test App 1 ');
+    expect(result).toBe('Test App 1');
+  });
+
+  test('returns a friendly display name with no forward slashes', () => {
+    const result = getFriendlyDisplayName('Test App 1 //');
+    expect(result).toBe('Test App 1');
+  });
+
   test('returns the framework name with the first letter capitalized', () => {
     const result = getFriendlyFrameworkName('python');
     expect(result).toBe('Python');
+  });
+
+  test('returns a friendly date string for recent change', () => {
+    const result = getFriendlyDateStr(new Date());
+    expect(result).toBe('Just now');
+  });
+
+  test('returns a friendly date string for change within 1 minute', () => {
+    const currentDate = new Date();
+    const result = getFriendlyDateStr(
+      new Date(currentDate.setMinutes(currentDate.getMinutes() - 1)),
+    );
+    expect(result).toBe('1 minute ago');
+  });
+
+  test('returns a friendly date string for change within minutes', () => {
+    const currentDate = new Date();
+    const result = getFriendlyDateStr(
+      new Date(currentDate.setMinutes(currentDate.getMinutes() - 5)),
+    );
+    expect(result).toBe('5 minutes ago');
+  });
+
+  test('returns a friendly date string for change within hours', () => {
+    const currentDate = new Date();
+    const result = getFriendlyDateStr(
+      new Date(currentDate.setHours(currentDate.getHours() - 5)),
+    );
+    expect(result).toBe('5 hours ago');
+  });
+
+  test('returns a friendly date string for change within days', () => {
+    const currentDate = new Date();
+    const result = getFriendlyDateStr(
+      new Date(currentDate.setHours(currentDate.getHours() - 120)),
+    );
+    expect(result).toBe('5 days ago');
   });
 
   test('gets app theme url window object', () => {
@@ -90,15 +164,39 @@ describe('JupyterHub utils', () => {
     expect(document.location.href).toBe(mockUrl);
   });
 
-  test('filters and sorts apps', () => {
+  test('filters and sorts apps by recently modified', () => {
     const apps = filterAndSortApps(
       serverApps,
       currentUser,
       '',
       'all',
       [],
-      'name',
+      'Recently modified',
     );
-    expect(apps.length).toBe(5);
+    expect(apps[0].name).toBe('Test App');
+  });
+
+  test('filters and sorts apps by name asc', () => {
+    const apps = filterAndSortApps(
+      serverApps,
+      currentUser,
+      '',
+      'all',
+      [],
+      'Name: A-Z',
+    );
+    expect(apps[0].name).toBe('App with a long name that should be truncated');
+  });
+
+  test('filters and sorts apps by name desc', () => {
+    const apps = filterAndSortApps(
+      serverApps,
+      currentUser,
+      '',
+      'all',
+      [],
+      'Name: Z-A',
+    );
+    expect(apps[0].name).toBe('TEST App 3');
   });
 });

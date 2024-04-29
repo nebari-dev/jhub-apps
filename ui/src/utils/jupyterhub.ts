@@ -19,12 +19,20 @@ export const getServices = (services: JhServiceFull[], user: string) => {
     if (Object.hasOwnProperty.call(services, key)) {
       const service = services[key];
       if (service.display === true && service.info.name) {
-        jhServices.push({
-          name: service.info.name,
-          url: service.info.url?.replace('[USER]', user),
-          external: service.info.external,
-          pinned: DEFAULT_PINNED_SERVICES.includes(service.info.name),
-        });
+        const serviceInfo = service.info;
+        if (serviceInfo.url) {
+          let url = serviceInfo.url;
+          const name = serviceInfo.name;
+          if (name === 'VSCode' || name === 'JupyterLab') {
+            url = getEncodedServerUrl(user, name);
+          }
+          jhServices.push({
+            name: name,
+            url: url,
+            external: serviceInfo.external,
+            pinned: DEFAULT_PINNED_SERVICES.includes(name),
+          });
+        }
       }
     }
   }
@@ -115,7 +123,7 @@ export const getPinnedApps = (servers: any, username: string) => {
       name: 'JupyterLab',
       description: 'This is your default JupyterLab server.',
       framework: 'JupyterLab',
-      url: `/hub/user/${username}/lab`,
+      url: getEncodedServerUrl(username, 'lab'),
       thumbnail: JUPYTER_LOGO,
       username: username,
       ready: defaultApp.ready,
@@ -127,25 +135,62 @@ export const getPinnedApps = (servers: any, username: string) => {
     pinnedApps.push(jupyterLabApp);
     pinnedApps.push({
       ...jupyterLabApp,
-      id: 'vscode',
+      id: '',
       name: 'VSCode',
       description: 'This is your default VSCode server.',
       framework: 'VSCode',
-      url: `/hub/user/${username}/vscode`,
+      url: getEncodedServerUrl(username, 'vscode'),
       thumbnail: VSCODE_LOGO,
     });
   }
   return pinnedApps;
 };
 
+/**
+ * Get a server URL for the given username and server type, with required jupyterhub encoding.
+ */
+export const getEncodedServerUrl = (username: string, serverType: string) => {
+  const encodedUsername = username.replace(/\+/g, '%2B'); // Encode '+' with url encoding
+  return `/hub/user/${encodedUsername}/${serverType.toLowerCase()}`;
+};
+
+export const getFriendlyDisplayName = (name: string) => {
+  return name.replace(/\//g, '').trim();
+};
+
 export const getFriendlyFrameworkName = (framework: string) => {
   return framework.charAt(0).toUpperCase() + framework.slice(1);
+};
+
+export const getFriendlyDateStr = (date: Date) => {
+  const currentDate = new Date();
+  const targetDate = new Date(date);
+
+  const timeDiff = currentDate.getTime() - targetDate.getTime();
+  const seconds = Math.floor(timeDiff / 1000);
+  const minutes = Math.floor(seconds / 60);
+  const hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
+
+  if (days > 0) {
+    return days === 1 ? '1 day ago' : days + ' days ago';
+  } else if (hours > 0) {
+    return hours === 1 ? '1 hour ago' : hours + ' hours ago';
+  } else if (minutes > 0) {
+    return minutes === 1 ? '1 minute ago' : minutes + ' minutes ago';
+  } else {
+    return 'Just now';
+  }
 };
 
 export const getAppLogoUrl = () => {
   if (window.theme?.logo) {
     return window.theme.logo;
   }
+};
+
+export const getFullAppUrl = (url: string) => {
+  return `${document.location.origin}${url}`;
 };
 
 export const navigateToUrl = (url: string) => {
@@ -182,7 +227,7 @@ export const filterAndSortApps = (
         : 'all';
 
   // Get Apps based on ownership type and search value
-  const apps = getApps(data, ownershipType, currentUser?.name ?? '')
+  const apps = getApps(data, ownershipType, currentUser.name)
     .filter(
       (app) =>
         app.name.toLowerCase().includes(searchToLower) ||
@@ -201,9 +246,9 @@ export const filterAndSortApps = (
     if (sortByValue === 'Recently modified') {
       return a.last_activity > b.last_activity ? -1 : 1;
     } else if (sortByValue === 'Name: A-Z') {
-      return a.name > b.name ? 1 : -1;
+      return a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1;
     }
-    return a.name > b.name ? -1 : 1;
+    return a.name.toLowerCase() > b.name.toLowerCase() ? -1 : 1;
   });
   return apps;
 };

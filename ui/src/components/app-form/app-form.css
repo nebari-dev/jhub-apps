@@ -48,3 +48,9 @@
 .form-breadcrumb > button {
   width: 50px;
 }
+
+@media screen and (max-width: 768px) {
+  .form {
+    max-width: unset;
+  }
+}

@@ -128,6 +128,7 @@ export const Thumbnail = ({
           <div
             className="thumbnail-icon-container"
             tabIndex={0}
+            title="Upload thumbnail"
             onClick={handleBrowseThumbnails}
           >
             <InsertPhotoIcon className="thumbnail-icon" />

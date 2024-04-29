@@ -64,7 +64,8 @@ class HubClient:
         text = re.sub(r"[^a-z0-9\s-]", "", text)
         # Replace spaces with hyphens
         text = text.replace(" ", "-")
-        return text
+        # Max limit for servername is 255 chars
+        return text[:240]
 
     def start_server(self, username, servername):
         if not servername:
