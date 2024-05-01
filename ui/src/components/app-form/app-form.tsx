@@ -1,9 +1,11 @@
 import InfoRoundedIcon from '@mui/icons-material/InfoRounded';
+
 import {
   Box,
   Button,
   FormControl,
   FormControlLabel,
+  FormHelperText,
   InputLabel,
   MenuItem,
   Select,
@@ -24,7 +26,7 @@ import axios from '@src/utils/axios';
 import { APP_BASE_URL, REQUIRED_FORM_FIELDS_RULES } from '@src/utils/constants';
 import { getFriendlyDisplayName, navigateToUrl } from '@src/utils/jupyterhub';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
@@ -47,6 +49,18 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
   const navigate = useNavigate();
   const [submitting, setSubmitting] = useState(false);
   const [currentUser] = useRecoilState<UserState | undefined>(defaultUser);
+  const [description, setDescription] = useState<string>('');
+  const textAreaRef = useRef<HTMLTextAreaElement>(null);
+  const overlayRef = useRef<HTMLDivElement>(null);
+  const [isFocused, setIsFocused] = useState<boolean>(false);
+  const adjustTextareaHeight = (
+    textarea: EventTarget & HTMLTextAreaElement,
+  ) => {
+    if (!textarea) return;
+    textarea.style.height = 'auto'; // Reset height to recalculate
+    textarea.style.height = textarea.scrollHeight + 'px'; // Set to scroll height
+  };
+
   const [, setNotification] = useRecoilState<string | undefined>(
     currentNotification,
   );
@@ -132,6 +146,51 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
     },
   });
   const currentFramework = watch('framework');
+
+  useEffect(() => {
+    const currentTextAreaRef = textAreaRef.current;
+    const syncScroll = () => {
+      if (overlayRef.current && textAreaRef.current) {
+        overlayRef.current.scrollTop = textAreaRef.current.scrollTop;
+      }
+    };
+
+    currentTextAreaRef?.addEventListener('scroll', syncScroll);
+    return () => currentTextAreaRef?.removeEventListener('scroll', syncScroll);
+  }, []);
+
+  const getStyledText = () => {
+    const normalText = description.slice(0, 200);
+    const excessText = description.slice(200);
+    return (
+      <>
+        {normalText}
+        <span style={{ color: 'red' }}>{excessText}</span>
+      </>
+    );
+  };
+  const descriptionRef = useRef(null); // Create a ref for the textarea
+
+  useEffect(() => {
+    const input = descriptionRef.current as HTMLInputElement | null;
+    if (input) {
+      const value = input.value;
+      const exceedLength = 200;
+
+      if (value.length > exceedLength) {
+        console.log('value', value.length, '/', exceedLength);
+        const partOne = value.substring(0, exceedLength);
+        const partTwo = value.substring(exceedLength);
+        input.innerHTML = `<span>${partOne}</span><span style="color: red;">${partTwo}</span>`;
+      } else {
+        input.innerHTML = `<span>${value}</span>`;
+      }
+    }
+  }, [description]);
+
+  function setFocus(focus: boolean): void {
+    setIsFocused(focus);
+  }
 
   const onFormSubmit: SubmitHandler<AppFormInput> = ({
     display_name,
@@ -347,23 +406,118 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
         <Controller
           name="description"
           control={control}
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          render={({ field: { ref: _, ...field } }) => (
-            <FormControl>
-              <TextField
+          render={({ field }) => (
+            <FormControl
+              fullWidth
+              className="form-control"
+              variant="outlined"
+              style={{ position: 'relative' }}
+            >
+              <label
+                htmlFor="description"
+                className={
+                  'description-label' +
+                  (description.length > 0 || isFocused ? ' label-float' : '')
+                }
+                style={{
+                  position: 'absolute',
+                  left: '10px',
+                  top: description.length > 0 || isFocused ? '-10px' : '10px',
+                  fontSize: '12px', // Ensure font size matches
+                  color:
+                    description.length > 0 || isFocused
+                      ? '#ba18da '
+                      : 'transparent',
+                  transition: 'all 0.2s ease-out',
+                  backgroundColor:
+                    description.length > 0 || isFocused
+                      ? 'white'
+                      : 'transparent',
+                  padding: '0 4px',
+                  zIndex: 10,
+                }}
+              >
+                Description
+              </label>
+              <textarea
                 {...field}
+                ref={textAreaRef}
                 id="description"
-                label="Description"
-                placeholder="Add app description (max. 200 characters)"
-                multiline
-                rows={4}
-                inputProps={{ maxLength: 200 }}
+                value={description}
+                onChange={(e) => {
+                  setDescription(e.target.value);
+                  field.onChange(e.target.value);
+                  adjustTextareaHeight(e.target);
+                }}
+                onFocus={() => {
+                  setFocus(true);
+                }}
+                onBlur={() => {
+                  field.onBlur();
+                  setFocus(false);
+                }}
+                className="description_text-field"
+                placeholder={
+                  isFocused
+                    ? 'Add app description (max. 200 characters)'
+                    : 'Description'
+                }
+                style={{
+                  outline: 'none',
+                  width: '100%',
+                  height: '80px',
+                  padding: '20px 10px 10px',
+                  boxSizing: 'border-box',
+                  border: '1px solid #ccc',
+                  backgroundColor: 'transparent',
+                  overflow: 'hidden',
+                  textOverflow: 'clip',
+                  whiteSpace: 'pre-wrap',
+                  resize: 'vertical',
+                  fontFamily: 'Arial, sans-serif', // Match font
+                  fontSize: '16px', // Match font size
+                  lineHeight: '20px', // Adjust line height as necessary
+                }}
               />
+              <div
+                ref={overlayRef}
+                style={{
+                  display: description.length > 200 ? 'block' : 'none',
+                  position: 'absolute',
+                  top: isFocused ? 'calc(1px + 1px)' : '1px',
+                  left: isFocused ? 'calc(1px + 1px)' : '1px',
+                  padding: '20px 10px 10px',
+                  pointerEvents: 'none',
+                  color: 'black',
+                  whiteSpace: 'pre-wrap',
+                  overflow: 'visbile',
+                  height: '80px',
+                  width: '100%',
+                  boxSizing: 'border-box',
+                  fontFamily: 'Arial, sans-serif', // Ensure font matches
+                  fontSize: '16px', // Ensure font size matches
+                  lineHeight: '20px', // Adjust line height as necessary
+                  zIndex: 5,
+                }}
+              >
+                {getStyledText()}
+              </div>
+              <FormHelperText
+                className="form-helper-text"
+                style={{
+                  textAlign: 'right',
+                  marginRight: '0',
+                  fontSize: '1rem',
+                  color: description.length > 200 ? 'red' : 'inherit',
+                }}
+              >
+                {description.length}/200
+              </FormHelperText>
             </FormControl>
           )}
         />
       </div>
-      <hr />
+
       <div className="form-section">
         <h2>Configuration</h2>
         <Controller
@@ -524,7 +678,7 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
           />
         </Box>
       </div>
-      <hr />
+
       <div className="form-section">
         <h2>Sharing</h2>
         <Controller
@@ -552,7 +706,7 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
           )}
         />
       </div>
-      <hr />
+
       <div className="form-section">
         <h2>App Thumbnail</h2>
         <Controller

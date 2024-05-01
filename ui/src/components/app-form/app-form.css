@@ -54,3 +54,135 @@
     max-width: unset;
   }
 }
+
+.description_text-field {
+  position: relative;
+  padding: 15px;
+}
+.description-display {
+  position: absolute;
+  top: 0px;
+  padding: 10px;
+  background: yellow;
+}
+
+/* Styles for the placeholder text */
+.placeholder-text {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  color: rgba(0, 0, 0, 0.87);
+  transition: all 0.2s;
+  pointer-events: none;
+}
+
+/* Styles when the description container is focused */
+.description-container:focus-within {
+  border-color: purple;
+}
+
+/* Styles for moving the placeholder text on focus */
+.description-container:focus-within .placeholder-text {
+  top: -10px;
+  left: 10px;
+  background: white;
+  padding: 0 5px;
+  font-size: 0.8em;
+  color: purple;
+}
+
+/* Styles for hiding placeholder text when content is present */
+.description-container:not(:empty) .placeholder-text {
+  visibility: hidden;
+}
+
+.description_text-field {
+  border: 1px solid rgba(0, 0, 0, 0.57);
+  border-radius: 3px;
+}
+
+.description_text-field:empty:before {
+  content: attr(data-placeholder);
+  color: rgba(0, 0, 0, 0.57);
+  pointer-events: none;
+  display: block; /* For IE */
+}
+
+.description_text-field:empty:focus:before {
+  content: attr(data-placeholder);
+}
+.description_text-field:hover {
+  border: 1px solid #000 !important;
+}
+.description_text-field:focus {
+  border: 2px solid #ba18da !important;
+}
+.description_text-field--not-empty + label {
+  color: #000;
+}
+
+.description-label {
+  position: absolute;
+  left: 10px;
+  top: 16px; /* Adjust if necessary */
+  transition: all 0.2s ease-in-out;
+  background: #fff;
+  padding: 0 5px;
+  color: rgba(0, 0, 0, 0.57);
+  pointer-events: none;
+}
+
+/* Adjust label when focused or has content */
+.description_text-field--not-empty + .description-label,
+.description_text-field:focus + .description-label {
+  top: -8px; /* Adjust as needed */
+  font-size: 0.75rem;
+  color: #ba18da; /* Active label color */
+}
+
+/* Container styles when focused */
+.description-container:focus-within {
+  border-color: #ba18da;
+}
+
+/* Styles to hide the placeholder when content is present */
+.description_text-field:not(:empty)::before {
+  display: none;
+}
+
+/* Placeholder styles */
+.description_text-field::before {
+  content: attr(data-placeholder);
+  position: absolute;
+  left: 15px;
+  top: 16px;
+  color: rgba(9, 10, 9, 0.57) !important; /* Placeholder color */
+  pointer-events: none;
+  display: block; /* For IE */
+}
+
+/* Adjust placeholder when focused */
+.description_text-field:focus::before {
+  content: '';
+}
+
+.form-control {
+  position: relative;
+}
+
+.form-helper-text {
+  display: none; /* Hide by default */
+  color: inherit;
+  font-size: 1rem; /* Adjust according to your design */
+  position: absolute;
+  right: 0;
+  bottom: -25px; /* Adjust positioning as necessary */
+}
+
+.form-control:focus-within .form-helper-text {
+  display: block; /* Show only when the child text field is focused */
+}
+
+.exceeding-characters {
+  color: red; /* Or any other style you want to apply */
+}
