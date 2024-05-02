@@ -45,7 +45,7 @@ def test_panel_app_creation(playwright: Playwright, with_server_options) -> None
     app_page_title = "Panel Test App"
     try:
         page.goto(BASE_URL)
-        sign_in_and_authorize(app_suffix, page)
+        sign_in_and_authorize(page, username=f"admin-{app_suffix}", password="admin")
         create_app(app_name, page, with_server_options)
         wait_for_element_in_app = "div.bk-slider-title >> text=Slider:"
         slider_text_element = page.wait_for_selector(wait_for_element_in_app)
@@ -86,11 +86,11 @@ def create_app(app_name, page, with_server_options=True):
     create_app_locator.click()
 
 
-def sign_in_and_authorize(app_suffix, page):
+def sign_in_and_authorize(page, username, password):
     logger.info("Signing in")
     page.get_by_label("Username:").click()
-    page.get_by_label("Username:").fill(f"admin-{app_suffix}")
-    page.get_by_label("Password:").fill("admin")
+    page.get_by_label("Username:").fill(username)
+    page.get_by_label("Password:").fill(password)
     logger.info("Pressing Sign in button")
     page.get_by_role("button", name="Sign in").click()
     logger.info("Click Authorize button")
