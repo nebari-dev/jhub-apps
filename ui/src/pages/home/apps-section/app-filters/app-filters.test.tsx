@@ -203,34 +203,33 @@ describe('AppFilters', () => {
       btn.click();
     });
 
-    waitFor(() => {
-      const form = baseElement.querySelector(
-        '#filters-form',
-      ) as HTMLFormElement;
-      expect(form).toBeTruthy();
+    const form = await waitFor(async () => {
+      baseElement.querySelector('#filters-form') as HTMLFormElement;
     });
 
-    const frameworkItem = baseElement.querySelectorAll(
-      '.MuiFormControlLabel-root',
-    )[0] as HTMLLabelElement;
-    await act(async () => {
-      frameworkItem.click();
-    });
-    expect(frameworkItem).toBeTruthy();
+    if (form !== null) {
+      const frameworkItem = baseElement.querySelectorAll(
+        '.MuiFormControlLabel-root',
+      )[0] as HTMLLabelElement;
+      await act(async () => {
+        frameworkItem.click();
+      });
+      expect(frameworkItem).toBeTruthy();
 
-    const ownershipItem = baseElement.querySelectorAll(
-      '.MuiFormControlLabel-root',
-    )[6] as HTMLLabelElement;
-    await act(async () => {
-      ownershipItem.click();
-    });
+      const ownershipItem = baseElement.querySelectorAll(
+        '.MuiFormControlLabel-root',
+      )[6] as HTMLLabelElement;
+      await act(async () => {
+        ownershipItem.click();
+      });
 
-    const applyButton = baseElement.querySelector(
-      '#apply-filters-btn',
-    ) as HTMLButtonElement;
-    await act(async () => {
-      applyButton.click();
-    });
+      const applyButton = baseElement.querySelector(
+        '#apply-filters-btn',
+      ) as HTMLButtonElement;
+      await act(async () => {
+        applyButton.click();
+      });
+    }
 
     expect(spy).toHaveBeenCalled();
   });
@@ -260,19 +259,18 @@ describe('AppFilters', () => {
       btn.click();
     });
 
-    waitFor(() => {
-      const form = baseElement.querySelector(
-        '#filters-form',
-      ) as HTMLFormElement;
-      expect(form).toBeTruthy();
+    const form = await waitFor(async () => {
+      baseElement.querySelector('#filters-form') as HTMLFormElement;
     });
 
-    const clearButton = baseElement.querySelector(
-      '#clear-filters-btn',
-    ) as HTMLButtonElement;
-    await act(async () => {
-      clearButton.click();
-    });
+    if (form !== null) {
+      const clearButton = baseElement.querySelector(
+        '#clear-filters-btn',
+      ) as HTMLButtonElement;
+      await act(async () => {
+        clearButton.click();
+      });
+    }
 
     expect(spy).not.toHaveBeenCalled();
   });

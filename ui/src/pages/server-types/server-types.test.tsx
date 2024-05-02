@@ -179,6 +179,7 @@ describe('ServerTypes', () => {
             is_public: false,
             keep_alive: false,
             env: '{ "key": "value" }',
+            share_with: { users: [], groups: [] },
           });
         }}
       >

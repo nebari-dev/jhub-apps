@@ -30,7 +30,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
-import { Thumbnail } from '..';
+import { AppSharing, Thumbnail } from '..';
 import {
   currentNotification,
   currentFile as defaultFile,
@@ -77,6 +77,12 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
     defaultImage,
   );
   const [isPublic, setIsPublic] = useState(false);
+  const [currentUserPermissions, setCurrentUserPermissions] = useState<
+    string[]
+  >([]);
+  const [currentGroupPermissions, setCurrentGroupPermissions] = useState<
+    string[]
+  >([]);
   const [keepAlive, setKeepAlive] = useState(false);
   // Get the app data if we're editing an existing app
   const { data: formData, error: formError } = useQuery<
@@ -217,6 +223,10 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
         custom_command,
         profile,
         is_public: isPublic,
+        share_with: {
+          users: currentUserPermissions,
+          groups: currentGroupPermissions,
+        },
         keep_alive: keepAlive,
       };
       setCurrentFormInput(payload);
@@ -237,6 +247,10 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
           custom_command: custom_command || '',
           profile: profile || '',
           public: isPublic,
+          share_with: {
+            users: currentUserPermissions,
+            groups: currentGroupPermissions,
+          },
           keep_alive: keepAlive,
         },
       };
@@ -337,6 +351,8 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
       setIsPublic(formData.user_options.public);
       setKeepAlive(formData.user_options.keep_alive);
       setCurrentImage(formData.user_options.thumbnail);
+      setCurrentUserPermissions(formData.user_options.share_with?.users);
+      setCurrentGroupPermissions(formData.user_options.share_with?.groups);
     }
   }, [
     formData?.name,
@@ -365,6 +381,8 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
       setIsPublic(currentFormInput.is_public);
       setKeepAlive(currentFormInput.keep_alive);
       setCurrentImage(currentFormInput.thumbnail);
+      setCurrentUserPermissions(currentFormInput.share_with?.users);
+      setCurrentGroupPermissions(currentFormInput.share_with?.groups);
     }
   }, [currentFormInput, reset, setCurrentImage, setCurrentServerName]);
 
@@ -681,29 +699,13 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
 
       <div className="form-section">
         <h2>Sharing</h2>
-        <Controller
-          name="is_public"
-          control={control}
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          render={({ field: { ref: _, value, onChange, ...field } }) => (
-            <FormControl sx={{ flexDirection: 'row' }}>
-              <FormControlLabel
-                control={
-                  <Switch
-                    {...field}
-                    id="is_public"
-                    checked={isPublic}
-                    onChange={() => {
-                      setIsPublic(!isPublic);
-                    }}
-                  />
-                }
-                label="Allow public access"
-                labelPlacement="start"
-                sx={{ marginLeft: '10px' }}
-              />
-            </FormControl>
-          )}
+        <AppSharing
+          url={formData?.url}
+          permissions={formData?.user_options?.share_with}
+          isPublic={isPublic}
+          setCurrentUserPermissions={setCurrentUserPermissions}
+          setCurrentGroupPermissions={setCurrentGroupPermissions}
+          setIsPublic={setIsPublic}
         />
       </div>
 

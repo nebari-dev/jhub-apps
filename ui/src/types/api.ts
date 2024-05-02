@@ -1,3 +1,8 @@
+export interface SharePermissions {
+  users: string[];
+  groups: string[];
+}
+
 export interface UserOptions {
   jhub_app: boolean;
   display_name: string;
@@ -9,6 +14,7 @@ export interface UserOptions {
   conda_env: string;
   profile: string;
   public: boolean;
+  share_with: SharePermissions;
   keep_alive: boolean;
   env: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }

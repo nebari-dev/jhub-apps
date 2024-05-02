@@ -1,3 +1,5 @@
+import { SharePermissions } from './api';
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export interface UserState {
   admin: boolean;
@@ -13,4 +15,5 @@ export interface UserState {
   server: string | null;
   servers: any;
   session_id: string | null;
+  share_permissions: SharePermissions;
 }
