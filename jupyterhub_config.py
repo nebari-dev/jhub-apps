@@ -54,6 +54,6 @@ c.JupyterHub.template_vars = {
 }
 
 c.JupyterHub.load_groups = {
-    'class-A': ['aktech', 'sumit'],
-    'class-B': ['aktech', 'sumit']
+    'class-A': ['john', 'alice'],
+    'class-B': ['john', 'alice']
 }
