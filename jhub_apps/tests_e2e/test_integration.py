@@ -12,7 +12,7 @@ logger = structlog.get_logger(__name__)
 
 
 def get_page(playwright: Playwright):
-    browser = playwright.chromium.launch(headless=True)
+    browser = playwright.chromium.launch(headless=False)
     context = browser.new_context(
         record_video_dir="videos/",
         record_video_size={"width": 1920, "height": 1080},
@@ -45,8 +45,13 @@ def test_panel_app_creation(playwright: Playwright, with_server_options) -> None
     app_page_title = "Panel Test App"
     try:
         page.goto(BASE_URL)
+        share_with_user = f"admin-{uuid.uuid4().hex[:6]}"
+        create_users(page, users=[share_with_user])
+        page.goto(BASE_URL)
         sign_in_and_authorize(page, username=f"admin-{app_suffix}", password="admin")
-        create_app(app_name, page, with_server_options)
+        create_app(
+            app_name, page, with_server_options, share_with_users=[share_with_user]
+        )
         wait_for_element_in_app = "div.bk-slider-title >> text=Slider:"
         slider_text_element = page.wait_for_selector(wait_for_element_in_app)
         assert slider_text_element is not None, "Slider text element not found!"
@@ -59,7 +64,13 @@ def test_panel_app_creation(playwright: Playwright, with_server_options) -> None
         raise e
 
 
-def create_app(app_name, page, with_server_options=True):
+def create_app(
+        app_name,
+        page,
+        with_server_options=True,
+        share_with_users=None,
+        share_with_groups=None,
+):
     logger.info("Creating App")
     page.get_by_role("button", name="Create App").click()
     logger.info("Fill App display Name")
@@ -79,11 +90,40 @@ def create_app(app_name, page, with_server_options=True):
         expect(small_instance_radio_button).to_be_visible()
         small_instance_radio_button.check()
 
+    select_share_options(page, users=share_with_users, groups=share_with_groups)
     create_app_locator = page.get_by_role("button", name="Create App")
     logger.info("Expect Create App button to be visible")
     expect(create_app_locator).to_be_visible()
     logger.info("Click Create App")
     create_app_locator.click()
+
+
+def select_share_options(page, users=None, groups=None):
+    logger.info("Selecting share form")
+    share_locator = page.locator("id=share-permissions-autocomplete")
+    expect(share_locator).to_be_visible()
+
+    users = users or []
+    groups = groups or []
+    for user in users:
+        logger.info(f"Fill user: {user} in share")
+        share_locator.fill(user)
+        logger.info(f"Select user: {user} in share")
+        page.get_by_role("option", name=user).click()
+
+    for group in groups:
+        logger.info(f"Fill group: {group} in share")
+        share_locator.fill(group)
+        logger.info(f"Select group: {group} in share")
+        page.get_by_role("option", name=f"{group} (Group)").click()
+    page.get_by_role("button", name="Share").click()
+
+
+def create_users(page, users):
+    """Create users by logging in"""
+    for user in users:
+        sign_in_and_authorize(page, user, password="password")
+        sign_out(page)
 
 
 def sign_in_and_authorize(page, username, password):
@@ -95,3 +135,15 @@ def sign_in_and_authorize(page, username, password):
     page.get_by_role("button", name="Sign in").click()
     logger.info("Click Authorize button")
     page.get_by_role("button", name="Authorize").click()
+
+
+def sign_out(page):
+    logger.info("Click on profile menu")
+    profile_top_corner_locator = page.locator("id=profile-menu-btn")
+    expect(profile_top_corner_locator).to_be_visible()
+    profile_top_corner_locator.click()
+    logger.info("Click on Logout button")
+    logout_button = page.get_by_role("menuitem").filter(has_text="Logout")
+    expect(logout_button).to_be_visible()
+    logout_button.click()
+    logger.info("Logged out")
