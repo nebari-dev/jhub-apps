@@ -1,6 +1,7 @@
 import typing
 from concurrent.futures import ThreadPoolExecutor
 
+from jupyterhub.scopes import parse_scopes
 import structlog
 import os
 import re
@@ -8,6 +9,7 @@ import uuid
 
 import requests
 
+from jhub_apps.service.models import UserOptions, SharePermissions
 
 API_URL = os.environ.get("JUPYTERHUB_API_URL")
 JUPYTERHUB_API_TOKEN = os.environ.get("JUPYTERHUB_API_TOKEN")
@@ -85,14 +87,14 @@ class HubClient:
         r.raise_for_status()
         return r.status_code, servername
 
-    def create_server(self, username, servername, user_options=None):
+    def create_server(self, username: str, servername: str, user_options: UserOptions = None):
         logger.info("Creating new server", user=username)
-        servername = self.normalize_server_name(servername)
-        servername = f"{servername}-{uuid.uuid4().hex[:7]}"
+        normalized_servername = self.normalize_server_name(servername)
+        unique_servername = f"{normalized_servername}-{uuid.uuid4().hex[:7]}"
         logger.info("Normalized servername", servername=servername)
-        return self._create_server(username, servername, user_options)
+        return self._create_server(username, unique_servername, user_options)
 
-    def edit_server(self, username, servername, user_options=None):
+    def edit_server(self, username: str, servername: str, user_options: UserOptions = None):
         logger.info("Editing server", server_name=servername)
         server = self.get_server(username, servername)
         if server:
@@ -104,13 +106,19 @@ class HubClient:
         logger.info("Now creating the server with new params", server_name=servername)
         return self._create_server(username, servername, user_options)
 
-    def _create_server(self, username, servername, user_options):
+    def _create_server(self, username: str, servername: str, user_options: UserOptions = None):
         url = f"/users/{username}/servers/{servername}"
         params = user_options.model_dump()
         data = {"name": servername, **params}
         logger.info("Creating new server", server_name=servername)
         r = requests.post(API_URL + url, headers=self._headers(), json=data)
         r.raise_for_status()
+        logger.info("Sharing", share_with=user_options.share_with)
+        self._share_server_with_multiple_entities(
+            username,
+            servername,
+            share_with=user_options.share_with
+        )
         return r.status_code, servername
 
     def _share_server(
@@ -135,8 +143,7 @@ class HubClient:
             self,
             username: str,
             servername: str,
-            share_to_users: typing.Optional[typing.List[str]] = None,
-            share_to_groups: typing.Optional[typing.List[str]] = None,
+            share_with: typing.Optional[SharePermissions] = None
     ):
         """
         :param username: owner of the servername
@@ -145,15 +152,15 @@ class HubClient:
         :param share_to_groups: list of groups to share the server with
         :return: mapping of dict of users + group to corresponding response json from Hub API
         """
-        logger.info(
-            f"Requested to share {username}/{servername}",
-            share_to_users=share_to_users, share_to_groups=share_to_groups
-        )
-        if not share_to_groups and not share_to_users:
+        if not share_with:
             logger.info("Neither of share_to_user or share_to_group provided, NOT sharing")
             return
-        users = share_to_users or []
-        groups = share_to_groups or []
+        logger.info(
+            f"Requested to share {username}/{servername}",
+            share_to_users=share_with.users, share_to_groups=share_with.groups
+        )
+        users = share_with.users or []
+        groups = share_with.groups or []
         share_to_user_args = [(username, servername, user, None,) for user in users]
         share_to_group_args = [(username, servername, None, group,) for group in groups]
         executor_arguments = share_to_user_args + share_to_group_args
@@ -192,3 +199,22 @@ class HubClient:
         r = requests.get(API_URL + "/services", headers=self._headers())
         r.raise_for_status()
         return r.json()
+
+    def get_groups(self):
+        r = requests.get(API_URL + "/groups", headers=self._headers())
+        r.raise_for_status()
+        return r.json()
+
+
+def get_users_and_group_allowed_to_share_with(scopes):
+    """Returns a list of users and groups"""
+    hclient = HubClient()
+    users = hclient.get_users()
+    user_names = [user["name"] for user in users]
+    groups = hclient.get_groups()
+    group_names = [group['name'] for group in groups]
+    parsed_scopes = parse_scopes(scopes)
+    return {
+        "users": user_names,
+        "groups": group_names
+    }

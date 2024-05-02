@@ -78,6 +78,7 @@ def install_jhub_apps(c, spawner_to_subclass):
             "scopes": [
                 # declare what permissions the service should have
                 "list:users",  # list users
+                "list:groups",  # list groups
                 "read:users:activity",  # read user last-activity
                 "read:users",  # read user last-activity
                 "admin:servers",  # start/stop servers
@@ -96,7 +97,7 @@ def install_jhub_apps(c, spawner_to_subclass):
             "scopes": [
                 "self",
                 "access:services",
-                "admin:auth_state"
+                "admin:auth_state",
             ],
         },
     ]

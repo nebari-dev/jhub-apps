@@ -19,6 +19,11 @@ class Server(BaseModel):
     user_options: Optional[Any]
 
 
+class SharePermissions(BaseModel):
+    users: List[str]
+    groups: List[str]
+
+
 class User(BaseModel):
     name: str
     admin: bool
@@ -30,6 +35,7 @@ class User(BaseModel):
     servers: Optional[Dict[str, Server]] = None
     scopes: List[str]
     auth_state: Optional[Dict] = None
+    share_permissions: typing.Optional[SharePermissions] = None
 
 
 # https://stackoverflow.com/questions/64501193/fastapi-how-to-use-httpexception-in-responses
@@ -66,6 +72,7 @@ class UserOptions(BaseModel):
     # Keep app alive, even when there is no activity
     # So that it's not killed by idle culler
     keep_alive: typing.Optional[bool] = False
+    share_with: typing.Optional[SharePermissions] = None
 
 
 class ServerCreation(BaseModel):
