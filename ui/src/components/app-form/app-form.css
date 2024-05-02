@@ -96,11 +96,6 @@
   visibility: hidden;
 }
 
-.description_text-field {
-  border: 1px solid rgba(0, 0, 0, 0.57);
-  border-radius: 3px;
-}
-
 .description_text-field:empty:before {
   content: attr(data-placeholder);
   color: rgba(0, 0, 0, 0.57);
@@ -111,12 +106,7 @@
 .description_text-field:empty:focus:before {
   content: attr(data-placeholder);
 }
-.description_text-field:hover {
-  border: 1px solid #000 !important;
-}
-.description_text-field:focus {
-  border: 2px solid #ba18da !important;
-}
+
 .description_text-field--not-empty + label {
   color: #000;
 }
@@ -124,7 +114,8 @@
 .description-label {
   position: absolute;
   left: 10px;
-  top: 16px; /* Adjust if necessary */
+  top: 16px;
+  font-size: 12px;
   transition: all 0.2s ease-in-out;
   background: #fff;
   padding: 0 5px;
@@ -138,11 +129,6 @@
   top: -8px; /* Adjust as needed */
   font-size: 0.75rem;
   color: #ba18da; /* Active label color */
-}
-
-/* Container styles when focused */
-.description-container:focus-within {
-  border-color: #ba18da;
 }
 
 /* Styles to hide the placeholder when content is present */
@@ -168,21 +154,129 @@
 
 .form-control {
   position: relative;
+  width: 100%;
+  border: 1px solid #ccc !important;
+  border-radius: 4px;
+  transition: border-color 0.3s;
+}
+.form-control:hover {
+  border-color: black !important;
+}
+
+.form-control:focus-within {
+  border: 2px solid #ba18da !important;
 }
 
 .form-helper-text {
-  display: none; /* Hide by default */
+  display: none;
   color: inherit;
-  font-size: 1rem; /* Adjust according to your design */
+  font-size: 1rem;
   position: absolute;
   right: 0;
-  bottom: -25px; /* Adjust positioning as necessary */
+  bottom: -30px;
 }
 
 .form-control:focus-within .form-helper-text {
-  display: block; /* Show only when the child text field is focused */
+  display: block;
 }
 
 .exceeding-characters {
-  color: red; /* Or any other style you want to apply */
+  color: red;
+}
+
+.description_text-field,
+.overlay-text {
+  outline: none;
+  width: 100%;
+  padding: 20px 10px 10px;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  line-height: 20px;
+  overflow: hidden;
+  background-color: transparent;
+}
+
+.overlay-text {
+  position: absolute;
+  top: 1px;
+  left: 1px;
+  bottom: 1px;
+  pointer-events: none;
+  color: transparent;
+  white-space: pre-wrap;
+  overflow: hidden;
+  height: auto;
+  z-index: 5;
+}
+
+.description_text-field,
+.overlay-text {
+  outline: none;
+  padding: 20px 10px 10px;
+  box-sizing: border-box;
+  border: none;
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  line-height: 20px;
+  background-color: transparent;
+}
+
+.overlay-text {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  color: transparent;
+  white-space: pre-wrap;
+  overflow: hidden;
+  z-index: 5;
+}
+
+.description-label {
+  position: absolute;
+  top: -15px;
+  left: 8px;
+  transform: translateY(50%);
+  color: rgba(0, 0, 0, 0.57);
+  background-color: transparent;
+  transition: all 0.2s ease;
+  pointer-events: none;
+}
+
+.description_text-field:focus + .description-label,
+.description_text-field:not(:empty) + .description-label {
+  top: -8px; /* Adjust as needed */
+  font-size: 0.75rem;
+  color: #ba18da; /* Active label color */
+}
+
+.description_text-field:not(:focus):not(:placeholder-shown)
+  + .description-label {
+  color: lime !important;
+}
+.form-control:focus-within .form-helper-text {
+  display: block;
+}
+
+.description-label {
+  position: absolute;
+  left: 10px;
+  transition:
+    transform 0.3s ease,
+    color 0.3s ease;
+  transform-origin: left top;
+  color: rgba(0, 0, 0, 0.54);
+  pointer-events: none;
+}
+
+.textarea-container:focus-within .description-label,
+.description-label.label-float {
+  transform: translateY(5px);
+  font-size: 12px;
+  font-weight: 500;
+  color: #ba18da;
 }

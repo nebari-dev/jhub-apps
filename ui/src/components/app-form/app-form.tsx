@@ -438,21 +438,15 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
                   (description.length > 0 || isFocused ? ' label-float' : '')
                 }
                 style={{
-                  position: 'absolute',
-                  left: '10px',
-                  top: description.length > 0 || isFocused ? '-10px' : '10px',
-                  fontSize: '12px', // Ensure font size matches
-                  color:
-                    description.length > 0 || isFocused
-                      ? '#ba18da '
+                  color: isFocused
+                    ? '#ba18da'
+                    : description.length > 0
+                      ? '#646464'
                       : 'transparent',
-                  transition: 'all 0.2s ease-out',
                   backgroundColor:
                     description.length > 0 || isFocused
-                      ? 'white'
+                      ? '#ffffff'
                       : 'transparent',
-                  padding: '0 4px',
-                  zIndex: 10,
                 }}
               >
                 Description
@@ -480,44 +474,8 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
                     ? 'Add app description (max. 200 characters)'
                     : 'Description'
                 }
-                style={{
-                  outline: 'none',
-                  width: '100%',
-                  height: '80px',
-                  padding: '20px 10px 10px',
-                  boxSizing: 'border-box',
-                  border: '1px solid #ccc',
-                  backgroundColor: 'transparent',
-                  overflow: 'hidden',
-                  textOverflow: 'clip',
-                  whiteSpace: 'pre-wrap',
-                  resize: 'vertical',
-                  fontFamily: 'Arial, sans-serif', // Match font
-                  fontSize: '16px', // Match font size
-                  lineHeight: '20px', // Adjust line height as necessary
-                }}
               />
-              <div
-                ref={overlayRef}
-                style={{
-                  display: description.length > 200 ? 'block' : 'none',
-                  position: 'absolute',
-                  top: isFocused ? 'calc(1px + 1px)' : '1px',
-                  left: isFocused ? 'calc(1px + 1px)' : '1px',
-                  padding: '20px 10px 10px',
-                  pointerEvents: 'none',
-                  color: 'black',
-                  whiteSpace: 'pre-wrap',
-                  overflow: 'visbile',
-                  height: '80px',
-                  width: '100%',
-                  boxSizing: 'border-box',
-                  fontFamily: 'Arial, sans-serif', // Ensure font matches
-                  fontSize: '16px', // Ensure font size matches
-                  lineHeight: '20px', // Adjust line height as necessary
-                  zIndex: 5,
-                }}
-              >
+              <div ref={overlayRef} className="overlay-text">
                 {getStyledText()}
               </div>
               <FormHelperText
@@ -752,7 +710,8 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
               frameworksLoading ||
               environmentsLoading ||
               profilesLoading ||
-              submitting
+              submitting ||
+              description.length > 200
             }
           >
             {profiles && profiles.length > 0 ? (
