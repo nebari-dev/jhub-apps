@@ -38,6 +38,7 @@ Check out their specific documentation pages for details.
 | Spawner profile                                                | Instance type (i.e. machines with CPU/RAM/GPU resources) required for running your application. Only applicable if you're using `KubeSpawner` as the spawner for JupyterHub.                                                                       |
 | Custom Command (required if the Framework is "Custom Command") | Python command to start an arbitrary app.                                                                                                                             |
 | Allow Public Access                                            | Toggle to share the application with anyone on the internet, including unauthenticated users.                                                                                                          |
+| Sharing                                           | To share the application with a set of users and or groups.                                                                                                                                                                            |
 
 Example:
 
