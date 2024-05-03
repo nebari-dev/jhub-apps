@@ -93,6 +93,7 @@ def create_app(
     logger.info("Select Framework")
     page.locator("id=framework").click()
     page.get_by_role("option", name="Panel").click()
+    select_share_options(page, users=share_with_users, groups=share_with_groups)
     if with_server_options:
         next_page_locator = page.get_by_role("button", name="Next")
         logger.info("Select Next Page for Server options")
@@ -103,8 +104,6 @@ def create_app(
         logger.info("Expect Small Instance to be visible")
         expect(small_instance_radio_button).to_be_visible()
         small_instance_radio_button.check()
-
-    select_share_options(page, users=share_with_users, groups=share_with_groups)
     create_app_locator = page.get_by_role("button", name="Create App")
     logger.info("Expect Create App button to be visible")
     expect(create_app_locator).to_be_visible()
