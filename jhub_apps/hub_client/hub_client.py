@@ -1,7 +1,6 @@
 import typing
 from concurrent.futures import ThreadPoolExecutor
 
-import jupyterhub
 import structlog
 import os
 import re
@@ -10,15 +9,12 @@ import uuid
 import requests
 
 from jhub_apps.service.models import UserOptions, SharePermissions
+from jhub_apps.hub_client.utils import is_jupyterhub_5
 
 API_URL = os.environ.get("JUPYTERHUB_API_URL")
 JUPYTERHUB_API_TOKEN = os.environ.get("JUPYTERHUB_API_TOKEN")
 
 logger = structlog.get_logger(__name__)
-
-
-def is_jupyterhub_5():
-    return jupyterhub.version_info[0] == 5
 
 
 class HubClient:

@@ -4,7 +4,7 @@ from secrets import token_bytes
 from traitlets.config import LazyConfigValue
 
 from jhub_apps import JAppsConfig
-from jhub_apps.hub_client.hub_client import is_jupyterhub_5
+from jhub_apps.hub_client.utils import is_jupyterhub_5
 from jhub_apps.spawner.spawner_creation import subclass_spawner
 
 
