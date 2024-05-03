@@ -12,7 +12,7 @@ logger = structlog.get_logger(__name__)
 
 
 def get_page(playwright: Playwright):
-    browser = playwright.chromium.launch(headless=False)
+    browser = playwright.chromium.launch(headless=True)
     context = browser.new_context(
         record_video_dir="videos/",
         record_video_size={"width": 1920, "height": 1080},
@@ -42,26 +42,40 @@ def test_panel_app_creation(playwright: Playwright, with_server_options) -> None
     app_suffix = uuid.uuid4().hex[:6]
     # for searching app with unique name in the UI
     app_name = f"{framework} app {app_suffix}"
-    app_page_title = "Panel Test App"
     try:
         page.goto(BASE_URL)
         share_with_user = f"admin-{uuid.uuid4().hex[:6]}"
         create_users(page, users=[share_with_user])
         page.goto(BASE_URL)
-        sign_in_and_authorize(page, username=f"admin-{app_suffix}", password="admin")
+        sign_in_and_authorize(page, username=f"admin-{app_suffix}", password="password")
         create_app(
             app_name, page, with_server_options, share_with_users=[share_with_user]
         )
-        wait_for_element_in_app = "div.bk-slider-title >> text=Slider:"
-        slider_text_element = page.wait_for_selector(wait_for_element_in_app)
-        assert slider_text_element is not None, "Slider text element not found!"
-        logger.info("Checking page title")
-        expect(page).to_have_title(re.compile(app_page_title))
+        assert_working_panel_app(page)
+
+        app_url = page.url
+        logger.info(f"Access panel app from shared user: {share_with_user}: {app_url}")
+        page.goto(BASE_URL)
+        sign_out(page)
+        sign_in_and_authorize(page, username=share_with_user, password="password")
+        page.goto(app_url)
+        logger.info("Click Authorize button for accessing the shared app")
+        page.get_by_role("button", name="Authorize").click()
+        assert_working_panel_app(page)
     except Exception as e:
         # So that we save the video, before we exit
         context.close()
         browser.close()
         raise e
+
+
+def assert_working_panel_app(page):
+    wait_for_element_in_app = "div.bk-slider-title >> text=Slider:"
+    slider_text_element = page.wait_for_selector(wait_for_element_in_app)
+    assert slider_text_element is not None, "Slider text element not found!"
+    logger.info("Checking page title")
+    app_page_title = "Panel Test App"
+    expect(page).to_have_title(re.compile(app_page_title))
 
 
 def create_app(
