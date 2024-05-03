@@ -5,7 +5,7 @@ from fastapi import HTTPException, Security, status
 from fastapi.security import OAuth2AuthorizationCodeBearer, APIKeyCookie
 from fastapi.security.api_key import APIKeyQuery
 
-from jhub_apps.hub_client.hub_client import get_users_and_group_allowed_to_share_with
+from jhub_apps.hub_client.hub_client import get_users_and_group_allowed_to_share_with, is_jupyterhub_5
 from .auth import get_jhub_token_from_jwt_token
 from .client import get_client
 from .models import User
@@ -70,7 +70,8 @@ async def get_current_user(
                 },
             )
     user = User(**resp.json())
-    user.share_permissions = get_users_and_group_allowed_to_share_with(user.scopes)
+    if is_jupyterhub_5():
+        user.share_permissions = get_users_and_group_allowed_to_share_with(user.scopes)
     if any(scope in user.scopes for scope in access_scopes):
         return user
     else:
