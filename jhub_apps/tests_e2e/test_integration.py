@@ -95,7 +95,7 @@ def create_app(
     page.get_by_role("option", name="Panel").click()
     select_share_options(page, users=share_with_users, groups=share_with_groups)
     if with_server_options:
-        next_page_locator = page.get_by_role("button", name="Next")
+        next_page_locator = page.locator("id=submit-btn")
         logger.info("Select Next Page for Server options")
         expect(next_page_locator).to_be_visible()
         next_page_locator.click()
