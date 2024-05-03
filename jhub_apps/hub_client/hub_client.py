@@ -1,7 +1,6 @@
 import typing
 from concurrent.futures import ThreadPoolExecutor
 
-from jupyterhub.scopes import parse_scopes
 import structlog
 import os
 import re
@@ -213,7 +212,8 @@ def get_users_and_group_allowed_to_share_with(scopes):
     user_names = [user["name"] for user in users]
     groups = hclient.get_groups()
     group_names = [group['name'] for group in groups]
-    parsed_scopes = parse_scopes(scopes)
+    # TODO: Filter users and groups based on what the user has access to share with
+    # parsed_scopes = parse_scopes(scopes)
     return {
         "users": user_names,
         "groups": group_names
