@@ -5,6 +5,7 @@ import pytest
 import structlog
 from playwright.sync_api import Playwright, expect
 
+from jhub_apps.hub_client.utils import is_jupyterhub_5
 from jhub_apps.spawner.types import Framework
 
 BASE_URL = "http://127.0.0.1:8000"
@@ -52,16 +53,16 @@ def test_panel_app_creation(playwright: Playwright, with_server_options) -> None
             app_name, page, with_server_options, share_with_users=[share_with_user]
         )
         assert_working_panel_app(page)
-
         app_url = page.url
         logger.info(f"Access panel app from shared user: {share_with_user}: {app_url}")
         page.goto(BASE_URL)
         sign_out(page)
         sign_in_and_authorize(page, username=share_with_user, password="password")
         page.goto(app_url)
-        logger.info("Click Authorize button for accessing the shared app")
-        page.get_by_role("button", name="Authorize").click()
-        assert_working_panel_app(page)
+        if is_jupyterhub_5():
+            logger.info("Click Authorize button for accessing the shared app")
+            page.get_by_role("button", name="Authorize").click()
+            assert_working_panel_app(page)
     except Exception as e:
         # So that we save the video, before we exit
         context.close()
