@@ -1,6 +1,7 @@
 import typing
 from concurrent.futures import ThreadPoolExecutor
 
+import jupyterhub
 import structlog
 import os
 import re
@@ -14,6 +15,10 @@ API_URL = os.environ.get("JUPYTERHUB_API_URL")
 JUPYTERHUB_API_TOKEN = os.environ.get("JUPYTERHUB_API_TOKEN")
 
 logger = structlog.get_logger(__name__)
+
+
+def is_jupyterhub_5():
+    return jupyterhub.version_info[0] == 5
 
 
 class HubClient:
@@ -112,12 +117,15 @@ class HubClient:
         logger.info("Creating new server", server_name=servername)
         r = requests.post(API_URL + url, headers=self._headers(), json=data)
         r.raise_for_status()
-        logger.info("Sharing", share_with=user_options.share_with)
-        self._share_server_with_multiple_entities(
-            username,
-            servername,
-            share_with=user_options.share_with
-        )
+        if is_jupyterhub_5():
+            logger.info("Sharing", share_with=user_options.share_with)
+            self._share_server_with_multiple_entities(
+                username,
+                servername,
+                share_with=user_options.share_with
+            )
+        else:
+            logger.info("Not sharing server as JupyterHub < 5.x")
         return r.status_code, servername
 
     def _share_server(

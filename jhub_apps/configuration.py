@@ -1,15 +1,11 @@
 from base64 import b64encode
 from secrets import token_bytes
 
-import jupyterhub
 from traitlets.config import LazyConfigValue
 
 from jhub_apps import JAppsConfig
+from jhub_apps.hub_client.hub_client import is_jupyterhub_5
 from jhub_apps.spawner.spawner_creation import subclass_spawner
-
-
-def is_jupyterhub_5():
-    return jupyterhub.version_info[0] == 5
 
 
 def _create_token_for_service():
