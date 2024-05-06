@@ -49,7 +49,7 @@ You will see a basic slider app as shown in this screenshot:
 <details>
 <summary> Environment specification </summary>
 
-Use the following spec to create a conda environment wherever JHub Apps is deployed.
+Use the following spec to create a Conda environment wherever JHub Apps is deployed.
 If using Nebari, use this spec to create an environment with [conda-store][conda-store].
 
 ```yaml
