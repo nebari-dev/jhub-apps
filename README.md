@@ -36,6 +36,7 @@ conda install -c conda-forge jhub-apps
 
 ```bash
 conda env create -f environment-dev.yml
+conda activate jhub-apps-dev
 pip install -e .
 ```
 
@@ -47,17 +48,18 @@ Set the following environment variable:
 export JHUB_APP_JWT_SECRET_KEY=$(openssl rand -hex 32)
 ```
 
+Start JupyterHub:
 
 ```bash
 jupyterhub -f jupyterhub_config.py
 ```
 
-Now go to http://127.0.0.1:8000/services/japps/ to access JHub Apps Launcher
+Now go to http://127.0.0.1:8000/hub/home to access JHub Apps Launcher
 
 ## API Endpoints
 
 The Hub service is exposed via FastAPI endpoints. The documentation for the same can be accessed at:
-http://127.0.0.1:8000/services/japps/docs
+http://127.0.0.1:10202/services/japps/docs
 
 To try out authenticated endpoints click on the Authorize button on the top right of
 the above url and chose `OAuth2AuthorizationCodeBearer` and click on Authorize.
