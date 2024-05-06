@@ -43,7 +43,7 @@ widgets.VBox([slider, text])
 
 You will see a basic slider app as shown in this screenshot:
 
-![Screenshot of a Voilà app](/img/voila_app.png)
+![Simple interactive Voilà app displaying a slider for variable x and its squared value](/img/voila_app.png)
 </details>
 
 <details>
