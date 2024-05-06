@@ -191,6 +191,8 @@ class HubClient:
 
     def get_shared_servers(self, username: str):
         """List servers shared with user"""
+        if not is_jupyterhub_5():
+            return []
         logger.info("Getting shared servers", user=username)
         url = f"/users/{username}/shared"
         response = requests.get(API_URL + url, headers=self._headers())
