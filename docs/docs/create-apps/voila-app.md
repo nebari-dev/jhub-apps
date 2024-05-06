@@ -18,7 +18,7 @@ In some cases, you may need `ipywidgets`
 
 ## Example application
 
-To deploy the [Voila Slider Example][voila-slider-example] using JHub Apps, you can use the following code and environment:
+To deploy the [Voila Basic Example][voila-basic-example] using JHub Apps, you can use the following code and environment:
 
 <details>
 <summary> Code (Jupyter Notebook) </summary>
@@ -41,11 +41,12 @@ slider.value = 4
 widgets.VBox([slider, text])
 ```
 
-You will see a basic slider app.
+You will see a basic slider app as shown in this screenshot:
 
 <p align="center">
-  <img src="voila_app.png" />
+  <img src="voila_app.png" alt="Screenshot of a Voilà app to demonstrate interactive widgets. The display includes a title 'So easy, voilà!' and describes the functionality. Below, there are two widgets: a slider labeled 'x' with a value of 4.00, and a text box displaying the square of 'x' as 16." />
 </p>
+
 
 </details>
 
@@ -81,5 +82,5 @@ When viola (>=0.5.6) is available on Conda Forge, it can be moved outside of the
 
 <!-- External links -->
 
-[voila-slider-example]: https://github.com/voila-dashboards/voila/blob/7596c4f930caf4fc2d89ba63b1096046adf9fe0e/notebooks/basics.ipynb
+[voila-basic-example]: https://github.com/voila-dashboards/voila/blob/7596c4f930caf4fc2d89ba63b1096046adf9fe0e/notebooks/basics.ipynb
 [conda-store]: https://conda.store/conda-store-ui/tutorials/create-envs
