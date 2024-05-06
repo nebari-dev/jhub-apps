@@ -167,7 +167,8 @@ class HubClient:
         share_to_user_args = [(username, servername, user, None,) for user in users]
         share_to_group_args = [(username, servername, None, group,) for group in groups]
         executor_arguments = share_to_user_args + share_to_group_args
-
+        # Remove any previously shared access, this is useful when editing apps
+        self._revoke_shared_access(username, servername)
         # NOTE: JupyterHub 5.x doesn't provide a way for bulk sharing, as in share with a
         # set of groups and users. Since we don't have a task queue in jhub-apps at the moment,
         # we're using multithreading to call JupyterHub API to share the app with multiple users/groups
