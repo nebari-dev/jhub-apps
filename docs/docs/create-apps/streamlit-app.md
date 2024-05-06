@@ -10,7 +10,6 @@ Your conda environment (used in JHub Apps Launcher's App creation form) must hav
 
 * `jhsingle-native-proxy` >= 0.8.2
 * `streamlit`
-* `altair`
 * Other libraries used in the app
 
 :::note
