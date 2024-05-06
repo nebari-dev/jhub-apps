@@ -138,8 +138,8 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
     formState: { errors },
   } = useForm<AppFormInput>({
     defaultValues: {
-      display_name: '',
-      description: '',
+      display_name: formData?.user_options.display_name || '',
+      description: formData?.user_options.description || '',
       framework: '',
       thumbnail: '',
       filepath: '',
@@ -341,6 +341,8 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
   // Populate form with existing app data
   useEffect(() => {
     if (formData?.name && formData?.user_options) {
+      console.log('formData', formData);
+      setDescription(formData.user_options.description || '');
       setCurrentServerName(formData.name);
       reset({
         ...formData.user_options,
@@ -355,6 +357,7 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
       setCurrentGroupPermissions(formData.user_options.share_with?.groups);
     }
   }, [
+    formData,
     formData?.name,
     formData?.user_options,
     reset,
