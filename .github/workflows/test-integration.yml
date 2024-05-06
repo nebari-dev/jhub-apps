@@ -16,15 +16,17 @@ jobs:
       fail-fast: false
       matrix:
         python-version:
-          - "3.9"
+          - "3.10"
+          - "3.11"
+          - "3.12"
         test_type:
           - "with_server_options"
           - "not with_server_options"
         os:
           - ubuntu-latest
         jupyterhub:
-          - "jupyterhub>=4.1"
-          - "git+https://github.com/jupyterhub/jupyterhub.git@f9fb650a7b1cfbc5306cb674ec3038f1801f4e17"
+          - "4.1.5"
+          - "5.0.0b1"
     steps:
     - uses: actions/checkout@v4.1.1
 
@@ -42,7 +44,7 @@ jobs:
 
     - name: Install JupyterHub
       run: |
-        pip install ${{ matrix.jupyterhub }}
+        pip install "jupyterhub==${{ matrix.jupyterhub }}"
 
     - name: Install chp
       run: npm install -g configurable-http-proxy
@@ -52,6 +54,14 @@ jobs:
 
     - name: pip freeze
       run: pip freeze
+
+    - name: Verify JupyterHub Version
+      run: |
+        # Check if the installed version matches the expected version
+        if [ "$(jupyterhub -V)" != "${{ matrix.jupyterhub }}" ]; then
+            echo "JupyterHub version $(jupyterhub -V) != ${{ matrix.jupyterhub }}"
+            exit 1
+        fi
 
     - name: Add server options if with server types
       if: matrix.test_type == 'with_server_options'
@@ -83,13 +93,13 @@ jobs:
     - name: Create artifact name
       id: artifact-name
       run: |
-        if [ "${{ matrix.jupyterhub }}" = "jupyterhub>=4.1" ]; then
+        if [ "${{ matrix.jupyterhub }}" = "4.1.5" ]; then
             jhub_suffix="4x"
         else
             jhub_suffix="5x"
         fi
-        echo "playwright-artifact-name=${{ matrix.test_type }}-$jhub_suffix-playwright-videos" >> "$GITHUB_OUTPUT"
-        echo "jhub-logs-artifact-name=${{ matrix.test_type }}-$jhub_suffix-jupyterhub-logs" >> "$GITHUB_OUTPUT"
+        echo "playwright-artifact-name=${{ matrix.test_type }}-$jhub_suffix-python${{ matrix.python-version }}-playwright-videos" >> "$GITHUB_OUTPUT"
+        echo "jhub-logs-artifact-name=${{ matrix.test_type }}-$jhub_suffix-python${{ matrix.python-version }}-jupyterhub-logs" >> "$GITHUB_OUTPUT"
 
     - name: Upload Playwright Videos
       if: always()
