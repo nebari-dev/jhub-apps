@@ -24,7 +24,12 @@ def mock_user_options():
             "ENV_VAR_KEY_2": "ENV_VAR_KEY_2",
         },
         "profile": "",
-        "public": False
+        "public": False,
+        "keep_alive": False,
+        "share_with": {
+            "users": ["alice", "john"],
+            "groups": ["alpha", "beta"]
+        }
     }
     return user_options
 
