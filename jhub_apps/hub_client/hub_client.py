@@ -167,6 +167,11 @@ class HubClient:
         share_to_user_args = [(username, servername, user, None,) for user in users]
         share_to_group_args = [(username, servername, None, group,) for group in groups]
         executor_arguments = share_to_user_args + share_to_group_args
+
+        # NOTE: JupyterHub 5.x doesn't provide a way for bulk sharing, as in share with a
+        # set of groups and users. Since we don't have a task queue in jhub-apps at the moment,
+        # we're using multithreading to call JupyterHub API to share the app with multiple users/groups
+        # to remove any visible lag in the API request to create server.
         with ThreadPoolExecutor(max_workers=10) as ex:
             logger.info(f"Share executor arguments: {executor_arguments}")
             response_results = list(ex.map(lambda p: self._share_server(*p), executor_arguments))
