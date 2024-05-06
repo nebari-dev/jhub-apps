@@ -185,11 +185,13 @@ class HubClient:
 
     def _revoke_shared_access(self, username: str, servername: str):
         """Revoke all shared access to a given server"""
+        logger.info("Revoking shared servers access", user=username, servername=servername)
         url = f"/shares/{username}/{servername}"
         return requests.delete(API_URL + url, headers=self._headers())
 
     def get_shared_servers(self, username: str):
         """List servers shared with user"""
+        logger.info("Getting shared servers", user=username)
         url = f"/users/{username}/shared"
         response = requests.get(API_URL + url, headers=self._headers())
         rjson = response.json()
@@ -213,6 +215,7 @@ class HubClient:
         return r.json()
 
     def get_groups(self):
+        """Returns all the groups in JupyterHub"""
         r = requests.get(API_URL + "/groups", headers=self._headers())
         r.raise_for_status()
         return r.json()
