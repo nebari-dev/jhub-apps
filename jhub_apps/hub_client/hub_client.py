@@ -188,10 +188,13 @@ class HubClient:
         url = f"/shares/{username}/{servername}"
         return requests.delete(API_URL + url, headers=self._headers())
 
-    def _get_shared_servers(self, username: str):
-        """List shares granting access to any of username's servers."""
-        url = f"/shares/{username}"
-        return requests.get(API_URL + url, headers=self._headers())
+    def get_shared_servers(self, username: str):
+        """List servers shared with user"""
+        url = f"/users/{username}/shared"
+        response = requests.get(API_URL + url, headers=self._headers())
+        rjson = response.json()
+        shared_servers = rjson["items"]
+        return shared_servers
 
     def delete_server(self, username, server_name, remove=False):
         if server_name is None:

@@ -104,7 +104,17 @@ def get_all_shared_servers(hub_users, current_hub_user):
             ]
             all_servers.extend(hub_user_servers_with_name)
     # Filter default servers
-    return list(filter(lambda server: server["name"] != "", all_servers))
+    all_servers_without_default_jlab = list(filter(lambda server: server["name"] != "", all_servers))
+    # Filter servers shared with the user
+    hub_client = HubClient()
+    shared_servers = hub_client.get_shared_servers(username=current_hub_user["name"])
+    shared_server_names = {shared_server["server"]["name"] for shared_server in shared_servers}
+    shared_servers_rich = [
+        server for server in all_servers_without_default_jlab
+        if server["name"] in shared_server_names
+    ]
+    return shared_servers_rich
+
 
 
 @router.get("/server/", description="Get all servers")
