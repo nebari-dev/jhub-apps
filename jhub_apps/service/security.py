@@ -71,7 +71,7 @@ async def get_current_user(
             )
     user = User(**resp.json())
     if is_jupyterhub_5():
-        user.share_permissions = get_users_and_group_allowed_to_share_with(user.scopes)
+        user.share_permissions = get_users_and_group_allowed_to_share_with(user)
     if any(scope in user.scopes for scope in access_scopes):
         return user
     else:

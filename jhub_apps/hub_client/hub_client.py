@@ -221,11 +221,11 @@ class HubClient:
         return r.json()
 
 
-def get_users_and_group_allowed_to_share_with(scopes):
+def get_users_and_group_allowed_to_share_with(user):
     """Returns a list of users and groups"""
     hclient = HubClient()
     users = hclient.get_users()
-    user_names = [user["name"] for user in users]
+    user_names = [u["name"] for u in users if u["name"] != user.name]
     groups = hclient.get_groups()
     group_names = [group['name'] for group in groups]
     # TODO: Filter users and groups based on what the user has access to share with
