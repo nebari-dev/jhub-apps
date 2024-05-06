@@ -44,7 +44,7 @@ widgets.VBox([slider, text])
 You will see a basic slider app as shown in this screenshot:
 
 <p align="center">
-  <img src="voila_app.png" alt="Screenshot of a Voilà app to demonstrate interactive widgets. The display includes a title 'So easy, voilà!' and describes the functionality. Below, there are two widgets: a slider labeled 'x' with a value of 4.00, and a text box displaying the square of 'x' as 16." />
+  <img src="docs/static/img/voila_app.png" alt="Screenshot of a Voilà app to demonstrate interactive widgets. The display includes a title 'So easy, voilà!' and describes the functionality. Below, there are two widgets: a slider labeled 'x' with a value of 4.00, and a text box displaying the square of 'x' as 16." />
 </p>
 
 
