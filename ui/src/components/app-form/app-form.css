@@ -59,12 +59,6 @@
   position: relative;
   padding: 15px;
 }
-.description-display {
-  position: absolute;
-  top: 0px;
-  padding: 10px;
-  background: yellow;
-}
 
 /* Styles for the placeholder text */
 .placeholder-text {
@@ -209,6 +203,7 @@
   overflow: hidden;
   height: auto;
   z-index: 5;
+  overflow-wrap: break-word;
 }
 
 .description_text-field,
@@ -221,6 +216,7 @@
   font-size: 16px;
   line-height: 20px;
   background-color: transparent;
+  resize: vertical;
 }
 
 .overlay-text {
