@@ -192,6 +192,7 @@ class HubClient:
     def get_shared_servers(self, username: str):
         """List servers shared with user"""
         if not is_jupyterhub_5():
+            logger.info("Unable to get shared servers as this feature is not available in JupyterHub < 5.x")
             return []
         logger.info("Getting shared servers", user=username)
         url = f"/users/{username}/shared"
