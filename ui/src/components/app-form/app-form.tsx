@@ -430,7 +430,7 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
           render={({ field }) => (
             <FormControl
               fullWidth
-              className="form-control"
+              className="form-control outer-div"
               variant="outlined"
               style={{ position: 'relative' }}
             >

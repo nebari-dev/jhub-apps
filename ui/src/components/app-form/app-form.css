@@ -178,6 +178,10 @@
   color: red;
 }
 
+form-control.outer-div {
+  height: 125px !important;
+}
+
 .description_text-field,
 .overlay-text {
   outline: none;
@@ -201,7 +205,6 @@
   color: transparent;
   white-space: pre-wrap;
   overflow: hidden;
-  height: auto;
   z-index: 5;
   overflow-wrap: break-word;
 }
@@ -216,7 +219,8 @@
   font-size: 16px;
   line-height: 20px;
   background-color: transparent;
-  resize: vertical;
+  resize: none;
+  height: 125px !important;
 }
 
 .overlay-text {
