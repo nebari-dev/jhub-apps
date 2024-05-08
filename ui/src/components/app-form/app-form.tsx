@@ -138,8 +138,8 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
     formState: { errors },
   } = useForm<AppFormInput>({
     defaultValues: {
-      display_name: formData?.user_options.display_name || '',
-      description: formData?.user_options.description || '',
+      display_name: '',
+      description: '',
       framework: '',
       thumbnail: '',
       filepath: '',
@@ -175,24 +175,6 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
       </>
     );
   };
-  const descriptionRef = useRef(null); // Create a ref for the textarea
-
-  useEffect(() => {
-    const input = descriptionRef.current as HTMLInputElement | null;
-    if (input) {
-      const value = input.value;
-      const exceedLength = 200;
-
-      if (value.length > exceedLength) {
-        console.log('value', value.length, '/', exceedLength);
-        const partOne = value.substring(0, exceedLength);
-        const partTwo = value.substring(exceedLength);
-        input.innerHTML = `<span>${partOne}</span><span style="color: red;">${partTwo}</span>`;
-      } else {
-        input.innerHTML = `<span>${value}</span>`;
-      }
-    }
-  }, [description]);
 
   function setFocus(focus: boolean): void {
     setIsFocused(focus);
@@ -341,9 +323,8 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
   // Populate form with existing app data
   useEffect(() => {
     if (formData?.name && formData?.user_options) {
-      console.log('formData', formData);
       setDescription(formData.user_options.description || '');
-      setCurrentServerName(formData.name);
+      setCurrentServerName(formData?.user_options.display_name || '');
       reset({
         ...formData.user_options,
         env: formData.user_options.env
