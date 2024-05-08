@@ -4,6 +4,7 @@ from secrets import token_bytes
 from traitlets.config import LazyConfigValue
 
 from jhub_apps import JAppsConfig
+from jhub_apps.hub_client.utils import is_jupyterhub_5
 from jhub_apps.spawner.spawner_creation import subclass_spawner
 
 
@@ -78,6 +79,7 @@ def install_jhub_apps(c, spawner_to_subclass):
             "scopes": [
                 # declare what permissions the service should have
                 "list:users",  # list users
+                "list:groups",  # list groups
                 "read:users:activity",  # read user last-activity
                 "read:users",  # read user last-activity
                 "admin:servers",  # start/stop servers
@@ -87,7 +89,9 @@ def install_jhub_apps(c, spawner_to_subclass):
                 "access:services",
                 "list:services",
                 "read:services",  # read service models
-            ],
+            ] + ([
+                "shares"
+            ] if is_jupyterhub_5() else []),
         },
         {
             "name": "user",
@@ -95,7 +99,7 @@ def install_jhub_apps(c, spawner_to_subclass):
             "scopes": [
                 "self",
                 "access:services",
-                "admin:auth_state"
+                "admin:auth_state",
             ],
         },
     ]

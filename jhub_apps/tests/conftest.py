@@ -21,7 +21,7 @@ def client():
     os.environ["PUBLIC_HOST"] = "/"
     os.environ["JUPYTERHUB_CLIENT_ID"] = "test-client-id"
     os.environ["JUPYTERHUB_OAUTH_CALLBACK_URL"] = "/"
-    from jhub_apps.service import app
+    from jhub_apps.service.app import app
     from jhub_apps.service.security import get_current_user
 
     async def mock_get_user_name():

@@ -1,4 +1,3 @@
-import typing
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
@@ -23,19 +22,6 @@ class FrameworkConf:
             "display_name": self.display_name,
             "logo": self.logo,
         }
-
-
-@dataclass
-class UserOptions:
-    jhub_app: bool
-    display_name: str
-    description: str
-    thumbnail: str
-    filepath: str
-    framework: str
-    custom_command: typing.Optional[str] = None
-    conda_env: typing.Optional[dict] = None
-    profile: typing.Optional[str] = None
 
 
 class Framework(Enum):
