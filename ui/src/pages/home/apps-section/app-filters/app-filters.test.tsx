@@ -65,7 +65,7 @@ describe('AppFilters', () => {
 
     waitFor(() => {
       const form = baseElement.querySelector(
-        '#sort-by-form',
+        'form[name="sort-by-form"]',
       ) as HTMLFormElement;
       expect(form).toBeTruthy();
     });
@@ -83,7 +83,7 @@ describe('AppFilters', () => {
 
     waitFor(() => {
       const form = baseElement.querySelector(
-        '#sort-by-form',
+        'form[name="sort-by-form"]',
       ) as HTMLFormElement;
       expect(form).toBeTruthy();
     });
@@ -100,7 +100,7 @@ describe('AppFilters', () => {
 
     waitFor(() => {
       const form = baseElement.querySelector(
-        '#sort-by-form',
+        'form[name="sort-by-form"]',
       ) as HTMLFormElement;
       expect(form).toBeTruthy();
     });
