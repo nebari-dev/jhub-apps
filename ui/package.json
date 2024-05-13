@@ -20,7 +20,7 @@
     "@emotion/styled": "^11.11.5",
     "@mui/icons-material": "^5.15.15",
     "@mui/material": "5.15.10",
-    "@tanstack/react-query": "5.35.1",
+    "@tanstack/react-query": "5.36.0",
     "axios": "1.6.8",
     "axios-mock-adapter": "1.22.0",
     "classnames": "^2.5.1",
