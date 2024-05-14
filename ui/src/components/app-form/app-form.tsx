@@ -323,8 +323,8 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
   // Populate form with existing app data
   useEffect(() => {
     if (formData?.name && formData?.user_options) {
-      setDescription(formData.user_options.description || '');
-      setCurrentServerName(formData?.user_options.display_name || '');
+      setCurrentServerName(formData.name);
+      setDescription(formData.user_options.description);
       reset({
         ...formData.user_options,
         env: formData.user_options.env
