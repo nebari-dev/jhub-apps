@@ -54,7 +54,7 @@
     "lint-staged": "15.2.2",
     "prettier": "3.2.5",
     "prettier-plugin-organize-imports": "3.2.4",
-    "sass": "1.76.0",
+    "sass": "1.77.1",
     "ts-jest": "29.1.2",
     "ts-node": "10.9.2",
     "tsconfig-paths": "4.2.0",
