@@ -57,3 +57,18 @@ c.JupyterHub.load_groups = {
     'class-A': {"users": ['john', 'alice']},
     'class-B': {"users": ['john', 'alice']}
 }
+
+# Add permission to share servers/apps
+# This should be handled by the users of jhub-apps,
+# jhub-apps won't make this decision for the users, so that
+# they can define permissions as per their preferences
+for role in c.JupyterHub.load_roles:
+    if role["name"] == "user":
+        role["scopes"].extend([
+            "shares",
+            # Need scope 'read:users:name' to share with users by name
+            "read:users:name",
+            # Need scope 'read:groups:name' to share with groups by name
+            "read:groups:name",
+        ])
+        break
