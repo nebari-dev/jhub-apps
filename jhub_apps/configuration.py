@@ -88,7 +88,8 @@ def install_jhub_apps(c, spawner_to_subclass):
                 "admin:auth_state",
                 "access:services",
                 "list:services",
-                "read:services",  # read service models
+                "read:services",  # read service models,
+                "tokens",  # ability to generate tokens for users to act as user
             ] + ([
                 "shares"
             ] if is_jupyterhub_5() else []),

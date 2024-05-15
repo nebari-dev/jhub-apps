@@ -121,7 +121,7 @@ def get_all_shared_servers(hub_users, current_hub_user):
 @router.get("/server/{server_name}", description="Get a server by server name")
 async def get_server(user: User = Depends(get_current_user), server_name=None):
     """Get servers for the authenticated user"""
-    hub_client = HubClient()
+    hub_client = HubClient(username=user.name)
     users = hub_client.get_users()
     current_hub_user = None
     for hub_user in users:
@@ -179,7 +179,7 @@ async def create_server(
     server.user_options.thumbnail = await get_thumbnail_data_url(
         framework_name=server.user_options.framework, thumbnail=thumbnail
     )
-    hub_client = HubClient()
+    hub_client = HubClient(username=user.name)
     return hub_client.create_server(
         username=user.name,
         servername=server.servername,
@@ -195,7 +195,7 @@ async def start_server(
 ):
     """Start an already existing server."""
     logger.info("Starting server", server_name=server_name, user=user.name)
-    hub_client = HubClient()
+    hub_client = HubClient(username=user.name)
     try:
         response = hub_client.start_server(
             username=user.name,
@@ -228,7 +228,7 @@ async def update_server(
         server.user_options.thumbnail = await get_thumbnail_data_url(
             framework_name=server.user_options.framework, thumbnail=thumbnail
         )
-    hub_client = HubClient()
+    hub_client = HubClient(username=user.name)
     logger.info("Updating server", server_name=server.servername, user=user.name)
     edit_server_response = hub_client.edit_server(
         username=user.name,
@@ -247,7 +247,7 @@ async def delete_server(
     remove: bool = False,
 ):
     """Delete or stop server. Delete if remove is True otherwise stop the server"""
-    hub_client = HubClient()
+    hub_client = HubClient(username=user.name)
     logger.info("Deleting server", server_name=server_name, user=user.name)
     return hub_client.delete_server(user.name, server_name=server_name, remove=remove)
 
@@ -297,7 +297,7 @@ async def spawner_profiles(user: User = Depends(get_current_user)):
 @router.get("/services/", description="Get all services")
 async def hub_services(user: User = Depends(get_current_user)):
     logger.info(f"Getting hub services for user: {user}")
-    hub_client = HubClient()
+    hub_client = HubClient(username=user.name)
     return hub_client.get_services()
 
 
