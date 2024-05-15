@@ -2,6 +2,7 @@ from jupyterhub.spawner import SimpleLocalProcessSpawner
 
 from jhub_apps import theme_template_paths, themes
 from jhub_apps.configuration import install_jhub_apps
+from jhub_apps.hub_client.utils import is_jupyterhub_5
 
 c = get_config()  # noqa
 
@@ -65,10 +66,9 @@ c.JupyterHub.load_groups = {
 for role in c.JupyterHub.load_roles:
     if role["name"] == "user":
         role["scopes"].extend([
-            "shares",
             # Need scope 'read:users:name' to share with users by name
             "read:users:name",
             # Need scope 'read:groups:name' to share with groups by name
             "read:groups:name",
-        ])
+        ] + ["shares"] if is_jupyterhub_5() else [])
         break

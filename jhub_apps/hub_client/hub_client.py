@@ -23,14 +23,14 @@ class HubClient:
         self.token = JUPYTERHUB_API_TOKEN
         self.jhub_apps_request_id = None
         self._set_request_id()
+        if self.username and JUPYTERHUB_API_TOKEN:
+            self.token = self._create_token_for_user(self.username)
 
     def _set_request_id(self):
         contextvars = structlog.contextvars.get_contextvars()
         self.jhub_apps_request_id = contextvars.get("request_id")
 
     def _headers(self, token=None):
-        if self.username:
-            self.token = self._create_token_for_user(self.username)
         return {
             "Authorization": f"token {token or self.token}",
             "JHUB_APPS_REQUEST_ID": self.jhub_apps_request_id
