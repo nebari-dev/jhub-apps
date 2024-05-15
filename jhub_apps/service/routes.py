@@ -94,23 +94,14 @@ async def login(request: Request):
     return RedirectResponse(authorization_url, status_code=302)
 
 
-def get_all_shared_servers(hub_users, current_hub_user):
-    all_servers = []
-    for hub_user in hub_users:
-        if hub_user["name"] != current_hub_user["name"]:
-            hub_user_servers = list(hub_user["servers"].values())
-            hub_user_servers_with_name = [
-                {"username": hub_user["name"], **server} for server in hub_user_servers
-            ]
-            all_servers.extend(hub_user_servers_with_name)
-    # Filter default servers
-    all_servers_without_default_jlab = list(filter(lambda server: server["name"] != "", all_servers))
+def get_shared_servers(user_servers, current_hub_user):
+    user_servers_without_default_jlab = list(filter(lambda server: server["name"] != "", user_servers.values()))
     # Filter servers shared with the user
-    hub_client = HubClient()
-    shared_servers = hub_client.get_shared_servers(username=current_hub_user["name"])
+    hub_client = HubClient(username=current_hub_user["name"])
+    shared_servers = hub_client.get_shared_servers()
     shared_server_names = {shared_server["server"]["name"] for shared_server in shared_servers}
     shared_servers_rich = [
-        server for server in all_servers_without_default_jlab
+        server for server in user_servers_without_default_jlab
         if server["name"] in shared_server_names
     ]
     return shared_servers_rich
@@ -122,18 +113,8 @@ def get_all_shared_servers(hub_users, current_hub_user):
 async def get_server(user: User = Depends(get_current_user), server_name=None):
     """Get servers for the authenticated user"""
     hub_client = HubClient(username=user.name)
-    users = hub_client.get_users()
-    current_hub_user = None
-    for hub_user in users:
-        if hub_user["name"] == user.name:
-            current_hub_user = hub_user
-            break
-    if not current_hub_user:
-        raise HTTPException(
-            detail=f"Hub user '{user.name}' not found",
-            status_code=status.HTTP_404_NOT_FOUND,
-        )
-    user_servers = current_hub_user["servers"]
+    hub_user = hub_client.get_user()
+    user_servers = hub_user["servers"]
     if server_name:
         # Get a particular server
         for s_name, server_details in user_servers.items():
@@ -144,10 +125,9 @@ async def get_server(user: User = Depends(get_current_user), server_name=None):
             status_code=status.HTTP_404_NOT_FOUND,
         )
     else:
-        # Get all servers
         return {
-            "shared_apps": get_all_shared_servers(
-                hub_users=users, current_hub_user=current_hub_user
+            "shared_apps": get_shared_servers(
+                user_servers=user_servers, current_hub_user=hub_user
             ),
             "user_apps": list(user_servers.values()),
         }

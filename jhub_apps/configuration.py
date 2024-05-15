@@ -100,6 +100,7 @@ def install_jhub_apps(c, spawner_to_subclass):
             "scopes": [
                 "self",
                 "access:services",
+                "list:services",
                 "admin:auth_state",
             ],
         },

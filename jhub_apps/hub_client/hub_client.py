@@ -19,6 +19,7 @@ logger = structlog.get_logger(__name__)
 
 class HubClient:
     def __init__(self, username=None):
+        self.username = username
         self.token = JUPYTERHUB_API_TOKEN
         self.jhub_apps_request_id = None
         self._set_request_id()
@@ -55,9 +56,9 @@ class HubClient:
         users = r.json()
         return users
 
-    def get_user(self, user):
+    def get_user(self, user=None):
         r = requests.get(
-            API_URL + f"/users/{user}",
+            API_URL + f"/users/{user or self.username}",
             params={"include_stopped_servers": True},
             headers=self._headers()
         )
@@ -205,8 +206,9 @@ class HubClient:
         url = f"/shares/{username}/{servername}"
         return requests.delete(API_URL + url, headers=self._headers())
 
-    def get_shared_servers(self, username: str):
+    def get_shared_servers(self, username: str = None):
         """List servers shared with user"""
+        username = username or self.username
         if not is_jupyterhub_5():
             logger.info("Unable to get shared servers as this feature is not available in JupyterHub < 5.x")
             return []
