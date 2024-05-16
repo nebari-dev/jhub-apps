@@ -1,5 +1,6 @@
 import typing
 from concurrent.futures import ThreadPoolExecutor
+from functools import wraps
 
 import structlog
 import os
@@ -17,14 +18,26 @@ JUPYTERHUB_API_TOKEN = os.environ.get("JUPYTERHUB_API_TOKEN")
 logger = structlog.get_logger(__name__)
 
 
+def requires_user_token(func):
+    @wraps(func)
+    def wrapper(self, *args, **kwargs):
+        token_id = self._create_token_for_user()
+        try:
+            original_method_return = func(self, *args, **kwargs)
+        except Exception as e:
+            raise e
+        finally:
+            self._revoke_token(token_id=token_id)
+        return original_method_return
+    return wrapper
+
+
 class HubClient:
     def __init__(self, username=None):
         self.username = username
         self.token = JUPYTERHUB_API_TOKEN
         self.jhub_apps_request_id = None
         self._set_request_id()
-        if self.username and JUPYTERHUB_API_TOKEN:
-            self.token = self._create_token_for_user(self.username)
 
     def _set_request_id(self):
         contextvars = structlog.contextvars.get_contextvars()
@@ -36,15 +49,34 @@ class HubClient:
             "JHUB_APPS_REQUEST_ID": self.jhub_apps_request_id
         }
 
-    def _create_token_for_user(self, username):
-        logger.info("Creating token for user", username=username)
+    def _create_token_for_user(self):
+        logger.info("Creating token for user", username=self.username)
         r = requests.post(
-            API_URL + f"/users/{username}/tokens",
-            headers=self._headers(token=JUPYTERHUB_API_TOKEN)
+            API_URL + f"/users/{self.username}/tokens",
+            headers=self._headers(token=JUPYTERHUB_API_TOKEN),
+            json={
+                # Expire in 5 minutes max
+                "expires_in": 60*5
+            }
         )
         r.raise_for_status()
         rjson = r.json()
-        return rjson["token"]
+        self.token = rjson["token"]
+        return rjson["id"]
+
+    def _revoke_token(self, token_id):
+        logger.info("Revoking token")
+        r = requests.delete(
+            API_URL + f"/users/{self.username}/tokens/{token_id}",
+            headers=self._headers(token=JUPYTERHUB_API_TOKEN),
+        )
+        r.raise_for_status()
+        logger.info(
+            "Token revoked",
+            status_code=r.status_code,
+            username=self.username, token_id=token_id
+        )
+        return r
 
     def get_users(self):
         r = requests.get(
@@ -56,6 +88,7 @@ class HubClient:
         users = r.json()
         return users
 
+    @requires_user_token
     def get_user(self, user=None):
         r = requests.get(
             API_URL + f"/users/{user or self.username}",
@@ -66,6 +99,7 @@ class HubClient:
         user = r.json()
         return user
 
+    @requires_user_token
     def get_server(self, username, servername):
         user = self.get_user(username)
         for name, server in user["servers"].items():
@@ -82,6 +116,7 @@ class HubClient:
         # Max limit for servername is 255 chars
         return text[:240]
 
+    @requires_user_token
     def start_server(self, username, servername):
         if not servername:
             logger.info("Starting JupyterLab server")
@@ -100,6 +135,7 @@ class HubClient:
         r.raise_for_status()
         return r.status_code, servername
 
+    @requires_user_token
     def create_server(self, username: str, servername: str, user_options: UserOptions = None):
         logger.info("Creating new server", user=username)
         normalized_servername = self.normalize_server_name(servername)
@@ -107,6 +143,7 @@ class HubClient:
         logger.info("Normalized servername", servername=servername)
         return self._create_server(username, unique_servername, user_options)
 
+    @requires_user_token
     def edit_server(self, username: str, servername: str, user_options: UserOptions = None):
         logger.info("Editing server", server_name=servername)
         server = self.get_server(username, servername)
@@ -206,6 +243,7 @@ class HubClient:
         url = f"/shares/{username}/{servername}"
         return requests.delete(API_URL + url, headers=self._headers())
 
+    @requires_user_token
     def get_shared_servers(self, username: str = None):
         """List servers shared with user"""
         username = username or self.username
@@ -219,6 +257,7 @@ class HubClient:
         shared_servers = rjson["items"]
         return shared_servers
 
+    @requires_user_token
     def delete_server(self, username, server_name, remove=False):
         if server_name is None:
             # Default server and not named server
@@ -230,6 +269,7 @@ class HubClient:
         r.raise_for_status()
         return r.status_code
 
+    @requires_user_token
     def get_services(self):
         r = requests.get(API_URL + "/services", headers=self._headers())
         r.raise_for_status()
