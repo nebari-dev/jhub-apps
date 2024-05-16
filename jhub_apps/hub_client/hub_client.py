@@ -80,7 +80,7 @@ class HubClient:
         logger.info(
             "Token revoked",
             status_code=r.status_code,
-            username=self.username, token_id=token_id
+            username=self.username
         )
         return r
 
