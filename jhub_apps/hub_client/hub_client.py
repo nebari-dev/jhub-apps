@@ -53,6 +53,7 @@ class HubClient:
         }
 
     def _create_token_for_user(self):
+        assert self.username
         logger.info("Creating token for user", username=self.username)
         r = requests.post(
             API_URL + f"/users/{self.username}/tokens",
@@ -68,6 +69,8 @@ class HubClient:
         return rjson["id"]
 
     def _revoke_token(self, token_id):
+        assert self.username
+        assert token_id
         logger.info("Revoking token")
         r = requests.delete(
             API_URL + f"/users/{self.username}/tokens/{token_id}",
