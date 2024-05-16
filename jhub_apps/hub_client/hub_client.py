@@ -19,6 +19,9 @@ logger = structlog.get_logger(__name__)
 
 
 def requires_user_token(func):
+    """Decorator to apply to methods of HubClient to create user token before
+    the method call and revoke them after the method call finishes.
+    """
     @wraps(func)
     def wrapper(self, *args, **kwargs):
         token_id = self._create_token_for_user()
