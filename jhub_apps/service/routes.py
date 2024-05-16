@@ -94,23 +94,14 @@ async def login(request: Request):
     return RedirectResponse(authorization_url, status_code=302)
 
 
-def get_all_shared_servers(hub_users, current_hub_user):
-    all_servers = []
-    for hub_user in hub_users:
-        if hub_user["name"] != current_hub_user["name"]:
-            hub_user_servers = list(hub_user["servers"].values())
-            hub_user_servers_with_name = [
-                {"username": hub_user["name"], **server} for server in hub_user_servers
-            ]
-            all_servers.extend(hub_user_servers_with_name)
-    # Filter default servers
-    all_servers_without_default_jlab = list(filter(lambda server: server["name"] != "", all_servers))
+def get_shared_servers(user_servers, current_hub_user):
+    user_servers_without_default_jlab = list(filter(lambda server: server["name"] != "", user_servers.values()))
     # Filter servers shared with the user
-    hub_client = HubClient()
-    shared_servers = hub_client.get_shared_servers(username=current_hub_user["name"])
+    hub_client = HubClient(username=current_hub_user["name"])
+    shared_servers = hub_client.get_shared_servers()
     shared_server_names = {shared_server["server"]["name"] for shared_server in shared_servers}
     shared_servers_rich = [
-        server for server in all_servers_without_default_jlab
+        server for server in user_servers_without_default_jlab
         if server["name"] in shared_server_names
     ]
     return shared_servers_rich
@@ -121,19 +112,9 @@ def get_all_shared_servers(hub_users, current_hub_user):
 @router.get("/server/{server_name}", description="Get a server by server name")
 async def get_server(user: User = Depends(get_current_user), server_name=None):
     """Get servers for the authenticated user"""
-    hub_client = HubClient()
-    users = hub_client.get_users()
-    current_hub_user = None
-    for hub_user in users:
-        if hub_user["name"] == user.name:
-            current_hub_user = hub_user
-            break
-    if not current_hub_user:
-        raise HTTPException(
-            detail=f"Hub user '{user.name}' not found",
-            status_code=status.HTTP_404_NOT_FOUND,
-        )
-    user_servers = current_hub_user["servers"]
+    hub_client = HubClient(username=user.name)
+    hub_user = hub_client.get_user()
+    user_servers = hub_user["servers"]
     if server_name:
         # Get a particular server
         for s_name, server_details in user_servers.items():
@@ -144,10 +125,9 @@ async def get_server(user: User = Depends(get_current_user), server_name=None):
             status_code=status.HTTP_404_NOT_FOUND,
         )
     else:
-        # Get all servers
         return {
-            "shared_apps": get_all_shared_servers(
-                hub_users=users, current_hub_user=current_hub_user
+            "shared_apps": get_shared_servers(
+                user_servers=user_servers, current_hub_user=hub_user
             ),
             "user_apps": list(user_servers.values()),
         }
@@ -179,7 +159,7 @@ async def create_server(
     server.user_options.thumbnail = await get_thumbnail_data_url(
         framework_name=server.user_options.framework, thumbnail=thumbnail
     )
-    hub_client = HubClient()
+    hub_client = HubClient(username=user.name)
     return hub_client.create_server(
         username=user.name,
         servername=server.servername,
@@ -195,7 +175,7 @@ async def start_server(
 ):
     """Start an already existing server."""
     logger.info("Starting server", server_name=server_name, user=user.name)
-    hub_client = HubClient()
+    hub_client = HubClient(username=user.name)
     try:
         response = hub_client.start_server(
             username=user.name,
@@ -228,7 +208,7 @@ async def update_server(
         server.user_options.thumbnail = await get_thumbnail_data_url(
             framework_name=server.user_options.framework, thumbnail=thumbnail
         )
-    hub_client = HubClient()
+    hub_client = HubClient(username=user.name)
     logger.info("Updating server", server_name=server.servername, user=user.name)
     edit_server_response = hub_client.edit_server(
         username=user.name,
@@ -247,7 +227,7 @@ async def delete_server(
     remove: bool = False,
 ):
     """Delete or stop server. Delete if remove is True otherwise stop the server"""
-    hub_client = HubClient()
+    hub_client = HubClient(username=user.name)
     logger.info("Deleting server", server_name=server_name, user=user.name)
     return hub_client.delete_server(user.name, server_name=server_name, remove=remove)
 
@@ -275,7 +255,7 @@ async def get_frameworks(user: User = Depends(get_current_user)):
 async def conda_environments(user: User = Depends(get_current_user)):
     logger.info("Getting conda environments", user=user.name)
     config = get_jupyterhub_config()
-    hclient = HubClient()
+    hclient = HubClient(username=user.name)
     user_from_service = hclient.get_user(user.name)
     conda_envs = get_conda_envs(config, user_from_service)
     logger.info(f"Found conda environments: {conda_envs}")
@@ -284,7 +264,7 @@ async def conda_environments(user: User = Depends(get_current_user)):
 
 @router.get("/spawner-profiles/", description="Get all spawner profiles")
 async def spawner_profiles(user: User = Depends(get_current_user)):
-    hclient = HubClient()
+    hclient = HubClient(username=user.name)
     user_from_service = hclient.get_user(user.name)
     auth_state = user_from_service.get("auth_state")
     logger.info("Getting spawner profiles", user=user.name)
@@ -297,7 +277,7 @@ async def spawner_profiles(user: User = Depends(get_current_user)):
 @router.get("/services/", description="Get all services")
 async def hub_services(user: User = Depends(get_current_user)):
     logger.info(f"Getting hub services for user: {user}")
-    hub_client = HubClient()
+    hub_client = HubClient(username=user.name)
     return hub_client.get_services()
 
 
