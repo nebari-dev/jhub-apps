@@ -95,7 +95,7 @@ async def login(request: Request):
     return RedirectResponse(authorization_url, status_code=302)
 
 
-def get_shared_servers(user_servers, current_hub_user):
+def get_shared_servers(current_hub_user):
     # Filter servers shared with the user
     hub_client_service = HubClient()
     all_users_servers = list(itertools.chain.from_iterable([
