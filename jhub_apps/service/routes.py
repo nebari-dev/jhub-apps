@@ -34,7 +34,7 @@ from jhub_apps.service.utils import (
     get_conda_envs,
     get_jupyterhub_config,
     get_spawner_profiles,
-    get_thumbnail_data_url,
+    get_thumbnail_data_url, get_shared_servers,
 )
 from jhub_apps.spawner.types import FRAMEWORKS
 from jhub_apps.version import get_version
@@ -92,20 +92,6 @@ async def login(request: Request):
         + "/hub/api/oauth2/authorize?response_type=code&client_id=service-japps"
     )
     return RedirectResponse(authorization_url, status_code=302)
-
-
-def get_shared_servers(user_servers, current_hub_user):
-    user_servers_without_default_jlab = list(filter(lambda server: server["name"] != "", user_servers.values()))
-    # Filter servers shared with the user
-    hub_client = HubClient(username=current_hub_user["name"])
-    shared_servers = hub_client.get_shared_servers()
-    shared_server_names = {shared_server["server"]["name"] for shared_server in shared_servers}
-    shared_servers_rich = [
-        server for server in user_servers_without_default_jlab
-        if server["name"] in shared_server_names
-    ]
-    return shared_servers_rich
-
 
 
 @router.get("/server/", description="Get all servers")
