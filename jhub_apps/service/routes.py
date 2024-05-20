@@ -1,5 +1,6 @@
 import os
 import typing
+import itertools
 from datetime import timedelta
 
 import requests
@@ -95,10 +96,14 @@ async def login(request: Request):
 
 
 def get_shared_servers(user_servers, current_hub_user):
-    user_servers_without_default_jlab = list(filter(lambda server: server["name"] != "", user_servers.values()))
     # Filter servers shared with the user
-    hub_client = HubClient(username=current_hub_user["name"])
-    shared_servers = hub_client.get_shared_servers()
+    hub_client_service = HubClient()
+    all_users_servers = list(itertools.chain.from_iterable([
+        list(user['servers'].values()) for user in hub_client_service.get_users()
+    ]))
+    user_servers_without_default_jlab = list(filter(lambda server: server["name"] != "", all_users_servers))
+    hub_client_user = HubClient(username=current_hub_user['name'])
+    shared_servers = hub_client_user.get_shared_servers()
     shared_server_names = {shared_server["server"]["name"] for shared_server in shared_servers}
     shared_servers_rich = [
         server for server in user_servers_without_default_jlab
