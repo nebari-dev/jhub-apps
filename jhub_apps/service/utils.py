@@ -1,4 +1,5 @@
 import base64
+import itertools
 
 import structlog
 import os
@@ -9,6 +10,7 @@ from unittest.mock import Mock
 from jupyterhub.app import JupyterHub
 from traitlets.config import LazyConfigValue
 
+from jhub_apps.hub_client.hub_client import HubClient
 from jhub_apps.spawner.types import FrameworkConf, FRAMEWORKS_MAPPING
 from slugify import slugify
 
@@ -145,3 +147,20 @@ def get_theme(config):
         return config.JupyterHub.template_vars
     else:
         return None
+
+
+def get_shared_servers(current_hub_user):
+    # Filter servers shared with the user
+    hub_client_service = HubClient()
+    all_users_servers = list(itertools.chain.from_iterable([
+        list(user['servers'].values()) for user in hub_client_service.get_users()
+    ]))
+    user_servers_without_default_jlab = list(filter(lambda server: server["name"] != "", all_users_servers))
+    hub_client_user = HubClient(username=current_hub_user['name'])
+    shared_servers = hub_client_user.get_shared_servers()
+    shared_server_names = {shared_server["server"]["name"] for shared_server in shared_servers}
+    shared_servers_rich = [
+        server for server in user_servers_without_default_jlab
+        if server["name"] in shared_server_names
+    ]
+    return shared_servers_rich
