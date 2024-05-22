@@ -2,26 +2,9 @@
   max-width: 600px;
 }
 
-.form-section {
-  margin: 16px 0;
-  padding: 12px 0;
-}
-
-.form-heading {
-  font-size: 24px;
-  font-weight: 700;
-  padding: 0 0 16px 0;
-}
-
-.form > .form-section > h2 {
-  font-size: 16px;
-  font-weight: 600;
-  margin: 0 0 16px 0;
-}
-
 .form > .button-section {
   width: 100%;
-  margin: 24px 0;
+  margin: 16px 0;
 }
 
 .form > .button-section > .prev {
@@ -180,6 +163,7 @@
 
 .form-control.outer-div {
   height: 125px !important;
+  margin-bottom: 0;
 }
 
 .description_text-field,

@@ -5,6 +5,8 @@ import { APP_BASE_URL } from '@src/utils/constants';
 import { navigateToUrl } from '@src/utils/jupyterhub';
 import React from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { StyledFormHeading } from '../../styles/styled-form-heading';
+import { StyledFormParagraph } from '../../styles/styled-form-paragraph';
 import { Item } from '../../styles/styled-item';
 
 export const EditApp = (): React.ReactElement => {
@@ -29,8 +31,10 @@ export const EditApp = (): React.ReactElement => {
           </div>
         </Item>
         <Item>
-          <h1 className="form-heading">Edit app</h1>
-          <p className="form-paragraph">
+          <StyledFormHeading className="form-heading">
+            Edit app
+          </StyledFormHeading>
+          <StyledFormParagraph>
             Edit your app details here. For more information on editing your
             app,{' '}
             <a
@@ -42,7 +46,7 @@ export const EditApp = (): React.ReactElement => {
               visit our docs
             </a>
             .
-          </p>
+          </StyledFormParagraph>
         </Item>
         <Item>
           <>{id ? <AppForm id={id} /> : <>No app found.</>}</>

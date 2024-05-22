@@ -70,7 +70,7 @@ const baseTheme = createTheme({
       defaultProps: {
         fullWidth: true,
         sx: {
-          marginBottom: '12px',
+          marginBottom: '24px',
         },
       },
     },
