@@ -13,10 +13,11 @@
   width: 100%;
   height: 100%;
   background-color: #90969c;
+  border-radius: 4px;
 }
 
 .thumbnail-body.selected {
-  background-color: var(--white);
+  background-color: transparent;
 }
 
 .thumbnail-body.dragging {
@@ -29,6 +30,7 @@
 
 .thumbnail-img {
   max-height: 150px;
+  border-radius: 4px;
 }
 
 .thumbnail-icon-container {
