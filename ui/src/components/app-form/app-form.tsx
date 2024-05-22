@@ -39,6 +39,8 @@ import {
   currentServerName as defaultServerName,
   currentUser as defaultUser,
 } from '../../store';
+import { StyledFormSection } from '../../styles/styled-form-section';
+import { StyledFormSectionHeading } from '../../styles/styled-form-section-heading';
 import './app-form.css';
 
 export interface AppFormProps {
@@ -383,8 +385,8 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
       className="form"
       noValidate
     >
-      <div className="form-section">
-        <h2>App Info</h2>
+      <StyledFormSection>
+        <StyledFormSectionHeading>App Info</StyledFormSectionHeading>
         <Controller
           name="display_name"
           control={control}
@@ -476,10 +478,10 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
             </FormControl>
           )}
         />
-      </div>
+      </StyledFormSection>
 
-      <div className="form-section">
-        <h2>Configuration</h2>
+      <StyledFormSection>
+        <StyledFormSectionHeading>Configuration</StyledFormSectionHeading>
         <Controller
           name="framework"
           control={control}
@@ -637,10 +639,9 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
             )}
           />
         </Box>
-      </div>
-
-      <div className="form-section">
-        <h2>Sharing</h2>
+      </StyledFormSection>
+      <StyledFormSection>
+        <StyledFormSectionHeading>Sharing</StyledFormSectionHeading>
         <AppSharing
           url={formData?.url}
           permissions={formData?.user_options?.share_with}
@@ -649,16 +650,15 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
           setCurrentGroupPermissions={setCurrentGroupPermissions}
           setIsPublic={setIsPublic}
         />
-      </div>
-
-      <div className="form-section">
-        <h2>App Thumbnail</h2>
+      </StyledFormSection>
+      <StyledFormSection sx={{ pb: '36px' }}>
+        <StyledFormSectionHeading>App Thumbnail</StyledFormSectionHeading>
         <Controller
           name="thumbnail"
           control={control}
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
           render={({ field: { ref: _, value, onChange, ...field } }) => (
-            <FormControl>
+            <FormControl sx={{ pb: 0 }}>
               <Thumbnail
                 {...field}
                 id="thumbnail"
@@ -670,7 +670,7 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
             </FormControl>
           )}
         />
-      </div>
+      </StyledFormSection>
       <hr />
       <div className="button-section">
         <div className="prev">

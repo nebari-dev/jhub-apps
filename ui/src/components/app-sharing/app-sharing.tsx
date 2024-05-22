@@ -372,7 +372,7 @@ export const AppSharing = ({
         ) : (
           <></>
         )}
-        <Item sx={{ pb: '16px' }}>
+        <Item>
           <Box>
             <Paper elevation={0}>
               <Stack direction="column">
