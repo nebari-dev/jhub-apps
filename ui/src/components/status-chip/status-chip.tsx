@@ -38,7 +38,7 @@ const getStatusStyles = (status: string) => {
 export const StatusChip = ({ status }: StatusChipProps): React.ReactElement => (
   <Chip
     label={status || 'Default'}
-    size="small"
+    size="medium"
     sx={{ fontWeight: 600, fontSize: '12px', ...getStatusStyles(status) }}
   />
 );

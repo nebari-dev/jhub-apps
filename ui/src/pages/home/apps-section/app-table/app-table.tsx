@@ -60,13 +60,27 @@ export const AppTable = ({ apps }: AppTableProps): React.ReactElement => {
   const getIcon = (isPublic: boolean, isShared: boolean) => {
     if (isPublic)
       return (
-        <PublicRoundedIcon data-testid="PublicRoundedIcon" fontSize="small" />
+        <PublicRoundedIcon
+          data-testid="PublicRoundedIcon"
+          fontSize="small"
+          className="align-vertical-center"
+        />
       );
     if (isShared)
       return (
-        <GroupRoundedIcon data-testid="GroupRoundedIcon" fontSize="small" />
+        <GroupRoundedIcon
+          data-testid="GroupRoundedIcon"
+          fontSize="small"
+          className="align-vertical-center"
+        />
       );
-    return <LockRoundedIcon data-testid="LockRoundedIcon" fontSize="small" />;
+    return (
+      <LockRoundedIcon
+        data-testid="LockRoundedIcon"
+        fontSize="small"
+        className="align-vertical-center"
+      />
+    );
   };
 
   return (
@@ -103,7 +117,7 @@ export const AppTable = ({ apps }: AppTableProps): React.ReactElement => {
                     <Chip
                       label={app.framework}
                       variant="outlined"
-                      size="small"
+                      size="medium"
                     />
                   </TableCell>
                   <TableCell>
@@ -136,6 +150,7 @@ export const AppTable = ({ apps }: AppTableProps): React.ReactElement => {
                         disabled={
                           app.status === 'Pending' || app.status === 'Unknown'
                         }
+                        style={{ borderRadius: '50%', minWidth: 'none' }}
                       >
                         <PlayCircleRoundedIcon />
                       </Button>
@@ -150,6 +165,7 @@ export const AppTable = ({ apps }: AppTableProps): React.ReactElement => {
                       className="action-button"
                       data-testid="EditRoundedIcon"
                       disabled={app.shared}
+                      style={{ borderRadius: '50%', minWidth: 'none' }}
                     >
                       <EditRoundedIcon />
                     </Button>
@@ -164,6 +180,7 @@ export const AppTable = ({ apps }: AppTableProps): React.ReactElement => {
                       className="action-button"
                       data-testid="DeleteRoundedIcon"
                       disabled={app.shared}
+                      style={{ borderRadius: '50%', minWidth: 'none' }}
                     >
                       <DeleteRoundedIcon />
                     </Button>
