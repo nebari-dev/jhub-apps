@@ -1,6 +1,7 @@
 import { Chip } from '@mui/material';
 interface StatusChipProps {
   status: string;
+  size?: 'small' | 'medium';
 }
 const getStatusStyles = (status: string) => {
   let styles;
@@ -35,10 +36,13 @@ const getStatusStyles = (status: string) => {
   return styles;
 };
 
-export const StatusChip = ({ status }: StatusChipProps): React.ReactElement => (
+export const StatusChip = ({
+  status,
+  size = 'small',
+}: StatusChipProps): React.ReactElement => (
   <Chip
     label={status || 'Default'}
-    size="medium"
+    size={size}
     sx={{ fontWeight: 600, fontSize: '12px', ...getStatusStyles(status) }}
   />
 );

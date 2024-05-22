@@ -53,3 +53,7 @@
 .MuiDataGrid-menuIcon.base-Popper-root.MuiDataGrid-menu {
   display: none;
 }
+
+.app-header th {
+  font-weight: 600;
+}

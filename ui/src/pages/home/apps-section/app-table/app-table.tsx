@@ -13,12 +13,10 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-import React from 'react';
-
 import { StatusChip } from '@src/components';
 import { JhApp } from '@src/types/jupyterhub';
 import { API_BASE_URL } from '@src/utils/constants';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import {
   currentApp,
@@ -89,7 +87,7 @@ export const AppTable = ({ apps }: AppTableProps): React.ReactElement => {
         <TableContainer component={Paper}>
           <Table sx={{ minWidth: 650 }} aria-label="App table">
             <TableHead>
-              <TableRow>
+              <TableRow className="app-header">
                 <TableCell>Name</TableCell>
                 <TableCell>Status</TableCell>
                 <TableCell>Created by</TableCell>
@@ -110,7 +108,7 @@ export const AppTable = ({ apps }: AppTableProps): React.ReactElement => {
                     </span>
                   </TableCell>
                   <TableCell>
-                    <StatusChip status={app.status} />
+                    <StatusChip status={app.status} size="medium" />
                   </TableCell>
                   <TableCell>{app.username}</TableCell>
                   <TableCell>
