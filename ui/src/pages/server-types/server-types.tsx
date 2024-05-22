@@ -19,7 +19,6 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
-import { Item } from 'src/styles/styled-item';
 import {
   currentNotification,
   currentFile as defaultFile,
@@ -31,6 +30,7 @@ import {
 import { StyledFormHeading } from '../../styles/styled-form-heading';
 import { StyledFormParagraph } from '../../styles/styled-form-paragraph';
 import { StyledFormSection } from '../../styles/styled-form-section';
+import { Item } from '../../styles/styled-item';
 import './server-types.css';
 
 export const ServerTypes = (): React.ReactElement => {
