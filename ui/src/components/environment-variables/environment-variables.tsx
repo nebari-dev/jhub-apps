@@ -77,11 +77,12 @@ export const EnvironmentVariables = ({
               direction="row"
               gap={1}
               key={`environment-variable-row-${index}`}
-              sx={{ pb: '8px' }}
+              sx={{ pb: '16px' }}
             >
               <Item sx={{ width: '100%' }}>
                 <TextField
                   name="key"
+                  label="Key"
                   placeholder="Key"
                   value={row.key}
                   onChange={(e: ChangeEvent<HTMLInputElement>) =>
@@ -92,6 +93,7 @@ export const EnvironmentVariables = ({
               <Item sx={{ width: '100%' }}>
                 <TextField
                   name="value"
+                  label="Value"
                   placeholder="Value"
                   value={row.value}
                   onChange={(e: ChangeEvent<HTMLInputElement>) =>
