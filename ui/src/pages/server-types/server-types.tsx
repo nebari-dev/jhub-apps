@@ -14,7 +14,10 @@ import { AppFormInput } from '@src/types/form';
 import { UserState } from '@src/types/user';
 import axios from '@src/utils/axios';
 import { APP_BASE_URL } from '@src/utils/constants';
-import { navigateToUrl } from '@src/utils/jupyterhub';
+import {
+  getFriendlyEnvironmentVariables,
+  navigateToUrl,
+} from '@src/utils/jupyterhub';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
@@ -99,7 +102,7 @@ export const ServerTypes = (): React.ReactElement => {
         thumbnail: currentFormInput?.thumbnail || '',
         filepath: currentFormInput?.filepath || '',
         conda_env: currentFormInput?.conda_env || '',
-        env: currentFormInput?.env ? JSON.parse(currentFormInput.env) : null,
+        env: getFriendlyEnvironmentVariables(currentFormInput?.env),
         custom_command: currentFormInput?.custom_command || '',
         profile: currentFormInput?.profile || '',
         public: currentFormInput?.is_public || false,

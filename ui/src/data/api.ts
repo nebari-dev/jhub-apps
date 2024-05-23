@@ -142,7 +142,7 @@ export const serverApps = {
         framework: 'streamlit',
         conda_env: 'env-2',
         profile: 'small0',
-        env: { key: 'value' },
+        env: { key1: 'value1', key2: 'value2' },
         public: false,
         share_with: {
           users: [],
