@@ -11,8 +11,10 @@ import { ServerTypes } from './pages/server-types/server-types';
 import {
   currentNotification,
   currentJhData as defaultJhData,
+  currentProfiles as defaultProfiles,
   currentUser as defaultUser,
 } from './store';
+import { AppProfileProps } from './types/api';
 import { JhData } from './types/jupyterhub';
 import { UserState } from './types/user';
 import axios from './utils/axios';
@@ -21,11 +23,16 @@ import { getJhData } from './utils/jupyterhub';
 export const App = (): React.ReactElement => {
   const [, setCurrentJhData] = useRecoilState<JhData>(defaultJhData);
   const [, setCurrentUser] = useRecoilState<UserState | undefined>(defaultUser);
+  const [, setCurrentProfiles] =
+    useRecoilState<AppProfileProps[]>(defaultProfiles);
   const [notification, setNotification] = useRecoilState<string | undefined>(
     currentNotification,
   );
 
-  const { error, data: userData } = useQuery<UserState, { message: string }>({
+  const { error: userError, data: userData } = useQuery<
+    UserState,
+    { message: string }
+  >({
     queryKey: ['user-state'],
     queryFn: () =>
       axios
@@ -38,11 +45,29 @@ export const App = (): React.ReactElement => {
         }),
   });
 
+  const { error: profileError, data: profileData } = useQuery<
+    AppProfileProps[],
+    { message: string }
+  >({
+    queryKey: ['server-types'],
+    queryFn: () =>
+      axios
+        .get('/spawner-profiles/')
+        .then((response) => {
+          return response.data;
+        })
+        .then((data) => {
+          return data;
+        }),
+  });
+
   useEffect(() => {
-    if (error) {
-      setNotification(error.message);
+    if (userError) {
+      setNotification(userError.message);
+    } else if (profileError) {
+      setNotification(profileError.message);
     }
-  }, [error, setNotification]);
+  }, [userError, profileError, setNotification]);
 
   useEffect(() => {
     setCurrentJhData(getJhData());
@@ -53,6 +78,12 @@ export const App = (): React.ReactElement => {
       setCurrentUser({ ...userData });
     }
   }, [userData, setCurrentUser]);
+
+  useEffect(() => {
+    if (profileData) {
+      setCurrentProfiles([...profileData]);
+    }
+  }, [profileData, setCurrentProfiles]);
 
   return (
     <div>

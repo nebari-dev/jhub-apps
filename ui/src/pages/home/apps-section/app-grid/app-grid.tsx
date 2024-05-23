@@ -17,6 +17,7 @@ export const AppGrid = ({ apps }: AppsGridProps): React.ReactElement => {
           description={app.description}
           thumbnail={app.thumbnail}
           framework={app.framework}
+          profile={app.profile}
           url={app.url}
           serverStatus={app.status}
           lastModified={app.last_activity}

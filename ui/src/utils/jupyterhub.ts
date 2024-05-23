@@ -93,6 +93,7 @@ export const getApps = (
         name: app.display_name,
         description: app.description,
         framework: getFriendlyFrameworkName(app.framework),
+        profile: app.profile,
         url: server.url,
         thumbnail: app.thumbnail,
         username: server.username || username,
