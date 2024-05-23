@@ -1,4 +1,5 @@
 import ArrowBackIcon from '@mui/icons-material/ArrowBackRounded';
+import { LoadingButton } from '@mui/lab';
 import {
   Box,
   Button,
@@ -19,6 +20,10 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
+import { StyledFormHeading } from 'src/styles/styled-form-heading';
+import { StyledFormParagraph } from 'src/styles/styled-form-paragraph';
+import { StyledFormSection } from 'src/styles/styled-form-section';
+import { Item } from 'src/styles/styled-item';
 import {
   currentNotification,
   currentFile as defaultFile,
@@ -27,10 +32,6 @@ import {
   currentServerName as defaultServerName,
   currentUser as defaultUser,
 } from '../../store';
-import { StyledFormHeading } from '../../styles/styled-form-heading';
-import { StyledFormParagraph } from '../../styles/styled-form-paragraph';
-import { StyledFormSection } from '../../styles/styled-form-section';
-import { Item } from '../../styles/styled-item';
 import './server-types.css';
 
 export const ServerTypes = (): React.ReactElement => {
@@ -286,15 +287,15 @@ export const ServerTypes = (): React.ReactElement => {
                   </Button>
                 </div>
                 <div className="next">
-                  <Button
+                  <LoadingButton
                     id="submit-btn"
                     type="submit"
                     variant="contained"
                     color="primary"
-                    disabled={submitting}
+                    loading={submitting}
                   >
-                    {id ? <>Save</> : <>Create App</>}
-                  </Button>
+                    {id ? 'Save' : 'Create App'}
+                  </LoadingButton>
                 </div>
               </div>
             </form>

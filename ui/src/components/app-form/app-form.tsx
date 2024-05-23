@@ -431,7 +431,7 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
                       : 'transparent',
                   backgroundColor:
                     description.length > 0 || isFocused
-                      ? '#ffffff'
+                      ? '#fafafa'
                       : 'transparent',
                 }}
               >

@@ -170,7 +170,11 @@ export const AppCard = ({
   };
 
   return (
-    <Box className="card" id={`card-${id}`} tabIndex={0}>
+    <Box
+      className={`card ${isAppCard ? '' : 'service'}`}
+      id={`card-${id}`}
+      tabIndex={0}
+    >
       <Link href={url}>
         <Card id={`card-${id}`} tabIndex={0} className="Mui-card">
           <div
@@ -220,32 +224,34 @@ export const AppCard = ({
                           label={framework}
                           id={`chip-${id}`}
                           size="small"
-                          sx={{ mb: '8px' }}
+                          sx={{ mb: '8px', fontWeight: 600 }}
                         />
                       </div>
                     </div>
                   ) : (
                     <></>
                   )}
-                  <span className="inline relative iconic">{getIcon()}</span>
-                  <Typography
-                    gutterBottom
-                    variant="h5"
-                    component="div"
-                    className="card-title"
-                    sx={{ position: 'relative', top: '5px' }}
-                  >
-                    <Tooltip title={title} placement="top-start">
-                      <span
-                        className="card-content-truncate"
-                        style={{
-                          maxWidth: '220px',
-                        }}
-                      >
-                        {title}
-                      </span>
-                    </Tooltip>
-                  </Typography>
+                  <div>
+                    <span className="inline relative iconic">{getIcon()}</span>
+                    <Typography
+                      gutterBottom
+                      variant="h5"
+                      component="div"
+                      className="card-title"
+                      sx={{ position: 'relative', top: '5px' }}
+                    >
+                      <Tooltip title={title} placement="top-start">
+                        <span
+                          className="card-content-truncate"
+                          style={{
+                            maxWidth: '220px',
+                          }}
+                        >
+                          {title}
+                        </span>
+                      </Tooltip>
+                    </Typography>
+                  </div>
                   <Typography
                     variant="body2"
                     color="text.secondary"
