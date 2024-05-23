@@ -30,6 +30,9 @@
 }
 
 /* Global Styling */
+html {
+  background: #fafafa;
+}
 main {
   margin: 24px 0;
 }

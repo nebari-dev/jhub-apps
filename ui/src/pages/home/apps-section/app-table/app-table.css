@@ -1,9 +1,15 @@
+.align-vertical-center {
+  vertical-align: middle;
+  position: relative;
+  top: -6px; /* Adjust this value as needed */
+}
+
 .icon-button {
   padding: 0 20px !important;
 }
 
 .icon-text {
-  padding-left: 1rem;
+  padding-left: 0.5rem;
   position: relative;
   top: -3px;
 }
@@ -19,6 +25,7 @@
 
 .actions .action-button:hover {
   background-color: transparent;
+  border-radius: 50%;
 }
 
 .actions button.button-icon {
@@ -27,6 +34,13 @@
 
 .actions button.button-icon:hover {
   background-color: transparent;
+  border-radius: 50%;
+}
+
+.action-button {
+  min-width: 0px !important;
+  border-radius: 50% !important;
+  margin: 0 1rem !important;
 }
 
 .truncate {
@@ -38,4 +52,8 @@
 
 .MuiDataGrid-menuIcon.base-Popper-root.MuiDataGrid-menu {
   display: none;
+}
+
+.app-header th {
+  font-weight: 600;
 }
