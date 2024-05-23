@@ -231,7 +231,7 @@ export const AppCard = ({
                   ) : (
                     <></>
                   )}
-                  <div className="card-header">
+                  <div>
                     <span className="inline relative iconic">{getIcon()}</span>
                     <Typography
                       gutterBottom

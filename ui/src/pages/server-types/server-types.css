@@ -14,22 +14,3 @@
 .server-type-card p {
   font-size: 14px;
 }
-
-.loading {
-  font-size: 24px;
-  font-family: Arial, sans-serif;
-  fill: #000;
-}
-
-@keyframes move-mask {
-  0% {
-    x: -100%;
-  }
-  100% {
-    x: 100%;
-  }
-}
-
-.mask-rect {
-  animation: move-mask 2s linear infinite;
-}
