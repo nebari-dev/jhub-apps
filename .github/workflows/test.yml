@@ -51,4 +51,4 @@ jobs:
 
     - name: Run Tests
       run: |
-        pytest jhub_apps/${{ matrix.test_type }} -vvv -s
+        pytest jhub_apps/tests/${{ matrix.test_type }} -vvv -s
