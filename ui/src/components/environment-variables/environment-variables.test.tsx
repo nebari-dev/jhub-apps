@@ -64,35 +64,28 @@ describe('EnvironmentVariables', () => {
   test('Updates a row', async () => {
     const { baseElement } = render(
       <EnvironmentVariables
-        variables="{key:'value'}"
+        variables="{'key':'value'}"
         setVariables={jest.fn()}
       />,
     );
+    let input = baseElement.querySelector(
+      '#environment-variable-key-0',
+    ) as HTMLButtonElement;
+    if (input) {
+      await act(async () => {
+        fireEvent.change(input, { target: { value: 'new key' } });
+      });
+      expect(input.value).toBe('new key');
+    }
 
-    waitFor(() => {
-      const input = baseElement.querySelectorAll(
-        'attr[name="key"]',
-      )[0] as HTMLInputElement;
-      if (input) {
-        fireEvent.change(input, 'new key');
-      }
-
-      const rows = baseElement.querySelectorAll('attr[name="key"]');
-      expect(rows).toHaveLength(1);
-      expect(rows[0].textContent).toBe('new key');
-    });
-
-    waitFor(() => {
-      const input = baseElement.querySelectorAll(
-        'attr[name="value"]',
-      )[0] as HTMLInputElement;
-      if (input) {
-        fireEvent.change(input, 'new value');
-      }
-
-      const rows = baseElement.querySelectorAll('attr[name="key"]');
-      expect(rows).toHaveLength(1);
-      expect(rows[0].textContent).toBe('new value');
-    });
+    input = baseElement.querySelector(
+      '#environment-variable-value-0',
+    ) as HTMLButtonElement;
+    if (input) {
+      await act(async () => {
+        fireEvent.change(input, { target: { value: 'new value' } });
+      });
+      expect(input.value).toBe('new value');
+    }
   });
 });

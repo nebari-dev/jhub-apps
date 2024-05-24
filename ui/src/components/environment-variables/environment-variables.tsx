@@ -81,6 +81,7 @@ export const EnvironmentVariables = ({
             >
               <Item sx={{ width: '100%' }}>
                 <TextField
+                  id={`environment-variable-key-${index}`}
                   name="key"
                   label="Key"
                   placeholder="Key"
@@ -92,6 +93,7 @@ export const EnvironmentVariables = ({
               </Item>
               <Item sx={{ width: '100%' }}>
                 <TextField
+                  id={`environment-variable-value-${index}`}
                   name="value"
                   label="Value"
                   placeholder="Value"

@@ -190,11 +190,7 @@ export const getFriendlyEnvironmentVariables = (env: any) => {
   }
 
   try {
-    if (env) {
-      return JSON.parse(JSON.stringify(env));
-    } else {
-      return null;
-    }
+    return JSON.parse(JSON.stringify(env));
   } catch (error) {
     return null;
   }
