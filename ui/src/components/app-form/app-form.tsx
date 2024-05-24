@@ -24,13 +24,17 @@ import { AppFormInput } from '@src/types/form';
 import { UserState } from '@src/types/user';
 import axios from '@src/utils/axios';
 import { APP_BASE_URL, REQUIRED_FORM_FIELDS_RULES } from '@src/utils/constants';
-import { getFriendlyDisplayName, navigateToUrl } from '@src/utils/jupyterhub';
+import {
+  getFriendlyDisplayName,
+  getFriendlyEnvironmentVariables,
+  navigateToUrl,
+} from '@src/utils/jupyterhub';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useEffect, useRef, useState } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
-import { AppSharing, Thumbnail } from '..';
+import { AppSharing, EnvironmentVariables, Thumbnail } from '..';
 import {
   currentNotification,
   currentFile as defaultFile,
@@ -86,6 +90,7 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
     string[]
   >([]);
   const [keepAlive, setKeepAlive] = useState(false);
+  const [variables, setVariables] = useState<string | null>(null);
   // Get the app data if we're editing an existing app
   const { data: formData, error: formError } = useQuery<
     AppQueryGetProps,
@@ -146,7 +151,6 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
       thumbnail: '',
       filepath: '',
       conda_env: '',
-      env: '',
       custom_command: '',
       profile: '',
       is_public: false,
@@ -189,7 +193,6 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
     thumbnail,
     filepath,
     conda_env,
-    env,
     custom_command,
     profile,
   }) => {
@@ -203,7 +206,7 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
         thumbnail,
         filepath,
         conda_env,
-        env: env ? JSON.parse(env) : null,
+        env: getFriendlyEnvironmentVariables(variables),
         custom_command,
         profile,
         is_public: isPublic,
@@ -227,7 +230,7 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
           thumbnail: thumbnail || '',
           filepath: filepath || '',
           conda_env: conda_env || '',
-          env: env ? JSON.parse(env) : null,
+          env: getFriendlyEnvironmentVariables(variables),
           custom_command: custom_command || '',
           profile: profile || '',
           public: isPublic,
@@ -329,12 +332,10 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
       setDescription(formData.user_options.description);
       reset({
         ...formData.user_options,
-        env: formData.user_options.env
-          ? JSON.stringify(formData.user_options.env)
-          : undefined,
       });
       setIsPublic(formData.user_options.public);
       setKeepAlive(formData.user_options.keep_alive);
+      setVariables(formData.user_options.env || null);
       setCurrentImage(formData.user_options.thumbnail);
       setCurrentUserPermissions(formData.user_options.share_with?.users);
       setCurrentGroupPermissions(formData.user_options.share_with?.groups);
@@ -358,14 +359,12 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
         framework: currentFormInput.framework || '',
         filepath: currentFormInput.filepath || '',
         conda_env: currentFormInput.conda_env || '',
-        env: currentFormInput.env
-          ? JSON.stringify(currentFormInput.env)
-          : undefined,
         custom_command: currentFormInput.custom_command || '',
         profile: currentFormInput.profile || '',
       });
       setIsPublic(currentFormInput.is_public);
       setKeepAlive(currentFormInput.keep_alive);
+      setVariables(currentFormInput.env || null);
       setCurrentImage(currentFormInput.thumbnail);
       setCurrentUserPermissions(currentFormInput.share_with?.users);
       setCurrentGroupPermissions(currentFormInput.share_with?.groups);
@@ -574,21 +573,6 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
             </FormControl>
           )}
         />
-        <Controller
-          name="env"
-          control={control}
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          render={({ field: { ref: _, ...field } }) => (
-            <FormControl>
-              <TextField
-                {...field}
-                id="env"
-                label="Environment Variables"
-                placeholder={`Enter valid json: {"KEY_1":"VALUE_1","KEY_2":"VALUE_2"}`}
-              />
-            </FormControl>
-          )}
-        />
         <Box
           sx={{
             display: 'flex',
@@ -639,6 +623,15 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
             )}
           />
         </Box>
+      </StyledFormSection>
+      <StyledFormSection>
+        <StyledFormSectionHeading>
+          Environment Variables
+        </StyledFormSectionHeading>
+        <EnvironmentVariables
+          variables={variables}
+          setVariables={setVariables}
+        />
       </StyledFormSection>
       <StyledFormSection>
         <StyledFormSectionHeading>Sharing</StyledFormSectionHeading>

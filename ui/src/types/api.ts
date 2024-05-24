@@ -3,6 +3,11 @@ export interface SharePermissions {
   groups: string[];
 }
 
+export interface KeyValuePair {
+  key: string;
+  value: string;
+}
+
 export interface UserOptions {
   jhub_app: boolean;
   display_name: string;
