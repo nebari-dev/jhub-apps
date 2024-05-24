@@ -16,8 +16,9 @@ def client():
     logging.basicConfig(
         level=logging.INFO, format=logging_format
     )
-    os.environ["JUPYTERHUB_API_URL"] = "http://127.0.0.1:8000/hub/api"
-    os.environ["PUBLIC_HOST"] = "http://127.0.0.1:8000/"
+    os.environ["JUPYTERHUB_API_URL"] = "/"
+    os.environ["JUPYTERHUB_API_TOKEN"] = "token"
+    os.environ["PUBLIC_HOST"] = "/"
     os.environ["JUPYTERHUB_CLIENT_ID"] = "test-client-id"
     os.environ["JUPYTERHUB_OAUTH_CALLBACK_URL"] = "/"
     from jhub_apps.service.app import app
