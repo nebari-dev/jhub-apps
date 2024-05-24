@@ -71,56 +71,61 @@ export const EnvironmentVariables = ({
   return (
     <Box id="environment-variables">
       <Stack>
-        <Item sx={{ pb: '16px' }}>
-          {rows.map((row, index) => (
-            <Stack
-              direction="row"
-              gap={1}
-              key={`environment-variable-row-${index}`}
-              sx={{ pb: '16px' }}
-            >
-              <Item sx={{ width: '100%' }}>
-                <TextField
-                  id={`environment-variable-key-${index}`}
-                  name="key"
-                  label="Key"
-                  placeholder="Key"
-                  value={row.key}
-                  onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                    handleChange(index, e)
-                  }
-                />
-              </Item>
-              <Item sx={{ width: '100%' }}>
-                <TextField
-                  id={`environment-variable-value-${index}`}
-                  name="value"
-                  label="Value"
-                  placeholder="Value"
-                  value={row.value}
-                  onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                    handleChange(index, e)
-                  }
-                />
-              </Item>
-              <Item>
-                <IconButton
-                  sx={{ mt: '7px' }}
-                  onClick={() => handleRemoveRow(index)}
-                  aria-label="Remove"
-                >
-                  <CloseRoundedIcon />
-                </IconButton>
-              </Item>
-            </Stack>
-          ))}
-        </Item>
+        {rows.length > 0 ? (
+          <Item sx={{ pb: '16px' }}>
+            {rows.map((row, index) => (
+              <Stack
+                direction="row"
+                gap={1}
+                key={`environment-variable-row-${index}`}
+                sx={{ pb: '16px' }}
+              >
+                <Item sx={{ width: '100%' }}>
+                  <TextField
+                    id={`environment-variable-key-${index}`}
+                    name="key"
+                    label="Key"
+                    placeholder="Key"
+                    value={row.key}
+                    onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                      handleChange(index, e)
+                    }
+                  />
+                </Item>
+                <Item sx={{ width: '100%' }}>
+                  <TextField
+                    id={`environment-variable-value-${index}`}
+                    name="value"
+                    label="Value"
+                    placeholder="Value"
+                    value={row.value}
+                    onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                      handleChange(index, e)
+                    }
+                  />
+                </Item>
+                <Item>
+                  <IconButton
+                    sx={{ mt: '7px' }}
+                    onClick={() => handleRemoveRow(index)}
+                    aria-label="Remove"
+                  >
+                    <CloseRoundedIcon />
+                  </IconButton>
+                </Item>
+              </Stack>
+            ))}
+          </Item>
+        ) : (
+          <></>
+        )}
         <Item>
           <Button
             variant="contained"
             color="secondary"
             startIcon={<AddIcon />}
             onClick={handleAddRow}
+            sx={{}}
           >
             Add Variable
           </Button>
