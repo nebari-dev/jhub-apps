@@ -2,13 +2,10 @@ import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
 import KeyboardArrowDownRoundedIcon from '@mui/icons-material/KeyboardArrowDownRounded';
 import KeyboardArrowUpRoundedIcon from '@mui/icons-material/KeyboardArrowUpRounded';
 import MenuIcon from '@mui/icons-material/Menu';
-import MiscellaneousServicesRoundedIcon from '@mui/icons-material/MiscellaneousServicesRounded';
-import PushPinRoundedIcon from '@mui/icons-material/PushPinRounded';
 import {
   AppBar,
   Box,
   Button,
-  Divider,
   Drawer,
   IconButton,
   List,
@@ -82,7 +79,6 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
   const [services, setServices] = useState<JhService[]>([]);
   const [pinnedApps, setPinnedApps] = useState<JhApp[]>([]);
   const [pinnedServices, setPinnedServices] = useState<JhServiceApp[]>([]);
-
   const {
     isLoading: appsLoading,
     error: appsError,
@@ -125,6 +121,7 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
 
   useEffect(() => {
     if (!appsLoading && appsData && currentUser) {
+      console.log('APPS DATA: ', appsData);
       setPinnedApps(() => getPinnedApps(appsData, currentUser.name));
     }
   }, [appsLoading, appsData, currentUser]);
@@ -163,111 +160,155 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
 
   const drawer = (
     <Box>
-      <ListItem disablePadding sx={{ mt: 10, mb: 2 }}>
-        <ListItemButton
-          sx={{ pl: 3 }}
-          onClick={() => navigateToUrl(`${APP_BASE_URL}`)}
-        >
-          <ListItemIcon>
-            <HomeRoundedIcon
+      <List>
+        <ListItem disablePadding sx={{ mt: 10, mb: 2 }}>
+          <ListItemButton
+            sx={{
+              px: '1.5rem',
+              backgroundColor: '#ebebeb',
+              borderRadius: '8px',
+              position: 'relative',
+              display: 'flex',
+              alignItems: 'center',
+              '&::before': {
+                content: '""',
+                position: 'absolute',
+                left: 0,
+                top: 0,
+                bottom: 0,
+                width: '8px',
+                backgroundColor: '#7d48d4',
+                borderTopLeftRadius: '8px',
+                borderBottomLeftRadius: '8px',
+              },
+              '&:hover': {
+                backgroundColor: '#ebebeb',
+                '&::before': {
+                  backgroundColor: '#BA18DA4',
+                },
+              },
+            }}
+            onClick={() => navigateToUrl(`${APP_BASE_URL}`)}
+          >
+            <ListItemIcon
               sx={{
-                color: theme.palette.common.black,
+                minWidth: 'auto',
+                mr: '8px',
+                display: 'flex',
+                alignItems: 'center',
               }}
-            />
-          </ListItemIcon>
-          <ListItemText
-            primary={<Typography variant="body1">Home</Typography>}
-          />
-        </ListItemButton>
-      </ListItem>
-      <Divider />
-      <>
-        <List>
-          <ListItem disablePadding>
-            <StyledListItemTextHeader
-              primary="Pinned"
-              disableTypography
-              sx={{
-                color: `${theme.palette.common.black}99`,
-                fontWeight: 600,
-                fontSize: '14px',
-              }}
-            />
-          </ListItem>
-          {pinnedApps.map((item, index) => (
-            <ListItem key={index} disablePadding>
-              <StyledListItemButton onClick={() => navigateToUrl(item.url)}>
-                <ListItemText
-                  primary={<Typography variant="body2">{item.name}</Typography>}
-                />
-                <ListItemIcon
-                  sx={{
-                    minWidth: '32px',
-                    color: `${theme.palette.common.black}DE`,
-                  }}
+            >
+              <HomeRoundedIcon
+                sx={{
+                  color: theme.palette.common.black,
+                  width: '28px',
+                  height: '28px',
+                }}
+              />
+            </ListItemIcon>
+            <ListItemText
+              primary={
+                <Typography
+                  variant="body1"
+                  sx={{ fontSize: '14px', lineHeight: '1.2' }}
                 >
-                  <PushPinRoundedIcon
-                    sx={{
-                      fontSize: '20px',
-                      position: 'relative',
-                      bottom: '2px',
-                    }}
-                  />
-                </ListItemIcon>
-              </StyledListItemButton>
-            </ListItem>
-          ))}
-          {pinnedServices.map((item, index) => (
-            <ListItem key={index} disablePadding>
-              <StyledListItemButton onClick={() => navigateToUrl(item.url)}>
-                <ListItemText
-                  primary={<Typography variant="body2">{item.name}</Typography>}
-                />
-                <ListItemIcon
-                  sx={{ minWidth: '32px', color: theme.palette.common.black }}
-                >
-                  <PushPinRoundedIcon
-                    sx={{
-                      fontSize: '20px',
-                      position: 'relative',
-                      bottom: '2px',
-                    }}
-                  />
-                </ListItemIcon>
-              </StyledListItemButton>
-            </ListItem>
-          ))}
-        </List>
-        <Divider />
-      </>
+                  Home
+                </Typography>
+              }
+            />
+          </ListItemButton>
+        </ListItem>
+      </List>
       <List>
         <ListItem disablePadding>
-          <ListItemIcon
-            sx={{
-              minWidth: '32px',
-              color: theme.palette.common.black,
-              pl: theme.spacing(4),
-              pr: '32px',
-            }}
-          >
-            <MiscellaneousServicesRoundedIcon
-              sx={{
-                fontSize: '24px',
-              }}
-            />
-          </ListItemIcon>
           <StyledListItemTextHeaderWithIcon
             primary="Services"
             disableTypography
+            sx={{
+              pl: '32px',
+              fonstSize: '14px',
+              textTransform: 'uppercase',
+              fontWeight: 600,
+              color: '#6F7073',
+            }}
           />
         </ListItem>
+        {pinnedApps.map((item, index) => (
+          <ListItem key={index} disablePadding>
+            <a
+              href={item.url}
+              style={{
+                textDecoration: 'none',
+                display: 'block',
+                width: '100%',
+                paddingLeft: '32px',
+                paddingTop: '8px',
+                color: '#000',
+              }}
+            >
+              <ListItemText
+                primary={
+                  <Typography
+                    variant="body2"
+                    sx={{ fontSize: '1rem', color: '#000000' }}
+                  >
+                    {item.name}
+                  </Typography>
+                }
+              />
+            </a>
+          </ListItem>
+        ))}
+        {pinnedServices.map((item, index) => (
+          <ListItem key={index} disablePadding>
+            <a
+              href={item.url}
+              style={{
+                textDecoration: 'none',
+                display: 'block',
+                width: '100%',
+                paddingLeft: '32px',
+                paddingTop: '8px',
+                color: '#000',
+              }}
+            >
+              <ListItemText
+                primary={
+                  <Typography
+                    variant="body2"
+                    sx={{ fontSize: '1rem', color: '#000000' }}
+                  >
+                    {item.name}
+                  </Typography>
+                }
+              />
+            </a>
+          </ListItem>
+        ))}
         {services.map((item, index) => (
           <ListItem key={index} disablePadding>
-            <StyledListItemButton onClick={() => navigateToUrl(item.url)}>
+            <a
+              href={item.url}
+              style={{
+                textDecoration: 'none',
+                display: 'block',
+                width: '100%',
+                paddingLeft: '32px',
+                paddingTop: '8px',
+                color: '#000',
+              }}
+            >
               <ListItemText
-                primary={<Typography variant="body2">{item.name}</Typography>}
+                primary={
+                  <Typography
+                    variant="body2"
+                    sx={{ fontSize: '1rem', color: '#000000' }}
+                  >
+                    {item.name}
+                  </Typography>
+                }
               />
-            </StyledListItemButton>
+            </a>
           </ListItem>
         ))}
       </List>
@@ -363,7 +404,9 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
           sx={{
             '& .MuiDrawer-paper': {
               boxSizing: 'border-box',
-              width: 240,
+              width: 224,
+              padding: '.5rem',
+              boxShadow: 1,
             },
           }}
         >
