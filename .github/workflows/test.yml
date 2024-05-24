@@ -22,8 +22,8 @@ jobs:
         test_type:
           - tests_unit
         jupyterhub:
-          - ">=4.1"
-          - ">=5.0.0b1"
+          - "==4.1.5"
+          - ">=5.0.0"
     steps:
     - uses: actions/checkout@v4.1.1
 
