@@ -89,19 +89,12 @@ export const getApps = (
       const app = server.user_options;
       const appStatus = getAppStatus(server);
       filteredApps.push({
+        ...app,
+        ...server,
         id: app.name,
         name: app.display_name,
-        description: app.description,
         framework: getFriendlyFrameworkName(app.framework),
-        profile: app.profile,
-        url: server.url,
-        thumbnail: app.thumbnail,
         username: server.username || username,
-        ready: server.ready,
-        pending: server.pending,
-        stopped: server.stopped,
-        public: app.public,
-        shared: server.shared,
         last_activity: server.last_activity,
         status: appStatus,
       });

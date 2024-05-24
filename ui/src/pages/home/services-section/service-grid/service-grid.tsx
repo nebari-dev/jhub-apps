@@ -15,30 +15,20 @@ export const ServiceGrid = ({
     <>
       {apps.map((app: JhApp, index: number) => (
         <AppCard
-          id={app.id}
+          {...app}
           key={`app-${app.id}-${index}`}
           title={app.name}
-          description={app.description}
-          thumbnail={app.thumbnail}
-          framework={app.framework}
-          url={app.url}
           serverStatus={app.status}
-          username={app.username}
           isAppCard={false}
           app={app}
         />
       ))}
       {services.map((service: JhServiceApp, index: number) => (
         <AppCard
-          id={service.id}
+          {...service}
           key={`app-${service.id}-${index}`}
           title={service.name}
-          description={service.description}
-          thumbnail={service.thumbnail}
-          framework={service.framework}
-          url={service.url}
           serverStatus={service.status}
-          username={service.username}
           isAppCard={false}
         />
       ))}

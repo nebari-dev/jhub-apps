@@ -30,7 +30,6 @@ interface AppCardProps {
   title: string;
   description?: string;
   framework: string;
-  profile?: string;
   thumbnail?: string;
   url: string;
   username?: string;
@@ -48,7 +47,6 @@ export const AppCard = ({
   title,
   description,
   framework,
-  profile,
   thumbnail,
   url,
   username,
@@ -195,7 +193,7 @@ export const AppCard = ({
                   <div className="menu-chip">
                     <StatusChip
                       status={appStatus}
-                      additionalInfo={getProfileData(profile || '')}
+                      additionalInfo={getProfileData(app?.profile || '')}
                       app={app}
                     />
                   </div>
