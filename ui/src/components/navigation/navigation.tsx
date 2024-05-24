@@ -165,6 +165,7 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
           <ListItemButton
             sx={{
               px: '1.5rem',
+              mx: '.5rem',
               backgroundColor: '#ebebeb',
               borderRadius: '8px',
               position: 'relative',
@@ -248,11 +249,11 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
                 display: 'block',
                 width: '100%',
                 paddingLeft: '40px',
-                paddingRight: '8px',
+                py: '4px',
                 paddingTop: '8px',
                 color: '#000',
                 '&:hover': {
-                  backgroundColor: 'rgba(0, 0, 0, 0.04)', // Change this to your desired hover background color
+                  backgroundColor: 'rgba(0, 0, 0, 0.04)',
                 },
               }}
             >
@@ -279,10 +280,10 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
                 width: '100%',
                 paddingLeft: '40px',
                 paddingRight: '8px',
-                paddingTop: '8px',
+                py: '4px',
                 color: '#000',
                 '&:hover': {
-                  backgroundColor: 'rgba(0, 0, 0, 0.04)', // Change this to your desired hover background color
+                  backgroundColor: 'rgba(0, 0, 0, 0.04)',
                 },
               }}
             >
@@ -309,10 +310,10 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
                 width: '100%',
                 paddingLeft: '40px',
                 paddingRight: '8px',
-                paddingTop: '8px',
+                py: '4px',
                 color: '#000',
                 '&:hover': {
-                  backgroundColor: 'rgba(0, 0, 0, 0.04)', // Change this to your desired hover background color
+                  backgroundColor: 'rgba(0, 0, 0, 0.04)',
                 },
               }}
             >
@@ -423,7 +424,6 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
             '& .MuiDrawer-paper': {
               boxSizing: 'border-box',
               width: 224,
-              padding: '.5rem',
               boxShadow: 1,
             },
           }}
