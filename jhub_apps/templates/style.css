@@ -368,6 +368,18 @@ a:focus {
 }
 
 /* Misc MUI */
+.container:not(.MuiBox-root) {
+    padding-top: 30px;
+}
+
+.container.MuiBox-root {
+    max-width: unset;
+}
+
+.card.MuiBox-root {
+    border: unset;
+}
+
 .MuiButton-containedPrimary:not(:disabled) {
     color: var(--light-text-color);
     background-color: var(--primary-color) !important;
