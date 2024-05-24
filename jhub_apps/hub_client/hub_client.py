@@ -8,6 +8,7 @@ import re
 import uuid
 
 import requests
+from jupyterhub.scopes import parse_scopes, Scope
 
 from jhub_apps.service.models import UserOptions, SharePermissions
 from jhub_apps.hub_client.utils import is_jupyterhub_5
@@ -24,7 +25,8 @@ def requires_user_token(func):
     """
     @wraps(func)
     def wrapper(self, *args, **kwargs):
-        token_id = self._create_token_for_user()
+        response_json = self._create_token_for_user()
+        token_id = response_json["id"]
         try:
             original_method_return = func(self, *args, **kwargs)
         except Exception as e:
@@ -39,6 +41,9 @@ class HubClient:
     def __init__(self, username=None):
         self.username = username
         self.token = JUPYTERHUB_API_TOKEN
+        # the json response received from JupyterHub API
+        # when token is created for the user
+        self.token_json = None
         self.jhub_apps_request_id = None
         self._set_request_id()
 
@@ -66,7 +71,8 @@ class HubClient:
         r.raise_for_status()
         rjson = r.json()
         self.token = rjson["token"]
-        return rjson["id"]
+        self.token_json = rjson
+        return rjson
 
     def _revoke_token(self, token_id):
         assert self.username
@@ -287,17 +293,89 @@ class HubClient:
         r.raise_for_status()
         return r.json()
 
+    @requires_user_token
+    def get_user_scopes(self):
+        assert self.token_json
+        assert self.token_json.get("scopes")
+        return self.token_json["scopes"]
+
 
 def get_users_and_group_allowed_to_share_with(user):
     """Returns a list of users and groups"""
-    hclient = HubClient()
+    hclient = HubClient(username=user.name)
     users = hclient.get_users()
     user_names = [u["name"] for u in users if u["name"] != user.name]
     groups = hclient.get_groups()
     group_names = [group['name'] for group in groups]
     # TODO: Filter users and groups based on what the user has access to share with
-    # parsed_scopes = parse_scopes(scopes)
+    # import ipdb as pdb; pdb.set_trace()
+    user_scopes = hclient.get_user_scopes()
+    parsed_scopes = parse_scopes(user_scopes)
     return {
         "users": user_names,
         "groups": group_names
     }
+
+
+def filter_users_based_on_scopes(scopes, users):
+    parsed_scopes = parse_scopes(user_scopes)
+    users_allowed_to_read = set()
+    for scope, parsed_scope in parsed_scopes.items():
+        if scope == "read:users:name" and isinstance(parsed_scope, dict):
+            users_allowed_to_read.update(parsed_scope.get("user"))
+        elif scope == "read:users:name" and parsed_scope == Scope.ALL:
+            pass
+
+# read:users:name
+user_scopes = [
+    "read:groups:shares!user=sumit",
+    "read:users!user=sumit",
+    "read:users:shares!user=sumit",
+    "read:users:name!user=sumit",
+    "read:users:name!user=aktech",
+    "read:services:name",
+    "access:servers!server=aktech/shared-9d5e435",
+    "read:shares!user=sumit",
+    "admin:auth_state",
+    "read:users:groups!user=sumit",
+    "access:services",
+    "read:servers!user=sumit",
+    "users:shares!user=sumit",
+    "access:servers!user=sumit",
+    "read:users:activity!user=sumit",
+    "read:groups:name",
+    "tokens!user=sumit",
+    "list:services",
+    "groups:shares!user=sumit",
+    "shares!user=sumit",
+    "delete:servers!user=sumit",
+    "users:activity!user=sumit",
+    "read:users:name!user=foo",
+    "read:tokens!user=sumit",
+    "servers!user=sumit",
+    "read:users:name!user=bar"
+]
+
+f = {'read:groups:shares': {'user': frozenset({'sumit'})},
+ 'read:users': {'user': frozenset({'sumit'})},
+ 'read:users:shares': {'user': frozenset({'sumit'})},
+ 'read:users:name': {'user': frozenset({'aktech', 'bar', 'foo', 'sumit'})},
+ 'read:services:name': <Scope.ALL: True>,
+'access:servers': {'server': frozenset({'aktech/shared-9d5e435'}),
+                   'user': frozenset({'sumit'})},
+'read:shares': {'user': frozenset({'sumit'})},
+'admin:auth_state': <Scope.ALL: True>,
+'read:users:groups': {'user': frozenset({'sumit'})},
+'access:services': <Scope.ALL: True>,
+'read:servers': {'user': frozenset({'sumit'})},
+'users:shares': {'user': frozenset({'sumit'})},
+'read:users:activity': {'user': frozenset({'sumit'})},
+'read:groups:name': <Scope.ALL: True>,
+'tokens': {'user': frozenset({'sumit'})},
+'list:services': <Scope.ALL: True>,
+'groups:shares': {'user': frozenset({'sumit'})},
+'shares': {'user': frozenset({'sumit'})},
+'delete:servers': {'user': frozenset({'sumit'})},
+'users:activity': {'user': frozenset({'sumit'})},
+'read:tokens': {'user': frozenset({'sumit'})},
+'servers': {'user': frozenset({'sumit'})}}
