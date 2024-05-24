@@ -1,3 +1,4 @@
+import os
 from base64 import b64encode
 from secrets import token_bytes
 
@@ -9,6 +10,9 @@ from jhub_apps.spawner.spawner_creation import subclass_spawner
 
 
 def _create_token_for_service():
+    # Use the one from environment if available
+    if os.environ.get("JHUB_APP_JWT_SECRET_KEY"):
+        return os.environ["JHUB_APP_JWT_SECRET_KEY"]
     return b64encode(token_bytes(32)).decode()
 
 
