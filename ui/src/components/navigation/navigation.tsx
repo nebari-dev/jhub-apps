@@ -8,6 +8,7 @@ import {
   Button,
   Drawer,
   IconButton,
+  Link,
   List,
   ListItem,
   ListItemButton,
@@ -40,7 +41,6 @@ import { useQuery } from '@tanstack/react-query';
 import React, { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { currentNotification, currentUser as defaultUser } from '../../store';
-
 export const StyledListItemTextHeader = styled(ListItemText)(({ theme }) => ({
   fontWeight: 400,
   fontSize: '16px',
@@ -161,7 +161,7 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
   const drawer = (
     <Box>
       <List>
-        <ListItem disablePadding sx={{ mt: 10, mb: 2 }}>
+        <ListItem disablePadding sx={{ mt: 10 }}>
           <ListItemButton
             sx={{
               px: '1.5rem',
@@ -177,14 +177,14 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
                 top: 0,
                 bottom: 0,
                 width: '8px',
-                backgroundColor: '#7d48d4',
+                backgroundColor: '#BA18DA',
                 borderTopLeftRadius: '8px',
                 borderBottomLeftRadius: '8px',
               },
               '&:hover': {
-                backgroundColor: '#ebebeb',
+                backgroundColor: '#E0E0E0',
                 '&::before': {
-                  backgroundColor: '#BA18DA4',
+                  backgroundColor: '#BA18DA',
                 },
               },
             }}
@@ -210,7 +210,13 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
               primary={
                 <Typography
                   variant="body1"
-                  sx={{ fontSize: '14px', lineHeight: '1.2' }}
+                  sx={{
+                    fontSize: '16px',
+                    fontWeight: 600,
+                    lineHeight: '1.2',
+                    position: 'relative',
+                    top: '3px',
+                  }}
                 >
                   Home
                 </Typography>
@@ -225,8 +231,8 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
             primary="Services"
             disableTypography
             sx={{
-              pl: '32px',
-              fonstSize: '14px',
+              pl: '40px',
+              fontSize: '14px',
               textTransform: 'uppercase',
               fontWeight: 600,
               color: '#6F7073',
@@ -235,15 +241,19 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
         </ListItem>
         {pinnedApps.map((item, index) => (
           <ListItem key={index} disablePadding>
-            <a
+            <Link
               href={item.url}
-              style={{
+              sx={{
                 textDecoration: 'none',
                 display: 'block',
                 width: '100%',
-                paddingLeft: '32px',
+                paddingLeft: '40px',
+                paddingRight: '8px',
                 paddingTop: '8px',
                 color: '#000',
+                '&:hover': {
+                  backgroundColor: 'rgba(0, 0, 0, 0.04)', // Change this to your desired hover background color
+                },
               }}
             >
               <ListItemText
@@ -256,20 +266,24 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
                   </Typography>
                 }
               />
-            </a>
+            </Link>
           </ListItem>
         ))}
         {pinnedServices.map((item, index) => (
           <ListItem key={index} disablePadding>
-            <a
+            <Link
               href={item.url}
-              style={{
+              sx={{
                 textDecoration: 'none',
                 display: 'block',
                 width: '100%',
-                paddingLeft: '32px',
+                paddingLeft: '40px',
+                paddingRight: '8px',
                 paddingTop: '8px',
                 color: '#000',
+                '&:hover': {
+                  backgroundColor: 'rgba(0, 0, 0, 0.04)', // Change this to your desired hover background color
+                },
               }}
             >
               <ListItemText
@@ -282,20 +296,24 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
                   </Typography>
                 }
               />
-            </a>
+            </Link>
           </ListItem>
         ))}
         {services.map((item, index) => (
           <ListItem key={index} disablePadding>
-            <a
+            <Link
               href={item.url}
-              style={{
+              sx={{
                 textDecoration: 'none',
                 display: 'block',
                 width: '100%',
-                paddingLeft: '32px',
+                paddingLeft: '40px',
+                paddingRight: '8px',
                 paddingTop: '8px',
                 color: '#000',
+                '&:hover': {
+                  backgroundColor: 'rgba(0, 0, 0, 0.04)', // Change this to your desired hover background color
+                },
               }}
             >
               <ListItemText
@@ -308,7 +326,7 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
                   </Typography>
                 }
               />
-            </a>
+            </Link>
           </ListItem>
         ))}
       </List>
@@ -338,9 +356,9 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
             component="div"
             sx={{ flexGrow: 1, display: { xs: 'none', sm: 'block' } }}
           >
-            <a href={APP_BASE_URL}>
+            <Link href={APP_BASE_URL}>
               <img src={getAppLogoUrl()} alt="logo" height="28" />
-            </a>
+            </Link>
           </Box>
           <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
             <Button
