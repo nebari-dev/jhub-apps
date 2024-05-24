@@ -250,7 +250,6 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
                 width: '100%',
                 paddingLeft: '40px',
                 py: '4px',
-                paddingTop: '8px',
                 color: '#000',
                 '&:hover': {
                   backgroundColor: 'rgba(0, 0, 0, 0.04)',
