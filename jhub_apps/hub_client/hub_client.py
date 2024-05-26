@@ -8,7 +8,7 @@ import re
 import uuid
 
 import requests
-from jupyterhub.scopes import parse_scopes, expand_scopes, has_scope, Scope
+from jupyterhub.scopes import expand_scopes, has_scope
 
 from jhub_apps.service.models import UserOptions, SharePermissions
 from jhub_apps.hub_client.utils import is_jupyterhub_5
