@@ -8,7 +8,6 @@ import re
 import uuid
 
 import requests
-from jupyterhub.scopes import expand_scopes, has_scope
 
 from jhub_apps.service.models import UserOptions, SharePermissions
 from jhub_apps.hub_client.utils import is_jupyterhub_5
@@ -328,6 +327,8 @@ def get_users_and_group_allowed_to_share_with(user):
 
 
 def filter_entity_based_on_scopes(scopes, entities, entity_key="user"):
+    # only available in JupyterHub>=5
+    from jupyterhub.scopes import has_scope, expand_scopes
     allowed_entities_to_read = set()
     for entity in entities:
         if has_scope(f'read:{entity_key}s:name!{entity_key}={entity}', expand_scopes(scopes)):
