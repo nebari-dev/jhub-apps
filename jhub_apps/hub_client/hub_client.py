@@ -40,10 +40,7 @@ def requires_user_token(func):
 class HubClient:
     def __init__(self, username=None):
         self.username = username
-        self.token = JUPYTERHUB_API_TOKEN
-        # the json response received from JupyterHub API
-        # when token is created for the user
-        self.token_json = None
+        self.tokens = [JUPYTERHUB_API_TOKEN]
         self.jhub_apps_request_id = None
         self._set_request_id()
 
@@ -52,8 +49,12 @@ class HubClient:
         self.jhub_apps_request_id = contextvars.get("request_id")
 
     def _headers(self, token=None):
+        header_token = token
+        if not token and self.tokens:
+            header_token = self.tokens[-1]
+
         return {
-            "Authorization": f"token {token or self.token}",
+            "Authorization": f"token {token or header_token}",
             "JHUB_APPS_REQUEST_ID": self.jhub_apps_request_id
         }
 
@@ -70,14 +71,19 @@ class HubClient:
         )
         r.raise_for_status()
         rjson = r.json()
-        self.token = rjson["token"]
-        self.token_json = rjson
-        return rjson
+        # This is so that when a new token is created, it doesn't overrides a previously created token,
+        # which is still in use by the previous function in stack
+        # for e.g. When func_a calls func_b and both have the decorator "requires_user_token"
+        # The func_a on completing execution will only clear the token, which the decorator
+        # requires_user_token created for it, not the token created for func_a
+        self.tokens.append(rjson["token"])
+        logger.info(f"Created token: {rjson['id']}")
+        return rjson["id"]
 
     def _revoke_token(self, token_id):
         assert self.username
         assert token_id
-        logger.info("Revoking token")
+        logger.info(f"Revoking token: {token_id}")
         r = requests.delete(
             API_URL + f"/users/{self.username}/tokens/{token_id}",
             headers=self._headers(token=JUPYTERHUB_API_TOKEN),
@@ -88,6 +94,7 @@ class HubClient:
             status_code=r.status_code,
             username=self.username
         )
+        self.tokens.pop()
         return r
 
     def get_users(self):

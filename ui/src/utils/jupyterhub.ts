@@ -183,6 +183,19 @@ export const getFriendlyDateStr = (date: Date) => {
   }
 };
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+export const getFriendlyEnvironmentVariables = (env: any) => {
+  if (!env) {
+    return null;
+  }
+
+  try {
+    return JSON.parse(JSON.stringify(env));
+  } catch (error) {
+    return null;
+  }
+};
+
 export const getAppLogoUrl = () => {
   if (window.theme?.logo) {
     return window.theme.logo;
