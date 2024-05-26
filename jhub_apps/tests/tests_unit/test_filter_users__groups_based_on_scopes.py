@@ -1,8 +1,10 @@
 import pytest
 
 from jhub_apps.hub_client.hub_client import filter_entity_based_on_scopes
+from jhub_apps.hub_client.utils import is_jupyterhub_5
 
 
+@pytest.mark.skipif(not is_jupyterhub_5(), reason="requires jupyterhub>=5")
 @pytest.mark.parametrize("scopes,entities,entity_key,expected_entities", [
     (
             [
