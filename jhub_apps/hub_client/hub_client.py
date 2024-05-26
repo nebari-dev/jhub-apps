@@ -8,7 +8,7 @@ import re
 import uuid
 
 import requests
-from jupyterhub.scopes import parse_scopes, Scope
+from jupyterhub.scopes import parse_scopes, expand_scopes, has_scope, Scope
 
 from jhub_apps.service.models import UserOptions, SharePermissions
 from jhub_apps.hub_client.utils import is_jupyterhub_5
@@ -41,6 +41,7 @@ class HubClient:
     def __init__(self, username=None):
         self.username = username
         self.tokens = [JUPYTERHUB_API_TOKEN]
+        self.token_json = None
         self.jhub_apps_request_id = None
         self._set_request_id()
 
@@ -76,9 +77,10 @@ class HubClient:
         # for e.g. When func_a calls func_b and both have the decorator "requires_user_token"
         # The func_a on completing execution will only clear the token, which the decorator
         # requires_user_token created for it, not the token created for func_a
+        self.token_json = rjson
         self.tokens.append(rjson["token"])
         logger.info(f"Created token: {rjson['id']}")
-        return rjson["id"]
+        return rjson
 
     def _revoke_token(self, token_id):
         assert self.username
@@ -314,75 +316,20 @@ def get_users_and_group_allowed_to_share_with(user):
     user_names = [u["name"] for u in users if u["name"] != user.name]
     groups = hclient.get_groups()
     group_names = [group['name'] for group in groups]
-    # TODO: Filter users and groups based on what the user has access to share with
-    # import ipdb as pdb; pdb.set_trace()
     user_scopes = hclient.get_user_scopes()
-    parsed_scopes = parse_scopes(user_scopes)
     return {
-        "users": user_names,
-        "groups": group_names
+        "users": filter_entity_based_on_scopes(
+            scopes=user_scopes, entities=user_names
+        ),
+        "groups": filter_entity_based_on_scopes(
+            scopes=user_scopes, entities=group_names, entity_key="group"
+        )
     }
 
 
-def filter_users_based_on_scopes(scopes, users):
-    parsed_scopes = parse_scopes(user_scopes)
-    users_allowed_to_read = set()
-    for scope, parsed_scope in parsed_scopes.items():
-        if scope == "read:users:name" and isinstance(parsed_scope, dict):
-            users_allowed_to_read.update(parsed_scope.get("user"))
-        elif scope == "read:users:name" and parsed_scope == Scope.ALL:
-            pass
-
-# read:users:name
-user_scopes = [
-    "read:groups:shares!user=sumit",
-    "read:users!user=sumit",
-    "read:users:shares!user=sumit",
-    "read:users:name!user=sumit",
-    "read:users:name!user=aktech",
-    "read:services:name",
-    "access:servers!server=aktech/shared-9d5e435",
-    "read:shares!user=sumit",
-    "admin:auth_state",
-    "read:users:groups!user=sumit",
-    "access:services",
-    "read:servers!user=sumit",
-    "users:shares!user=sumit",
-    "access:servers!user=sumit",
-    "read:users:activity!user=sumit",
-    "read:groups:name",
-    "tokens!user=sumit",
-    "list:services",
-    "groups:shares!user=sumit",
-    "shares!user=sumit",
-    "delete:servers!user=sumit",
-    "users:activity!user=sumit",
-    "read:users:name!user=foo",
-    "read:tokens!user=sumit",
-    "servers!user=sumit",
-    "read:users:name!user=bar"
-]
-
-f = {'read:groups:shares': {'user': frozenset({'sumit'})},
- 'read:users': {'user': frozenset({'sumit'})},
- 'read:users:shares': {'user': frozenset({'sumit'})},
- 'read:users:name': {'user': frozenset({'aktech', 'bar', 'foo', 'sumit'})},
- 'read:services:name': <Scope.ALL: True>,
-'access:servers': {'server': frozenset({'aktech/shared-9d5e435'}),
-                   'user': frozenset({'sumit'})},
-'read:shares': {'user': frozenset({'sumit'})},
-'admin:auth_state': <Scope.ALL: True>,
-'read:users:groups': {'user': frozenset({'sumit'})},
-'access:services': <Scope.ALL: True>,
-'read:servers': {'user': frozenset({'sumit'})},
-'users:shares': {'user': frozenset({'sumit'})},
-'read:users:activity': {'user': frozenset({'sumit'})},
-'read:groups:name': <Scope.ALL: True>,
-'tokens': {'user': frozenset({'sumit'})},
-'list:services': <Scope.ALL: True>,
-'groups:shares': {'user': frozenset({'sumit'})},
-'shares': {'user': frozenset({'sumit'})},
-'delete:servers': {'user': frozenset({'sumit'})},
-'users:activity': {'user': frozenset({'sumit'})},
-'read:tokens': {'user': frozenset({'sumit'})},
-'servers': {'user': frozenset({'sumit'})}}
+def filter_entity_based_on_scopes(scopes, entities, entity_key="user"):
+    allowed_entities_to_read = set()
+    for entity in entities:
+        if has_scope(f'read:{entity_key}s:name!{entity_key}={entity}', expand_scopes(scopes)):
+            allowed_entities_to_read.add(entity)
+    return list(allowed_entities_to_read)
