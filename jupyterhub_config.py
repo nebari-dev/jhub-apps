@@ -67,9 +67,7 @@ for role in c.JupyterHub.load_roles:
     if role["name"] == "user":
         role["scopes"].extend([
             # Need scope 'read:users:name' to share with users by name
-            "read:users:name!user=aktech",
-            "read:users:name!user=foo",
-            "read:users:name!user=bar",
+            "read:users:name",
             # Need scope 'read:groups:name' to share with groups by name
             "read:groups:name",
         ] + ["shares!user"] if is_jupyterhub_5() else [])
