@@ -330,7 +330,8 @@ def filter_entity_based_on_scopes(scopes, entities, entity_key="user"):
     # only available in JupyterHub>=5
     from jupyterhub.scopes import has_scope, expand_scopes
     allowed_entities_to_read = set()
+    expanded_scopes = expand_scopes(scopes)
     for entity in entities:
-        if has_scope(f'read:{entity_key}s:name!{entity_key}={entity}', expand_scopes(scopes)):
+        if has_scope(f'read:{entity_key}s:name!{entity_key}={entity}', expanded_scopes):
             allowed_entities_to_read.add(entity)
     return list(allowed_entities_to_read)
