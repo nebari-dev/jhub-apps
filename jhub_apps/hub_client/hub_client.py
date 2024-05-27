@@ -304,7 +304,7 @@ class HubClient:
     @requires_user_token
     def get_user_scopes(self):
         assert self.token_json
-        assert self.token_json.get("scopes")
+        assert "scopes" in self.token_json
         return self.token_json["scopes"]
 
 
