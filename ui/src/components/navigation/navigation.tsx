@@ -226,13 +226,14 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
           </ListItemButton>
         </ListItem>
       </List>
-      <List>
+      <List sx={{ px: 1 }}>
         <ListItem disablePadding>
           <StyledListItemTextHeaderWithIcon
             primary="Services"
             disableTypography
             sx={{
-              pl: '40px',
+              px: '24px',
+              py: '4px',
               fontSize: '14px',
               textTransform: 'uppercase',
               fontWeight: 600,
@@ -248,7 +249,7 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
                 textDecoration: 'none',
                 display: 'block',
                 width: '100%',
-                paddingLeft: '40px',
+                px: '24px',
                 py: '4px',
                 color: '#000',
                 '&:hover': {
@@ -277,8 +278,7 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
                 textDecoration: 'none',
                 display: 'block',
                 width: '100%',
-                paddingLeft: '40px',
-                paddingRight: '8px',
+                px: '24px',
                 py: '4px',
                 color: '#000',
                 '&:hover': {
@@ -307,8 +307,7 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
                 textDecoration: 'none',
                 display: 'block',
                 width: '100%',
-                paddingLeft: '40px',
-                paddingRight: '8px',
+                px: '24px',
                 py: '4px',
                 color: '#000',
                 '&:hover': {
