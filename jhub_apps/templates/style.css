@@ -143,6 +143,8 @@ a:focus {
 .btn {
     font-family: var(--base-font-family) !important;
     font-weight: 400 !important;
+    border-radius: 4px !important;
+    padding: 6px 16px;
 }
 
 .btn-xs {
