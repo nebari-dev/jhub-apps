@@ -93,7 +93,9 @@ export const serverApps = {
       name: '',
       url: '/user/test',
       ready: true,
-      user_options: {},
+      user_options: {
+        profile: 'small1',
+      },
       last_activity: getMockDate(0),
     },
     {

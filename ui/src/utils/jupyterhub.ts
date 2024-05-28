@@ -117,6 +117,7 @@ export const getPinnedApps = (servers: any, username: string) => {
       name: 'JupyterLab',
       description: 'This is your default JupyterLab server.',
       framework: 'JupyterLab',
+      profile: defaultApp.user_options?.profile,
       url: getEncodedServerUrl(username, 'lab'),
       thumbnail: JUPYTER_LOGO,
       username: username,
