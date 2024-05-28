@@ -121,7 +121,6 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
 
   useEffect(() => {
     if (!appsLoading && appsData && currentUser) {
-      console.log('APPS DATA: ', appsData);
       setPinnedApps(() => getPinnedApps(appsData, currentUser.name));
     }
   }, [appsLoading, appsData, currentUser]);
