@@ -215,7 +215,6 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
                     fontWeight: 600,
                     lineHeight: '1.2',
                     position: 'relative',
-                    top: '3px',
                   }}
                 >
                   Home
@@ -245,6 +244,7 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
             <Link
               href={item.url}
               sx={{
+                borderRadius: '4px',
                 textDecoration: 'none',
                 display: 'block',
                 width: '100%',
@@ -253,6 +253,7 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
                 color: '#000',
                 '&:hover': {
                   backgroundColor: 'rgba(0, 0, 0, 0.04)',
+                  textDecoration: 'none',
                 },
               }}
             >
@@ -274,7 +275,8 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
             <Link
               href={item.url}
               sx={{
-                textDecoration: 'none',
+                borderRadius: '4px',
+                textDecoratioon: 'none',
                 display: 'block',
                 width: '100%',
                 px: '24px',
@@ -282,6 +284,7 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
                 color: '#000',
                 '&:hover': {
                   backgroundColor: 'rgba(0, 0, 0, 0.04)',
+                  textDecoration: 'none',
                 },
               }}
             >
@@ -303,6 +306,7 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
             <Link
               href={item.url}
               sx={{
+                borderRadius: '4px',
                 textDecoration: 'none',
                 display: 'block',
                 width: '100%',
@@ -311,6 +315,7 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
                 color: '#000',
                 '&:hover': {
                   backgroundColor: 'rgba(0, 0, 0, 0.04)',
+                  textDecoration: 'none',
                 },
               }}
             >
