@@ -9,6 +9,7 @@ import {
   getEncodedServerUrl,
   getFriendlyDateStr,
   getFriendlyDisplayName,
+  getFriendlyEnvironmentVariables,
   getFriendlyFrameworkName,
   getJhData,
   getServices,
@@ -151,6 +152,17 @@ describe('JupyterHub utils', () => {
       new Date(currentDate.setHours(currentDate.getHours() - 120)),
     );
     expect(result).toBe('5 days ago');
+  });
+
+  test('returns environment variables as JSON object', () => {
+    const env = { key: 'value' };
+    const result = getFriendlyEnvironmentVariables(env);
+    expect(result).toEqual(env);
+  });
+
+  test('returns null when no environment variables', () => {
+    const result = getFriendlyEnvironmentVariables(null);
+    expect(result).toBeNull();
   });
 
   test('gets app theme url window object', () => {

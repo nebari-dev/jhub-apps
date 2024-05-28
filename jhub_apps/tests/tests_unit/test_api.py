@@ -7,7 +7,7 @@ import pytest
 from jhub_apps.hub_client.hub_client import HubClient
 from jhub_apps.service.utils import get_shared_servers
 from jhub_apps.spawner.types import FRAMEWORKS
-from jhub_apps.tests.constants import MOCK_USER
+from jhub_apps.tests.common.constants import MOCK_USER
 
 
 def mock_user_options():
