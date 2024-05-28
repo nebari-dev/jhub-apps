@@ -24,7 +24,8 @@ def requires_user_token(func):
     """
     @wraps(func)
     def wrapper(self, *args, **kwargs):
-        token_id = self._create_token_for_user()
+        response_json = self._create_token_for_user()
+        token_id = response_json["id"]
         try:
             original_method_return = func(self, *args, **kwargs)
         except Exception as e:
@@ -39,6 +40,7 @@ class HubClient:
     def __init__(self, username=None):
         self.username = username
         self.tokens = [JUPYTERHUB_API_TOKEN]
+        self.token_json = None
         self.jhub_apps_request_id = None
         self._set_request_id()
 
@@ -74,9 +76,10 @@ class HubClient:
         # for e.g. When func_a calls func_b and both have the decorator "requires_user_token"
         # The func_a on completing execution will only clear the token, which the decorator
         # requires_user_token created for it, not the token created for func_a
+        self.token_json = rjson
         self.tokens.append(rjson["token"])
         logger.info(f"Created token: {rjson['id']}")
-        return rjson["id"]
+        return rjson
 
     def _revoke_token(self, token_id):
         assert self.username
@@ -298,17 +301,37 @@ class HubClient:
         r.raise_for_status()
         return r.json()
 
+    @requires_user_token
+    def get_user_scopes(self):
+        assert self.token_json
+        assert "scopes" in self.token_json
+        return self.token_json["scopes"]
+
 
 def get_users_and_group_allowed_to_share_with(user):
     """Returns a list of users and groups"""
-    hclient = HubClient()
+    hclient = HubClient(username=user.name)
     users = hclient.get_users()
     user_names = [u["name"] for u in users if u["name"] != user.name]
     groups = hclient.get_groups()
     group_names = [group['name'] for group in groups]
-    # TODO: Filter users and groups based on what the user has access to share with
-    # parsed_scopes = parse_scopes(scopes)
+    user_scopes = hclient.get_user_scopes()
     return {
-        "users": user_names,
-        "groups": group_names
+        "users": filter_entity_based_on_scopes(
+            scopes=user_scopes, entities=user_names
+        ),
+        "groups": filter_entity_based_on_scopes(
+            scopes=user_scopes, entities=group_names, entity_key="group"
+        )
     }
+
+
+def filter_entity_based_on_scopes(scopes, entities, entity_key="user"):
+    # only available in JupyterHub>=5
+    from jupyterhub.scopes import has_scope, expand_scopes
+    allowed_entities_to_read = set()
+    expanded_scopes = expand_scopes(scopes)
+    for entity in entities:
+        if has_scope(f'read:{entity_key}s:name!{entity_key}={entity}', expanded_scopes):
+            allowed_entities_to_read.add(entity)
+    return list(allowed_entities_to_read)
