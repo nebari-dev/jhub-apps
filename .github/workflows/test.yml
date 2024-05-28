@@ -3,8 +3,18 @@ name: Test
 on:
   pull_request:
     branches: [main]
+    paths:
+      - ui/*
+      - jhub_apps/*
+      - docker/*
+      - .github/workflows/test-integration.yml
   push:
     branches: [main]
+    paths:
+      - ui/*
+      - jhub_apps/*
+      - docker/*
+      - .github/workflows/test-integration.yml
 
 jobs:
   test:
