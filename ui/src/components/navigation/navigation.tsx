@@ -236,7 +236,7 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
               fontSize: '14px',
               textTransform: 'uppercase',
               fontWeight: 600,
-              color: '#6F7073',
+              color: 'rgba(15 16 21 / 60%)',
             }}
           />
         </ListItem>
@@ -251,7 +251,7 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
                 width: '100%',
                 px: '24px',
                 py: '4px',
-                color: '#000',
+                color: 'rgb(15 16 21 / 87%)',
                 '&:hover': {
                   backgroundColor: 'rgba(0, 0, 0, 0.04)',
                   textDecoration: 'none',
@@ -262,7 +262,7 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
                 primary={
                   <Typography
                     variant="body2"
-                    sx={{ fontSize: '1rem', color: '#000000' }}
+                    sx={{ fontSize: '1rem', color: 'rgb(15 16 21 / 87%)' }}
                   >
                     {item.name}
                   </Typography>
@@ -282,7 +282,7 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
                 width: '100%',
                 px: '24px',
                 py: '4px',
-                color: '#000',
+                color: 'rgb(15 16 21 / 87%)',
                 '&:hover': {
                   backgroundColor: 'rgba(0, 0, 0, 0.04)',
                   textDecoration: 'none',
@@ -293,7 +293,7 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
                 primary={
                   <Typography
                     variant="body2"
-                    sx={{ fontSize: '1rem', color: '#000000' }}
+                    sx={{ fontSize: '1rem', color: 'rgb(15 16 21 / 87%)' }}
                   >
                     {item.name}
                   </Typography>
@@ -313,7 +313,7 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
                 width: '100%',
                 px: '24px',
                 py: '4px',
-                color: '#000',
+                color: 'rgb(15 16 21 / 87%)',
                 '&:hover': {
                   backgroundColor: 'rgba(0, 0, 0, 0.04)',
                   textDecoration: 'none',
@@ -324,7 +324,7 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
                 primary={
                   <Typography
                     variant="body2"
-                    sx={{ fontSize: '1rem', color: '#000000' }}
+                    sx={{ fontSize: '1rem', color: 'rgb(15 16 21 / 87%)' }}
                   >
                     {item.name}
                   </Typography>
