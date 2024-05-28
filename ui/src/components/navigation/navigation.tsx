@@ -215,6 +215,7 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
                     fontWeight: 600,
                     lineHeight: '1.2',
                     position: 'relative',
+                    top: '2px',
                   }}
                 >
                   Home
@@ -276,7 +277,7 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
               href={item.url}
               sx={{
                 borderRadius: '4px',
-                textDecoratioon: 'none',
+                textDecoration: 'none',
                 display: 'block',
                 width: '100%',
                 px: '24px',
