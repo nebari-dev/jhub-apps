@@ -175,6 +175,7 @@ export const AppsSection = (): React.ReactElement => {
                     id="create-app"
                     variant="contained"
                     color="primary"
+                    size="large"
                     startIcon={<AddIcon />}
                     onClick={() => {
                       window.location.href = `${API_BASE_URL}/create-app`;

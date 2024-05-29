@@ -28,10 +28,6 @@
   margin: 0 0 16px 0;
 }
 
-.form-breadcrumb > button {
-  width: 50px;
-}
-
 @media screen and (max-width: 768px) {
   .form {
     max-width: unset;
