@@ -156,24 +156,19 @@ export const theme = createTheme(baseTheme, {
         {
           props: { variant: 'contained', color: 'primary' },
           style: {
-            minWidth: '120px',
             backgroundColor: `${purple}`,
-            border: `1px solid ${purple}`,
             fontWeight: 700,
             '&:hover': {
               backgroundColor: `${purpleDark}`,
-              border: `1px solid ${purpleDark}`,
             },
             '&:disabled': {
               color: disabled,
-              borderColor: 'transparent',
             },
           },
         },
         {
           props: { variant: 'contained', color: 'secondary' },
           style: {
-            minWidth: '120px',
             backgroundColor: gray[200],
             border: `1px solid ${gray[200]}`,
             color: black,
@@ -189,9 +184,14 @@ export const theme = createTheme(baseTheme, {
           },
         },
         {
+          props: { variant: 'contained', color: 'error' },
+          style: {
+            fontWeight: 600,
+          },
+        },
+        {
           props: { variant: 'outlined', color: 'primary' },
           style: {
-            minWidth: '120px',
             backgroundColor: white,
             border: `2px solid ${purple}`,
             color: `${purple}`,
@@ -208,7 +208,6 @@ export const theme = createTheme(baseTheme, {
         {
           props: { variant: 'outlined', color: 'secondary' },
           style: {
-            minWidth: '120px',
             backgroundColor: white,
             border: `2px solid ${green}`,
             color: `${green}`,
@@ -240,7 +239,6 @@ export const theme = createTheme(baseTheme, {
         {
           props: { variant: 'text', color: 'secondary' },
           style: {
-            minWidth: '100px',
             color: black,
             '&:hover': {
               backgroundColor: `${gray[50]}`,

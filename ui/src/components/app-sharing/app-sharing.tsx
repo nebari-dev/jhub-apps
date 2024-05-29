@@ -230,7 +230,7 @@ export const AppSharing = ({
                     disableCloseOnSelect
                     clearOnBlur
                     limitTags={2}
-                    sx={{ width: 470 }}
+                    sx={{ width: 510 }}
                     renderInput={(params) => (
                       <TextField
                         {...params}
@@ -263,7 +263,7 @@ export const AppSharing = ({
                     color="primary"
                     onClick={handleShare}
                     disabled={currentShare.length === 0}
-                    sx={{ height: '42px' }}
+                    sx={{ height: '42px', px: '22px', py: '8px' }}
                   >
                     Share
                   </Button>

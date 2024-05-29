@@ -153,7 +153,7 @@ export const Home = (): React.ReactElement => {
           id="cancel-btn"
           data-testid="cancel-btn"
           variant="text"
-          color="secondary"
+          color="primary"
           onClick={() => setIsStartOpen(false)}
         >
           Cancel
@@ -181,7 +181,7 @@ export const Home = (): React.ReactElement => {
         <Button
           id="cancel-btn"
           variant="text"
-          color="secondary"
+          color="primary"
           onClick={() => setIsStopOpen(false)}
         >
           Cancel
@@ -210,7 +210,7 @@ export const Home = (): React.ReactElement => {
           id="cancel-btn"
           data-testid="cancel-btn"
           variant="text"
-          color="secondary"
+          color="primary"
           onClick={() => setIsDeleteOpen(false)}
         >
           Cancel
@@ -220,7 +220,7 @@ export const Home = (): React.ReactElement => {
           id="delete-btn"
           data-testid="delete-btn"
           variant="contained"
-          color="primary"
+          color="error"
           onClick={handleDelete}
           disabled={submitting}
         >
