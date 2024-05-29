@@ -3,6 +3,7 @@ import { Chip, IconButton } from '@mui/material';
 import { JhApp } from '@src/types/jupyterhub';
 import { useRecoilState } from 'recoil';
 import { currentApp, isStopOpen } from '../../store';
+import './status-chip.css';
 
 interface StatusChipProps {
   status: string;
@@ -58,7 +59,10 @@ export const StatusChip = ({
         <>
           {app && !app.shared ? (
             <>
-              <span style={{ position: 'relative', top: '1px', left: '2px' }}>
+              <span
+                className="chip-label-info"
+                style={{ position: 'relative', top: '1px' }}
+              >
                 {status} on {additionalInfo}
               </span>
               <IconButton
@@ -72,7 +76,8 @@ export const StatusChip = ({
                 sx={{
                   pl: 0,
                   position: 'relative',
-                  left: '12px',
+                  top: 0,
+                  left: '6px',
                 }}
                 color="inherit"
                 disabled={app.shared}
@@ -96,8 +101,17 @@ export const StatusChip = ({
   return (
     <Chip
       label={getLabel()}
+      className={
+        status !== 'Running' || !additionalInfo || app?.shared
+          ? 'chip-base'
+          : ''
+      }
       size={size}
-      sx={{ fontWeight: 600, fontSize: '12px', ...getStatusStyles(status) }}
+      sx={{
+        fontWeight: 600,
+        fontSize: '12px',
+        ...getStatusStyles(status),
+      }}
     />
   );
 };
