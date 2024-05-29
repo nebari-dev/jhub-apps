@@ -207,7 +207,7 @@ export const AppCard = ({
             ) : (
               <></>
             )}
-            <CardMedia>
+            {/* <CardMedia>
               {thumbnail ? (
                 <div
                   className={isAppCard ? 'img-overlay' : 'img-overlay-service'}
@@ -217,6 +217,15 @@ export const AppCard = ({
               ) : (
                 <></>
               )}
+            </CardMedia> */}
+            <CardMedia>
+              <div
+                className={
+                  isAppCard && thumbnail ? 'img-overlay' : 'img-overlay-service'
+                }
+              >
+                {thumbnail && <img src={thumbnail} alt="App thumb" />}
+              </div>
             </CardMedia>
           </div>
           <div className="card-content-content">

@@ -167,7 +167,7 @@ export const serverApps = {
         display_name: 'TEST App 3',
         description:
           'Lorem ipsum dolor sit amet consectetur. Sit vestibulum facilisis auctor pulvinar ac. Dras. Id consectetur purus ut faucibus.',
-        thumbnail: DEFAULT_APP_LOGO,
+        // thumbnail: DEFAULT_APP_LOGO,
         framework: 'jupyterlab',
         conda_env: 'env-1',
         profile: 'small0',
