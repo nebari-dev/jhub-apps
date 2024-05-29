@@ -203,3 +203,9 @@
     width: 100%;
   }
 }
+
+@media screen and (min-width: 382px) {
+  .card {
+    margin-bottom: 1.5rem;
+  }
+}

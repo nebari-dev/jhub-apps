@@ -295,7 +295,6 @@ export const AppCard = ({
             ) : (
               <Box className="card-content-container app-service no-hover">
                 <CardContent className="card-inner-content">
-                  <span className="inline relative iconic">{getIcon()}</span>
                   <Typography
                     gutterBottom
                     variant="h5"

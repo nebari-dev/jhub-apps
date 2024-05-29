@@ -335,9 +335,7 @@ export const AppFilters = ({
                 fontWeight: 400,
                 color: 'common.black',
               }}
-            >
-              Sort by:
-            </FormLabel>
+            ></FormLabel>
             <Button
               id="sort-by-btn"
               variant="text"

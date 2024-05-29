@@ -133,7 +133,7 @@ export const AppsSection = (): React.ReactElement => {
             <Grid container spacing={2}>
               <Grid item xs={12} md={4}>
                 <Item>
-                  <h2>Apps</h2>
+                  <h2>Apps Library</h2>
                 </Item>
               </Grid>
               <Grid
@@ -159,12 +159,29 @@ export const AppsSection = (): React.ReactElement => {
                     onBlur={() => setFocused(false)}
                     sx={{
                       width: { sm: '200px', md: '300px', lg: '600px' },
-                      pr: '16px',
+                      mr: '16px',
+                      color: 'rgba(15, 16, 21, 0.56)',
+                      backgroundColor: '#fff',
+                      '& .MuiOutlinedInput-root': {
+                        '& fieldset': {
+                          borderColor: 'rgba(15, 16, 21, 0.12)',
+                        },
+                        '&:hover fieldset': {
+                          borderColor: 'rgba(15, 16, 21, 0.56)',
+                        },
+                        '&.Mui-focused fieldset': {
+                          borderColor: 'rgba(15, 16, 21, 0.56)',
+                        },
+                      },
                     }}
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
-                          {!focused && <SearchIcon />}
+                          {!focused && (
+                            <SearchIcon
+                              style={{ fill: 'rgba(15, 16, 21, 0.56)' }}
+                            />
+                          )}
                         </InputAdornment>
                       ),
                     }}
