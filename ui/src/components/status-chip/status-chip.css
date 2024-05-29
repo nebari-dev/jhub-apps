@@ -1,0 +1,7 @@
+.card-content-header .chip-container span.MuiChip-label {
+  padding-right: 2px;
+}
+
+.card-content-header .chip-container .chip-base span.MuiChip-label {
+  padding-right: 8px;
+}

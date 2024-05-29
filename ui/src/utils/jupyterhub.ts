@@ -89,18 +89,12 @@ export const getApps = (
       const app = server.user_options;
       const appStatus = getAppStatus(server);
       filteredApps.push({
+        ...app,
+        ...server,
         id: app.name,
         name: app.display_name,
-        description: app.description,
         framework: getFriendlyFrameworkName(app.framework),
-        url: server.url,
-        thumbnail: app.thumbnail,
         username: server.username || username,
-        ready: server.ready,
-        pending: server.pending,
-        stopped: server.stopped,
-        public: app.public,
-        shared: server.shared,
         last_activity: server.last_activity,
         status: appStatus,
       });
@@ -123,6 +117,7 @@ export const getPinnedApps = (servers: any, username: string) => {
       name: 'JupyterLab',
       description: 'This is your default JupyterLab server.',
       framework: 'JupyterLab',
+      profile: defaultApp.user_options?.profile,
       url: getEncodedServerUrl(username, 'lab'),
       thumbnail: JUPYTER_LOGO,
       username: username,
