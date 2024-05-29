@@ -11,12 +11,14 @@ import Typography from '@mui/material/Typography';
 import { StatusChip } from '@src/components';
 import { API_BASE_URL } from '@src/utils/constants';
 
+import { AppProfileProps } from '@src/types/api';
 import { JhApp } from '@src/types/jupyterhub';
 import React, { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import {
   currentApp,
   currentNotification,
+  currentProfiles as defaultProfiles,
   isDeleteOpen,
   isStartOpen,
   isStopOpen,
@@ -56,6 +58,7 @@ export const AppCard = ({
   app,
 }: AppCardProps): React.ReactElement => {
   const [appStatus, setAppStatus] = useState('');
+  const [currentProfiles] = useRecoilState<AppProfileProps[]>(defaultProfiles);
   const [, setCurrentApp] = useRecoilState<JhApp | undefined>(currentApp);
   const [, setNotification] = useRecoilState<string | undefined>(
     currentNotification,
@@ -169,6 +172,10 @@ export const AppCard = ({
     }
   };
 
+  const getProfileData = (profile: string) => {
+    return currentProfiles.find((p) => p.slug === profile)?.display_name || '';
+  };
+
   return (
     <Box
       className={`card ${isAppCard ? '' : 'service'}`}
@@ -184,7 +191,11 @@ export const AppCard = ({
               <>
                 <div className="chip-container">
                   <div className="menu-chip">
-                    <StatusChip status={appStatus} />
+                    <StatusChip
+                      status={appStatus}
+                      additionalInfo={getProfileData(app?.profile || '')}
+                      app={app}
+                    />
                   </div>
                 </div>
                 <ContextMenu
