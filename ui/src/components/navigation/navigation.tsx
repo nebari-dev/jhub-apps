@@ -177,7 +177,7 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
                 top: 0,
                 bottom: 0,
                 width: '8px',
-                backgroundColor: '#BA18DA',
+                backgroundColor: theme.palette.primary.main,
                 borderTopLeftRadius: '8px',
                 borderBottomLeftRadius: '8px',
               },

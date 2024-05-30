@@ -326,16 +326,6 @@ export const AppFilters = ({
               flexDirection: 'row',
             }}
           >
-            <SortRounded sx={{ position: 'relative', marginRight: '4px' }} />
-            <FormLabel
-              id="sort-by-label"
-              sx={{
-                fontSize: '16px',
-                pr: '6px',
-                fontWeight: 400,
-                color: 'common.black',
-              }}
-            ></FormLabel>
             <Button
               id="sort-by-btn"
               variant="text"
@@ -359,6 +349,7 @@ export const AppFilters = ({
                 )
               }
             >
+              <SortRounded sx={{ position: 'relative', marginRight: '4px' }} />
               {currentSortValue}
             </Button>
             <Menu

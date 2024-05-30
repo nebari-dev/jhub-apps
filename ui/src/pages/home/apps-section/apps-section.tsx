@@ -27,7 +27,6 @@ import { Item } from '../../../styles/styled-item';
 import { AppFilters } from './app-filters/app-filters';
 import { AppGrid } from './app-grid/app-grid';
 import { AppTable } from './app-table/app-table';
-import './apps-section.css';
 
 export const AppsSection = (): React.ReactElement => {
   const [apps, setApps] = useState<JhApp[]>([]);
@@ -131,13 +130,14 @@ export const AppsSection = (): React.ReactElement => {
       <Box>
         <Stack>
           <Item>
-            <Grid container spacing={2} className="search-grid">
-              <Grid item xs={12} md={4}>
+            <Grid container spacing={2} alignItems="center">
+              <Grid item xs={12} md={4} sx={{ padding: '0' }}>
                 <Item>
                   <h2>App Library</h2>
                 </Item>
               </Grid>
               <Grid
+                alignItems="center"
                 container
                 item
                 xs={12}
@@ -159,6 +159,7 @@ export const AppsSection = (): React.ReactElement => {
                     onFocus={() => setFocused(true)}
                     onBlur={() => setFocused(false)}
                     sx={{
+                      my: '0',
                       width: { sm: '200px', md: '300px', lg: '600px' },
                       mr: '16px',
                       color: 'rgba(15, 16, 21, 0.56)',
