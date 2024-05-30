@@ -121,7 +121,7 @@ export const ContextMenu = ({
               key={`menu-item-${item.id}`}
               sx={{
                 fontSize: '12px',
-                color: 'inherit',
+                color: item.danger ? theme.palette.error.main : 'inherit',
               }}
               onClick={(e) => {
                 if (!item.disabled && item.onClick) {

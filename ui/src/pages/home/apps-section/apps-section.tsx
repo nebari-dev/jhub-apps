@@ -27,6 +27,7 @@ import { Item } from '../../../styles/styled-item';
 import { AppFilters } from './app-filters/app-filters';
 import { AppGrid } from './app-grid/app-grid';
 import { AppTable } from './app-table/app-table';
+import './apps-section.css';
 
 export const AppsSection = (): React.ReactElement => {
   const [apps, setApps] = useState<JhApp[]>([]);
@@ -130,10 +131,10 @@ export const AppsSection = (): React.ReactElement => {
       <Box>
         <Stack>
           <Item>
-            <Grid container spacing={2}>
+            <Grid container spacing={2} className="search-grid">
               <Grid item xs={12} md={4}>
                 <Item>
-                  <h2>Apps Library</h2>
+                  <h2>App Library</h2>
                 </Item>
               </Grid>
               <Grid
@@ -165,12 +166,15 @@ export const AppsSection = (): React.ReactElement => {
                       '& .MuiOutlinedInput-root': {
                         '& fieldset': {
                           borderColor: 'rgba(15, 16, 21, 0.12)',
+                          borderWidth: '1px',
                         },
                         '&:hover fieldset': {
                           borderColor: 'rgba(15, 16, 21, 0.56)',
+                          borderWidth: '1px',
                         },
                         '&.Mui-focused fieldset': {
-                          borderColor: 'rgba(15, 16, 21, 0.56)',
+                          borderColor: '#ba18da',
+                          borderWidth: '1px',
                         },
                       },
                     }}
