@@ -116,6 +116,11 @@ a {
   font-weight: 700;
 }
 
+/* Misc */
+#search {
+  padding: 10px 12px;
+}
+
 @media only screen and (min-width: 1537px) {
   .grid-spacer {
     width: 1460px;
@@ -156,7 +161,7 @@ a {
   }
 
   #create-app {
-    width: 120px;
+    width: 150px;
   }
 }
 
@@ -177,6 +182,6 @@ a {
   }
 
   #create-app {
-    width: 120px;
+    width: 150px;
   }
 }

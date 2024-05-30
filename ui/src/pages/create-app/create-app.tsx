@@ -22,7 +22,7 @@ export const CreateApp = (): React.ReactElement => {
               startIcon={<ArrowBackIcon />}
               onClick={() => navigateToUrl(APP_BASE_URL)}
             >
-              Back
+              Back To Home
             </Button>
           </div>
         </Item>

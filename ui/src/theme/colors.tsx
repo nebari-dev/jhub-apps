@@ -12,10 +12,10 @@ export const blue = {
 };
 
 export const gray = {
-  50: '#F7F8F8',
+  50: '#0F10150A',
   100: '#E1E3E4',
-  200: '#C3C7CB',
-  300: '#A6ACB2',
+  200: '#EEEEEE',
+  300: '#E0E0E0',
   400: '#90969C',
   500: '#5B5F63',
   600: '#44474A',
@@ -38,4 +38,6 @@ export const orange = '#F66A0A';
 
 export const white = '#FFFFFF';
 
-export const black = '#0F1015';
+export const black = '#0F1015DE';
+
+export const disabled = '#0F101561';

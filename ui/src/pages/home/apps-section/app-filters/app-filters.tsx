@@ -135,7 +135,7 @@ export const AppFilters = ({
         <Item sx={{ pb: 0 }}>
           <StyledFilterButton
             id="filters-btn"
-            variant="outlined"
+            variant="text"
             color="secondary"
             onClick={(event) => setFiltersAnchorEl(event.currentTarget)}
             startIcon={<FilterAltRoundedIcon />}
