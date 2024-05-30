@@ -18,10 +18,10 @@ export default defineConfig({
       writeBundle() {
         exec('./build-and-copy.sh', (error) => {
           if (error) {
-            console.error(`exec error: ${error}`);
+            console.error(`Build error: ${error}`);
             return;
           }
-          console.log(`[success] Build and copy complete.`);
+          console.log(`Build and copy complete.`);
         });
       },
     },
