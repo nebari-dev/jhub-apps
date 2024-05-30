@@ -72,7 +72,7 @@ describe('Home', () => {
     const { getByText } = render(componentWrapper);
     await act(async () => {
       expect(getByText('Quick Access')).toBeTruthy();
-      expect(getByText('Apps Library')).toBeTruthy();
+      expect(getByText('App Library')).toBeTruthy();
     });
   });
 
