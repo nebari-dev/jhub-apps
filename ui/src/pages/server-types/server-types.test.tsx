@@ -228,7 +228,7 @@ describe('ServerTypes', () => {
     await act(async () => {
       btn.click();
     });
-    expect(window.location.pathname).toBe('/create-app');
+    expect(window.location.pathname).toBe('/');
   });
 
   test('clicks back to edit app', async () => {
@@ -253,7 +253,7 @@ describe('ServerTypes', () => {
     await act(async () => {
       btn.click();
     });
-    expect(window.location.pathname).toBe('/edit-app');
+    expect(window.location.pathname).toBe('/');
     mockSearchParamsGet.mockRestore();
   });
 

@@ -214,11 +214,9 @@ export const ServerTypes = (): React.ReactElement => {
               variant="text"
               color="primary"
               startIcon={<ArrowBackIcon />}
-              onClick={() =>
-                navigate(id ? `/edit-app?id=${id}` : '/create-app')
-              }
+              onClick={() => navigateToUrl(APP_BASE_URL)}
             >
-              Back
+              Back To Home
             </Button>
           </div>
         </Item>
@@ -283,10 +281,12 @@ export const ServerTypes = (): React.ReactElement => {
                     id="cancel-btn"
                     type="button"
                     variant="text"
-                    color="secondary"
-                    onClick={() => navigateToUrl(APP_BASE_URL)}
+                    color="primary"
+                    onClick={() =>
+                      navigate(id ? `/edit-app?id=${id}` : '/create-app')
+                    }
                   >
-                    Cancel
+                    Back
                   </Button>
                 </div>
                 <div className="next">

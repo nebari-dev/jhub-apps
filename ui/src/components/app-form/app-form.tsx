@@ -671,7 +671,7 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
             id="cancel-btn"
             type="button"
             variant="text"
-            color="secondary"
+            color="primary"
             onClick={() => navigateToUrl(`${APP_BASE_URL}`)}
           >
             Cancel

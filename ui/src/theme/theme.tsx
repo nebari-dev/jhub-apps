@@ -4,6 +4,7 @@ import { PaletteColorOptions } from '@mui/material/styles';
 import {
   black,
   blue,
+  disabled,
   gray,
   green,
   greenDark,
@@ -155,39 +156,58 @@ export const theme = createTheme(baseTheme, {
         {
           props: { variant: 'contained', color: 'primary' },
           style: {
-            minWidth: '120px',
             backgroundColor: `${purple}`,
-            border: `1px solid ${purple}`,
             fontWeight: 700,
             '&:hover': {
               backgroundColor: `${purpleDark}`,
             },
             '&:disabled': {
-              borderColor: 'transparent',
+              color: disabled,
             },
           },
         },
         {
           props: { variant: 'contained', color: 'secondary' },
           style: {
-            minWidth: '120px',
-            backgroundColor: gray[100],
-            border: `1px solid ${gray[100]}`,
-            color: gray[700],
-            fontWeight: 700,
+            backgroundColor: gray[200],
+            border: `1px solid ${gray[200]}`,
+            color: black,
+            fontWeight: 600,
             '&:hover': {
-              backgroundColor: white,
-              filter: 'brightness(0.96)',
+              backgroundColor: gray[300],
+              border: `1px solid ${gray[300]}`,
             },
             '&:disabled': {
+              color: disabled,
               borderColor: 'transparent',
+            },
+          },
+        },
+        {
+          props: { variant: 'contained', color: 'error' },
+          style: {
+            fontWeight: 600,
+          },
+        },
+        {
+          props: { variant: 'outlined', color: 'primary' },
+          style: {
+            backgroundColor: white,
+            border: `2px solid ${purple}`,
+            color: `${purple}`,
+            fontWeight: 700,
+            textTransform: 'none',
+            '&:hover': {
+              backgroundColor: white,
+              borderWidth: 2,
+              border: `2px solid ${purple}`,
+              color: `${purple}`,
             },
           },
         },
         {
           props: { variant: 'outlined', color: 'secondary' },
           style: {
-            minWidth: '120px',
             backgroundColor: white,
             border: `2px solid ${green}`,
             color: `${green}`,
@@ -205,18 +225,29 @@ export const theme = createTheme(baseTheme, {
           props: { variant: 'text', color: 'primary' },
           style: {
             color: `${purple}`,
+            '&:hover': {
+              backgroundColor: `${purpleLight}`,
+            },
             '&:focus': {
               backgroundColor: `${purpleLight}`,
+            },
+            '&:disabled': {
+              color: disabled,
             },
           },
         },
         {
           props: { variant: 'text', color: 'secondary' },
           style: {
-            minWidth: '100px',
-            color: gray[500],
+            color: black,
+            '&:hover': {
+              backgroundColor: `${gray[50]}`,
+            },
             '&:focus': {
-              backgroundColor: `${gray[100]}`,
+              backgroundColor: `${gray[50]}`,
+            },
+            '&:disabled': {
+              color: disabled,
             },
           },
         },
