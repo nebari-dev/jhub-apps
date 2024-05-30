@@ -8,7 +8,7 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "build:dev": "tsc && NODE_ENV=development vite build --mode development",
-    "buildCopy": "./build-and-copy.sh",
+    "watch": "tsc && vite build --watch",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "format": "npx prettier src --write",
