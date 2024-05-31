@@ -26,6 +26,16 @@ declare module '@mui/material/styles' {
     accent?: PaletteColorOptions;
   }
 
+  interface Palette {
+    accent: PaletteColor;
+    gray: PaletteColor;
+  }
+
+  interface PaletteOptions {
+    accent?: PaletteColorOptions;
+    gray?: PaletteColorOptions; // Add thi
+  }
+
   interface PaletteColor {
     50: string;
     100: string;

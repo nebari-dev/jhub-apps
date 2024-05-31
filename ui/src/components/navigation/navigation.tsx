@@ -182,9 +182,9 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
                 borderBottomLeftRadius: '8px',
               },
               '&:hover': {
-                backgroundColor: '#E0E0E0',
+                backgroundColor: theme.palette.gray.light,
                 '&::before': {
-                  backgroundColor: '#BA18DA',
+                  backgroundColor: theme.palette.primary.main,
                 },
               },
             }}
