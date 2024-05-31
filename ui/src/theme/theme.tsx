@@ -122,6 +122,8 @@ export const theme = createTheme(baseTheme, {
     }),
     gray: baseTheme.palette.augmentColor({
       color: {
+        lightest: gray[100],
+        lighter: gray[200],
         light: gray[300],
         main: gray[500],
         dark: gray[700],

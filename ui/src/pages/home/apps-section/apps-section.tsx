@@ -167,15 +167,15 @@ export const AppsSection = (): React.ReactElement => {
                       '& .MuiOutlinedInput-root': {
                         '& fieldset': {
                           borderColor: 'rgba(15, 16, 21, 0.12)',
-                          borderWidth: '1px',
+                          // borderWidth: '1px',
                         },
                         '&:hover fieldset': {
                           borderColor: 'rgba(15, 16, 21, 0.56)',
-                          borderWidth: '1px',
+                          // borderWidth: '1px',
                         },
                         '&.Mui-focused fieldset': {
                           borderColor: '#ba18da',
-                          borderWidth: '1px',
+                          // borderWidth: '1px',
                         },
                       },
                     }}
@@ -232,7 +232,7 @@ export const AppsSection = (): React.ReactElement => {
                 flexDirection: 'row',
                 flexWrap: 'wrap',
                 gap: 2,
-                rowGap: 3,
+                rowGap: 2,
                 justifyContent: 'flex-start',
                 paddingBottom: '48px',
               }}
