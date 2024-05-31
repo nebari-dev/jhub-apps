@@ -22,6 +22,7 @@ import {
 } from '../../../src/store';
 import { Item } from '../../styles/styled-item';
 import { AppsSection } from './apps-section/apps-section';
+import './home.css';
 import { ServicesSection } from './services-section/services-section';
 
 export const Home = (): React.ReactElement => {
@@ -234,7 +235,7 @@ export const Home = (): React.ReactElement => {
       <Grid container spacing={2} paddingBottom="32px">
         <Grid item xs={12} md={2}>
           <Item>
-            <h1>Home</h1>
+            <h1 className="h5">Home</h1>
           </Item>
         </Grid>
       </Grid>

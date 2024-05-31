@@ -71,8 +71,8 @@ describe('Home', () => {
   test('should render ServicesGrid and AppsGrid', async () => {
     const { getByText } = render(componentWrapper);
     await act(async () => {
-      expect(getByText('Services')).toBeTruthy();
-      expect(getByText('Apps')).toBeTruthy();
+      expect(getByText('Quick Access')).toBeTruthy();
+      expect(getByText('App Library')).toBeTruthy();
     });
   });
 

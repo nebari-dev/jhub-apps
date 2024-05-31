@@ -38,6 +38,8 @@ export const orange = '#F66A0A';
 
 export const white = '#FFFFFF';
 
-export const black = '#0F1015DE';
+export const black = '#0F1015';
 
 export const disabled = '#0F101561';
+
+export const grayLighter = gray[100];

@@ -130,13 +130,14 @@ export const AppsSection = (): React.ReactElement => {
       <Box>
         <Stack>
           <Item>
-            <Grid container spacing={2}>
-              <Grid item xs={12} md={4}>
+            <Grid container spacing={2} alignItems="center">
+              <Grid item xs={12} md={4} sx={{ padding: '0' }}>
                 <Item>
-                  <h2>Apps</h2>
+                  <h2>App Library</h2>
                 </Item>
               </Grid>
               <Grid
+                alignItems="center"
                 container
                 item
                 xs={12}
@@ -158,13 +159,31 @@ export const AppsSection = (): React.ReactElement => {
                     onFocus={() => setFocused(true)}
                     onBlur={() => setFocused(false)}
                     sx={{
+                      my: '0',
                       width: { sm: '200px', md: '300px', lg: '600px' },
-                      pr: '16px',
+                      mr: '16px',
+                      color: 'rgba(15, 16, 21, 0.56)',
+                      backgroundColor: '#fff',
+                      '& .MuiOutlinedInput-root': {
+                        '& fieldset': {
+                          borderColor: 'rgba(15, 16, 21, 0.12)',
+                        },
+                        '&:hover fieldset': {
+                          borderColor: 'rgba(15, 16, 21, 0.56)',
+                        },
+                        '&.Mui-focused fieldset': {
+                          borderColor: '#ba18da',
+                        },
+                      },
                     }}
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
-                          {!focused && <SearchIcon />}
+                          {!focused && (
+                            <SearchIcon
+                              style={{ fill: 'rgba(15, 16, 21, 0.56)' }}
+                            />
+                          )}
                         </InputAdornment>
                       ),
                     }}
@@ -210,7 +229,7 @@ export const AppsSection = (): React.ReactElement => {
                 flexDirection: 'row',
                 flexWrap: 'wrap',
                 gap: 2,
-                rowGap: 3,
+                rowGap: 2,
                 justifyContent: 'flex-start',
                 paddingBottom: '48px',
               }}

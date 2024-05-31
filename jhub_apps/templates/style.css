@@ -454,6 +454,10 @@ a:focus {
     color: var(--navbar-text-color) !important;
 }
 
+.MuiListItemButton-root::before  {
+    background-color: var(--primary-color) !important;
+}   
+
 /* Misc */
 .version {
     position: fixed;

@@ -1,4 +1,8 @@
+import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
+import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import MoreHorizRoundedIcon from '@mui/icons-material/MoreHorizRounded';
+import PlayCircleFilledRoundedIcon from '@mui/icons-material/PlayCircleFilledRounded';
+import StopCircleRoundedIcon from '@mui/icons-material/StopCircleRounded';
 import { Divider } from '@mui/material';
 import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
@@ -23,7 +27,22 @@ export interface ContextMenuProps {
   items: ContextMenuItem[];
   sx?: object;
 }
-
+const getMenuItemIcon = (id: string) => {
+  switch (id) {
+    case 'start':
+      return (
+        <PlayCircleFilledRoundedIcon fontSize="small" sx={{ marginRight: 1 }} />
+      );
+    case 'stop':
+      return <StopCircleRoundedIcon fontSize="small" sx={{ marginRight: 1 }} />;
+    case 'edit':
+      return <EditRoundedIcon fontSize="small" sx={{ marginRight: 1 }} />;
+    case 'delete':
+      return <DeleteRoundedIcon fontSize="small" sx={{ marginRight: 1 }} />;
+    default:
+      return null;
+  }
+};
 export const ContextMenu = ({
   id,
   lastModified,
@@ -112,6 +131,7 @@ export const ContextMenu = ({
               }}
               disabled={item.disabled}
             >
+              {getMenuItemIcon(item.id)}
               {item.title}
             </MenuItem>
           ))}

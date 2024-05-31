@@ -208,15 +208,13 @@ export const AppCard = ({
               <></>
             )}
             <CardMedia>
-              {thumbnail ? (
-                <div
-                  className={isAppCard ? 'img-overlay' : 'img-overlay-service'}
-                >
-                  <img src={thumbnail} alt="App thumb" />
-                </div>
-              ) : (
-                <></>
-              )}
+              <div
+                className={
+                  isAppCard && thumbnail ? 'img-overlay' : 'img-overlay-service'
+                }
+              >
+                {thumbnail && <img src={thumbnail} alt="App thumb" />}
+              </div>
             </CardMedia>
           </div>
           <div className="card-content-content">
@@ -295,7 +293,6 @@ export const AppCard = ({
             ) : (
               <Box className="card-content-container app-service no-hover">
                 <CardContent className="card-inner-content">
-                  <span className="inline relative iconic">{getIcon()}</span>
                   <Typography
                     gutterBottom
                     variant="h5"
