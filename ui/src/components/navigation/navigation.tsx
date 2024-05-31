@@ -165,7 +165,7 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
             sx={{
               px: '1.5rem',
               mx: '.5rem',
-              backgroundColor: theme.palette.gray.lightest,
+              backgroundColor: theme.palette.gray.lighter,
               borderRadius: '8px',
               position: 'relative',
               display: 'flex',

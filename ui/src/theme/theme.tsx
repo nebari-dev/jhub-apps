@@ -6,6 +6,7 @@ import {
   blue,
   disabled,
   gray,
+  grayLighter,
   green,
   greenDark,
   greenLight,
@@ -33,7 +34,7 @@ declare module '@mui/material/styles' {
 
   interface PaletteOptions {
     accent?: PaletteColorOptions;
-    gray?: PaletteColorOptions; // Add thi
+    gray?: PaletteColorOptions;
   }
 
   interface PaletteColor {
@@ -47,6 +48,7 @@ declare module '@mui/material/styles' {
     700: string;
     800: string;
     900: string;
+    lighter: string;
   }
 
   interface SimplePaletteColorOptions {
@@ -60,6 +62,7 @@ declare module '@mui/material/styles' {
     700?: string;
     800?: string;
     900?: string;
+    lighter?: string;
   }
 }
 
@@ -122,9 +125,8 @@ export const theme = createTheme(baseTheme, {
     }),
     gray: baseTheme.palette.augmentColor({
       color: {
-        lightest: gray[100],
-        lighter: gray[200],
         light: gray[300],
+        lighter: grayLighter,
         main: gray[500],
         dark: gray[700],
         contrastText: black,
