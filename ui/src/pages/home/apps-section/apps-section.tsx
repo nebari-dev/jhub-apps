@@ -167,15 +167,12 @@ export const AppsSection = (): React.ReactElement => {
                       '& .MuiOutlinedInput-root': {
                         '& fieldset': {
                           borderColor: 'rgba(15, 16, 21, 0.12)',
-                          // borderWidth: '1px',
                         },
                         '&:hover fieldset': {
                           borderColor: 'rgba(15, 16, 21, 0.56)',
-                          // borderWidth: '1px',
                         },
                         '&.Mui-focused fieldset': {
                           borderColor: '#ba18da',
-                          // borderWidth: '1px',
                         },
                       },
                     }}
