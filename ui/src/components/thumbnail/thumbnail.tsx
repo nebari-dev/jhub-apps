@@ -135,6 +135,7 @@ export const Thumbnail = ({
                 currentFile ? URL.createObjectURL(currentFile) : currentImage
               }
               alt="App thumnail"
+              title="Click to view image"
               className="thumbnail-img"
               onClick={handleViewThumbnail}
             />
@@ -142,7 +143,7 @@ export const Thumbnail = ({
         ) : (
           <Box
             tabIndex={0}
-            title="Upload thumbnail"
+            title="Select an image"
             className="thumbnail-icon-container"
             sx={{
               display: 'flex',
@@ -187,7 +188,7 @@ export const Thumbnail = ({
             onClick={handleBrowseThumbnails}
             sx={{ width: '100%', maxWidth: '170px' }}
           >
-            Select an Image
+            Select an image
           </Button>
           {currentFile || currentImage ? (
             <Button
@@ -200,7 +201,7 @@ export const Thumbnail = ({
               hidden={!currentFile && !currentImage}
               sx={{ width: '100%', maxWidth: '170px' }}
             >
-              Remove Image
+              Remove image
             </Button>
           ) : (
             <></>
