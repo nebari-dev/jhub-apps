@@ -2,6 +2,7 @@ import InsertPhotoIcon from '@mui/icons-material/CropOriginalRounded';
 import DeleteIcon from '@mui/icons-material/DeleteRounded';
 import UploadRoundedIcon from '@mui/icons-material/UploadRounded';
 import { Box, Button, Dialog, Typography } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 import { useEffect, useRef, useState } from 'react';
 import './thumbnail.css';
 
@@ -41,6 +42,7 @@ export const Thumbnail = ({
   setCurrentFile,
   ...props
 }: ThumbnailProps & JSX.IntrinsicElements['input']) => {
+  const theme = useTheme();
   const [dragging, setDragging] = useState(false);
   const [open, setOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -70,6 +72,12 @@ export const Thumbnail = ({
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     // istanbul ignore next
     if (!e.target.files) return;
+
+    const maxSize = 5 * 1024 * 1024; // 5MB
+    if (e.target.files[0].size > maxSize) {
+      alert('File size exceeds 5MB');
+      return;
+    }
     const uploadedFile = e.target.files[0];
     setCurrentFile(uploadedFile);
   };
@@ -106,6 +114,7 @@ export const Thumbnail = ({
   return (
     <Box
       id={`thumbnail-${id}`}
+      className="thumbnail"
       sx={{
         display: 'flex',
         flexDirection: 'row',
@@ -137,6 +146,12 @@ export const Thumbnail = ({
               alt="App thumnail"
               title="Click to view image"
               className="thumbnail-img"
+              style={{
+                maxWidth: '225px',
+                maxHeight: '130px',
+                borderRadius: '4px',
+                cursor: 'pointer',
+              }}
               onClick={handleViewThumbnail}
             />
           </Box>
@@ -153,10 +168,19 @@ export const Thumbnail = ({
               width: '225px',
               height: '130px',
               cursor: 'pointer',
+              '&:focus': {
+                outlineColor: theme.palette.primary.main,
+              },
             }}
             onClick={handleBrowseThumbnails}
           >
-            <InsertPhotoIcon className="thumbnail-icon" />
+            <InsertPhotoIcon
+              sx={{
+                width: '64px',
+                height: '64px',
+                color: theme.palette.common.white,
+              }}
+            />
           </Box>
         )}
         <input

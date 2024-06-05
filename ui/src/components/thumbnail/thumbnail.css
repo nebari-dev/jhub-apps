@@ -5,20 +5,3 @@
 .thumbnail-body.dragging {
   border: 2px dashed var(--primary);
 }
-
-.thumbnail-img {
-  max-width: 225px;
-  max-height: 130px;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.thumbnail-icon-container:focus {
-  outline-color: var(--primary);
-}
-
-.thumbnail-icon {
-  width: 64px !important;
-  height: 64px !important;
-  color: var(--white);
-}
