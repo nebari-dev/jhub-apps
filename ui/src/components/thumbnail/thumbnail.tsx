@@ -1,8 +1,7 @@
 import InsertPhotoIcon from '@mui/icons-material/CropOriginalRounded';
 import DeleteIcon from '@mui/icons-material/DeleteRounded';
-import UploadFileIcon from '@mui/icons-material/UploadFile';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import { Button, Dialog } from '@mui/material';
+import UploadRoundedIcon from '@mui/icons-material/UploadRounded';
+import { Box, Button, Dialog, Typography } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
 import './thumbnail.css';
 
@@ -105,34 +104,59 @@ export const Thumbnail = ({
   }, [inputRef, setCurrentFile]);
 
   return (
-    <div id={`thumbnail-${id}`} className="thumbnail">
-      <div
+    <Box
+      id={`thumbnail-${id}`}
+      sx={{
+        display: 'flex',
+        flexDirection: 'row',
+        columnGap: '24px',
+        width: '500px',
+        height: '180px',
+        border: 'none',
+      }}
+    >
+      <Box
         id={`thumbnail-body-${id}`}
         className={`thumbnail-body ${dragging ? 'dragging' : ''} ${currentFile || currentImage ? 'selected' : ''}`}
         onDragOver={handleDragOver}
         onDragEnter={handleDragEnter}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
+        sx={{
+          height: '130px',
+          backgroundColor: '#90969c',
+          borderRadius: '4px',
+        }}
       >
         {currentFile || currentImage ? (
-          <div className="thumbnail-img-container">
+          <Box sx={{ margin: 'auto auto' }}>
             <img
               src={
                 currentFile ? URL.createObjectURL(currentFile) : currentImage
               }
               alt="App thumnail"
               className="thumbnail-img"
+              onClick={handleViewThumbnail}
             />
-          </div>
+          </Box>
         ) : (
-          <div
-            className="thumbnail-icon-container"
+          <Box
             tabIndex={0}
             title="Upload thumbnail"
+            className="thumbnail-icon-container"
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: 'center',
+              width: '225px',
+              height: '130px',
+              cursor: 'pointer',
+            }}
             onClick={handleBrowseThumbnails}
           >
             <InsertPhotoIcon className="thumbnail-icon" />
-          </div>
+          </Box>
         )}
         <input
           ref={inputRef}
@@ -144,48 +168,62 @@ export const Thumbnail = ({
           style={{ display: 'none' }}
           {...props}
         />
-      </div>
-      <div className="thumbnail-actions">
-        <Button
-          id="view-thumbnail-btn"
-          variant="contained"
-          color="secondary"
-          size="small"
-          startIcon={<VisibilityIcon />}
-          onClick={handleViewThumbnail}
-          disabled={!currentFile && !currentImage}
+      </Box>
+      <Box sx={{ display: 'flex', flexDirection: 'column', rowGap: '16px' }}>
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: { xs: 'column', sm: 'row' },
+            columnGap: '16px',
+            rowGap: '12px',
+            height: '40px',
+          }}
         >
-          View Thumbnail
-        </Button>
-        <Button
-          id="upload-thumbnail-btn"
-          variant="contained"
-          color="secondary"
-          size="small"
-          startIcon={<UploadFileIcon />}
-          onClick={handleBrowseThumbnails}
+          <Button
+            id="upload-thumbnail-btn"
+            variant="contained"
+            color="secondary"
+            startIcon={<UploadRoundedIcon />}
+            onClick={handleBrowseThumbnails}
+            sx={{ width: '100%', maxWidth: '170px' }}
+          >
+            Select an Image
+          </Button>
+          {currentFile || currentImage ? (
+            <Button
+              id="remove-thumbnail-btn"
+              variant="contained"
+              color="secondary"
+              startIcon={<DeleteIcon />}
+              onClick={handleRemoveThumbnail}
+              disabled={!currentFile && !currentImage}
+              hidden={!currentFile && !currentImage}
+              sx={{ width: '100%', maxWidth: '170px' }}
+            >
+              Remove Image
+            </Button>
+          ) : (
+            <></>
+          )}
+        </Box>
+        <Typography
+          variant="body1"
+          sx={{
+            color: '#0F101599',
+            width: '340px',
+            display: { xs: 'none', md: 'block' },
+          }}
         >
-          Upload Thumbnail
-        </Button>
-        <Button
-          id="remove-thumbnail-btn"
-          variant="contained"
-          color="secondary"
-          size="small"
-          startIcon={<DeleteIcon />}
-          onClick={handleRemoveThumbnail}
-          disabled={!currentFile && !currentImage}
-        >
-          Remove Thumbnail
-        </Button>
-      </div>
+          Recommended size: 225x130 | JPG, PNG, Max size: 5MB
+        </Typography>
+      </Box>
       <Dialog onClose={() => setOpen(false)} open={open}>
         <img
           src={currentFile ? URL.createObjectURL(currentFile) : currentImage}
           alt="App thumnail"
         />
       </Dialog>
-    </div>
+    </Box>
   );
 };
 
