@@ -64,6 +64,22 @@ http://127.0.0.1:10202/services/japps/docs
 To try out authenticated endpoints click on the Authorize button on the top right of
 the above url and chose `OAuth2AuthorizationCodeBearer` and click on Authorize.
 
+## Developing Locally
+
+_Note: In order to develop locally, both the JupyterHub backend and React UI frontend should be running._
+
+1. To start the JupyterHub Backend, run the following in a terminal:
+
+```bash
+jupyterhub -f jupyterhub_config.py
+```
+
+2. To start the React UI frontend, run the following in a separate terminal from the `ui` directory:
+
+```bash
+npm run watch
+```
+
 ## Running Tests
 
 ### Unit Tests
@@ -83,13 +99,13 @@ pytest jhub_apps/tests_e2e -vvv -s --headed
 JHub Apps has been tested with local JupyterHub using `SimpleLocalProcessSpawner` and with
 The Littlest JupyterHub using `SystemdSpawner`.
 
-* Install JHub Apps
+- Install JHub Apps
 
 ```python
 pip install git+https://github.com/nebari-dev/jhub-apps.git
 ```
 
-* Add the following in The Littlest JupyterHub's `jupyterhub_config.py`
+- Add the following in The Littlest JupyterHub's `jupyterhub_config.py`
 
 ```python
 from tljh.user_creating_spawner import UserCreatingSpawner
