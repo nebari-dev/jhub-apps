@@ -16,15 +16,13 @@ export default defineConfig({
       name: 'run-build-script',
       apply: 'build',
       writeBundle() {
-        if (process.env.NODE_ENV !== 'production') {
-          exec('./build-and-copy.sh', (error) => {
-            if (error) {
-              console.error(`Build error: ${error}`);
-              return;
-            }
-            console.log(`Build and copy complete.`);
-          });
-        }
+        exec('./build-and-copy.sh', (error) => {
+          if (error) {
+            console.error(`Build error: ${error}`);
+            return;
+          }
+          console.log(`Build and copy complete.`);
+        });
       },
     },
   ],
