@@ -41,7 +41,7 @@ jobs:
         working-directory: ui
 
       - name: Build and Copy
-        run: tsc && vite build
+        run: npm run build:prod
         working-directory: ui
 
       - name: Get Last Commit
