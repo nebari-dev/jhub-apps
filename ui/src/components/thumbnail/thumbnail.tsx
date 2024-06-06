@@ -81,6 +81,7 @@ export const Thumbnail = ({
     }
     const uploadedFile = e.target.files[0];
     setCurrentFile(uploadedFile);
+    setError(undefined);
   };
 
   const handleViewThumbnail = (e: React.SyntheticEvent) => {
