@@ -45,6 +45,7 @@ export const Thumbnail = ({
   const theme = useTheme();
   const [dragging, setDragging] = useState(false);
   const [open, setOpen] = useState(false);
+  const [error, setError] = useState<string | undefined>(undefined);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
@@ -75,7 +76,7 @@ export const Thumbnail = ({
 
     const maxSize = 5 * 1024 * 1024; // 5MB
     if (e.target.files[0].size > maxSize) {
-      alert('File size exceeds 5MB');
+      setError('File size exceeds 5MB.');
       return;
     }
     const uploadedFile = e.target.files[0];
@@ -241,6 +242,13 @@ export const Thumbnail = ({
         >
           Recommended size: 225x130 | JPG, PNG, Max size: 5MB
         </Typography>
+        {error ? (
+          <Typography variant="body2" sx={{ color: theme.palette.error.main }}>
+            {error}
+          </Typography>
+        ) : (
+          <></>
+        )}
       </Box>
       <Dialog onClose={() => setOpen(false)} open={open}>
         <img
