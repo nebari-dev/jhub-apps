@@ -645,7 +645,7 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
         />
       </StyledFormSection>
       <StyledFormSection sx={{ pb: '36px' }}>
-        <StyledFormSectionHeading>App Thumbnail</StyledFormSectionHeading>
+        <StyledFormSectionHeading>Custom Thumbnail</StyledFormSectionHeading>
         <Controller
           name="thumbnail"
           control={control}
