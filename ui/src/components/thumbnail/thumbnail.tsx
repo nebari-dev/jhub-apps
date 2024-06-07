@@ -145,7 +145,7 @@ export const Thumbnail = ({
               src={
                 currentFile ? URL.createObjectURL(currentFile) : currentImage
               }
-              alt="App thumnail"
+              alt="App thumbnail"
               title="Click to view image"
               className="thumbnail-img"
               style={{
@@ -223,7 +223,6 @@ export const Thumbnail = ({
               color="secondary"
               startIcon={<DeleteIcon />}
               onClick={handleRemoveThumbnail}
-              disabled={!currentFile && !currentImage}
               hidden={!currentFile && !currentImage}
               sx={{ width: '100%', maxWidth: '170px' }}
             >
@@ -254,7 +253,7 @@ export const Thumbnail = ({
       <Dialog onClose={() => setOpen(false)} open={open}>
         <img
           src={currentFile ? URL.createObjectURL(currentFile) : currentImage}
-          alt="App thumnail"
+          alt="App thumbnail"
         />
       </Dialog>
     </Box>
