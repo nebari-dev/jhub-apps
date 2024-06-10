@@ -75,6 +75,12 @@ const currentSortValue = atom<string>({
   key: 'currentSortValue',
   default: 'Recently modified',
 });
+
+const currentServerStatuses = atom<string[]>({
+  key: 'currentServerStatuses',
+  default: [],
+});
+
 const isStartOpen = atom<boolean>({
   key: 'isStartOpen',
   default: false,
@@ -102,6 +108,7 @@ export {
   currentProfiles,
   currentSearchValue,
   currentServerName,
+  currentServerStatuses,
   currentSortValue,
   currentUser,
   isDeleteOpen,

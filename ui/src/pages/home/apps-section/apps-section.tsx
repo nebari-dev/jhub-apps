@@ -20,6 +20,7 @@ import {
   currentSearchValue,
   currentFrameworks as defaultFrameworks,
   currentOwnershipValue as defaultOwnershipValue,
+  currentServerStatuses as defaultServerStatuses,
   currentSortValue as defaultSortValue,
   currentUser as defaultUser,
 } from '../../../store';
@@ -45,7 +46,9 @@ export const AppsSection = (): React.ReactElement => {
     currentNotification,
   );
   const [currentSortValue] = useRecoilState<string>(defaultSortValue);
-
+  const [currentServerStatuses] = useRecoilState<string[]>(
+    defaultServerStatuses,
+  );
   const toggleView = () => setIsGridViewActive((prev) => !prev); // Added toggleView function
 
   useEffect(() => {
@@ -98,6 +101,7 @@ export const AppsSection = (): React.ReactElement => {
           currentOwnershipValue,
           currentFrameworks,
           currentSortValue,
+          currentServerStatuses,
         ),
       );
     }
