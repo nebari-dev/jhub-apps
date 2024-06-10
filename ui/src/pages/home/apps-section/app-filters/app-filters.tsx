@@ -293,6 +293,7 @@ export const AppFilters = ({
                 <ButtonGroup>
                   <Button
                     id="clear-filters-btn"
+                    data-testid="clear-filters-btn"
                     variant="text"
                     sx={{
                       color: '#0F1015',
