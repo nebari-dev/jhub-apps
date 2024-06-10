@@ -55,7 +55,7 @@
     "jest-environment-jsdom": "29.7.0",
     "jest-transform-stub": "2.0.0",
     "lint-staged": "15.2.5",
-    "prettier": "3.3.0",
+    "prettier": "3.3.1",
     "prettier-plugin-organize-imports": "3.2.4",
     "sass": "1.77.4",
     "ts-jest": "29.1.4",
