@@ -184,7 +184,7 @@ describe('JupyterHub utils', () => {
       'all',
       [],
       'Recently modified',
-      [], // Add an empty array as the seventh argument
+      [],
     );
     expect(apps[0].name).toBe('Test App');
   });
@@ -197,7 +197,7 @@ describe('JupyterHub utils', () => {
       'all',
       [],
       'Name: A-Z',
-      [], // Add an empty array as the seventh argument
+      [],
     );
     expect(apps[0].name).toBe('App with a long name that should be truncated');
   });
@@ -210,7 +210,7 @@ describe('JupyterHub utils', () => {
       'all',
       [],
       'Name: Z-A',
-      [], // Add an empty array as the seventh argument
+      [],
     );
     expect(apps[0].name).toBe('TEST App 3');
   });

@@ -239,7 +239,7 @@ export const AppFilters = ({
                   fontWeight: 600,
                 }}
               >
-                Server Statuses
+                Server Status
               </FormLabel>
               <Box>
                 {SERVER_STATUSES.map((status) => (
