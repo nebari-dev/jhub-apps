@@ -1,4 +1,3 @@
-/*
 import { currentUser } from '@src/data/user';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import '@testing-library/jest-dom';
@@ -236,4 +235,3 @@ describe('AppSharing', () => {
     }
   });
 });
-*/
