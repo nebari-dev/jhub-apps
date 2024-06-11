@@ -21,7 +21,7 @@ fi
 
 # Run Unit Tests
 
-# npm run test
+ npm run test
 
 # Run Linting
 
