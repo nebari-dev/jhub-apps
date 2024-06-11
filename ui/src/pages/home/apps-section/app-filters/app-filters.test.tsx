@@ -63,10 +63,8 @@ describe('AppFilters', () => {
       btn.click();
     });
 
-    waitFor(() => {
-      const form = baseElement.querySelector(
-        'form[name="sort-by-form"]',
-      ) as HTMLFormElement;
+    await waitFor(() => {
+      const form = baseElement.querySelector('form[name="sort-by-form"]');
       expect(form).toBeTruthy();
     });
 
@@ -81,10 +79,8 @@ describe('AppFilters', () => {
       btn.click();
     });
 
-    waitFor(() => {
-      const form = baseElement.querySelector(
-        'form[name="sort-by-form"]',
-      ) as HTMLFormElement;
+    await waitFor(() => {
+      const form = baseElement.querySelector('form[name="sort-by-form"]');
       expect(form).toBeTruthy();
     });
     menuItem = baseElement.querySelectorAll(
@@ -98,10 +94,8 @@ describe('AppFilters', () => {
       btn.click();
     });
 
-    waitFor(() => {
-      const form = baseElement.querySelector(
-        'form[name="sort-by-form"]',
-      ) as HTMLFormElement;
+    await waitFor(() => {
+      const form = baseElement.querySelector('form[name="sort-by-form"]');
       expect(form).toBeTruthy();
     });
     menuItem = baseElement.querySelectorAll(
@@ -139,43 +133,44 @@ describe('AppFilters', () => {
       btn.click();
     });
 
-    waitFor(() => {
+    await waitFor(async () => {
       const form = baseElement.querySelector(
         '#filters-form',
       ) as HTMLFormElement;
       expect(form).toBeTruthy();
-    });
 
-    const frameworkItem = baseElement.querySelectorAll(
-      '.MuiFormControlLabel-root',
-    )[0] as HTMLLabelElement;
-    await act(async () => {
-      frameworkItem.click();
-    });
-    expect(frameworkItem).toBeTruthy();
+      const frameworkItem = baseElement.querySelectorAll(
+        '.MuiFormControlLabel-root',
+      )[0] as HTMLLabelElement;
 
-    let ownershipItem = baseElement.querySelectorAll(
-      '.MuiFormControlLabel-root',
-    )[6] as HTMLLabelElement;
-    await act(async () => {
-      ownershipItem.click();
-    });
-    ownershipItem = baseElement.querySelectorAll(
-      '.MuiFormControlLabel-root',
-    )[7] as HTMLLabelElement;
-    await act(async () => {
-      ownershipItem.click();
-    });
-    expect(ownershipItem).toBeTruthy();
+      await act(async () => {
+        frameworkItem.click();
+      });
+      expect(frameworkItem).toBeTruthy();
 
-    const applyButton = baseElement.querySelector(
-      '#apply-filters-btn',
-    ) as HTMLButtonElement;
-    await act(async () => {
-      applyButton.click();
-    });
+      let ownershipItem = baseElement.querySelectorAll(
+        '.MuiFormControlLabel-root',
+      )[6] as HTMLLabelElement;
+      await act(async () => {
+        ownershipItem.click();
+      });
+      ownershipItem = baseElement.querySelectorAll(
+        '.MuiFormControlLabel-root',
+      )[7] as HTMLLabelElement;
+      await act(async () => {
+        ownershipItem.click();
+      });
+      expect(ownershipItem).toBeTruthy();
 
-    expect(spy).toHaveBeenCalled();
+      const applyButton = baseElement.querySelector(
+        '#apply-filters-btn',
+      ) as HTMLButtonElement;
+      await act(async () => {
+        applyButton.click();
+      });
+
+      expect(spy).toHaveBeenCalled();
+    });
   });
 
   test('should filter my apps', async () => {
@@ -203,35 +198,35 @@ describe('AppFilters', () => {
       btn.click();
     });
 
-    const form = await waitFor(async () => {
-      baseElement.querySelector('#filters-form') as HTMLFormElement;
+    await waitFor(async () => {
+      const form = baseElement.querySelector(
+        '#filters-form',
+      ) as HTMLFormElement;
+      if (form !== null) {
+        const frameworkItem = baseElement.querySelectorAll(
+          '.MuiFormControlLabel-root',
+        )[0] as HTMLLabelElement;
+        await act(async () => {
+          frameworkItem.click();
+        });
+        expect(frameworkItem).toBeTruthy();
+
+        const ownershipItem = baseElement.querySelectorAll(
+          '.MuiFormControlLabel-root',
+        )[6] as HTMLLabelElement;
+        await act(async () => {
+          ownershipItem.click();
+        });
+
+        const applyButton = baseElement.querySelector(
+          '#apply-filters-btn',
+        ) as HTMLButtonElement;
+        await act(async () => {
+          applyButton.click();
+        });
+      }
+      expect(spy).toHaveBeenCalled();
     });
-
-    if (form !== null) {
-      const frameworkItem = baseElement.querySelectorAll(
-        '.MuiFormControlLabel-root',
-      )[0] as HTMLLabelElement;
-      await act(async () => {
-        frameworkItem.click();
-      });
-      expect(frameworkItem).toBeTruthy();
-
-      const ownershipItem = baseElement.querySelectorAll(
-        '.MuiFormControlLabel-root',
-      )[6] as HTMLLabelElement;
-      await act(async () => {
-        ownershipItem.click();
-      });
-
-      const applyButton = baseElement.querySelector(
-        '#apply-filters-btn',
-      ) as HTMLButtonElement;
-      await act(async () => {
-        applyButton.click();
-      });
-    }
-
-    expect(spy).toHaveBeenCalled();
   });
 
   test('should clear filters', async () => {
@@ -259,21 +254,22 @@ describe('AppFilters', () => {
       btn.click();
     });
 
-    const form = await waitFor(async () => {
-      baseElement.querySelector('#filters-form') as HTMLFormElement;
+    await waitFor(async () => {
+      const form = baseElement.querySelector(
+        '#filters-form',
+      ) as HTMLFormElement;
+      if (form !== null) {
+        const clearButton = baseElement.querySelector(
+          '#clear-filters-btn',
+        ) as HTMLButtonElement;
+        await act(async () => {
+          clearButton.click();
+        });
+      }
+      expect(spy).not.toHaveBeenCalled();
     });
-
-    if (form !== null) {
-      const clearButton = baseElement.querySelector(
-        '#clear-filters-btn',
-      ) as HTMLButtonElement;
-      await act(async () => {
-        clearButton.click();
-      });
-    }
-
-    expect(spy).not.toHaveBeenCalled();
   });
+
   test('should filter by server statuses', async () => {
     const spy = jest.fn();
 
@@ -298,16 +294,14 @@ describe('AppFilters', () => {
     );
 
     const btn = baseElement.querySelector('#filters-btn') as HTMLButtonElement;
-
     await act(async () => {
       btn.click();
     });
 
-    waitFor(() => {
+    await waitFor(() => {
       const form = baseElement.querySelector(
         '#filters-form',
       ) as HTMLFormElement;
-
       expect(form).toBeTruthy();
     });
 
@@ -324,7 +318,6 @@ describe('AppFilters', () => {
     const applyButton = baseElement.querySelector(
       '#apply-filters-btn',
     ) as HTMLButtonElement;
-
     await act(async () => {
       applyButton.click();
     });

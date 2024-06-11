@@ -196,6 +196,7 @@ export const AppFilters = ({
             <Box
               component="form"
               name="filters-form"
+              id="filters-form"
               sx={{
                 width: '450px',
                 px: '16px',
