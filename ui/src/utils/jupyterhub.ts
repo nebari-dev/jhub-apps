@@ -225,6 +225,7 @@ export const filterAndSortApps = (
   ownershipValue: string,
   frameworkValues: string[],
   sortByValue: string,
+  currentServerStatuses: string[],
 ) => {
   const searchToLower = searchValue.toLowerCase();
   const ownershipType =
@@ -245,6 +246,12 @@ export const filterAndSortApps = (
     .filter((app) => {
       if (frameworkValues.length > 0) {
         return frameworkValues.includes(app.framework);
+      }
+      return true;
+    })
+    .filter((app) => {
+      if (currentServerStatuses.length > 0) {
+        return currentServerStatuses.includes(app.status);
       }
       return true;
     });

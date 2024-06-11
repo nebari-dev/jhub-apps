@@ -21,7 +21,11 @@ import { AppFrameworkProps } from '@src/types/api';
 import { JhApp } from '@src/types/jupyterhub';
 import { UserState } from '@src/types/user';
 import axios from '@src/utils/axios';
-import { OWNERSHIP_TYPES, SORT_TYPES } from '@src/utils/constants';
+import {
+  OWNERSHIP_TYPES,
+  SERVER_STATUSES,
+  SORT_TYPES,
+} from '@src/utils/constants';
 import { filterAndSortApps } from '@src/utils/jupyterhub';
 import { useQuery } from '@tanstack/react-query';
 import React, { SyntheticEvent } from 'react';
@@ -30,6 +34,7 @@ import {
   currentFrameworks as defaultFrameworks,
   currentOwnershipValue as defaultOwnershipValue,
   currentSearchValue as defaultSearchValue,
+  currentServerStatuses as defaultServerStatuses,
   currentSortValue as defaultSortValue,
 } from '../../../../store';
 import { StyledFilterButton } from '../../../../styles/styled-filter-button';
@@ -70,6 +75,9 @@ export const AppFilters = ({
   const [currentSortValue, setCurrentSortValue] =
     useRecoilState(defaultSortValue);
   // const [hasBulkSelections] = useState(false); // Not using now, may in the future
+  const [currentServerStatuses, setCurrentServerStatuses] = useRecoilState<
+    string[]
+  >(defaultServerStatuses);
 
   const { data: frameworks, isLoading: frameworksLoading } = useQuery<
     AppFrameworkProps[],
@@ -106,9 +114,20 @@ export const AppFilters = ({
         currentOwnershipValue,
         currentFrameworks,
         value,
+        currentServerStatuses,
       ),
     );
     setSortByAnchorEl(null);
+  };
+
+  const handleServerStatusChange = (event: SyntheticEvent) => {
+    const target = event.target as HTMLInputElement;
+    const value = target.value;
+    if (currentServerStatuses.includes(value)) {
+      setCurrentServerStatuses((prev) => prev.filter((item) => item !== value));
+    } else {
+      setCurrentServerStatuses((prev) => [...prev, value]);
+    }
   };
 
   const handleApplyFilters = () => {
@@ -121,12 +140,14 @@ export const AppFilters = ({
         currentOwnershipValue,
         currentFrameworks,
         currentSortValue,
+        currentServerStatuses,
       ),
     );
   };
   const handleClearFilters = () => {
     setCurrentFrameworks([]);
     setCurrentOwnershipValue('Any');
+    setCurrentServerStatuses([]);
   };
 
   return (
@@ -175,6 +196,7 @@ export const AppFilters = ({
             <Box
               component="form"
               name="filters-form"
+              id="filters-form"
               sx={{
                 width: '450px',
                 px: '16px',
@@ -205,6 +227,28 @@ export const AppFilters = ({
                     }}
                     onClick={handleFrameworkChange}
                     checked={currentFrameworks.includes(framework.display_name)}
+                  />
+                ))}
+              </Box>
+              <Divider sx={{ mt: '24px', mb: '16px' }} />
+              <FormLabel
+                id="server-statuses-label"
+                sx={{
+                  pb: '16px',
+                  fontSize: '14px',
+                  fontWeight: 600,
+                }}
+              >
+                Server Status
+              </FormLabel>
+              <Box>
+                {SERVER_STATUSES.map((status) => (
+                  <FormControlLabel
+                    key={status}
+                    control={<Checkbox value={status} />}
+                    label={status}
+                    onClick={handleServerStatusChange}
+                    checked={currentServerStatuses.includes(status)}
                   />
                 ))}
               </Box>
@@ -250,6 +294,7 @@ export const AppFilters = ({
                 <ButtonGroup>
                   <Button
                     id="clear-filters-btn"
+                    data-testid="clear-filters-btn"
                     variant="text"
                     sx={{
                       color: '#0F1015',
