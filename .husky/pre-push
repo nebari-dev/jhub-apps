@@ -18,11 +18,3 @@ exit 1
 else
 echo "No uncommitted changes found."
 fi
-
-# Run Unit Tests
-
-# npm run test
-
-# Run Linting
-
-# npm run lint

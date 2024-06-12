@@ -330,15 +330,6 @@ export const AppFilters = ({
                   >
                     Clear
                   </Button>
-                  {/* <Button
-                    id="apply-filters-btn"
-                    variant="contained"
-                    size="small"
-                    onClick={handleApplyFilters}
-                    sx={{ px: 'none !important', minWidth: '20px' }}
-                  >
-                    Apply
-                  </Button> */}
                   <Button
                     id="apply-filters-btn"
                     variant="contained"
