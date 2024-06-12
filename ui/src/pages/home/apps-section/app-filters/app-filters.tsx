@@ -381,9 +381,7 @@ export const AppFilters = ({
                 bottom: '8px',
                 fontSize: '16px',
                 fontWeight: 600,
-                width: '180px',
                 color: 'common.black',
-                px: 0,
                 mr: '24px',
               }}
               endIcon={
