@@ -11,4 +11,4 @@ export const DEFAULT_PINNED_SERVICES: string[] = ['Environments'];
 
 export const OWNERSHIP_TYPES = ['Any', 'Owned by me', 'Shared with me'];
 export const SORT_TYPES = ['Recently modified', 'Name: A-Z', 'Name: Z-A'];
-export const SERVER_STATUSES = ['Ready', 'Pending', 'Running', 'Unknown'];
+export const SERVER_STATUSES = ['Running', 'Ready', 'Pending', 'Unknown'];

@@ -28,7 +28,7 @@ import {
 } from '@src/utils/constants';
 import { filterAndSortApps } from '@src/utils/jupyterhub';
 import { useQuery } from '@tanstack/react-query';
-import React, { SyntheticEvent } from 'react';
+import React, { SyntheticEvent, useCallback, useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import {
   currentFrameworks as defaultFrameworks,
@@ -78,7 +78,7 @@ export const AppFilters = ({
   const [currentServerStatuses, setCurrentServerStatuses] = useRecoilState<
     string[]
   >(defaultServerStatuses);
-
+  const [filteredCount, setFilteredCount] = useState(0);
   const { data: frameworks, isLoading: frameworksLoading } = useQuery<
     AppFrameworkProps[],
     { message: string }
@@ -150,6 +150,30 @@ export const AppFilters = ({
     setCurrentServerStatuses([]);
   };
 
+  const calculateFilteredCount = useCallback(() => {
+    const filteredApps = filterAndSortApps(
+      data,
+      currentUser,
+      currentSearchValue,
+      currentOwnershipValue,
+      currentFrameworks,
+      currentSortValue,
+      currentServerStatuses,
+    );
+    return filteredApps.length;
+  }, [
+    data,
+    currentUser,
+    currentSearchValue,
+    currentOwnershipValue,
+    currentFrameworks,
+    currentSortValue,
+    currentServerStatuses,
+  ]);
+
+  useEffect(() => {
+    setFilteredCount(calculateFilteredCount());
+  }, [calculateFilteredCount]);
   return (
     <Grid container spacing={2} paddingBottom="32px">
       <Grid item xs={12} md={4}>
@@ -313,7 +337,7 @@ export const AppFilters = ({
                     onClick={handleApplyFilters}
                     sx={{ px: 'none !important', minWidth: '20px' }}
                   >
-                    Apply
+                    Show {filteredCount} results
                   </Button>
                 </ButtonGroup>
               </Box>
