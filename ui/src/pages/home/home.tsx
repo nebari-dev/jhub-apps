@@ -161,6 +161,7 @@ export const Home = (): React.ReactElement => {
           variant="text"
           color="primary"
           onClick={() => setIsStartOpen(false)}
+          sx={{ fontWeight: 700 }}
         >
           Cancel
         </Button>
@@ -191,6 +192,7 @@ export const Home = (): React.ReactElement => {
           variant="text"
           color="primary"
           onClick={() => setIsStopOpen(false)}
+          sx={{ fontWeight: 700 }}
         >
           Cancel
         </Button>
@@ -224,6 +226,7 @@ export const Home = (): React.ReactElement => {
           variant="text"
           color="primary"
           onClick={() => setIsDeleteOpen(false)}
+          sx={{ fontWeight: 700 }}
         >
           Cancel
         </Button>
@@ -257,6 +260,7 @@ export const Home = (): React.ReactElement => {
           open={isStartOpen}
           onClose={() => setIsStartOpen(false)}
           data-testid="StartModal"
+          sx={{ '.MuiPaper-root': { width: '444px' } }}
         >
           <DialogTitle sx={{ fontWeight: 700 }}>Start App</DialogTitle>
           <DialogContent sx={{ padding: '0px' }}>
@@ -269,8 +273,9 @@ export const Home = (): React.ReactElement => {
           open={isStopOpen}
           onClose={() => setIsStopOpen(false)}
           data-testid="StopModal"
+          sx={{ '.MuiPaper-root': { width: '444px' } }}
         >
-          <DialogTitle sx={{ fontWeight: 700 }}>Stop App</DialogTitle>
+          <DialogTitle sx={{ fontWeight: 700, pb: 1 }}>Stop App</DialogTitle>
           <DialogContent sx={{ padding: '0px' }}>{stopModalBody}</DialogContent>
         </Dialog>
       )}
@@ -279,6 +284,7 @@ export const Home = (): React.ReactElement => {
           open={isDeleteOpen}
           onClose={() => setIsDeleteOpen(false)}
           data-testid="DeleteModal"
+          sx={{ '.MuiPaper-root': { width: '444px' } }}
         >
           <DialogTitle sx={{ fontWeight: 700 }}>Delete App</DialogTitle>
           <DialogContent sx={{ padding: '0px' }}>

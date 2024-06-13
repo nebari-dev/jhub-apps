@@ -6,9 +6,13 @@
   font-weight: 600;
   line-height: 133.4%;
 }
+
 .card-dialog-body-wrapper {
   padding: 0px 24px;
-  line-height: 1.5rem;
+}
+
+.card-dialog-body {
+  padding-bottom: 8px;
 }
 .card-dialog-note {
   color: var(--text-secondary, rgba(15, 16, 21, 0.6));
