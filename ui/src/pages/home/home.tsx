@@ -146,10 +146,15 @@ export const Home = (): React.ReactElement => {
 
   const startModalBody = (
     <>
-      <p className="card-dialog-body">
-        Are you sure you want to start <b>{currentApp?.name}</b>?
-      </p>
-      <ButtonGroup>
+      <div className="card-dialog-body-wrapper">
+        <p className="card-dialog-body">
+          Are you sure you want to start <b>{currentApp?.name}</b>?
+        </p>
+        <p className="card-dialog-note">
+          This action starts a new server that consumes resources.
+        </p>
+      </div>
+      <ButtonGroup className="card-dialog-button-group">
         <Button
           id="cancel-btn"
           data-testid="cancel-btn"
@@ -175,10 +180,12 @@ export const Home = (): React.ReactElement => {
 
   const stopModalBody = (
     <>
-      <p className="card-dialog-body">
-        Are you sure you want to stop <b>{currentApp?.name}</b>?
-      </p>
-      <ButtonGroup>
+      <div className="card-dialog-body-wrapper">
+        <p className="card-dialog-body">
+          Are you sure you want to stop <b>{currentApp?.name}</b>?
+        </p>
+      </div>
+      <ButtonGroup className="card-dialog-button-group">
         <Button
           id="cancel-btn"
           variant="text"
@@ -202,11 +209,15 @@ export const Home = (): React.ReactElement => {
 
   const deleteModalBody = (
     <>
-      <p className="card-dialog-body">
-        Are you sure you want to delete <b>{currentApp?.name}</b>? This action
-        is permanent and cannot be reversed.
-      </p>
-      <ButtonGroup>
+      <div className="card-dialog-body-wrapper">
+        <p className="card-dialog-body">
+          Are you sure you want to delete <b>{currentApp?.name}</b>?
+        </p>
+        <p className="card-dialog-note">
+          This action is permanent and cannot be reversed.
+        </p>
+      </div>
+      <ButtonGroup className="card-dialog-button-group">
         <Button
           id="cancel-btn"
           data-testid="cancel-btn"
@@ -247,8 +258,10 @@ export const Home = (): React.ReactElement => {
           onClose={() => setIsStartOpen(false)}
           data-testid="StartModal"
         >
-          <DialogTitle>Start {currentApp?.name}</DialogTitle>
-          <DialogContent>{startModalBody}</DialogContent>
+          <DialogTitle sx={{ fontWeight: 700 }}>Start App</DialogTitle>
+          <DialogContent sx={{ padding: '0px' }}>
+            {startModalBody}
+          </DialogContent>
         </Dialog>
       )}
       {isStopOpen && (
@@ -257,8 +270,8 @@ export const Home = (): React.ReactElement => {
           onClose={() => setIsStopOpen(false)}
           data-testid="StopModal"
         >
-          <DialogTitle>Stop {currentApp?.name}</DialogTitle>
-          <DialogContent>{stopModalBody}</DialogContent>
+          <DialogTitle sx={{ fontWeight: 700 }}>Stop App</DialogTitle>
+          <DialogContent sx={{ padding: '0px' }}>{stopModalBody}</DialogContent>
         </Dialog>
       )}
       {isDeleteOpen && (
@@ -267,8 +280,10 @@ export const Home = (): React.ReactElement => {
           onClose={() => setIsDeleteOpen(false)}
           data-testid="DeleteModal"
         >
-          <DialogTitle>Delete {currentApp?.name}</DialogTitle>
-          <DialogContent>{deleteModalBody}</DialogContent>
+          <DialogTitle sx={{ fontWeight: 700 }}>Delete App</DialogTitle>
+          <DialogContent sx={{ padding: '0px' }}>
+            {deleteModalBody}
+          </DialogContent>
         </Dialog>
       )}
     </Box>
