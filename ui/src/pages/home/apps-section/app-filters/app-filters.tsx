@@ -405,10 +405,8 @@ export const AppFilters = ({
                 bottom: '8px',
                 fontSize: '16px',
                 fontWeight: 600,
-                width: '180px',
                 color: 'common.black',
-                px: 0,
-                mr: 1.5,
+                mr: '24px',
               }}
               endIcon={
                 sortByOpen ? (
@@ -418,7 +416,7 @@ export const AppFilters = ({
                 )
               }
             >
-              <SortRounded sx={{ position: 'relative', marginRight: '4px' }} />
+              <SortRounded sx={{ position: 'relative', marginRight: '8px' }} />
               {currentSortValue}
             </Button>
             <Menu
