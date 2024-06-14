@@ -332,6 +332,8 @@ export const Home = (): React.ReactElement => {
             width: '100%',
             backgroundColor: 'success.main',
             color: 'rgba(30, 70, 32, 1)',
+            fontFamily: 'Inter, sans-serif',
+            fontWeight: 600,
           }}
         >
           {snackbarMessage}
