@@ -146,16 +146,22 @@ export const Home = (): React.ReactElement => {
 
   const startModalBody = (
     <>
-      <p className="card-dialog-body">
-        Are you sure you want to start <b>{currentApp?.name}</b>?
-      </p>
-      <ButtonGroup>
+      <div className="card-dialog-body-wrapper">
+        <p className="card-dialog-body">
+          Are you sure you want to start <b>{currentApp?.name}</b>?
+        </p>
+        <p className="card-dialog-note">
+          This action starts a new server that consumes resources.
+        </p>
+      </div>
+      <ButtonGroup className="card-dialog-button-group">
         <Button
           id="cancel-btn"
           data-testid="cancel-btn"
           variant="text"
           color="primary"
           onClick={() => setIsStartOpen(false)}
+          sx={{ fontWeight: 700 }}
         >
           Cancel
         </Button>
@@ -175,15 +181,18 @@ export const Home = (): React.ReactElement => {
 
   const stopModalBody = (
     <>
-      <p className="card-dialog-body">
-        Are you sure you want to stop <b>{currentApp?.name}</b>?
-      </p>
-      <ButtonGroup>
+      <div className="card-dialog-body-wrapper">
+        <p className="card-dialog-body">
+          Are you sure you want to stop <b>{currentApp?.name}</b>?
+        </p>
+      </div>
+      <ButtonGroup className="card-dialog-button-group">
         <Button
           id="cancel-btn"
           variant="text"
           color="primary"
           onClick={() => setIsStopOpen(false)}
+          sx={{ fontWeight: 700 }}
         >
           Cancel
         </Button>
@@ -202,17 +211,22 @@ export const Home = (): React.ReactElement => {
 
   const deleteModalBody = (
     <>
-      <p className="card-dialog-body">
-        Are you sure you want to delete <b>{currentApp?.name}</b>? This action
-        is permanent and cannot be reversed.
-      </p>
-      <ButtonGroup>
+      <div className="card-dialog-body-wrapper">
+        <p className="card-dialog-body">
+          Are you sure you want to delete <b>{currentApp?.name}</b>?
+        </p>
+        <p className="card-dialog-note">
+          This action is permanent and cannot be reversed.
+        </p>
+      </div>
+      <ButtonGroup className="card-dialog-button-group">
         <Button
           id="cancel-btn"
           data-testid="cancel-btn"
           variant="text"
           color="primary"
           onClick={() => setIsDeleteOpen(false)}
+          sx={{ fontWeight: 700 }}
         >
           Cancel
         </Button>
@@ -246,9 +260,12 @@ export const Home = (): React.ReactElement => {
           open={isStartOpen}
           onClose={() => setIsStartOpen(false)}
           data-testid="StartModal"
+          sx={{ '.MuiPaper-root': { width: '444px' } }}
         >
-          <DialogTitle>Start {currentApp?.name}</DialogTitle>
-          <DialogContent>{startModalBody}</DialogContent>
+          <DialogTitle sx={{ fontWeight: 700 }}>Start App</DialogTitle>
+          <DialogContent sx={{ padding: '0px' }}>
+            {startModalBody}
+          </DialogContent>
         </Dialog>
       )}
       {isStopOpen && (
@@ -256,9 +273,10 @@ export const Home = (): React.ReactElement => {
           open={isStopOpen}
           onClose={() => setIsStopOpen(false)}
           data-testid="StopModal"
+          sx={{ '.MuiPaper-root': { width: '444px' } }}
         >
-          <DialogTitle>Stop {currentApp?.name}</DialogTitle>
-          <DialogContent>{stopModalBody}</DialogContent>
+          <DialogTitle sx={{ fontWeight: 700, pb: 1 }}>Stop App</DialogTitle>
+          <DialogContent sx={{ padding: '0px' }}>{stopModalBody}</DialogContent>
         </Dialog>
       )}
       {isDeleteOpen && (
@@ -266,9 +284,12 @@ export const Home = (): React.ReactElement => {
           open={isDeleteOpen}
           onClose={() => setIsDeleteOpen(false)}
           data-testid="DeleteModal"
+          sx={{ '.MuiPaper-root': { width: '444px' } }}
         >
-          <DialogTitle>Delete {currentApp?.name}</DialogTitle>
-          <DialogContent>{deleteModalBody}</DialogContent>
+          <DialogTitle sx={{ fontWeight: 700 }}>Delete App</DialogTitle>
+          <DialogContent sx={{ padding: '0px' }}>
+            {deleteModalBody}
+          </DialogContent>
         </Dialog>
       )}
     </Box>

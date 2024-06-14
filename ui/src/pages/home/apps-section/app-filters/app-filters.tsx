@@ -292,6 +292,11 @@ export const AppFilters = ({
                   aria-labelledby="ownership-label"
                   defaultValue="any"
                   name="ownership-group"
+                  sx={{
+                    '& .MuiFormControlLabel-root': {
+                      pb: '3px',
+                    },
+                  }}
                   row
                 >
                   {OWNERSHIP_TYPES.map((value) => (
