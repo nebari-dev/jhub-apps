@@ -1,5 +1,6 @@
 import { UserState } from '@src/types/user';
 import { atom } from 'recoil';
+import { AppProfileProps } from './types/api';
 import { AppFormInput } from './types/form';
 import { JhApp, JhData } from './types/jupyterhub';
 
@@ -24,10 +25,12 @@ const currentNotification = atom<string | undefined>({
   key: 'currentNotification',
   default: undefined,
 });
+
 const currentApp = atom<JhApp | undefined>({
   key: 'currentApp',
   default: undefined,
 });
+
 const currentServerName = atom<string | undefined>({
   key: 'currentServerName',
   default: undefined,
@@ -58,6 +61,11 @@ const currentFrameworks = atom<string[]>({
   default: [],
 });
 
+const currentProfiles = atom<AppProfileProps[]>({
+  key: 'currentProfiles',
+  default: [],
+});
+
 const currentOwnershipValue = atom<string>({
   key: 'currentOwnershipValue',
   default: 'Any',
@@ -67,6 +75,12 @@ const currentSortValue = atom<string>({
   key: 'currentSortValue',
   default: 'Recently modified',
 });
+
+const currentServerStatuses = atom<string[]>({
+  key: 'currentServerStatuses',
+  default: [],
+});
+
 const isStartOpen = atom<boolean>({
   key: 'isStartOpen',
   default: false,
@@ -91,8 +105,10 @@ export {
   currentJhData,
   currentNotification,
   currentOwnershipValue,
+  currentProfiles,
   currentSearchValue,
   currentServerName,
+  currentServerStatuses,
   currentSortValue,
   currentUser,
   isDeleteOpen,

@@ -34,7 +34,7 @@ http://localhost:8080/hub/home
 1. To run a production build and apply changes, run the following:
 
 ```sh
-npm run buildCopy
+npm run build
 ```
 
 2. Restart JupyterHub to verify changes

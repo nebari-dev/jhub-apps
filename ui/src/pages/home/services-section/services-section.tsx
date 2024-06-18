@@ -86,7 +86,7 @@ export const ServicesSection = (): React.ReactElement => {
           <Grid container spacing={2}>
             <Grid item xs={12} md={4}>
               <Item>
-                <h2>Services</h2>
+                <h2>Quick Access</h2>
               </Item>
             </Grid>
           </Grid>

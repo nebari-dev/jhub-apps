@@ -14,6 +14,7 @@ export interface JhApp {
   name: string;
   description?: string;
   framework: string;
+  profile?: string;
   url: string;
   thumbnail?: string;
   username?: string;

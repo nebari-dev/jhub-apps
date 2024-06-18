@@ -1,3 +1,4 @@
+import os
 from base64 import b64encode
 from secrets import token_bytes
 
@@ -9,6 +10,9 @@ from jhub_apps.spawner.spawner_creation import subclass_spawner
 
 
 def _create_token_for_service():
+    # Use the one from environment if available
+    if os.environ.get("JHUB_APP_JWT_SECRET_KEY"):
+        return os.environ["JHUB_APP_JWT_SECRET_KEY"]
     return b64encode(token_bytes(32)).decode()
 
 
@@ -88,7 +92,8 @@ def install_jhub_apps(c, spawner_to_subclass):
                 "admin:auth_state",
                 "access:services",
                 "list:services",
-                "read:services",  # read service models
+                "read:services",  # read service models,
+                "tokens",  # ability to generate tokens for users to act as user
             ] + ([
                 "shares"
             ] if is_jupyterhub_5() else []),
@@ -99,6 +104,7 @@ def install_jhub_apps(c, spawner_to_subclass):
             "scopes": [
                 "self",
                 "access:services",
+                "list:services",
                 "admin:auth_state",
             ],
         },

@@ -1,5 +1,6 @@
 import typing
 from concurrent.futures import ThreadPoolExecutor
+from functools import wraps
 
 import structlog
 import os
@@ -17,9 +18,29 @@ JUPYTERHUB_API_TOKEN = os.environ.get("JUPYTERHUB_API_TOKEN")
 logger = structlog.get_logger(__name__)
 
 
+def requires_user_token(func):
+    """Decorator to apply to methods of HubClient to create user token before
+    the method call and revoke them after the method call finishes.
+    """
+    @wraps(func)
+    def wrapper(self, *args, **kwargs):
+        response_json = self._create_token_for_user()
+        token_id = response_json["id"]
+        try:
+            original_method_return = func(self, *args, **kwargs)
+        except Exception as e:
+            raise e
+        finally:
+            self._revoke_token(token_id=token_id)
+        return original_method_return
+    return wrapper
+
+
 class HubClient:
-    def __init__(self, token=None):
-        self.token = token or JUPYTERHUB_API_TOKEN
+    def __init__(self, username=None):
+        self.username = username
+        self.tokens = [JUPYTERHUB_API_TOKEN]
+        self.token_json = None
         self.jhub_apps_request_id = None
         self._set_request_id()
 
@@ -27,11 +48,55 @@ class HubClient:
         contextvars = structlog.contextvars.get_contextvars()
         self.jhub_apps_request_id = contextvars.get("request_id")
 
-    def _headers(self):
+    def _headers(self, token=None):
+        header_token = token
+        if not token and self.tokens:
+            header_token = self.tokens[-1]
+
         return {
-            "Authorization": f"token {self.token}",
+            "Authorization": f"token {token or header_token}",
             "JHUB_APPS_REQUEST_ID": self.jhub_apps_request_id
         }
+
+    def _create_token_for_user(self):
+        assert self.username
+        logger.info("Creating token for user", username=self.username)
+        r = requests.post(
+            API_URL + f"/users/{self.username}/tokens",
+            headers=self._headers(token=JUPYTERHUB_API_TOKEN),
+            json={
+                # Expire in 5 minutes max
+                "expires_in": 60*5
+            }
+        )
+        r.raise_for_status()
+        rjson = r.json()
+        # This is so that when a new token is created, it doesn't overrides a previously created token,
+        # which is still in use by the previous function in stack
+        # for e.g. When func_a calls func_b and both have the decorator "requires_user_token"
+        # The func_a on completing execution will only clear the token, which the decorator
+        # requires_user_token created for it, not the token created for func_a
+        self.token_json = rjson
+        self.tokens.append(rjson["token"])
+        logger.info(f"Created token: {rjson['id']}")
+        return rjson
+
+    def _revoke_token(self, token_id):
+        assert self.username
+        assert token_id
+        logger.info(f"Revoking token: {token_id}")
+        r = requests.delete(
+            API_URL + f"/users/{self.username}/tokens/{token_id}",
+            headers=self._headers(token=JUPYTERHUB_API_TOKEN),
+        )
+        r.raise_for_status()
+        logger.info(
+            "Token revoked",
+            status_code=r.status_code,
+            username=self.username
+        )
+        self.tokens.pop()
+        return r
 
     def get_users(self):
         r = requests.get(
@@ -43,9 +108,10 @@ class HubClient:
         users = r.json()
         return users
 
-    def get_user(self, user):
+    @requires_user_token
+    def get_user(self, user=None):
         r = requests.get(
-            API_URL + f"/users/{user}",
+            API_URL + f"/users/{user or self.username}",
             params={"include_stopped_servers": True},
             headers=self._headers()
         )
@@ -53,6 +119,7 @@ class HubClient:
         user = r.json()
         return user
 
+    @requires_user_token
     def get_server(self, username, servername):
         user = self.get_user(username)
         for name, server in user["servers"].items():
@@ -69,6 +136,7 @@ class HubClient:
         # Max limit for servername is 255 chars
         return text[:240]
 
+    @requires_user_token
     def start_server(self, username, servername):
         if not servername:
             logger.info("Starting JupyterLab server")
@@ -87,6 +155,7 @@ class HubClient:
         r.raise_for_status()
         return r.status_code, servername
 
+    @requires_user_token
     def create_server(self, username: str, servername: str, user_options: UserOptions = None):
         logger.info("Creating new server", user=username)
         normalized_servername = self.normalize_server_name(servername)
@@ -94,6 +163,7 @@ class HubClient:
         logger.info("Normalized servername", servername=servername)
         return self._create_server(username, unique_servername, user_options)
 
+    @requires_user_token
     def edit_server(self, username: str, servername: str, user_options: UserOptions = None):
         logger.info("Editing server", server_name=servername)
         server = self.get_server(username, servername)
@@ -140,7 +210,11 @@ class HubClient:
             raise ValueError("None of share_to_user or share_to_group provided")
         share_with = share_to_group or share_to_user
         logger.info(f"Sharing {username}/{servername} with {share_with}")
-        return requests.post(API_URL + url, headers=self._headers(), json=data)
+        return requests.post(
+            API_URL + url,
+            headers=self._headers(),
+            json=data
+        )
 
     def _share_server_with_multiple_entities(
             self,
@@ -189,8 +263,10 @@ class HubClient:
         url = f"/shares/{username}/{servername}"
         return requests.delete(API_URL + url, headers=self._headers())
 
-    def get_shared_servers(self, username: str):
+    @requires_user_token
+    def get_shared_servers(self, username: str = None):
         """List servers shared with user"""
+        username = username or self.username
         if not is_jupyterhub_5():
             logger.info("Unable to get shared servers as this feature is not available in JupyterHub < 5.x")
             return []
@@ -201,6 +277,7 @@ class HubClient:
         shared_servers = rjson["items"]
         return shared_servers
 
+    @requires_user_token
     def delete_server(self, username, server_name, remove=False):
         if server_name is None:
             # Default server and not named server
@@ -212,6 +289,7 @@ class HubClient:
         r.raise_for_status()
         return r.status_code
 
+    @requires_user_token
     def get_services(self):
         r = requests.get(API_URL + "/services", headers=self._headers())
         r.raise_for_status()
@@ -223,17 +301,37 @@ class HubClient:
         r.raise_for_status()
         return r.json()
 
+    @requires_user_token
+    def get_user_scopes(self):
+        assert self.token_json
+        assert "scopes" in self.token_json
+        return self.token_json["scopes"]
+
 
 def get_users_and_group_allowed_to_share_with(user):
     """Returns a list of users and groups"""
-    hclient = HubClient()
+    hclient = HubClient(username=user.name)
     users = hclient.get_users()
     user_names = [u["name"] for u in users if u["name"] != user.name]
     groups = hclient.get_groups()
     group_names = [group['name'] for group in groups]
-    # TODO: Filter users and groups based on what the user has access to share with
-    # parsed_scopes = parse_scopes(scopes)
+    user_scopes = hclient.get_user_scopes()
     return {
-        "users": user_names,
-        "groups": group_names
+        "users": filter_entity_based_on_scopes(
+            scopes=user_scopes, entities=user_names
+        ),
+        "groups": filter_entity_based_on_scopes(
+            scopes=user_scopes, entities=group_names, entity_key="group"
+        )
     }
+
+
+def filter_entity_based_on_scopes(scopes, entities, entity_key="user"):
+    # only available in JupyterHub>=5
+    from jupyterhub.scopes import has_scope, expand_scopes
+    allowed_entities_to_read = set()
+    expanded_scopes = expand_scopes(scopes)
+    for entity in entities:
+        if has_scope(f'read:{entity_key}s:name!{entity_key}={entity}', expanded_scopes):
+            allowed_entities_to_read.add(entity)
+    return list(allowed_entities_to_read)

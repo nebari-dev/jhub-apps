@@ -4,6 +4,8 @@ import { AppForm } from '@src/components';
 import { APP_BASE_URL } from '@src/utils/constants';
 import { navigateToUrl } from '@src/utils/jupyterhub';
 import React from 'react';
+import { StyledFormHeading } from '../../styles/styled-form-heading';
+import { StyledFormParagraph } from '../../styles/styled-form-paragraph';
 import { Item } from '../../styles/styled-item';
 
 export const CreateApp = (): React.ReactElement => {
@@ -20,13 +22,13 @@ export const CreateApp = (): React.ReactElement => {
               startIcon={<ArrowBackIcon />}
               onClick={() => navigateToUrl(APP_BASE_URL)}
             >
-              Back
+              Back To Home
             </Button>
           </div>
         </Item>
         <Item>
-          <h1 className="form-heading">Create a new app</h1>
-          <p className="form-paragraph">
+          <StyledFormHeading>Create a new app</StyledFormHeading>
+          <StyledFormParagraph>
             Begin your project by entering the details below. For more
             information about creating an app,{' '}
             <a
@@ -38,7 +40,7 @@ export const CreateApp = (): React.ReactElement => {
               visit our docs
             </a>
             .
-          </p>
+          </StyledFormParagraph>
         </Item>
         <Item>
           <AppForm />

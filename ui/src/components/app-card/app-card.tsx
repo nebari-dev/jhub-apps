@@ -11,12 +11,14 @@ import Typography from '@mui/material/Typography';
 import { StatusChip } from '@src/components';
 import { API_BASE_URL } from '@src/utils/constants';
 
+import { AppProfileProps } from '@src/types/api';
 import { JhApp } from '@src/types/jupyterhub';
 import React, { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import {
   currentApp,
   currentNotification,
+  currentProfiles as defaultProfiles,
   isDeleteOpen,
   isStartOpen,
   isStopOpen,
@@ -56,6 +58,7 @@ export const AppCard = ({
   app,
 }: AppCardProps): React.ReactElement => {
   const [appStatus, setAppStatus] = useState('');
+  const [currentProfiles] = useRecoilState<AppProfileProps[]>(defaultProfiles);
   const [, setCurrentApp] = useRecoilState<JhApp | undefined>(currentApp);
   const [, setNotification] = useRecoilState<string | undefined>(
     currentNotification,
@@ -169,8 +172,16 @@ export const AppCard = ({
     }
   };
 
+  const getProfileData = (profile: string) => {
+    return currentProfiles.find((p) => p.slug === profile)?.display_name || '';
+  };
+
   return (
-    <Box className="card" id={`card-${id}`} tabIndex={0}>
+    <Box
+      className={`card ${isAppCard ? '' : 'service'}`}
+      id={`card-${id}`}
+      tabIndex={0}
+    >
       <Link href={url}>
         <Card id={`card-${id}`} tabIndex={0} className="Mui-card">
           <div
@@ -180,7 +191,11 @@ export const AppCard = ({
               <>
                 <div className="chip-container">
                   <div className="menu-chip">
-                    <StatusChip status={appStatus} />
+                    <StatusChip
+                      status={appStatus}
+                      additionalInfo={getProfileData(app?.profile || '')}
+                      app={app}
+                    />
                   </div>
                 </div>
                 <ContextMenu
@@ -193,15 +208,13 @@ export const AppCard = ({
               <></>
             )}
             <CardMedia>
-              {thumbnail ? (
-                <div
-                  className={isAppCard ? 'img-overlay' : 'img-overlay-service'}
-                >
-                  <img src={thumbnail} alt="App thumb" />
-                </div>
-              ) : (
-                <></>
-              )}
+              <div
+                className={
+                  isAppCard && thumbnail ? 'img-overlay' : 'img-overlay-service'
+                }
+              >
+                {thumbnail && <img src={thumbnail} alt="App thumb" />}
+              </div>
             </CardMedia>
           </div>
           <div className="card-content-content">
@@ -220,32 +233,34 @@ export const AppCard = ({
                           label={framework}
                           id={`chip-${id}`}
                           size="small"
-                          sx={{ mb: '8px' }}
+                          sx={{ mb: '8px', fontWeight: 600 }}
                         />
                       </div>
                     </div>
                   ) : (
                     <></>
                   )}
-                  <span className="inline relative iconic">{getIcon()}</span>
-                  <Typography
-                    gutterBottom
-                    variant="h5"
-                    component="div"
-                    className="card-title"
-                    sx={{ position: 'relative', top: '5px' }}
-                  >
-                    <Tooltip title={title} placement="top-start">
-                      <span
-                        className="card-content-truncate"
-                        style={{
-                          maxWidth: '220px',
-                        }}
-                      >
-                        {title}
-                      </span>
-                    </Tooltip>
-                  </Typography>
+                  <div>
+                    <span className="inline relative iconic">{getIcon()}</span>
+                    <Typography
+                      gutterBottom
+                      variant="h5"
+                      component="div"
+                      className="card-title"
+                      sx={{ position: 'relative', top: '5px' }}
+                    >
+                      <Tooltip title={title} placement="top-start">
+                        <span
+                          className="card-content-truncate"
+                          style={{
+                            maxWidth: '220px',
+                          }}
+                        >
+                          {title}
+                        </span>
+                      </Tooltip>
+                    </Typography>
+                  </div>
                   <Typography
                     variant="body2"
                     color="text.secondary"
@@ -278,7 +293,6 @@ export const AppCard = ({
             ) : (
               <Box className="card-content-container app-service no-hover">
                 <CardContent className="card-inner-content">
-                  <span className="inline relative iconic">{getIcon()}</span>
                   <Typography
                     gutterBottom
                     variant="h5"

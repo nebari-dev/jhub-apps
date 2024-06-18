@@ -71,8 +71,8 @@ describe('Home', () => {
   test('should render ServicesGrid and AppsGrid', async () => {
     const { getByText } = render(componentWrapper);
     await act(async () => {
-      expect(getByText('Services')).toBeTruthy();
-      expect(getByText('Apps')).toBeTruthy();
+      expect(getByText('Quick Access')).toBeTruthy();
+      expect(getByText('App Library')).toBeTruthy();
     });
   });
 
@@ -208,8 +208,8 @@ describe('Home', () => {
   });
 
   test('should render with stop modal and submit', async () => {
-    mock.onPost(`/server/test-app-1/stop`).reply(200); // Mock the delete API endpoint
-    const { baseElement } = render(
+    mock.onDelete(`/server/test-app-1`).reply(200); // Mock the stop API endpoint
+    const { baseElement, getByText } = render(
       <RecoilRoot
         initializeState={({ set }) => {
           set(isStopOpen, true);
@@ -225,14 +225,20 @@ describe('Home', () => {
     );
 
     await waitFor(() => {
-      const startModal = within(baseElement).getByTestId('StopModal');
-      expect(startModal).toBeInTheDocument();
+      const stopModal = within(baseElement).getByTestId('StopModal');
+      expect(stopModal).toBeInTheDocument();
     });
 
     const stopBtn = baseElement.querySelector('#stop-btn') as HTMLButtonElement;
     await act(async () => {
       stopBtn.click();
     });
+
+    await waitFor(() => {
+      const snackbar = getByText('Server stopped successfully');
+      expect(snackbar).toBeInTheDocument();
+    });
+
     expect(document.location.pathname).toBe('/');
   });
 
@@ -248,8 +254,8 @@ describe('Home', () => {
     );
 
     await waitFor(() => {
-      const startModal = within(baseElement).getByTestId('DeleteModal');
-      expect(startModal).toBeInTheDocument();
+      const deleteModal = within(baseElement).getByTestId('DeleteModal');
+      expect(deleteModal).toBeInTheDocument();
     });
 
     const cancelBtn = baseElement.querySelector(
@@ -273,8 +279,8 @@ describe('Home', () => {
     );
 
     await waitFor(() => {
-      const startModal = within(baseElement).getByTestId('DeleteModal');
-      expect(startModal).toBeInTheDocument();
+      const deleteModal = within(baseElement).getByTestId('DeleteModal');
+      expect(deleteModal).toBeInTheDocument();
     });
 
     const backdrop = baseElement.querySelector(
@@ -288,7 +294,7 @@ describe('Home', () => {
 
   test('should render with delete modal and submit', async () => {
     mock.onDelete(`/server/test-app-1`).reply(200); // Mock the delete API endpoint
-    const { baseElement } = render(
+    const { baseElement, getByText } = render(
       <RecoilRoot
         initializeState={({ set }) => {
           set(isDeleteOpen, true);
@@ -304,8 +310,8 @@ describe('Home', () => {
     );
 
     await waitFor(() => {
-      const startModal = within(baseElement).getByTestId('DeleteModal');
-      expect(startModal).toBeInTheDocument();
+      const deleteModal = within(baseElement).getByTestId('DeleteModal');
+      expect(deleteModal).toBeInTheDocument();
     });
 
     const deleteBtn = baseElement.querySelector(
@@ -314,6 +320,12 @@ describe('Home', () => {
     await act(async () => {
       deleteBtn.click();
     });
+
+    await waitFor(() => {
+      const snackbar = getByText('App deleted successfully');
+      expect(snackbar).toBeInTheDocument();
+    });
+
     expect(document.location.pathname).toBe('/');
   });
 });

@@ -89,18 +89,12 @@ export const getApps = (
       const app = server.user_options;
       const appStatus = getAppStatus(server);
       filteredApps.push({
+        ...app,
+        ...server,
         id: app.name,
         name: app.display_name,
-        description: app.description,
         framework: getFriendlyFrameworkName(app.framework),
-        url: server.url,
-        thumbnail: app.thumbnail,
         username: server.username || username,
-        ready: server.ready,
-        pending: server.pending,
-        stopped: server.stopped,
-        public: app.public,
-        shared: server.shared,
         last_activity: server.last_activity,
         status: appStatus,
       });
@@ -123,6 +117,7 @@ export const getPinnedApps = (servers: any, username: string) => {
       name: 'JupyterLab',
       description: 'This is your default JupyterLab server.',
       framework: 'JupyterLab',
+      profile: defaultApp.user_options?.profile,
       url: getEncodedServerUrl(username, 'lab'),
       thumbnail: JUPYTER_LOGO,
       username: username,
@@ -183,6 +178,19 @@ export const getFriendlyDateStr = (date: Date) => {
   }
 };
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+export const getFriendlyEnvironmentVariables = (env: any) => {
+  if (!env) {
+    return null;
+  }
+
+  try {
+    return JSON.parse(JSON.stringify(env));
+  } catch (error) {
+    return null;
+  }
+};
+
 export const getAppLogoUrl = () => {
   if (window.theme?.logo) {
     return window.theme.logo;
@@ -217,6 +225,7 @@ export const filterAndSortApps = (
   ownershipValue: string,
   frameworkValues: string[],
   sortByValue: string,
+  currentServerStatuses: string[],
 ) => {
   const searchToLower = searchValue.toLowerCase();
   const ownershipType =
@@ -237,6 +246,12 @@ export const filterAndSortApps = (
     .filter((app) => {
       if (frameworkValues.length > 0) {
         return frameworkValues.includes(app.framework);
+      }
+      return true;
+    })
+    .filter((app) => {
+      if (currentServerStatuses.length > 0) {
+        return currentServerStatuses.includes(app.status);
       }
       return true;
     });

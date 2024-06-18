@@ -25,12 +25,12 @@ export const environments = ['env-1', 'env-2', 'env-3', 'env-4', 'env-5'];
 
 export const profiles: AppProfileProps[] = [
   {
-    display_name: 'Small',
+    display_name: 'Small Instance',
     slug: 'small0',
     description: 'Stable environment with 1 CPU / 4GB RAM',
   },
   {
-    display_name: 'Small',
+    display_name: 'Small Instance',
     slug: 'small1',
     description: 'Stable environment with 2 CPU / 8GB RAM',
   },
@@ -93,7 +93,9 @@ export const serverApps = {
       name: '',
       url: '/user/test',
       ready: true,
-      user_options: {},
+      user_options: {
+        profile: 'small1',
+      },
       last_activity: getMockDate(0),
     },
     {
@@ -142,7 +144,7 @@ export const serverApps = {
         framework: 'streamlit',
         conda_env: 'env-2',
         profile: 'small0',
-        env: { key: 'value' },
+        env: { key1: 'value1', key2: 'value2' },
         public: false,
         share_with: {
           users: [],

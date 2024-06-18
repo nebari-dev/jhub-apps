@@ -32,7 +32,7 @@ describe('AppsSection', () => {
     const header = baseElement.querySelector('h2');
 
     expect(baseElement).toBeTruthy();
-    expect(header).toHaveTextContent('Apps');
+    expect(header).toHaveTextContent('App Library');
   });
 
   test('renders with mocked data', async () => {

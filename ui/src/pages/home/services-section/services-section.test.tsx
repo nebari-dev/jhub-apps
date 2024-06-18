@@ -32,7 +32,7 @@ describe('ServicesSection', () => {
     const header = baseElement.querySelector('h2');
 
     expect(baseElement).toBeTruthy();
-    expect(header).toHaveTextContent('Services');
+    expect(header).toHaveTextContent('Quick Access');
   });
 
   test('renders a message when no services', () => {

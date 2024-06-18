@@ -1,3 +1,4 @@
+import { ThemeProvider } from '@mui/material/styles';
 import { serverApps } from '@src/data/api';
 import { servicesFull } from '@src/data/jupyterhub';
 import { currentUser } from '@src/data/user';
@@ -6,11 +7,13 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import '@testing-library/jest-dom';
 import { act, fireEvent, render } from '@testing-library/react';
 import MockAdapter from 'axios-mock-adapter';
+import { ReactNode } from 'react';
 import { BrowserRouter } from 'react-router-dom';
+import { JSX } from 'react/jsx-runtime';
 import { RecoilRoot } from 'recoil';
 import { Navigation } from '..';
 import { currentUser as defaultUser } from '../../store';
-
+import { theme } from '../../theme/theme';
 describe('Navigation', () => {
   const queryClient = new QueryClient();
   const mock = new MockAdapter(axios);
@@ -23,8 +26,20 @@ describe('Navigation', () => {
     mock.reset();
   });
 
+  // Wrap your components with the ThemeProvider and provide the theme
+  const renderWithTheme = (
+    component:
+      | string
+      | number
+      | boolean
+      | JSX.Element
+      | Iterable<ReactNode>
+      | null
+      | undefined,
+  ) => render(<ThemeProvider theme={theme}>{component}</ThemeProvider>);
+
   test('renders default top navigation successfully', () => {
-    const { baseElement } = render(
+    const { baseElement } = renderWithTheme(
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
@@ -41,7 +56,7 @@ describe('Navigation', () => {
     mock.onGet(new RegExp('/services')).reply(200, servicesFull);
     queryClient.setQueryData(['service-data'], servicesFull);
 
-    const { baseElement } = render(
+    const { baseElement } = renderWithTheme(
       <RecoilRoot initializeState={({ set }) => set(defaultUser, currentUser)}>
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
@@ -63,7 +78,7 @@ describe('Navigation', () => {
     queryClient.setQueryData(['service-data'], servicesFull);
     queryClient.setQueryData(['app-state'], serverApps);
 
-    const { baseElement } = render(
+    const { baseElement } = renderWithTheme(
       <RecoilRoot initializeState={({ set }) => set(defaultUser, currentUser)}>
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
@@ -82,7 +97,7 @@ describe('Navigation', () => {
   test('renders with data error', async () => {
     mock.onGet(new RegExp('/services')).reply(500, { message: 'Some error' });
     queryClient.setQueryData(['service-data'], null);
-    const { baseElement } = render(
+    const { baseElement } = renderWithTheme(
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
           <Navigation />
@@ -95,7 +110,7 @@ describe('Navigation', () => {
   });
 
   test('handles profile menu click', async () => {
-    const { baseElement } = render(
+    const { baseElement } = renderWithTheme(
       <RecoilRoot initializeState={({ set }) => set(defaultUser, currentUser)}>
         <QueryClientProvider client={queryClient}>
           <Navigation />

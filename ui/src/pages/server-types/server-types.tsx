@@ -1,22 +1,32 @@
 import ArrowBackIcon from '@mui/icons-material/ArrowBackRounded';
+import { LoadingButton } from '@mui/lab';
 import {
+  Box,
   Button,
   Card,
   CardContent,
   FormControlLabel,
   Radio,
   RadioGroup,
+  Stack,
 } from '@mui/material';
 import { AppProfileProps, AppQueryUpdateProps } from '@src/types/api';
 import { AppFormInput } from '@src/types/form';
 import { UserState } from '@src/types/user';
 import axios from '@src/utils/axios';
 import { APP_BASE_URL } from '@src/utils/constants';
-import { navigateToUrl } from '@src/utils/jupyterhub';
+import {
+  getFriendlyEnvironmentVariables,
+  navigateToUrl,
+} from '@src/utils/jupyterhub';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
+import { StyledFormHeading } from 'src/styles/styled-form-heading';
+import { StyledFormParagraph } from 'src/styles/styled-form-paragraph';
+import { StyledFormSection } from 'src/styles/styled-form-section';
+import { Item } from 'src/styles/styled-item';
 import {
   currentNotification,
   currentFile as defaultFile,
@@ -93,7 +103,7 @@ export const ServerTypes = (): React.ReactElement => {
         thumbnail: currentFormInput?.thumbnail || '',
         filepath: currentFormInput?.filepath || '',
         conda_env: currentFormInput?.conda_env || '',
-        env: currentFormInput?.env ? JSON.parse(currentFormInput.env) : null,
+        env: getFriendlyEnvironmentVariables(currentFormInput?.env),
         custom_command: currentFormInput?.custom_command || '',
         profile: currentFormInput?.profile || '',
         public: currentFormInput?.is_public || false,
@@ -194,101 +204,109 @@ export const ServerTypes = (): React.ReactElement => {
   }, [error, setCurrentNotification]);
 
   return (
-    <div className="container">
-      <div className="form-breadcrumb">
-        <Button
-          id="back-btn"
-          type="button"
-          variant="text"
-          color="primary"
-          startIcon={<ArrowBackIcon />}
-          onClick={() => navigate(id ? `/edit-app?id=${id}` : '/create-app')}
-        >
-          Back
-        </Button>
-      </div>
-      <div className="row">
-        <h1 className="form-heading">Server Type</h1>
-        <p className="form-paragraph">
-          Please select the appropriate server for your app. For more
-          information on server types,{' '}
-          <span>
-            <a
-              href="https://www.nebari.dev/docs/welcome"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="form-paragraph-link"
+    <Box className="container">
+      <Stack>
+        <Item>
+          <div className="form-breadcrumb">
+            <Button
+              id="back-btn"
+              type="button"
+              variant="text"
+              color="primary"
+              startIcon={<ArrowBackIcon />}
+              onClick={() => navigateToUrl(APP_BASE_URL)}
             >
-              visit our docs
-            </a>
-          </span>
-          .
-        </p>
-      </div>
-      {isLoading ? (
-        <div className="font-bold center">Loading...</div>
-      ) : serverTypes && serverTypes.length > 0 ? (
-        <form className="form" onSubmit={handleSubmit}>
-          <div className="form-section">
-            <RadioGroup>
-              {serverTypes?.map((type: AppProfileProps, index: number) => (
-                <Card
-                  key={`server-type-card-${type.slug}`}
-                  className="server-type-card"
-                  onClick={() => handleCardClick(type.slug)}
-                  tabIndex={0}
-                >
-                  <CardContent>
-                    <FormControlLabel
-                      value={type.slug}
-                      key={type.slug}
-                      id={type.slug}
-                      control={
-                        <Radio
-                          checked={
-                            selectedServerType
-                              ? selectedServerType === type.slug
-                              : index === 0
+              Back To Home
+            </Button>
+          </div>
+        </Item>
+        <Item>
+          <StyledFormHeading>Server Type</StyledFormHeading>
+          <StyledFormParagraph>
+            Please select the appropriate server for your app. For more
+            information on server types,{' '}
+            <span>
+              <a
+                href="https://www.nebari.dev/docs/welcome"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="form-paragraph-link"
+              >
+                visit our docs
+              </a>
+            </span>
+            .
+          </StyledFormParagraph>
+        </Item>
+        <Item>
+          {isLoading ? (
+            <div className="font-bold center">Loading...</div>
+          ) : serverTypes && serverTypes.length > 0 ? (
+            <form className="form" onSubmit={handleSubmit}>
+              <StyledFormSection sx={{ pb: '36px' }}>
+                <RadioGroup>
+                  {serverTypes?.map((type: AppProfileProps, index: number) => (
+                    <Card
+                      key={`server-type-card-${type.slug}`}
+                      className="server-type-card"
+                      onClick={() => handleCardClick(type.slug)}
+                      tabIndex={0}
+                    >
+                      <CardContent>
+                        <FormControlLabel
+                          value={type.slug}
+                          key={type.slug}
+                          id={type.slug}
+                          control={
+                            <Radio
+                              checked={
+                                selectedServerType
+                                  ? selectedServerType === type.slug
+                                  : index === 0
+                              }
+                            />
                           }
+                          label={type.display_name}
                         />
-                      }
-                      label={type.display_name}
-                    />
-                    <p>{type.description}</p>
-                  </CardContent>
-                </Card>
-              ))}
-            </RadioGroup>
-          </div>
-          <hr />
-          <div className="button-section">
-            <div className="prev">
-              <Button
-                id="cancel-btn"
-                type="button"
-                variant="text"
-                color="secondary"
-                onClick={() => navigateToUrl(APP_BASE_URL)}
-              >
-                Cancel
-              </Button>
-            </div>
-            <div className="next">
-              <Button
-                id="submit-btn"
-                type="submit"
-                variant="contained"
-                color="primary"
-                disabled={submitting}
-              >
-                {id ? <>Save</> : <>Create App</>}
-              </Button>
-            </div>
-          </div>
-        </form>
-      ) : (
-        <div>No servers available</div>
-      )}
-    </div>
+                        <p>{type.description}</p>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </RadioGroup>
+              </StyledFormSection>
+              <hr />
+              <div className="button-section">
+                <div className="prev">
+                  <Button
+                    id="cancel-btn"
+                    type="button"
+                    variant="text"
+                    color="primary"
+                    onClick={() =>
+                      navigate(id ? `/edit-app?id=${id}` : '/create-app')
+                    }
+                  >
+                    Back
+                  </Button>
+                </div>
+                <div className="next">
+                  <LoadingButton
+                    id="submit-btn"
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    loading={submitting}
+                  >
+                    {id ? 'Save' : 'Create App'}
+                  </LoadingButton>
+                </div>
+              </div>
+            </form>
+          ) : (
+            <div>No servers available</div>
+          )}
+        </Item>
+      </Stack>
+    </Box>
   );
 };

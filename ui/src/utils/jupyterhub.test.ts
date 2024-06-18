@@ -9,6 +9,7 @@ import {
   getEncodedServerUrl,
   getFriendlyDateStr,
   getFriendlyDisplayName,
+  getFriendlyEnvironmentVariables,
   getFriendlyFrameworkName,
   getJhData,
   getServices,
@@ -153,6 +154,17 @@ describe('JupyterHub utils', () => {
     expect(result).toBe('5 days ago');
   });
 
+  test('returns environment variables as JSON object', () => {
+    const env = { key: 'value' };
+    const result = getFriendlyEnvironmentVariables(env);
+    expect(result).toEqual(env);
+  });
+
+  test('returns null when no environment variables', () => {
+    const result = getFriendlyEnvironmentVariables(null);
+    expect(result).toBeNull();
+  });
+
   test('gets app theme url window object', () => {
     const result = getAppLogoUrl();
     expect(result).toBe('/img/logo.png');
@@ -172,6 +184,7 @@ describe('JupyterHub utils', () => {
       'all',
       [],
       'Recently modified',
+      [],
     );
     expect(apps[0].name).toBe('Test App');
   });
@@ -184,6 +197,7 @@ describe('JupyterHub utils', () => {
       'all',
       [],
       'Name: A-Z',
+      [],
     );
     expect(apps[0].name).toBe('App with a long name that should be truncated');
   });
@@ -196,6 +210,7 @@ describe('JupyterHub utils', () => {
       'all',
       [],
       'Name: Z-A',
+      [],
     );
     expect(apps[0].name).toBe('TEST App 3');
   });

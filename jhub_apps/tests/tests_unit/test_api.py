@@ -5,8 +5,9 @@ from unittest.mock import patch
 import pytest
 
 from jhub_apps.hub_client.hub_client import HubClient
+from jhub_apps.service.utils import get_shared_servers
 from jhub_apps.spawner.types import FRAMEWORKS
-from jhub_apps.tests.constants import MOCK_USER
+from jhub_apps.tests.common.constants import MOCK_USER
 
 
 def mock_user_options():
@@ -34,15 +35,13 @@ def mock_user_options():
     return user_options
 
 
-@patch.object(HubClient, "get_users")
-def test_api_get_server(get_users, client):
+@patch.object(HubClient, "get_user")
+def test_api_get_server(get_user, client):
     server_data = {"panel-app": {}}
-    get_users_response = [
-        {'name': 'aktech', 'servers': server_data}
-    ]
-    get_users.return_value = get_users_response
+    get_users_response = {'name': 'aktech', 'servers': server_data}
+    get_user.return_value = get_users_response
     response = client.get("/server/panel-app")
-    get_users.assert_called_once_with()
+    get_user.assert_called_once_with()
     assert response.status_code == 200
     assert response.json() == server_data["panel-app"]
 
@@ -144,6 +143,43 @@ def test_api_update_server(edit_server, client):
     )
     assert response.status_code == 200
     assert response.json() == create_server_response
+
+
+@patch.object(HubClient, "get_users")
+@patch.object(HubClient, "get_shared_servers")
+def test_shared_server_filtering(hub_get_shared_servers, get_users):
+    current_hub_user = {"name": "fakeuser"}
+    get_users.return_value = [
+        {
+            "servers": {
+                '': {'name': ''},
+                "panel-12": {"name": "panel-12"}
+            }
+        },
+        {
+            "servers": {
+                '': {'name': ''},
+                "panel-34": {"name": "panel-34", "fullname": "panel shared 34"}
+            }
+        },
+        {
+            "servers": {
+                '': {'name': ''},
+                "panel-56": {"name": "panel-56", "fullname": "panel shared server"}
+            }
+        }
+    ]
+    hub_get_shared_servers.return_value = [
+        {"server": {"name": "panel-56"}},
+        {"server": {"name": "panel-34"}},
+    ]
+    shared_servers = get_shared_servers(current_hub_user)
+    assert shared_servers == [
+        {"name": "panel-34", "fullname": "panel shared 34"},
+        {"name": "panel-56", "fullname": "panel shared server"}
+    ]
+    hub_get_shared_servers.assert_called_once_with()
+    get_users.assert_called_once_with()
 
 
 def test_api_frameworks(client):
