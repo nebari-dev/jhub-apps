@@ -6,52 +6,56 @@ sidebar_position: 1
 
 JHub Apps, also known as JupyterHub (Jhub) App Launcher, is an [Externally-Managed JupyterHub service](https://jupyterhub.readthedocs.io/en/stable/reference/services.html#externally-managed-services) designed to enable users to launch various server types including API services, any generic Python command, standard JupyterLab instances, and dashboards such as Panel, Bokeh, Streamlit.
 
-The system is built on a FastAPI framework as detailed in the [services.apps module](https://github.com/nebari-dev/jhub-apps/blob/main/jhub_apps/service/app.py). It initializes and runs through a [Uvicorn](https://www.uvicorn.org/) server (a WSGI HTTP server), managed by the JupyterHub service manager upon startup:
+## High Level Overview
 
-<div style={{'border-radius': '15px', 'border': '2px solid var(--ifm-color-primary)', 'padding': '20px' }}>
-```python title="jhub_apps/configuration.py#L42-L5"
-c.JupyterHub.services.extend(
-    [
-        {
-            "name": fast_api_service_name,
-            "url": f"http://{c.JAppsConfig.hub_host}:10202",
-            "command": [
-                c.JAppsConfig.python_exec,
-                "-m",
-                "uvicorn",
-                "jhub_apps.service.app:app",
-                "--port=10202",
-                "--host=0.0.0.0",
-                f"--workers={c.JAppsConfig.service_workers}",
-            ],
-            ...
-        }
-    ]
-)
-```
-</div>
+The system is built on a FastAPI framework as detailed in the [services.apps module](https://github.com/nebari-dev/jhub-apps/blob/main/jhub_apps/service/app.py). It initializes and runs through a [Uvicorn](https://www.uvicorn.org/) server (a WSGI HTTP server), managed by the JupyterHub service manager upon startup.
 
-This service operates on the Hub's host at port 10202, with a set number of workers as specified in the `service_workers` configuration parameter. It is accessible to users through the Hub's proxy, which directs requests to this service URL.
+This service operates on the Hub's host at port [`10202`](https://github.com/nebari-dev/jhub-apps/blob/main/jhub_apps/configuration.py#L56), with a set number of workers as specified in the `service_workers` configuration parameter.
 
-JupyterHub itself is comprised of four primary subsystems:
+## JupyterHub subsystems
 
-- a Hub (tornado process) that serves as the core of JupyterHub,
-- a configurable http proxy (node-http-proxy) that routes incoming browser requests,
-- multiple single-user Jupyter notebook servers (Python/IPython/tornado) managed by Spawners,
-- and an authentication module that governs user access.
+Before we dive into the specifics of JHub Apps, it is essential to understand some basic
+concepts of JupyterHub's architecture. JupyterHub itself is comprised of four primary subsystems:
+
+- **Hub** (tornado process) that serves as the core of JupyterHub,
+- **Proxy** [configurable http proxy](https://github.com/jupyterhub/configurable-http-proxy)
+  that dynamically routes incoming browser requests,
+- **single-user Jupyter notebook server** (Python/IPython/tornado) managed by [Spawners](https://jupyterhub.readthedocs.io/en/stable/reference/spawners.html#spawners-reference),
+- **Authenticator**, an authentication module that governs user access.
+
+The most critical component of JupyterHub is the Hub, which manages the user's
+lifecycle, including authentication, spawning, and routing requests to the appropriate
+single-user server. The Hub also serves as the primary entry point for users, providing
+a web interface for logging in, selecting services, and launching single-user servers.
+
+Then there is the configurable http proxy, which acts as a gatekeeper, dynamically updating internal routing to direct traffic efficiently and securely to the appropriate server instance. This setup not only supports default proxies but also allows for custom proxy configurations to manage various external applications seamlessly.
+
+Last but not least, the Spawners are abstract interfaces to processes that can start,
+monitor, and stop single-user servers. They are responsible for managing the lifecycle
+of the user's server, including spawning and stopping the server, as well as monitoring
+its status.
+
+![JupyterHub’s Major subsystems](/img/jhub_subsystems.png)
+
+For more information on JupyterHub's architecture, please refer to the official
+[JupyterHub Technical Overview](https://jupyterhub.readthedocs.io/en/stable/reference/technical-overview.html#) documentation.
+
+## JHub Apps Integration
 
 When JHub Apps is launched, it is integrated into JupyterHub as a new service. This addition modifies the Hub's homepage to feature the service's URL, thereby offering users not only access to other services but also control over spawning different frameworks beyond JupyterLab, like Streamlit and Bokeh, while utilizing JupyterHub's authentication and spawner mechanisms.
 
 The newly added Jhub-apps service introduces intermediate steps that tailor request routing based on the selected framework:
 
-- The Hub initiates a proxy,
-- Jhub-apps is launched and registered with JupyterHub,
-- The proxy initially routes all requests to the Hub,
-- Jhub-apps modifies the Hub's homepage to include its URL, extending the service
+- The Hub initiates its own proxy server,
+- Jhub-apps is launched and registered within JupyterHub as an external service,
+- The proxy initially routes all requests to the Hub, while complying with the
+  extensions and modifications made by Jhub-apps,
+- Jhub-apps modifies the Hub's homepage to include its URL (dynamically handled by the
+  proxy above), as well as extending the service
   selection options for users, who can now choose from a variety of frameworks.
 - The Hub continues to handle logins and server spawning,
-- Jhub-apps adjusts the request handling to direct users to the appropriate single-user server environments based on their selections.
-
+- Jhub-apps adjusts the request handling to direct users to the appropriate single-user
+  server environments based on their selections.
 
 ## Technical Architecture Diagram
 
@@ -64,31 +68,66 @@ Starting from the left of the diagram:
   their preferred OAuth providers (e.g., GitHub, Google). Authenticated users are
   redirected to JHub's homepage, where they select and launch the desired service.
 - As an external server managed by JHub, the JHub Apps service maintains full access to
-  JupyterHub’s authentication, authorization, and access controls. As a result, users
+  JupyterHub’s endpoint API's: authentication, authorization, and access controls. As a result, users
   still maintain the capability to visit Hub's built-in pages.
 - On the homepage, users can choose the specific framework to deploy as a single-user server. JHub Apps then spawns the selected framework similarly to how JupyterLab is launched. The service redirects users to their individual server instances, where they can interact with the chosen framework.
+
+Once a framework is selected it will determined which Spawner and proxy will be
+responsible for it. The Spawners will be responsible for granting that the
+server instance, it is, the container/kubernetes pod, or any process that will run the chosen
+framework, being it a custom web-service or a standard JupyterLab instance is up and
+running. The proxy, on the other hand, will be responsible for keeping the access to the
+server instance and the user's browser in sync, managing the routing of the requests
+between the two.
 
 ## Looking Under the Hood
 
 Proxies within JupyterHub act as gatekeepers, dynamically updating internal routing to direct traffic efficiently and securely to the appropriate server instance. This setup not only supports default proxies but also allows for custom proxy configurations to manage various external applications seamlessly.
 
-Jhub-apps introduces an additional layer of proxy management for custom frameworks, employing the [jhub-single-native](https://github.com/ideonate/jhsingle-native-proxy) to replace the standard jupyter-singleuser with any web service directly.
-
-Spawners are one of our major focal points in JupyterHub, acting as abstract interfaces to processes. They can
-start, monitor, and stop single-user servers, and are responsible for managing the
-lifecycle of the user's server. Jhub-apps extends this functionality to support a
-variety of frameworks, enabling users to launch different server types beyond
-JupyterLab.
-
 When a user selects a framework, JHub Apps balances the given requests into two possible
-proxies, each one corresponding to a different framework type. For conventional
-JupyterLab instances, the request is directed to the standard `jupyter-singleuser` proxy.
-For other frameworks, the request is routed to the `jhub-single-native` proxy, which
-handles the request and launches the appropriate server instance.
+proxies, each one corresponding to a different framework type:
+- For standard JupyterLab instances, the request is only managed by the default
+[jupyter-server-proxy](https://github.com/jupyterhub/jupyter-server-proxy), which
+launches the JupyterLab instance, under your usual `/lab` URL.
+- For other frameworks, an additional proxy layer is launched within the web-service, the
+[jhsingle-native-proxy](https://github.com/ideonate/jhsingle-native-proxy), which
+works in a similar fashion as the above, but is designed to remove the dependency on the
+jupyter notebook and jupyterlab services, while also allowing for a direct connection to the
+selected framework (webs service) during its lifecycle.
+
+Here’s a simplified explanation of the interaction between the two proxies:
+
+1. **Public Proxy:**
+   - Acts as a gatekeeper, receiving requests from users trying to access their `/lab`
+     instances and the usual JupyterHub endpoints.
+   - This proxy decides where each request should go based on the user's information and routes it accordingly.
+
+2. **Internal Proxy (jhub-single-native):**
+   - This internal proxy sits behind the public proxy and handles specific user requests
+     when a custom framework is selected.
+   - Similar to the public proxy, it also dynamically updates the available route table
+     based on the framework selected by giving it a special route endpoint, while also
+     handling the routing of the web-service's internal endpoints.
+   - It wraps an arbitrary web application so it can replace the Jupyter notebook
+     interface, allowing users to work directly with their preferred web services.
+
+### How does all Work Together?
 
 The diagram below illustrates the interaction between the two
-proxies, in a kubernetes environment:
+proxies, in a kubernetes environment, to grasp the general concept of how the routing is
+handled, you can disregard the specifics of the kubernetes environment, such as the
+`Ingress (Route)`, and `Service (Proxy-public)` in the diagram bellow:
 
 ![JHub Apps Proxy Interaction](/img/jhub_single_native_proxy.png)
 
-:: Insert explanatory text here ::
+- **Request Handling:**
+  1. A user sends a request to access their selected framework through the JHub Apps
+     home page.
+  2. The public proxy receives the request and forwards it to the Jhub Apps service
+     internally, which then launches the selected web-service through the internal proxy
+     in a containerized environment.
+  3. The internal proxy then ensures that the user’s specific web application is
+     available and properly set up, by wrapping its execution in a supervised process.
+     While also handling a socket connection with jupyterhub's internal API for errors
+     and to keep the heartbeat and the user's session.
+  4. The user interacts with their web application as if they were directly connected.
