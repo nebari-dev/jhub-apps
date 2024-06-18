@@ -97,26 +97,30 @@ selected framework (webs service) during its lifecycle.
 
 Here’s a simplified explanation of the interaction between the two proxies:
 
-1. **Public Proxy:**
-   - Acts as a gatekeeper, receiving requests from users trying to access their `/lab`
-     instances and the usual JupyterHub endpoints.
+1. **Public Proxy (configurable-http-proxy):**
+   - Acts as a gatekeeper, for all receiving requests.
    - This proxy decides where each request should go based on the user's information and routes it accordingly.
 
-2. **Internal Proxy (jhub-single-native):**
-   - This internal proxy sits behind the public proxy and handles specific user requests
-     when a custom framework is selected.
-   - Similar to the public proxy, it also dynamically updates the available route table
-     based on the framework selected by giving it a special route endpoint, while also
-     handling the routing of the web-service's internal endpoints.
-   - It wraps an arbitrary web application so it can replace the Jupyter notebook
-     interface, allowing users to work directly with their preferred web services.
+2. **Internal Proxies:**
+    - jupyter-server-proxy:
+      - Jupyter Server Proxy lets you run arbitrary external processes (such as RStudio,
+        Shiny Server, Syncthing, PostgreSQL, Code Server, etc) alongside your notebook
+        server and provide authenticated web access to them using a path like /rstudio
+        next to others like `/lab`.
+    - jhub-single-native:
+      - Similar to the public proxy, it also dynamically updates the available route
+        table, it is, allows a public facing endpoint to be created for the selected
+        web-service (framework), though its main difference is that it is designed to be
+        a lightweight proxy, removing the dependency on the jupyter notebook and
+        jupyterlab services.
 
 ### How does all Work Together?
 
-The diagram below illustrates the interaction between the two
-proxies, in a kubernetes environment, to grasp the general concept of how the routing is
-handled, you can disregard the specifics of the kubernetes environment, such as the
-`Ingress (Route)`, and `Service (Proxy-public)` in the diagram bellow:
+The diagram below illustrates the interaction between the two given
+proxies (http--jupyter-server-proxy or http--jhub-single-native), in a kubernetes
+environment, in the context of JHub Apps. To grasp the general concept of how the
+routing is handled, you can disregard the specifics of the kubernetes environment, such
+as the `Ingress (Route)`, and `Service (Proxy-public)` in the diagram bellow:
 
 ![JHub Apps Proxy Interaction](/img/jhub_single_native_proxy.png)
 
@@ -126,6 +130,8 @@ handled, you can disregard the specifics of the kubernetes environment, such as 
   2. The public proxy receives the request and forwards it to the Jhub Apps service
      internally, which then launches the selected web-service through the internal proxy
      in a containerized environment.
+      - Based on the selected framework, we will end up spawning different proxies, as
+      explained in the previous paragraph. Though, the overal routing logic is the same.
   3. The internal proxy then ensures that the user’s specific web application is
      available and properly set up, by wrapping its execution in a supervised process.
      While also handling a socket connection with jupyterhub's internal API for errors
