@@ -9,6 +9,7 @@ import {
   Grid,
   Snackbar,
   SvgIcon,
+  Typography,
 } from '@mui/material';
 import { ButtonGroup } from '@src/components';
 import { AppQueryDeleteProps, AppQueryPostProps } from '@src/types/api';
@@ -272,7 +273,9 @@ export const Home = (): React.ReactElement => {
       <Grid container spacing={2} paddingBottom="32px">
         <Grid item xs={12} md={2}>
           <Item>
-            <h1 className="h5">Home</h1>
+            <Typography component="h1" variant="h5" sx={{ fontWeight: '600' }}>
+              Home
+            </Typography>
           </Item>
         </Grid>
       </Grid>
