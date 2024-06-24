@@ -69,6 +69,53 @@ declare module '@mui/material/styles' {
 const baseTheme = createTheme({
   typography: {
     fontFamily: '"Inter", sans-serif',
+    h1: {
+      letterSpacing: '-1.5px',
+      fontSize: '96px',
+    },
+    h2: {
+      letterSpacing: '0.5px',
+      fontSize: '60px',
+    },
+    h3: {
+      letterSpacing: '0px',
+      fontSize: '48px',
+    },
+    h4: {
+      letterSpacing: '0.25px',
+      fontSize: '34px',
+    },
+    h5: {
+      letterSpacing: '0px',
+      fontSize: '24px',
+    },
+    h6: {
+      letterSpacing: '0.15px',
+      fontSize: '20px',
+    },
+    subtitle1: {
+      letterSpacing: '0.15px',
+      fontSize: '16px',
+    },
+    subtitle2: {
+      letterSpacing: '0.1px',
+      fontSize: '14px',
+    },
+    body1: {
+      letterSpacing: '0.15px',
+      fontSize: '16px',
+    },
+    body2: {
+      letterSpacing: '0.17px',
+      fontSize: '14px',
+    },
+    caption: {
+      letterSpacing: '0.4px',
+    },
+    overline: {
+      letterSpacing: '1px',
+      fontSize: '12px',
+    },
   },
   components: {
     MuiButtonBase: {
