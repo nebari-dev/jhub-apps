@@ -1,11 +1,10 @@
 import ArrowBackIcon from '@mui/icons-material/ArrowBackRounded';
-import { Box, Button, Stack } from '@mui/material';
+import { Box, Button, Stack, Typography } from '@mui/material';
 import { AppForm } from '@src/components';
 import { APP_BASE_URL } from '@src/utils/constants';
 import { navigateToUrl } from '@src/utils/jupyterhub';
 import React from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { StyledFormHeading } from '../../styles/styled-form-heading';
 import { StyledFormParagraph } from '../../styles/styled-form-paragraph';
 import { Item } from '../../styles/styled-item';
 
@@ -31,9 +30,9 @@ export const EditApp = (): React.ReactElement => {
           </div>
         </Item>
         <Item>
-          <StyledFormHeading className="form-heading">
+          <Typography component="h1" variant="h5">
             Edit app
-          </StyledFormHeading>
+          </Typography>
           <StyledFormParagraph>
             Edit your app details here. For more information on editing your
             app,{' '}

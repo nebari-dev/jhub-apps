@@ -44,7 +44,6 @@ import {
   currentUser as defaultUser,
 } from '../../store';
 import { StyledFormSection } from '../../styles/styled-form-section';
-import { StyledFormSectionHeading } from '../../styles/styled-form-section-heading';
 import './app-form.css';
 
 export interface AppFormProps {
@@ -385,7 +384,9 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
       noValidate
     >
       <StyledFormSection>
-        <StyledFormSectionHeading>App Info</StyledFormSectionHeading>
+        <Typography component="h2" variant="subtitle1">
+          App Info
+        </Typography>
         <Controller
           name="display_name"
           control={control}
@@ -478,9 +479,10 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
           )}
         />
       </StyledFormSection>
-
       <StyledFormSection>
-        <StyledFormSectionHeading>Configuration</StyledFormSectionHeading>
+        <Typography component="h2" variant="subtitle1">
+          Configuration
+        </Typography>
         <Controller
           name="framework"
           control={control}
@@ -625,16 +627,18 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
         </Box>
       </StyledFormSection>
       <StyledFormSection>
-        <StyledFormSectionHeading>
+        <Typography component="h2" variant="subtitle1">
           Environment Variables
-        </StyledFormSectionHeading>
+        </Typography>
         <EnvironmentVariables
           variables={variables}
           setVariables={setVariables}
         />
       </StyledFormSection>
       <StyledFormSection>
-        <StyledFormSectionHeading>Sharing</StyledFormSectionHeading>
+        <Typography component="h2" variant="subtitle1">
+          Sharing
+        </Typography>
         <AppSharing
           url={formData?.url}
           permissions={formData?.user_options?.share_with}
@@ -645,7 +649,9 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
         />
       </StyledFormSection>
       <StyledFormSection sx={{ pb: '36px' }}>
-        <StyledFormSectionHeading>Custom Thumbnail</StyledFormSectionHeading>
+        <Typography component="h2" variant="subtitle1">
+          Custom Thumbnail
+        </Typography>
         <Controller
           name="thumbnail"
           control={control}

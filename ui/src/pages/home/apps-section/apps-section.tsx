@@ -2,7 +2,15 @@ import AddIcon from '@mui/icons-material/AddRounded';
 import SearchIcon from '@mui/icons-material/Search';
 import InputAdornment from '@mui/material/InputAdornment';
 
-import { Box, Button, Divider, Grid, Stack, TextField } from '@mui/material';
+import {
+  Box,
+  Button,
+  Divider,
+  Grid,
+  Stack,
+  TextField,
+  Typography,
+} from '@mui/material';
 import { JhApp } from '@src/types/jupyterhub';
 import { UserState } from '@src/types/user';
 import axios from '@src/utils/axios';
@@ -137,7 +145,9 @@ export const AppsSection = (): React.ReactElement => {
             <Grid container spacing={2} alignItems="center">
               <Grid item xs={12} md={4} sx={{ padding: '0' }}>
                 <Item>
-                  <h2>App Library</h2>
+                  <Typography component="h2" variant="h6">
+                    App Library
+                  </Typography>
                 </Item>
               </Grid>
               <Grid

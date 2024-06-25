@@ -9,6 +9,7 @@ import {
   Grid,
   Snackbar,
   SvgIcon,
+  Typography,
 } from '@mui/material';
 import { ButtonGroup } from '@src/components';
 import { AppQueryDeleteProps, AppQueryPostProps } from '@src/types/api';
@@ -269,10 +270,12 @@ export const Home = (): React.ReactElement => {
 
   return (
     <Box sx={{ flexGrow: 1 }} className="container">
-      <Grid container spacing={2} paddingBottom="32px">
+      <Grid container spacing={2} paddingBottom="24px">
         <Grid item xs={12} md={2}>
           <Item>
-            <h1 className="h5">Home</h1>
+            <Typography component="h1" variant="h5">
+              Home
+            </Typography>
           </Item>
         </Grid>
       </Grid>
