@@ -198,7 +198,7 @@ export const AppSharing = ({
               </Alert>
             </Item>
             <Item sx={{ pb: '8px' }}>
-              <Typography variant="subtitle1">
+              <Typography variant="subtitle1" sx={{ fontWeight: 400, pb: 0 }}>
                 Individuals and group access
               </Typography>
               <Box

@@ -9,6 +9,7 @@ import {
   Radio,
   RadioGroup,
   Stack,
+  Typography,
 } from '@mui/material';
 import { AppProfileProps, AppQueryUpdateProps } from '@src/types/api';
 import { AppFormInput } from '@src/types/form';
@@ -23,7 +24,6 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
-import { StyledFormHeading } from 'src/styles/styled-form-heading';
 import { StyledFormParagraph } from 'src/styles/styled-form-paragraph';
 import { StyledFormSection } from 'src/styles/styled-form-section';
 import { Item } from 'src/styles/styled-item';
@@ -221,7 +221,9 @@ export const ServerTypes = (): React.ReactElement => {
           </div>
         </Item>
         <Item>
-          <StyledFormHeading>Server Type</StyledFormHeading>
+          <Typography component="h1" variant="h5">
+            Server Type
+          </Typography>
           <StyledFormParagraph>
             Please select the appropriate server for your app. For more
             information on server types,{' '}

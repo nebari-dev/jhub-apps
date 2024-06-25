@@ -270,10 +270,10 @@ export const Home = (): React.ReactElement => {
 
   return (
     <Box sx={{ flexGrow: 1 }} className="container">
-      <Grid container spacing={2} paddingBottom="32px">
+      <Grid container spacing={2} paddingBottom="24px">
         <Grid item xs={12} md={2}>
           <Item>
-            <Typography component="h1" variant="h5" sx={{ fontWeight: '600' }}>
+            <Typography component="h1" variant="h5">
               Home
             </Typography>
           </Item>

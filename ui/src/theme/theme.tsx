@@ -88,18 +88,26 @@ const baseTheme = createTheme({
     h5: {
       letterSpacing: '0px',
       fontSize: '24px',
+      fontWeight: 600,
+      paddingBottom: '16px',
     },
     h6: {
       letterSpacing: '0.15px',
       fontSize: '20px',
+      fontWeight: 700,
+      paddingBottom: '16px',
     },
     subtitle1: {
       letterSpacing: '0.15px',
       fontSize: '16px',
+      fontWeight: 600,
+      paddingBottom: '24px',
     },
     subtitle2: {
       letterSpacing: '0.1px',
       fontSize: '14px',
+      fontWeight: 500,
+      paddingBottom: '24px',
     },
     body1: {
       letterSpacing: '0.15px',

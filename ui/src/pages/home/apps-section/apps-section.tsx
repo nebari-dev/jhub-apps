@@ -145,11 +145,7 @@ export const AppsSection = (): React.ReactElement => {
             <Grid container spacing={2} alignItems="center">
               <Grid item xs={12} md={4} sx={{ padding: '0' }}>
                 <Item>
-                  <Typography
-                    component="h2"
-                    variant="h6"
-                    sx={{ fontWeight: '700' }}
-                  >
+                  <Typography component="h2" variant="h6">
                     App Library
                   </Typography>
                 </Item>

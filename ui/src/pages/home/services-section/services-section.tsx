@@ -86,11 +86,7 @@ export const ServicesSection = (): React.ReactElement => {
           <Grid container spacing={2}>
             <Grid item xs={12} md={4}>
               <Item>
-                <Typography
-                  component="h2"
-                  variant="h6"
-                  sx={{ fontWeight: '700' }}
-                >
+                <Typography component="h2" variant="h6">
                   Quick Access
                 </Typography>
               </Item>
