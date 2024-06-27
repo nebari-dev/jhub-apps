@@ -119,6 +119,8 @@ describe('AppSharing', () => {
   });
 
   test('Adds permissions to table', async () => {
+    const setUserPermissionMock = jest.fn();
+    const setGroupPermissionMock = jest.fn();
     const { baseElement, getByText } = render(
       <RecoilRoot initializeState={({ set }) => set(defaultUser, currentUser)}>
         <QueryClientProvider client={queryClient}>
@@ -129,8 +131,8 @@ describe('AppSharing', () => {
             }}
             isPublic={false}
             setIsPublic={jest.fn()}
-            setCurrentUserPermissions={jest.fn()}
-            setCurrentGroupPermissions={jest.fn()}
+            setCurrentUserPermissions={setUserPermissionMock}
+            setCurrentGroupPermissions={setGroupPermissionMock}
           />
         </QueryClientProvider>
       </RecoilRoot>,
@@ -146,13 +148,32 @@ describe('AppSharing', () => {
       });
       const listbox = baseElement.querySelector('.MuiAutocomplete-listbox');
       await act(async () => {
-        listbox?.querySelector('li')?.click();
+        const listItems = listbox?.querySelectorAll('li');
+        listItems?.forEach((item) => {
+          item.click();
+        });
       });
       const button = getByText('Share');
       await act(async () => {
         button.click();
       });
     }
+
+    expect(setUserPermissionMock).toHaveBeenCalledWith(expect.any(Function));
+    const userMockUpdater = setUserPermissionMock.mock.calls[0][0];
+    expect(userMockUpdater(['existing_user_permission'])).toEqual([
+      'user1',
+      'user2',
+      'user3',
+    ]);
+
+    expect(setGroupPermissionMock).toHaveBeenCalledWith(expect.any(Function));
+    const groupMockUpdater = setGroupPermissionMock.mock.calls[0][0];
+    expect(groupMockUpdater(['existing_user_permission'])).toEqual([
+      'group1',
+      'group2',
+      'superadmin',
+    ]);
   });
 
   test('removes existing permission', async () => {
