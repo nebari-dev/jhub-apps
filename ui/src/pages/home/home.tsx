@@ -57,27 +57,17 @@ export const Home = (): React.ReactElement => {
   const [snackbarMessage, setSnackbarMessage] = useState('');
 
   const handleStartRequest = async ({ id }: AppQueryPostProps) => {
-    try {
-      const response = await axios.post(`/server/${id}`);
-      return response;
-    } catch (error) {
-      console.error('There was an error!', error);
-      setNotification((error as Error).toString());
-    }
+    const response = await axios.post(`/server/${id}`);
+    return response;
   };
 
   const handleDeleteRequest = async ({ id, remove }: AppQueryDeleteProps) => {
-    try {
-      const response = await axios.delete(`/server/${id}`, {
-        params: {
-          remove,
-        },
-      });
-      return response;
-    } catch (error) {
-      console.error('There was an error!', error);
-      setNotification((error as Error).toString());
-    }
+    const response = await axios.delete(`/server/${id}`, {
+      params: {
+        remove,
+      },
+    });
+    return response;
   };
 
   // Mutations
@@ -115,56 +105,41 @@ export const Home = (): React.ReactElement => {
 
   const handleStart = async () => {
     const appId = currentApp?.id || '';
-    try {
-      setSubmitting(true);
-      await startQuery(
-        { id: appId },
-        {
-          onSuccess: async () => {
-            setIsStartOpen(false);
-            queryClient.invalidateQueries({ queryKey: ['app-state'] });
-          },
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          onError: (error: any) => {
-            setNotification(error.message);
-          },
+    setSubmitting(true);
+    startQuery(
+      { id: appId },
+      {
+        onSuccess: async () => {
+          setIsStartOpen(false);
+          queryClient.invalidateQueries({ queryKey: ['app-state'] });
         },
-      );
-    } catch (error: unknown) {
-      console.error('Error in handleStart', error);
-      setNotification((error as Error).message);
-    } finally {
-      setSubmitting(false);
-    }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        onError: (error: any) => {
+          setSubmitting(false);
+          setNotification(error.message);
+        },
+      },
+    );
   };
 
   const handleStop = async () => {
     const appId = currentApp?.id || '';
     setSubmitting(true);
-    try {
-      deleteQuery(
-        { id: appId, remove: false },
-        {
-          onSuccess: () => {
-            setIsStopOpen(false);
-            queryClient.invalidateQueries({ queryKey: ['app-state'] });
-            setSnackbarMessage('Server stopped successfully');
-            setSnackbarOpen(true);
-          },
-          onError: (error: unknown) => {
-            setNotification((error as Error).message);
-          },
+    deleteQuery(
+      { id: appId, remove: false },
+      {
+        onSuccess: () => {
+          setIsStopOpen(false);
+          queryClient.invalidateQueries({ queryKey: ['app-state'] });
+          setSnackbarMessage('Server stopped successfully');
+          setSnackbarOpen(true);
         },
-      );
-    } catch (error) {
-      if (error instanceof Error) {
-        setNotification(error.message);
-      } else {
-        console.error('An unknown error occurred', error);
-      }
-    } finally {
-      setSubmitting(false);
-    }
+        onError: (error: unknown) => {
+          setSubmitting(false);
+          setNotification((error as Error).message);
+        },
+      },
+    );
   };
 
   const startModalBody = (
