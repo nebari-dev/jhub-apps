@@ -7,7 +7,13 @@ import { AppSharing } from '..';
 import { currentUser as defaultUser } from '../../store';
 
 describe('AppSharing', () => {
-  const queryClient = new QueryClient();
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+      },
+    },
+  });
   beforeEach(() => {
     queryClient.clear();
   });

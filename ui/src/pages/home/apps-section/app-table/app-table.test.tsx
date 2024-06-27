@@ -42,7 +42,13 @@ const mockApps: JhApp[] = [
 ];
 
 describe('AppTable', () => {
-  const queryClient = new QueryClient();
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+      },
+    },
+  });
   const mock = new MockAdapter(axios);
 
   beforeAll(() => {

@@ -14,7 +14,13 @@ import {
 import { ServerTypes } from './server-types';
 
 describe('ServerTypes', () => {
-  const queryClient = new QueryClient();
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+      },
+    },
+  });
   const mock = new MockAdapter(axios);
   const originalHref = window.location.href;
 

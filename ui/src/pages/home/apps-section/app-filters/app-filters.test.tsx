@@ -10,7 +10,13 @@ import { currentUser as defaultUser } from '../../../../store';
 import { AppFilters } from './app-filters';
 
 describe('AppFilters', () => {
-  const queryClient = new QueryClient();
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+      },
+    },
+  });
   const mock = new MockAdapter(axios);
   beforeAll(() => {
     mock.reset();

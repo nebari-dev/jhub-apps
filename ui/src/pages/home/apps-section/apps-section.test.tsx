@@ -10,7 +10,13 @@ import { currentUser as defaultUser } from '../../../store';
 import { AppsSection } from './apps-section';
 
 describe('AppsSection', () => {
-  const queryClient = new QueryClient();
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+      },
+    },
+  });
   const mock = new MockAdapter(axios);
   beforeAll(() => {
     mock.reset();

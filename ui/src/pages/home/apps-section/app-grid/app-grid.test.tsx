@@ -7,7 +7,13 @@ import { RecoilRoot } from 'recoil';
 import { AppGrid } from './app-grid';
 
 describe('AppGrid', () => {
-  const queryClient = new QueryClient();
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+      },
+    },
+  });
   test('should render successfully', async () => {
     const { baseElement } = render(
       <QueryClientProvider client={queryClient}>

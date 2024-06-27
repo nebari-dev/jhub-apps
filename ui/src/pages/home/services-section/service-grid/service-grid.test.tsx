@@ -8,7 +8,13 @@ import { RecoilRoot } from 'recoil';
 import { ServiceGrid } from './service-grid';
 
 describe('ServiceGrid', () => {
-  const queryClient = new QueryClient();
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+      },
+    },
+  });
   test('should render successfully', async () => {
     const { baseElement } = render(
       <QueryClientProvider client={queryClient}>

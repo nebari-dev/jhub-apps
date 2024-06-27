@@ -8,7 +8,13 @@ import { RecoilRoot } from 'recoil';
 import AppCard from './app-card';
 
 describe('AppCard', () => {
-  const queryClient = new QueryClient();
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+      },
+    },
+  });
   const mock = new MockAdapter(axios);
 
   beforeAll(() => {
