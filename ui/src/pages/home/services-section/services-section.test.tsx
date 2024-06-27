@@ -1,6 +1,6 @@
 import { serverApps, services } from '@src/data/api';
 import { currentUser } from '@src/data/user';
-import axios from '@src/utils/jupyterhub-axios';
+import axios from '@src/utils/axios';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import '@testing-library/jest-dom';
 import { fireEvent, render } from '@testing-library/react';
@@ -10,7 +10,13 @@ import { currentUser as defaultUser } from '../../../store';
 import { ServicesSection } from './services-section';
 
 describe('ServicesSection', () => {
-  const queryClient = new QueryClient();
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+      },
+    },
+  });
   const mock = new MockAdapter(axios);
   beforeAll(() => {
     mock.reset();
