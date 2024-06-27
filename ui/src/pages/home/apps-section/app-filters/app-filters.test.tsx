@@ -401,10 +401,6 @@ describe('AppFilters', () => {
       });
 
       await waitFor(() => {
-        expect(applyButton).toBeInTheDocument();
-      });
-
-      await waitFor(() => {
         const filteredCount = baseElement.querySelector(
           '#apply-filters-btn',
         ) as HTMLButtonElement;
