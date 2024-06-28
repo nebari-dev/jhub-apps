@@ -59,15 +59,6 @@ export const AppsSection = (): React.ReactElement => {
   );
   const toggleView = () => setIsGridViewActive((prev) => !prev); // Added toggleView function
 
-  useEffect(() => {
-    const serverStatus = apps ? apps.map((app) => app.status) : [];
-    if (!serverStatus) {
-      setNotification('Server status id undefined.');
-    } else {
-      setAppStatus(serverStatus.join(', ')); // Convert the array of strings to a single string
-    }
-  }, [apps, setNotification, setAppStatus]);
-
   const {
     isLoading,
     error,
@@ -86,17 +77,6 @@ export const AppsSection = (): React.ReactElement => {
     enabled: !!currentUser,
   });
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const serverStatus = apps ? apps.map((app) => app.status) : [];
-
-  useEffect(() => {
-    if (!serverStatus) {
-      setNotification('Server status id undefined.');
-    } else {
-      setAppStatus(serverStatus.join(', ')); // Convert the array of strings to a single string
-    }
-  }, [serverStatus, setNotification]);
-
   const handleSearch = (event: SyntheticEvent) => {
     const target = event.target as HTMLInputElement;
     setCurrentSearchValue(target.value);
@@ -114,6 +94,15 @@ export const AppsSection = (): React.ReactElement => {
       );
     }
   };
+
+  useEffect(() => {
+    const serverStatus = apps.map((app) => app.status);
+    if (serverStatus.length === 0) {
+      setNotification('Server status id undefined.');
+    } else {
+      setAppStatus(serverStatus.join(', ')); // Convert the array of strings to a single string
+    }
+  }, [apps, setNotification, setAppStatus]);
 
   useEffect(() => {
     if (!isLoading && serverData) {

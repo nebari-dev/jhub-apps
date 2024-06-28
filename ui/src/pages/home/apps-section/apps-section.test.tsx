@@ -10,7 +10,13 @@ import { currentUser as defaultUser } from '../../../store';
 import { AppsSection } from './apps-section';
 
 describe('AppsSection', () => {
-  const queryClient = new QueryClient();
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+      },
+    },
+  });
   const mock = new MockAdapter(axios);
   beforeAll(() => {
     mock.reset();
@@ -48,6 +54,19 @@ describe('AppsSection', () => {
     expect(baseElement.querySelectorAll('.card')).toHaveLength(5);
   });
 
+  test('renders with mocked data and no current user', async () => {
+    mock.onGet(new RegExp('/server/')).reply(200, serverApps);
+    queryClient.setQueryData(['app-state'], serverApps);
+    const { baseElement } = render(
+      <RecoilRoot initializeState={({ set }) => set(defaultUser, undefined)}>
+        <QueryClientProvider client={queryClient}>
+          <AppsSection />
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+    expect(baseElement.querySelectorAll('.card')).toHaveLength(5);
+  });
+
   test('renders a message when no apps', () => {
     queryClient.setQueryData(['app-state'], null);
     mock.onGet(new RegExp('/server/')).reply(200, null);
@@ -76,7 +95,7 @@ describe('AppsSection', () => {
 
   test('renders with data error', async () => {
     queryClient.setQueryData(['app-state'], null);
-    mock.onGet().reply(500, { message: 'Some error' });
+    mock.onGet(new RegExp('/server/')).reply(500, { message: 'Some error' });
     const { baseElement } = render(
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
@@ -113,5 +132,23 @@ describe('AppsSection', () => {
     });
     const cards = baseElement.querySelectorAll('.card');
     expect(cards).toHaveLength(2);
+  });
+
+  test('should toggle app table view', async () => {
+    mock.onGet(new RegExp('/server/')).reply(200, serverApps);
+    queryClient.setQueryData(['app-state'], serverApps);
+    const { baseElement, getByLabelText } = render(
+      <RecoilRoot initializeState={({ set }) => set(defaultUser, currentUser)}>
+        <QueryClientProvider client={queryClient}>
+          <AppsSection />
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+
+    const button = getByLabelText('Table View') as HTMLButtonElement;
+    await act(async () => {
+      fireEvent.click(button);
+    });
+    expect(baseElement.querySelector('.MuiTable-root')).toBeTruthy();
   });
 });

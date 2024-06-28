@@ -21,7 +21,13 @@ import {
 import { Home } from './home';
 
 describe('Home', () => {
-  const queryClient = new QueryClient();
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+      },
+    },
+  });
   const mock = new MockAdapter(axios);
   beforeAll(() => {
     mock.reset();
@@ -157,6 +163,37 @@ describe('Home', () => {
     expect(document.location.pathname).toBe('/');
   });
 
+  test('should render with start modal and not submit when no current app', async () => {
+    mock.onPost(new RegExp('/server/*')).reply(500, { message: 'Some error' });
+    const { baseElement } = render(
+      <RecoilRoot
+        initializeState={({ set }) => {
+          set(isStartOpen, true);
+          set(defaultApp, undefined);
+        }}
+      >
+        <QueryClientProvider client={queryClient}>
+          <BrowserRouter>
+            <Home />
+          </BrowserRouter>
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+
+    await waitFor(() => {
+      const startModal = within(baseElement).getByTestId('StartModal');
+      expect(startModal).toBeInTheDocument();
+    });
+
+    const startBtn = baseElement.querySelector(
+      '#start-btn',
+    ) as HTMLButtonElement;
+    await act(async () => {
+      startBtn.click();
+    });
+    expect(document.location.pathname).toBe('/');
+  });
+
   test('should render with stop modal', async () => {
     const { baseElement } = render(
       <RecoilRoot initializeState={({ set }) => set(isStopOpen, true)}>
@@ -237,6 +274,38 @@ describe('Home', () => {
     await waitFor(() => {
       const snackbar = getByText('Server stopped successfully');
       expect(snackbar).toBeInTheDocument();
+    });
+
+    expect(document.location.pathname).toBe('/');
+  });
+
+  test('should render with stop modal and not submit when no current app', async () => {
+    mock
+      .onDelete(new RegExp('/server/*'))
+      .reply(500, { message: 'Some error' });
+    const { baseElement } = render(
+      <RecoilRoot
+        initializeState={({ set }) => {
+          set(isStopOpen, true);
+          set(defaultApp, undefined);
+        }}
+      >
+        <QueryClientProvider client={queryClient}>
+          <BrowserRouter>
+            <Home />
+          </BrowserRouter>
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+
+    await waitFor(() => {
+      const stopModal = within(baseElement).getByTestId('StopModal');
+      expect(stopModal).toBeInTheDocument();
+    });
+
+    const stopBtn = baseElement.querySelector('#stop-btn') as HTMLButtonElement;
+    await act(async () => {
+      stopBtn.click();
     });
 
     expect(document.location.pathname).toBe('/');
@@ -324,6 +393,40 @@ describe('Home', () => {
     await waitFor(() => {
       const snackbar = getByText('App deleted successfully');
       expect(snackbar).toBeInTheDocument();
+    });
+
+    expect(document.location.pathname).toBe('/');
+  });
+
+  test('should render with delete modal and not submit when no current app', async () => {
+    mock
+      .onDelete(new RegExp('/server/*'))
+      .reply(500, { message: 'Some error' });
+    const { baseElement } = render(
+      <RecoilRoot
+        initializeState={({ set }) => {
+          set(isDeleteOpen, true);
+          set(defaultApp, undefined);
+        }}
+      >
+        <QueryClientProvider client={queryClient}>
+          <BrowserRouter>
+            <Home />
+          </BrowserRouter>
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+
+    await waitFor(() => {
+      const deleteModal = within(baseElement).getByTestId('DeleteModal');
+      expect(deleteModal).toBeInTheDocument();
+    });
+
+    const deleteBtn = baseElement.querySelector(
+      '#delete-btn',
+    ) as HTMLButtonElement;
+    await act(async () => {
+      deleteBtn.click();
     });
 
     expect(document.location.pathname).toBe('/');

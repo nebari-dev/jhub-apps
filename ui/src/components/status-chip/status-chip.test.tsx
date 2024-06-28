@@ -1,6 +1,7 @@
 import { apps } from '@src/data/api';
 import '@testing-library/jest-dom';
 import { render, waitFor } from '@testing-library/react';
+import { act } from 'react-dom/test-utils';
 import { RecoilRoot } from 'recoil';
 import { StatusChip } from '..';
 
@@ -82,7 +83,9 @@ describe('StatusChip', () => {
       '.MuiIconButton-root',
     ) as HTMLButtonElement;
     if (stopButton) {
-      stopButton.click();
+      act(() => {
+        stopButton.click();
+      });
     }
     waitFor(() => {
       const stopModal = baseElement.querySelector('.MuiDialog-root');

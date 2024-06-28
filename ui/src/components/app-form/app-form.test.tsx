@@ -17,7 +17,13 @@ describe('AppForm', () => {
     value: jest.fn(),
   });
 
-  const queryClient = new QueryClient();
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+      },
+    },
+  });
   const mock = new MockAdapter(axios);
   beforeAll(() => {
     mock.reset();

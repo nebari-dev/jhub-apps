@@ -8,7 +8,13 @@ import { RecoilRoot } from 'recoil';
 import { CreateApp } from './create-app';
 
 describe('CreateApp', () => {
-  const queryClient = new QueryClient();
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+      },
+    },
+  });
   const mock = new MockAdapter(axios);
   beforeAll(() => {
     mock.reset();

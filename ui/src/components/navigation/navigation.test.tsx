@@ -15,7 +15,13 @@ import { Navigation } from '..';
 import { currentUser as defaultUser } from '../../store';
 import { theme } from '../../theme/theme';
 describe('Navigation', () => {
-  const queryClient = new QueryClient();
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+      },
+    },
+  });
   const mock = new MockAdapter(axios);
   beforeAll(() => {
     mock.reset();

@@ -27,7 +27,7 @@ const config: JestConfigWithTsJest = {
     '!src/App.tsx',
     '!src/main.tsx',
     '!src/store.ts',
-    '!src/utils/axios.ts',
+    '!src/utils/*axios.ts',
     '!**/*.d.ts',
     '!**/types.ts',
     '!**/index.ts',

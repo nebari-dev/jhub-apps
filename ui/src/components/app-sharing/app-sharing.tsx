@@ -276,60 +276,61 @@ export const AppSharing = ({
                   <TableContainer>
                     <Table aria-label="Individuals and Groups" size="small">
                       <TableBody>
-                        {(rowsPerPage > 0
-                          ? currentItems.slice(
-                              page * rowsPerPage,
-                              page * rowsPerPage + rowsPerPage,
-                            )
-                          : currentItems
-                        ).map((item) => (
-                          <TableRow
-                            key={item.name}
-                            sx={{
-                              '&:last-child td, &:last-child th': { border: 0 },
-                            }}
-                          >
-                            <TableCell
-                              component="td"
-                              scope="row"
-                              sx={{ fontSize: '16px' }}
+                        {currentItems
+                          .slice(
+                            page * rowsPerPage,
+                            page * rowsPerPage + rowsPerPage,
+                          )
+                          .map((item) => (
+                            <TableRow
+                              key={item.name}
+                              sx={{
+                                '&:last-child td, &:last-child th': {
+                                  border: 0,
+                                },
+                              }}
                             >
-                              {item.name}{' '}
-                              {item.type === 'group' ? (
-                                <span style={{ fontWeight: 600 }}>
-                                  {' '}
-                                  (Group)
-                                </span>
-                              ) : (
-                                <></>
-                              )}
-                            </TableCell>
-                            <TableCell align="right">
-                              <Button
-                                variant="text"
-                                color="error"
-                                size="small"
-                                sx={{ fontWeight: '600', fontSize: '14px' }}
-                                onClick={() => {
-                                  setCurrentItems((prev) =>
-                                    prev.filter((i) => i.name !== item.name),
-                                  );
-                                  if (item.type === 'group') {
-                                    setCurrentGroupPermissions((prev) =>
-                                      prev.filter((i) => i !== item.name),
-                                    );
-                                  } else {
-                                    setCurrentUserPermissions((prev) =>
-                                      prev.filter((i) => i !== item.name),
-                                    );
-                                  }
-                                }}
+                              <TableCell
+                                component="td"
+                                scope="row"
+                                sx={{ fontSize: '16px' }}
                               >
-                                Remove
-                              </Button>
-                            </TableCell>
-                          </TableRow>
-                        ))}
+                                {item.name}{' '}
+                                {item.type === 'group' ? (
+                                  <span style={{ fontWeight: 600 }}>
+                                    {' '}
+                                    (Group)
+                                  </span>
+                                ) : (
+                                  <></>
+                                )}
+                              </TableCell>
+                              <TableCell align="right">
+                                <Button
+                                  variant="text"
+                                  color="error"
+                                  size="small"
+                                  sx={{ fontWeight: '600', fontSize: '14px' }}
+                                  onClick={() => {
+                                    setCurrentItems((prev) =>
+                                      prev.filter((i) => i.name !== item.name),
+                                    );
+                                    if (item.type === 'group') {
+                                      setCurrentGroupPermissions((prev) =>
+                                        prev.filter((i) => i !== item.name),
+                                      );
+                                    } else {
+                                      setCurrentUserPermissions((prev) =>
+                                        prev.filter((i) => i !== item.name),
+                                      );
+                                    }
+                                  }}
+                                >
+                                  Remove
+                                </Button>
+                              </TableCell>
+                            </TableRow>
+                          ))}
                       </TableBody>
                       <TableFooter>
                         <TableRow>
