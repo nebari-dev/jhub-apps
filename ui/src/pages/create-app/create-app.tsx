@@ -33,7 +33,7 @@ export const CreateApp = (): React.ReactElement => {
             Begin your project by entering the details below. For more
             information about creating an app,{' '}
             <a
-              href="https://jhub-apps.nebari.dev/docs/reference/create-app-form"
+              href="https://jhub-apps.nebari.dev/docs/category/create-apps"
               target="_blank"
               rel="noopener noreferrer"
               className="form-paragraph-link"
