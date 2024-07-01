@@ -68,7 +68,7 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
     textarea.style.height = 'auto'; // Reset height to recalculate
     textarea.style.height = textarea.scrollHeight + 'px'; // Set to scroll height
   };
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
   const [, setNotification] = useRecoilState<string | undefined>(
     currentNotification,
   );
@@ -425,7 +425,6 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
           name="display_name"
           control={control}
           rules={{ required: true }}
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           render={({ field: { ref, ...field } }) => (
             <FormControl error={!!errors.display_name}>
               {errors.display_name && (
