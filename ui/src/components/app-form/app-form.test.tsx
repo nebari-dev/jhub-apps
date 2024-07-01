@@ -671,6 +671,23 @@ describe('AppForm', () => {
     }
   });
 
+  test('renders CustomLabel correctly', async () => {
+    const { baseElement } = render(
+      <RecoilRoot>
+        <QueryClientProvider client={queryClient}>
+          <BrowserRouter>
+            <AppForm />
+          </BrowserRouter>
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+
+    const customLabel = baseElement.querySelector('label') as HTMLLabelElement;
+
+    expect(customLabel).toHaveTextContent('*');
+    expect(customLabel).toHaveTextContent('Name');
+  });
+
   test('handles form submission with thumbnail upload', async () => {
     mock.onGet(new RegExp('/frameworks')).reply(200, frameworks);
     mock.onPost(new RegExp('/server')).reply(200);
