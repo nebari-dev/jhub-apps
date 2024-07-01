@@ -18,23 +18,6 @@ describe('AppSharing', () => {
     queryClient.clear();
   });
 
-  test('renders default component successfully', () => {
-    const { baseElement } = render(
-      <RecoilRoot initializeState={({ set }) => set(defaultUser, currentUser)}>
-        <QueryClientProvider client={queryClient}>
-          <AppSharing
-            isPublic={false}
-            setIsPublic={jest.fn()}
-            setCurrentUserPermissions={jest.fn()}
-            setCurrentGroupPermissions={jest.fn()}
-          />
-        </QueryClientProvider>
-      </RecoilRoot>,
-    );
-
-    expect(baseElement.querySelector('.MuiAlert-message')).toBeTruthy();
-  });
-
   test('renders with mock data', () => {
     const { baseElement } = render(
       <RecoilRoot initializeState={({ set }) => set(defaultUser, currentUser)}>

@@ -3,9 +3,7 @@ import GroupRoundedIcon from '@mui/icons-material/GroupRounded';
 import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 import PublicRoundedIcon from '@mui/icons-material/PublicRounded';
-import WarningRoundedIcon from '@mui/icons-material/WarningRounded';
 import {
-  Alert,
   Autocomplete,
   Box,
   Button,
@@ -102,9 +100,9 @@ export const AppSharing = ({
   setIsPublic,
 }: AppSharingProps): React.ReactElement => {
   const [currentUser] = useRecoilState<UserState | undefined>(defaultUser);
-  const [message] = useState(
-    'Warning: adding individuals or groups will allow others to access this app.',
-  );
+  // const [message] = useState(
+  //   'Warning: adding individuals or groups will allow others to access this app.',
+  // );
   const [tooltipOpen, setTooltipOpen] = useState(false);
   const [availablePermissions, setAvailablePermissions] = useState<
     AppSharingItem[]
@@ -187,16 +185,6 @@ export const AppSharing = ({
       <Stack direction="column">
         {currentUser?.share_permissions ? (
           <>
-            <Item>
-              <Alert
-                id="sharing-notification"
-                severity="warning"
-                icon={<WarningRoundedIcon sx={{ color: '#EAB54E' }} />}
-                sx={{ mb: '16px' }}
-              >
-                {message}
-              </Alert>
-            </Item>
             <Item sx={{ pb: '8px' }}>
               <Typography variant="subtitle1" sx={{ fontWeight: 400, pb: 0 }}>
                 Individuals and group access
