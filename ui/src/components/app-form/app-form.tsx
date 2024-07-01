@@ -44,7 +44,6 @@ import {
   currentUser as defaultUser,
 } from '../../store';
 import { StyledFormSection } from '../../styles/styled-form-section';
-// import { StyledFormSectionHeading } from '../../styles/styled-form-section-heading';
 import CustomLabel from '../custom-label/custom-label';
 import './app-form.css';
 export interface AppFormProps {
