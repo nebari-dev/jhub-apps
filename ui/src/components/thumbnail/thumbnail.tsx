@@ -132,7 +132,6 @@ export const Thumbnail = ({
           sx={{
             display: 'flex',
             alignItems: 'center',
-            // backgroundColor: theme.palette.error.light,
             backgroundColor: '#FDEDED',
             color: theme.palette.error.main,
             padding: '8px',
