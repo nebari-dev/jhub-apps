@@ -5,3 +5,11 @@
 .thumbnail-body.dragging {
   border: 2px dashed var(--primary);
 }
+
+.error-msg {
+  color: #5F2120;
+}
+
+.weight600 {
+  font-weight: 600;
+}

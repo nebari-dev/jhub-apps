@@ -1,11 +1,12 @@
+import ErrorRoundedIcon from '@mui/icons-material/ErrorRounded';
 import InfoRoundedIcon from '@mui/icons-material/InfoRounded';
-
 import {
   Box,
   Button,
   FormControl,
   FormControlLabel,
   FormHelperText,
+  InputAdornment,
   InputLabel,
   MenuItem,
   Select,
@@ -23,14 +24,14 @@ import {
 import { AppFormInput } from '@src/types/form';
 import { UserState } from '@src/types/user';
 import axios from '@src/utils/axios';
-import { APP_BASE_URL, REQUIRED_FORM_FIELDS_RULES } from '@src/utils/constants';
+import { APP_BASE_URL } from '@src/utils/constants';
 import {
   getFriendlyDisplayName,
   getFriendlyEnvironmentVariables,
   navigateToUrl,
 } from '@src/utils/jupyterhub';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
@@ -44,8 +45,8 @@ import {
   currentUser as defaultUser,
 } from '../../store';
 import { StyledFormSection } from '../../styles/styled-form-section';
+import CustomLabel from '../custom-label/custom-label';
 import './app-form.css';
-
 export interface AppFormProps {
   id?: string;
 }
@@ -58,6 +59,9 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
   const [isFocused, setIsFocused] = useState<boolean>(false);
+  const firstErrorRef = useRef<HTMLInputElement | null>(null);
+  const appInfoRef = useRef<HTMLDivElement | null>(null);
+
   const adjustTextareaHeight = (
     textarea: EventTarget & HTMLTextAreaElement,
   ) => {
@@ -139,6 +143,7 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
   const {
     control,
     handleSubmit,
+    setFocus,
     reset,
     watch,
     formState: { errors },
@@ -181,7 +186,7 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
     );
   };
 
-  function setFocus(focus: boolean): void {
+  function handleFocus(focus: boolean): void {
     setIsFocused(focus);
   }
 
@@ -240,7 +245,6 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
           keep_alive: keepAlive,
         },
       };
-
       setSubmitting(true);
       if (id) {
         updateQuery(payload, {
@@ -376,37 +380,114 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
     }
   }, [formError, setNotification]);
 
+  const scrollToFirstError = useCallback(() => {
+    const scrollToErrorElement = (element: HTMLElement | null) => {
+      if (element) {
+        const yOffset = 120; // Desired distance from the top of the viewport
+        const elementRect = element.getBoundingClientRect();
+        const scrollY = window.scrollY || window.scrollY;
+        const y = elementRect.top + scrollY - yOffset;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+        setTimeout(() => {}, 500); // Adjust timeout duration as needed
+      }
+    };
+
+    // Delay the scroll action to ensure DOM updates are complete
+    setTimeout(() => {
+      requestAnimationFrame(() => {
+        // Focus on the first input with an error
+        if (errors.display_name) {
+          scrollToErrorElement(document.getElementById('display_name'));
+          setFocus('display_name');
+        } else if (errors.framework) {
+          scrollToErrorElement(document.getElementById('framework'));
+          setFocus('framework');
+        } else if (errors.custom_command) {
+          scrollToErrorElement(document.getElementById('custom_command'));
+          setFocus('custom_command');
+        } else if (errors.conda_env) {
+          scrollToErrorElement(document.getElementById('conda_env'));
+          setFocus('conda_env');
+        }
+      });
+    }, 0);
+  }, [errors, setFocus]);
+
+  useEffect(() => {
+    if (Object.keys(errors).length > 0) {
+      scrollToFirstError();
+    }
+  }, [errors, scrollToFirstError]);
+
   return (
     <form
       id="app-form"
-      onSubmit={handleSubmit(onFormSubmit)}
+      onSubmit={handleSubmit(onFormSubmit, scrollToFirstError)}
       className="form"
       noValidate
     >
-      <StyledFormSection>
+      <StyledFormSection ref={appInfoRef}>
         <Typography component="h2" variant="subtitle1">
           App Info
         </Typography>
         <Controller
           name="display_name"
           control={control}
-          rules={REQUIRED_FORM_FIELDS_RULES}
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          render={({ field: { ref: _, ...field } }) => (
-            <FormControl>
+          rules={{ required: true }}
+          render={({ field: { ref, ...field } }) => (
+            <FormControl error={!!errors.display_name}>
+              {errors.display_name && (
+                <Box
+                  display="flex"
+                  alignItems="center"
+                  color="error.main"
+                  mb={2}
+                >
+                  <ErrorRoundedIcon fontSize="small" />
+                  <Typography variant="body2" color="error" ml={1}>
+                    Enter an app name
+                  </Typography>
+                </Box>
+              )}
               <TextField
                 {...field}
                 id="display_name"
-                label="Name"
+                label={<CustomLabel label="Name" required={true} />}
                 placeholder="Add app name"
+                inputRef={(e) => {
+                  ref(e);
+                  if (errors.display_name) {
+                    firstErrorRef.current = e;
+                  }
+                }}
                 autoFocus
-                required
-                error={errors.display_name?.message ? true : false}
+                error={!!errors.display_name}
                 inputProps={{ maxLength: 255 }}
+                helperText={
+                  <span
+                    style={{
+                      fontSize: '12px',
+                      color: errors.display_name ? 'error' : 'textSecondary',
+                    }}
+                  >
+                    *Required
+                  </span>
+                }
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      {/* Add any start adornments here */}
+                    </InputAdornment>
+                  ),
+                }}
               />
             </FormControl>
           )}
         />
+
         <Controller
           name="description"
           control={control}
@@ -419,20 +500,16 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
             >
               <label
                 htmlFor="description"
-                className={
-                  'description-label' +
-                  (description.length > 0 || isFocused ? ' label-float' : '')
-                }
+                className="description-label"
                 style={{
-                  color: isFocused
-                    ? '#ba18da'
-                    : description.length > 0
-                      ? '#646464'
-                      : 'transparent',
-                  backgroundColor:
-                    description.length > 0 || isFocused
-                      ? '#fafafa'
-                      : 'transparent',
+                  position: 'absolute',
+                  top: '0',
+                  left: '10px',
+                  transform: 'translate(0, -50%)',
+                  color: isFocused ? '#ba18da' : '#646464',
+                  backgroundColor: '#fafafa',
+                  padding: '0 4px',
+                  zIndex: 1,
                 }}
               >
                 Description
@@ -447,19 +524,18 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
                   field.onChange(e.target.value);
                   adjustTextareaHeight(e.target);
                 }}
-                onFocus={() => {
-                  setFocus(true);
-                }}
+                onFocus={() => handleFocus(true)}
                 onBlur={() => {
                   field.onBlur();
-                  setFocus(false);
+                  handleFocus(false);
                 }}
                 className="description_text-field"
-                placeholder={
-                  isFocused
-                    ? 'Add app description (max. 200 characters)'
-                    : 'Description'
-                }
+                placeholder="Add app description (max. 200 characters)"
+                style={{
+                  paddingBottom: '8px',
+                  borderColor: isFocused ? '#ba18da' : '#ccc',
+                  letterSpacing: '.15px',
+                }}
               />
               <div ref={overlayRef} className="overlay-text">
                 {getStyledText()}
@@ -483,29 +559,83 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
         <Typography component="h2" variant="subtitle1">
           Configuration
         </Typography>
+
         <Controller
           name="framework"
           control={control}
-          rules={REQUIRED_FORM_FIELDS_RULES}
+          rules={{ required: true }}
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          render={({ field: { ref: _, ...field } }) => (
-            <FormControl>
-              <InputLabel id="framework-label" required>
-                Framework
+          render={({ field: { ref, ...field } }) => (
+            <FormControl
+              error={!!errors.framework}
+              fullWidth
+              variant="outlined"
+            >
+              {errors.framework && (
+                <Box
+                  display="flex"
+                  alignItems="center"
+                  color="error.main"
+                  mb={2}
+                >
+                  <ErrorRoundedIcon fontSize="small" />
+                  <Typography variant="body2" color="error" ml={1}>
+                    Select a framework
+                  </Typography>
+                </Box>
+              )}
+              <InputLabel
+                id="framework-label"
+                shrink
+                sx={{
+                  fontSize: '1rem',
+                  transform: 'translate(14px, -6px) scale(0.75)', // Ensure consistent positioning
+                  color: errors.framework ? '#f44336' : 'rgba(0, 0, 0, 0.54)',
+                  top: errors.framework ? '33px' : '0', // Adjust top based on error// Color changes based on error
+                  left: '-4px',
+                  padding: '0 4px',
+                  zIndex: 1,
+                  position: 'absolute',
+                  pointerEvents: 'none',
+                  transition: 'color 0.3s ease',
+                }}
+              >
+                *Framework
               </InputLabel>
               <Select
                 {...field}
                 id="framework"
+                error={!!errors.framework}
+                displayEmpty
+                labelId="framework-label"
                 label="Framework"
-                required
-                error={errors.framework?.message ? true : false}
+                sx={{
+                  '& .MuiOutlinedInput-notchedOutline': {
+                    borderColor: errors.framework
+                      ? '#f44336'
+                      : 'rgba(0, 0, 0, 0.23)',
+                  },
+                  '&:hover .MuiOutlinedInput-notchedOutline': {
+                    borderColor: errors.framework
+                      ? '#f44336'
+                      : 'rgba(0, 0, 0, 0.87)',
+                  },
+                  '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                    borderColor: errors.framework ? '#f44336' : '#BA18DA',
+                  },
+                }}
+                inputProps={{ 'aria-label': 'Select framework' }}
               >
-                {frameworks?.map((framework: AppFrameworkProps) => (
+                <MenuItem value="" disabled>
+                  Select framework
+                </MenuItem>
+                {frameworks?.map((framework) => (
                   <MenuItem key={framework.name} value={framework.name}>
                     {framework.display_name}
                   </MenuItem>
                 ))}
               </Select>
+              <FormHelperText>*Required</FormHelperText>
             </FormControl>
           )}
         />
@@ -513,15 +643,80 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
           <Controller
             name="custom_command"
             control={control}
-            rules={REQUIRED_FORM_FIELDS_RULES}
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            render={({ field: { ref: _, ...field } }) => (
-              <FormControl>
+            rules={{ required: true }}
+            render={({ field: { ref, ...field } }) => (
+              <FormControl
+                error={!!errors.custom_command}
+                fullWidth
+                variant="outlined"
+                sx={{
+                  mb: 3,
+                }}
+              >
+                {errors.custom_command && (
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    color="error.main"
+                    mb={2}
+                  >
+                    <ErrorRoundedIcon fontSize="small" />
+                    <Typography variant="body2" color="error" ml={1}>
+                      Enter a custom command
+                    </Typography>
+                  </Box>
+                )}
                 <TextField
                   {...field}
                   id="custom_command"
-                  label="Custom Command"
-                  required={currentFramework === 'custom'}
+                  label="*Custom Command"
+                  placeholder="Enter custom command"
+                  inputRef={(e) => {
+                    ref(e);
+                    if (errors.custom_command) {
+                      firstErrorRef.current = e;
+                    }
+                  }}
+                  autoFocus={!!errors.custom_command}
+                  error={!!errors.custom_command}
+                  inputProps={{ maxLength: 255 }}
+                  helperText={
+                    <span
+                      style={{
+                        fontSize: '12px',
+                        color: errors.custom_command
+                          ? 'error'
+                          : 'textSecondary',
+                      }}
+                    >
+                      *Required
+                    </span>
+                  }
+                  InputProps={{
+                    style: errors.custom_command
+                      ? {
+                          borderColor: '#d32f2f',
+                          // boxShadow: '0 0 0 2px rgba(211, 47, 47, 0.2)',
+                        }
+                      : {},
+                  }}
+                  InputLabelProps={{
+                    style: {
+                      fontSize: '1rem',
+                      transform: 'translate(14px, -6px) scale(0.75)', // Keep label position fixed
+                      color: errors.custom_command
+                        ? '#d32f2f'
+                        : 'rgba(0, 0, 0, 0.54)', // Conditional color
+                      top: '-3px', // Adjust top for error state if needed
+                      position: 'absolute',
+                      pointerEvents: 'none',
+                      transition: 'color 0.3s ease', // Smooth transition for color
+                      // fontWeight: errors.custom_command ? 'bold' : 'normal',
+                    },
+                    shrink: true,
+                  }}
+                  onFocus={() => setIsFocused(true)}
+                  onBlur={() => setIsFocused(false)}
                 />
               </FormControl>
             )}
@@ -533,26 +728,76 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
           <Controller
             name="conda_env"
             control={control}
-            rules={REQUIRED_FORM_FIELDS_RULES}
+            rules={{ required: true }}
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            render={({ field: { ref: _, ...field } }) => (
-              <FormControl>
-                <InputLabel id="framework-label" required>
-                  Software Environment
+            render={({ field: { ref, ...field } }) => (
+              <FormControl
+                error={!!errors.conda_env}
+                fullWidth
+                variant="outlined"
+              >
+                {errors.conda_env && (
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    color="error.main"
+                    mb={2}
+                  >
+                    <ErrorRoundedIcon fontSize="small" />
+                    <Typography variant="body2" color="error" ml={1}>
+                      Select a software environment
+                    </Typography>
+                  </Box>
+                )}
+                <InputLabel
+                  id="conda_env-label"
+                  shrink
+                  sx={{
+                    fontSize: '1rem',
+                    transform: 'translate(14px, -6px) scale(0.75)',
+                    color: errors.conda_env ? '#f44336' : 'rgba(0, 0, 0, 0.54)',
+                    top: errors.conda_env ? '33px' : '-2px',
+                    left: '-5px',
+                    padding: '0 4px',
+                    zIndex: 1,
+                  }}
+                >
+                  *Software Environment
                 </InputLabel>
                 <Select
                   {...field}
                   id="conda_env"
+                  error={!!errors.conda_env}
+                  displayEmpty
+                  labelId="conda_env-label"
                   label="Software Environment"
-                  required
-                  error={errors.conda_env?.message ? true : false}
+                  sx={{
+                    '& .MuiOutlinedInput-notchedOutline': {
+                      borderColor: errors.conda_env
+                        ? '#f44336'
+                        : 'rgba(0, 0, 0, 0.23)',
+                    },
+                    '&:hover .MuiOutlinedInput-notchedOutline': {
+                      borderColor: errors.conda_env
+                        ? '#f44336'
+                        : 'rgba(0, 0, 0, 0.87)',
+                    },
+                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                      borderColor: errors.conda_env ? '#f44336' : '#BA18DA',
+                    },
+                  }}
+                  inputProps={{ 'aria-label': 'Select software environment' }}
                 >
-                  {environments.map((env: string) => (
+                  <MenuItem value="" disabled>
+                    Select software environment
+                  </MenuItem>
+                  {environments.map((env) => (
                     <MenuItem key={env} value={env}>
                       {env}
                     </MenuItem>
                   ))}
                 </Select>
+                <FormHelperText>*Required</FormHelperText>
               </FormControl>
             )}
           />
@@ -563,14 +808,14 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
           name="filepath"
           control={control}
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          render={({ field: { ref: _, ...field } }) => (
+          render={({ field: { ref, ...field } }) => (
             <FormControl>
               <TextField
                 {...field}
                 id="filepath"
                 label="File path"
                 placeholder='Enter the path to the file, e.g. "/shared/users/panel_basic.py"'
-                error={errors.filepath?.message ? true : false}
+                error={!!errors.filepath}
               />
             </FormControl>
           )}
@@ -584,11 +829,11 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
           <Tooltip
             placement="bottom-start"
             title={
-              <Typography sx={{ fontSize: '10px', fontWeight: 600 }}>
+              <span style={{ fontSize: '10px', fontWeight: 600 }}>
                 Keep alive prevents the app from being suspended even when not
                 in active use. Your app will be instantly available, but it will
                 consume resources until manually stopped.
-              </Typography>
+              </span>
             }
           >
             <InfoRoundedIcon
@@ -605,7 +850,7 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
             name="keep_alive"
             control={control}
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            render={({ field: { ref: _, value, onChange, ...field } }) => (
+            render={({ field: { ref, value, onChange, ...field } }) => (
               <FormControl sx={{ flexDirection: 'row' }}>
                 <FormControlLabel
                   control={
@@ -656,7 +901,7 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
           name="thumbnail"
           control={control}
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          render={({ field: { ref: _, value, onChange, ...field } }) => (
+          render={({ field: { ref, value, onChange, ...field } }) => (
             <FormControl sx={{ pb: 0 }}>
               <Thumbnail
                 {...field}

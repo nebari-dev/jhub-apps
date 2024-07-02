@@ -103,7 +103,7 @@ export const AppSharing = ({
 }: AppSharingProps): React.ReactElement => {
   const [currentUser] = useRecoilState<UserState | undefined>(defaultUser);
   const [message] = useState(
-    'Warning: adding individuals or groups will allow others to access this app.',
+    'Adding individuals or groups will allow others to access this app.',
   );
   const [tooltipOpen, setTooltipOpen] = useState(false);
   const [availablePermissions, setAvailablePermissions] = useState<
@@ -191,8 +191,12 @@ export const AppSharing = ({
               <Alert
                 id="sharing-notification"
                 severity="warning"
-                icon={<WarningRoundedIcon sx={{ color: '#EAB54E' }} />}
-                sx={{ mb: '16px' }}
+                icon={
+                  <WarningRoundedIcon
+                    sx={{ color: '#EAB54E', top: '-2px', position: 'relative' }}
+                  />
+                }
+                sx={{ mb: '16px', position: 'relative' }}
               >
                 {message}
               </Alert>
