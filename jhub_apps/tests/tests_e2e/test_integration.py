@@ -1,9 +1,9 @@
 import re
 import uuid
 
-import pytest
-import structlog
-from playwright.sync_api import Playwright, expect
+import pytest # type: ignore
+import structlog # type: ignore
+from playwright.sync_api import Playwright, expect # type: ignore
 
 from jhub_apps.hub_client.utils import is_jupyterhub_5
 from jhub_apps.spawner.types import Framework
@@ -89,8 +89,8 @@ def create_app(
     logger.info("Creating App")
     page.get_by_role("button", name="Create App").click()
     logger.info("Fill App display Name")
-    page.get_by_label("* Name").click()
-    page.get_by_label("* Name").fill(app_name)
+    page.get_by_label("*Name").click()
+    page.get_by_label("*Name").fill(app_name)
     logger.info("Select Framework")
     page.locator("id=framework").click()
     page.get_by_role("option", name="Panel").click()

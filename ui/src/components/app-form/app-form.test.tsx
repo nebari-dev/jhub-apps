@@ -29,6 +29,10 @@ describe('AppForm', () => {
     mock.reset();
   });
 
+  beforeAll(() => {
+    window.scrollTo = jest.fn();
+  });
+
   beforeEach(() => {
     queryClient.clear();
     mock.reset();
@@ -524,7 +528,6 @@ describe('AppForm', () => {
     expect(window.location.pathname).toBe('/');
   });
 
-  // New Tests to cover uncovered statements
   test('handles form submission when profiles are not available', async () => {
     mock.onGet(new RegExp('/frameworks')).reply(200, frameworks);
     mock.onPost(new RegExp('/server')).reply(200);
