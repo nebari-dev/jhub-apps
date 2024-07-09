@@ -121,10 +121,6 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
   };
 
   useEffect(() => {
-    console.log('Theme:', theme);
-  }, [theme]);
-
-  useEffect(() => {
     if (!appsLoading && appsData && currentUser) {
       setPinnedApps(() => getPinnedApps(appsData, currentUser.name));
     }
