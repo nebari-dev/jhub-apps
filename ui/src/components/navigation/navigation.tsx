@@ -380,7 +380,7 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
                 )
               }
               sx={{
-                color: theme.palette.common.black,
+                color: `${theme.palette.common.black} !important`,
                 fontWeight: 700,
                 '&:hover': {
                   backgroundColor: theme.palette.gray[50],
@@ -395,8 +395,8 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
                   size="small"
                   sx={{
                     marginLeft: theme.spacing(1),
-                    backgroundColor: theme.palette.gray.light,
-                    color: theme.palette.common.black,
+                    backgroundColor: `${theme.palette.gray.light} !impotant`,
+                    color: `${theme.palette.common.black} !important`,
                   }}
                 />
               )}
