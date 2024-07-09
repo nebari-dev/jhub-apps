@@ -6,6 +6,7 @@ import {
   AppBar,
   Box,
   Button,
+  Chip,
   Drawer,
   IconButton,
   Link,
@@ -120,6 +121,10 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
   };
 
   useEffect(() => {
+    console.log('Theme:', theme);
+  }, [theme]);
+
+  useEffect(() => {
     if (!appsLoading && appsData && currentUser) {
       setPinnedApps(() => getPinnedApps(appsData, currentUser.name));
     }
@@ -165,7 +170,7 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
             sx={{
               px: '1.5rem',
               mx: '.5rem',
-              backgroundColor: theme.palette.gray.lighter,
+              backgroundColor: theme.palette.primary.light,
               borderRadius: '8px',
               position: 'relative',
               display: 'flex',
@@ -182,7 +187,7 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
                 borderBottomLeftRadius: '8px',
               },
               '&:hover': {
-                backgroundColor: theme.palette.gray.light,
+                backgroundColor: theme.palette.gray[50],
                 '&::before': {
                   backgroundColor: theme.palette.primary.main,
                 },
@@ -343,7 +348,7 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
         position="fixed"
         sx={{
           zIndex: (theme) => theme.zIndex.drawer + 1,
-          backgroundColor: (theme) => theme.palette.common.black,
+          backgroundColor: (theme) => theme.palette.common.white,
         }}
       >
         <Toolbar>
@@ -378,9 +383,27 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
                   <KeyboardArrowDownRoundedIcon />
                 )
               }
-              sx={{ color: theme.palette.common.white, fontWeight: 700 }}
+              sx={{
+                color: theme.palette.common.black,
+                fontWeight: 700,
+                '&:hover': {
+                  backgroundColor: theme.palette.gray[50],
+                },
+              }}
             >
-              {currentUser?.name} {currentUser?.admin ? '(admin)' : ''}
+              {currentUser?.name}{' '}
+              {currentUser?.admin && (
+                <Chip
+                  label="admin"
+                  // color="primary"
+                  size="small"
+                  sx={{
+                    marginLeft: theme.spacing(1),
+                    backgroundColor: theme.palette.gray.light,
+                    color: theme.palette.common.black,
+                  }}
+                />
+              )}
             </Button>
             <Menu
               id="profile-menu-list"
