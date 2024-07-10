@@ -344,7 +344,7 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
         position="fixed"
         sx={{
           zIndex: (theme) => theme.zIndex.drawer + 1,
-          backgroundColor: (theme) => theme.palette.common.white,
+          backgroundColor: (theme) => theme.palette.blue[50],
         }}
       >
         <Toolbar>
