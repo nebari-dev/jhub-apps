@@ -449,11 +449,6 @@ a:focus {
 .MuiInputLabel-root {
     color: var(--text-color) !important;
 }
-
-{% comment %} .MuiButton-textPrimary#profile-menu-btn {
-    color: var(--navbar-text-color) !important;
-} {% endcomment %}
- 
 .MuiListItemButton-root::before  {
     background-color: var(--primary-color) !important;
 }   
