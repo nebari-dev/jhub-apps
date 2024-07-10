@@ -37,16 +37,20 @@ export const NotRunning = (): React.ReactElement => {
 
     if (formData?.started) {
       window.location.assign(window.location.href.replace('/hub', ''));
+    } else if (formData?.stopped && id) {
+      window.location.assign(
+        `${APP_BASE_URL}/home?action=start-server&id=${id}`,
+      );
     } else {
       window.location.assign(APP_BASE_URL);
     }
-  }, [formData]);
+  }, [formData, id]);
 
   return (
     <Stack>
       <Box sx={{ margin: 'auto auto' }}>
         <Typography component="h1" variant="body1">
-          Redirecting back to home...
+          Redirecting...
         </Typography>
       </Box>
     </Stack>

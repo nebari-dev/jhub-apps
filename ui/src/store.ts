@@ -96,6 +96,11 @@ const isDeleteOpen = atom<boolean>({
   default: false,
 });
 
+const isStartNotRunningOpen = atom<boolean>({
+  key: 'isStartNotRunningOpen',
+  default: false,
+});
+
 export {
   currentApp,
   currentFile,
@@ -112,6 +117,7 @@ export {
   currentSortValue,
   currentUser,
   isDeleteOpen,
+  isStartNotRunningOpen,
   isStartOpen,
   isStopOpen,
 };

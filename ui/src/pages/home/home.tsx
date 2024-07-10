@@ -12,16 +12,25 @@ import {
   Typography,
 } from '@mui/material';
 import { ButtonGroup } from '@src/components';
-import { AppQueryDeleteProps, AppQueryPostProps } from '@src/types/api';
+import {
+  AppQueryDeleteProps,
+  AppQueryGetProps,
+  AppQueryPostProps,
+} from '@src/types/api';
 import { JhApp } from '@src/types/jupyterhub';
+import { UserState } from '@src/types/user';
 import axios from '@src/utils/axios';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import React, { useState } from 'react';
+import { APP_BASE_URL } from '@src/utils/constants';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import React, { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import {
   currentNotification,
   currentApp as defaultApp,
+  currentUser as defaultUser,
   isDeleteOpen as isDeleteOpenState,
+  isStartNotRunningOpen as isStartNotRunningOpenState,
   isStartOpen as isStartOpenState,
   isStopOpen as isStopOpenState,
 } from '../../../src/store';
@@ -44,13 +53,22 @@ const CustomCheckIcon = () => (
 );
 
 export const Home = (): React.ReactElement => {
+  const [searchParams] = useSearchParams();
+  const id = searchParams.get('id');
+  const action = searchParams.get('action');
   const [, setNotification] = useRecoilState<string | undefined>(
     currentNotification,
   );
-  const [currentApp] = useRecoilState<JhApp | undefined>(defaultApp);
+  const [currentApp, setCurrentApp] = useRecoilState<JhApp | undefined>(
+    defaultApp,
+  );
+  const [currentUser] = useRecoilState<UserState | undefined>(defaultUser);
   const [isStartOpen, setIsStartOpen] = useRecoilState(isStartOpenState);
   const [isStopOpen, setIsStopOpen] = useRecoilState(isStopOpenState);
   const [isDeleteOpen, setIsDeleteOpen] = useRecoilState(isDeleteOpenState);
+  const [isStartNotRunningOpen, setIsStartNotRunningOpen] = useRecoilState(
+    isStartNotRunningOpenState,
+  );
   const [submitting, setSubmitting] = useState(false);
   const queryClient = useQueryClient();
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -69,6 +87,18 @@ export const Home = (): React.ReactElement => {
     });
     return response;
   };
+
+  const { data: currentAppData } = useQuery<
+    AppQueryGetProps,
+    { message: string }
+  >({
+    queryKey: ['app-form', id],
+    queryFn: () =>
+      axios.get(`/server/${id}`).then((response) => {
+        return response.data;
+      }),
+    enabled: !!id,
+  });
 
   // Mutations
   const { mutate: startQuery } = useMutation({
@@ -111,6 +141,7 @@ export const Home = (): React.ReactElement => {
       {
         onSuccess: async () => {
           setIsStartOpen(false);
+          setIsStartNotRunningOpen(false);
           queryClient.invalidateQueries({ queryKey: ['app-state'] });
         },
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -140,6 +171,16 @@ export const Home = (): React.ReactElement => {
         },
       },
     );
+  };
+
+  const handleStartNotRunning = async () => {
+    // hub/spawn/jbouder@metrostar.com?next=%2Fhub%2Fuser%2Fjbouder%40metrostar.com%2Flab
+    const username = currentUser?.name;
+    let next = encodeURIComponent(`/hub/user/${username}/lab`);
+    if (id === 'vscode') {
+      next = next.replace('lab', 'vscode');
+    }
+    document.location.assign(`/hub/spawn/${username}?next=${next}`);
   };
 
   const startModalBody = (
@@ -243,6 +284,73 @@ export const Home = (): React.ReactElement => {
     </>
   );
 
+  const startNotRunningModalBody = (
+    <>
+      <div className="card-dialog-body-wrapper">
+        <p className="card-dialog-body">
+          Would you like to start <b>{currentApp?.name}</b>?
+        </p>
+        <p className="card-dialog-note">
+          This action starts a new server that consumes resources.
+        </p>
+      </div>
+      <ButtonGroup className="card-dialog-button-group">
+        <Button
+          id="cancel-btn"
+          data-testid="cancel-btn"
+          variant="text"
+          color="primary"
+          onClick={() => document.location.assign(APP_BASE_URL)}
+          sx={{ fontWeight: 700 }}
+        >
+          Cancel
+        </Button>
+        <Button
+          id="start-btn"
+          data-testid="start-btn"
+          variant="contained"
+          color="primary"
+          onClick={() => {
+            if (id === 'lab' || id === 'vscode') {
+              handleStartNotRunning();
+            } else {
+              handleStart();
+            }
+          }}
+          disabled={submitting}
+        >
+          Start
+        </Button>
+      </ButtonGroup>
+    </>
+  );
+
+  useEffect(() => {
+    if (action === 'start-server' && id && currentAppData) {
+      if (!currentAppData.started) {
+        setIsStartNotRunningOpen(true);
+        let currentAppName = currentAppData.name;
+        if (!currentAppName && id === 'lab') {
+          currentAppName = 'JupyterLab';
+        } else if (!currentAppName && id === 'vscode') {
+          currentAppName = 'VSCode';
+        }
+
+        setCurrentApp({
+          id,
+          name: currentAppName,
+          framework: currentAppData.user_options.framework,
+          url: currentAppData.url,
+          ready: currentAppData.ready,
+          public: currentAppData.user_options.public,
+          shared: false,
+          last_activity: new Date(currentAppData.last_activity),
+          status: 'Ready',
+        });
+      }
+    }
+  }, [currentAppData, action, id, setIsStartNotRunningOpen, setCurrentApp]);
+
   return (
     <Box sx={{ flexGrow: 1 }} className="container">
       <Grid container spacing={2} paddingBottom="24px">
@@ -290,6 +398,19 @@ export const Home = (): React.ReactElement => {
           <DialogTitle sx={{ fontWeight: 700 }}>Delete App</DialogTitle>
           <DialogContent sx={{ padding: '0px' }}>
             {deleteModalBody}
+          </DialogContent>
+        </Dialog>
+      )}
+      {isStartNotRunningOpen && (
+        <Dialog
+          open={isStartNotRunningOpen}
+          onClose={() => setIsStartNotRunningOpen(false)}
+          data-testid="StartNotRunningModal"
+          sx={{ '.MuiPaper-root': { width: '444px' } }}
+        >
+          <DialogTitle sx={{ fontWeight: 700 }}>Server Not Running</DialogTitle>
+          <DialogContent sx={{ padding: '0px' }}>
+            {startNotRunningModalBody}
           </DialogContent>
         </Dialog>
       )}
