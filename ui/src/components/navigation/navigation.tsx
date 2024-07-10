@@ -42,6 +42,7 @@ import { useQuery } from '@tanstack/react-query';
 import React, { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { currentNotification, currentUser as defaultUser } from '../../store';
+import './navigation.css';
 export const StyledListItemTextHeader = styled(ListItemText)(({ theme }) => ({
   fontWeight: 400,
   fontSize: '16px',
@@ -341,13 +342,14 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar
+        id="app-bar"
         position="fixed"
         sx={{
           zIndex: (theme) => theme.zIndex.drawer + 1,
-          backgroundColor: (theme) => theme.palette.blue[50],
+          backgroundColor: (theme) => theme.palette.common.white,
         }}
       >
-        <Toolbar>
+        <Toolbar id="toolbar">
           <IconButton
             color="inherit"
             aria-label="open drawer"
@@ -368,6 +370,7 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
           <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
             <Button
               id="profile-menu-btn"
+              className="button-menu"
               aria-controls={profileMenuOpen ? 'profile-menu-list' : undefined}
               aria-haspopup="true"
               aria-expanded={profileMenuOpen ? 'true' : undefined}
@@ -380,8 +383,6 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
                 )
               }
               sx={{
-                color: `${theme.palette.common.black} !important`,
-                fontWeight: 700,
                 '&:hover': {
                   backgroundColor: theme.palette.gray[50],
                 },
@@ -391,12 +392,10 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
               {currentUser?.admin && (
                 <Chip
                   label="admin"
-                  // color="primary"
                   size="small"
+                  className="chip"
                   sx={{
                     marginLeft: theme.spacing(1),
-                    backgroundColor: `${theme.palette.gray.light} !impotant`,
-                    color: `${theme.palette.common.black} !important`,
                   }}
                 />
               )}

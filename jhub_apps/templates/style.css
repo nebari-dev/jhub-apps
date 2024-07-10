@@ -422,6 +422,10 @@ a:focus {
     outline-color: var(--secondary-color) !important;
 }
 
+.MuiButton-textPrimary {
+    color: var(--primary-color) !important;
+}
+
 .MuiRadio-colorPrimary, .MuiCheckbox-colorPrimary {
     color: var(--primary-color) !important;
 }
@@ -445,6 +449,11 @@ a:focus {
 .MuiInputLabel-root {
     color: var(--text-color) !important;
 }
+
+.MuiButton-textPrimary#profile-menu-btn {
+    color: var(--navbar-text-color) !important;
+}
+
 .MuiListItemButton-root::before  {
     background-color: var(--primary-color) !important;
 }   
