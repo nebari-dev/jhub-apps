@@ -450,10 +450,10 @@ a:focus {
     color: var(--text-color) !important;
 }
 
-{# comment #} .MuiButton-textPrimary#profile-menu-btn {
+{% comment %} .MuiButton-textPrimary#profile-menu-btn {
     color: var(--navbar-text-color) !important;
-} {# endcomment #}
-
+} {% endcomment %}
+ 
 .MuiListItemButton-root::before  {
     background-color: var(--primary-color) !important;
 }   
