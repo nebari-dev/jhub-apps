@@ -22,12 +22,13 @@
     --link-text-color: {{ text_color | default("#1c1d26") }};
     --primary-color: {{ primary_color | default("#ba18da") }};
     --primary-color-dark: {{ primary_color_dark | default("#9b00ce") }};
+    --primary-color-light: {{ primary_color_light | default("#ba18da10") }};
     --secondary-color: {{ secondary_color | default("#18817a") }};
     --secondary-color-dark: {{ secondary_color_dark | default("#12635e") }};
     --accent-color: {{ accent_color | default("#eda61d") }};
     --accent-color-dark: {{ accent_color_dark | default("#a16d14") }};
     --navbar-background-color: {{ navbar_color | default("#1c1d26") }};
-    --navbar-text-color: {{ navbar_text_color | default("#ffffff") }};
+    --navbar-text-color: {{ navbar_text_color | default("#2E2F33") }};
     --navbar-hover-color: {{ navbar_hover_color | default("#20b1a8") }};
     --link-hover-color: {{ accent_color | default("#20b1a8") }};
     --light-text-color: #f1f1f6;
@@ -36,6 +37,7 @@
     --gray-color: #EEEEEE;
     --gray-color-dark: #E0E0E0;
     --blue-link-color: #276BE9;
+
 
     /* Miscellaneous */
     --button-hover-shadow: 0 3px 0 var(--text-color);
@@ -272,6 +274,9 @@ a:focus {
 .navbar.navbar-default .navbar-nav>.open>a,
 .navbar.navbar-default .navbar-nav>.open>a:hover{
     background-color: {{ navbar_hover_color | default("#00a3b0") }};
+}
+
+.MuiButtonBase-root.MuiListItemButton-root {
 }
 
 .progress-bar {
