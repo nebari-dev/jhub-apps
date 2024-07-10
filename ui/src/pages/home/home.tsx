@@ -329,7 +329,7 @@ export const Home = (): React.ReactElement => {
     if (action === 'start-server' && id && currentAppData) {
       if (!currentAppData.started) {
         setIsStartNotRunningOpen(true);
-        let currentAppName = currentAppData.name;
+        let currentAppName = currentAppData.user_options.display_name;
         if (!currentAppName && id === 'lab') {
           currentAppName = 'JupyterLab';
         } else if (!currentAppName && id === 'vscode') {
