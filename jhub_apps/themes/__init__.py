@@ -1,7 +1,7 @@
 from jhub_apps.version import get_version
 
 # LOGO = "/services/japps/static/img/Nebari-Logo-Horizontal-Lockup-White-text.svg"
-LOGO = "/services/japps/static/img/CDAO_Nebari.svg"
+LOGO = "/services/japps/static/img/Nebari-Logo-Horizontal-Lockup-Black-text.svg"
 FAVICON = "/services/japps/static/favicon.ico"
 
 DEFAULT_THEME = {
