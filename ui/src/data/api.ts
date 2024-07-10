@@ -63,6 +63,7 @@ export const app: AppQueryGetProps = {
   last_activity: '',
   pending: null,
   ready: true,
+  started: '',
   stopped: false,
   url: 'http://',
   user_options: {
@@ -92,6 +93,7 @@ export const serverApps = {
     {
       name: '',
       url: '/user/test',
+      started: '2021-01-01T00:00:00',
       ready: true,
       user_options: {
         profile: 'small1',

@@ -93,6 +93,7 @@ export const getApps = (
         ...server,
         id: app.name,
         name: app.display_name,
+        url: server.url?.replace('/user/', '/hub/user/'),
         framework: getFriendlyFrameworkName(app.framework),
         username: server.username || username,
         last_activity: server.last_activity,

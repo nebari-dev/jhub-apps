@@ -23,7 +23,7 @@ async def handle_apps(request: Request):
     if not theme:
         theme = themes.DEFAULT_THEME
     return templates.TemplateResponse(
-        "japps_home.html",
+        "japps_custom.html",
         {
             "request": request,
             "version_hash": now.strftime("%Y%m%d%H%M%S"),
