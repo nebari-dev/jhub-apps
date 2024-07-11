@@ -184,7 +184,7 @@ export const Home = (): React.ReactElement => {
       return;
     }
 
-    document.location.assign(getSpawnUrl(currentUser, currentApp));
+    window.location.assign(getSpawnUrl(currentUser, currentApp));
   };
 
   const startModalBody = (

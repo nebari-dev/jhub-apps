@@ -27,7 +27,9 @@ export const NotRunning = (): React.ReactElement => {
         .replace(/\/$/, '')
         .split('/')
         .pop();
-      setId(currentId ?? null);
+      if (currentId) {
+        setId(currentId);
+      }
     }
   }, [currentUser]);
 
