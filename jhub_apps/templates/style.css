@@ -282,15 +282,9 @@ a:focus {
     background-color: var(--navbar-background-color) !important;
 }
 
-.MuiAppBar-root .MuiButtonBase-root.MuiButton-root.MuiButton-text.MuiButton-textPrimary {
+.MuiAppBar-root .MuiButtonBase-root.MuiButton-root.MuiButton-text.MuiButton-textPrimary, .MuiAppBar-root .MuiChip-root.MuiChip-filled {
     color: var(--navbar-text-color) !important;
     font-weight: 700;
-}
-
-.MuiAppBar-root .MuiChip-root.MuiChip-filled {
-    background-color: var(--gray-color-dark) !important;
-    color: #0F1015 !important;
-}
 }
 
 /* Sidebar Home Button */
