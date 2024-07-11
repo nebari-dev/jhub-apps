@@ -287,6 +287,11 @@ a:focus {
     font-weight: 700;
 }
 
+.MuiButton-textPrimary#profile-menu-btn:hover {
+    background-color: var(--navbar-hover-color) !important;
+}
+
+
 /* Sidebar Home Button */
 
 .MuiButtonBase-root.MuiListItemButton-root { 
@@ -350,6 +355,7 @@ a:focus {
 }
 
 /* Style for the profile menu */
+
 .profile-menu {
     display: inline-block;
     position: relative;
@@ -360,9 +366,17 @@ a:focus {
     display: flex;
     align-items: center;
     cursor: pointer;
-    margin: 10px 0;
+    padding: 10px;
   }
-
+ .profile:hover {
+    background-color: var(--navbar-hover-color)!important;
+  }
+  .profile img {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    margin-right: 10px;
+ }
   .username {
     font-weight: bold;
   }
@@ -496,6 +510,10 @@ a:focus {
 
 .MuiButton-textPrimary#profile-menu-btn {
     color: var(--navbar-text-color) !important;
+}
+
+.MuiButton-textPrimary#profile-menu-btn:hover {
+    background-color: var(--navbar-hover-color) !important;
 }
 
 .MuiListItemButton-root::before  {
