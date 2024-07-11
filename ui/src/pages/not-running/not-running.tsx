@@ -41,7 +41,7 @@ export const NotRunning = (): React.ReactElement => {
     } else if (formData?.pending && currentUser && id) {
       window.location.assign(getSpawnPendingUrl(currentUser, id));
     } else if (formData?.stopped && id) {
-      storeAppToStart(id);
+      storeAppToStart(id); // TODO: Update this to store in global state when everything is running in single react app
       window.location.assign(APP_BASE_URL);
     } else {
       window.location.assign(APP_BASE_URL);
