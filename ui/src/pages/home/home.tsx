@@ -20,11 +20,15 @@ import {
 import { JhApp } from '@src/types/jupyterhub';
 import { UserState } from '@src/types/user';
 import axios from '@src/utils/axios';
-import { APP_BASE_URL } from '@src/utils/constants';
-import { getSpawnUrl, isDefaultApp } from '@src/utils/jupyterhub';
+import {
+  clearAppToStart,
+  getAppToStart,
+  getSpawnUrl,
+  isDefaultApp,
+} from '@src/utils/jupyterhub';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import React, { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+
 import { useRecoilState } from 'recoil';
 import {
   currentNotification,
@@ -54,9 +58,6 @@ const CustomCheckIcon = () => (
 );
 
 export const Home = (): React.ReactElement => {
-  const [searchParams] = useSearchParams();
-  const id = searchParams.get('id');
-  const action = searchParams.get('action');
   const [, setNotification] = useRecoilState<string | undefined>(
     currentNotification,
   );
@@ -64,6 +65,7 @@ export const Home = (): React.ReactElement => {
     defaultApp,
   );
   const [currentUser] = useRecoilState<UserState | undefined>(defaultUser);
+  const [currentAppId, setCurrentAppId] = useState<string | null>(null);
   const [isStartOpen, setIsStartOpen] = useRecoilState(isStartOpenState);
   const [isStopOpen, setIsStopOpen] = useRecoilState(isStopOpenState);
   const [isDeleteOpen, setIsDeleteOpen] = useRecoilState(isDeleteOpenState);
@@ -93,12 +95,12 @@ export const Home = (): React.ReactElement => {
     AppQueryGetProps,
     { message: string }
   >({
-    queryKey: ['app-form', id],
+    queryKey: ['app-form', currentAppId],
     queryFn: () =>
-      axios.get(`/server/${id}`).then((response) => {
+      axios.get(`/server/${currentAppId}`).then((response) => {
         return response.data;
       }),
-    enabled: !!id,
+    enabled: !!currentAppId,
   });
 
   // Mutations
@@ -302,7 +304,10 @@ export const Home = (): React.ReactElement => {
           data-testid="cancel-btn"
           variant="text"
           color="primary"
-          onClick={() => document.location.assign(APP_BASE_URL)}
+          onClick={() => {
+            clearAppToStart();
+            setIsStartNotRunningOpen(false);
+          }}
           sx={{ fontWeight: 700 }}
         >
           Cancel
@@ -313,6 +318,7 @@ export const Home = (): React.ReactElement => {
           variant="contained"
           color="primary"
           onClick={() => {
+            clearAppToStart();
             if (isDefaultApp(currentApp?.name || '')) {
               handleStartNotRunning();
             } else {
@@ -328,30 +334,36 @@ export const Home = (): React.ReactElement => {
   );
 
   useEffect(() => {
-    if (action === 'start-server' && id && currentAppData) {
-      if (!currentAppData.started) {
-        setIsStartNotRunningOpen(true);
-        let currentAppName = currentAppData.user_options.display_name;
-        if (!currentAppName && id === 'lab') {
-          currentAppName = 'JupyterLab';
-        } else if (!currentAppName && id === 'vscode') {
-          currentAppName = 'VSCode';
-        }
-
-        setCurrentApp({
-          id,
-          name: currentAppName,
-          framework: currentAppData.user_options.framework,
-          url: currentAppData.url,
-          ready: currentAppData.ready,
-          public: currentAppData.user_options.public,
-          shared: false,
-          last_activity: new Date(currentAppData.last_activity),
-          status: 'Ready',
-        });
+    if (currentAppData && !currentAppData.started && currentAppId) {
+      let currentAppName = currentAppData.user_options.display_name;
+      if (!currentAppName && currentAppId === 'lab') {
+        currentAppName = 'JupyterLab';
+      } else if (!currentAppName && currentAppId === 'vscode') {
+        currentAppName = 'VSCode';
       }
+      setCurrentApp({
+        id: currentAppId,
+        name: currentAppName,
+        framework: currentAppData.user_options.framework,
+        url: currentAppData.url,
+        ready: currentAppData.ready,
+        public: currentAppData.user_options.public,
+        shared: false,
+        last_activity: new Date(currentAppData.last_activity),
+        status: 'Ready',
+      });
+
+      setIsStartNotRunningOpen(true);
+      clearAppToStart();
     }
-  }, [currentAppData, action, id, setIsStartNotRunningOpen, setCurrentApp]);
+  }, [currentAppData, currentAppId, setIsStartNotRunningOpen, setCurrentApp]);
+
+  useEffect(() => {
+    const appId = getAppToStart();
+    if (appId) {
+      setCurrentAppId(appId);
+    }
+  }, [setCurrentAppId]);
 
   return (
     <Box sx={{ flexGrow: 1 }} className="container">
