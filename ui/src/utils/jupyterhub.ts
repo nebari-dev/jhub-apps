@@ -7,7 +7,7 @@ import {
 } from '@src/types/jupyterhub';
 import { JhData } from '@src/types/jupyterhub.ts';
 import { UserState } from '@src/types/user';
-import { DEFAULT_PINNED_SERVICES } from './constants';
+import { APP_BASE_URL, DEFAULT_PINNED_SERVICES } from './constants';
 
 export const getJhData = (): JhData => {
   return window.jhdata;
@@ -200,6 +200,32 @@ export const getAppLogoUrl = () => {
 
 export const getFullAppUrl = (url: string) => {
   return `${document.location.origin}${url}`;
+};
+
+export const getSpawnUrl = (currentUser: UserState, currentApp: JhApp) => {
+  const username = currentUser.name;
+  let appName = currentApp.name;
+  if (currentApp.name === 'JupyterLab') {
+    appName = 'lab';
+  } else if (currentApp.name === 'VSCode') {
+    appName = 'vscode';
+  }
+  const next = encodeURIComponent(
+    `${APP_BASE_URL}/user/${username}/${appName}`,
+  );
+
+  return `${APP_BASE_URL}/spawn/${username}?next=${next}`;
+};
+
+export const getSpawnPendingUrl = (currentUser: UserState, appId: string) => {
+  const username = currentUser?.name;
+  const next = encodeURIComponent(`${APP_BASE_URL}/user/${username}/${appId}`);
+
+  return `${APP_BASE_URL}/spawn-pending/${username}/${appId}?next=${next}`;
+};
+
+export const getStartNotRunningUrl = (appId: string) => {
+  return `${APP_BASE_URL}/home?action=start-server&id=${appId}`;
 };
 
 export const navigateToUrl = (url: string) => {

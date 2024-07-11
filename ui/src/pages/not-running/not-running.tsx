@@ -3,6 +3,10 @@ import { AppQueryGetProps } from '@src/types/api';
 import { UserState } from '@src/types/user';
 import axios from '@src/utils/axios';
 import { APP_BASE_URL } from '@src/utils/constants';
+import {
+  getSpawnPendingUrl,
+  getStartNotRunningUrl,
+} from '@src/utils/jupyterhub';
 import { useQuery } from '@tanstack/react-query';
 import React, { useEffect } from 'react';
 import { useRecoilState } from 'recoil';
@@ -37,14 +41,14 @@ export const NotRunning = (): React.ReactElement => {
 
     if (formData?.started) {
       window.location.assign(window.location.href.replace('/hub', ''));
+    } else if (formData?.pending && currentUser && id) {
+      window.location.assign(getSpawnPendingUrl(currentUser, id));
     } else if (formData?.stopped && id) {
-      window.location.assign(
-        `${APP_BASE_URL}/home?action=start-server&id=${id}`,
-      );
+      window.location.assign(getStartNotRunningUrl(id));
     } else {
       window.location.assign(APP_BASE_URL);
     }
-  }, [formData, id]);
+  }, [formData, id, currentUser]);
 
   return (
     <Stack>

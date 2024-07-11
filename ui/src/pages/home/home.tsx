@@ -21,6 +21,7 @@ import { JhApp } from '@src/types/jupyterhub';
 import { UserState } from '@src/types/user';
 import axios from '@src/utils/axios';
 import { APP_BASE_URL } from '@src/utils/constants';
+import { getSpawnUrl } from '@src/utils/jupyterhub';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
@@ -174,13 +175,11 @@ export const Home = (): React.ReactElement => {
   };
 
   const handleStartNotRunning = async () => {
-    // hub/spawn/jbouder@metrostar.com?next=%2Fhub%2Fuser%2Fjbouder%40metrostar.com%2Flab
-    const username = currentUser?.name;
-    let next = encodeURIComponent(`/hub/user/${username}/lab`);
-    if (id === 'vscode') {
-      next = next.replace('lab', 'vscode');
+    if (!currentUser || !currentApp) {
+      return;
     }
-    document.location.assign(`/hub/spawn/${username}?next=${next}`);
+
+    document.location.assign(getSpawnUrl(currentUser, currentApp));
   };
 
   const startModalBody = (
@@ -311,7 +310,10 @@ export const Home = (): React.ReactElement => {
           variant="contained"
           color="primary"
           onClick={() => {
-            if (id === 'lab' || id === 'vscode') {
+            if (
+              currentApp?.name === 'JupyterLab' ||
+              currentApp?.name === 'VSCode'
+            ) {
               handleStartNotRunning();
             } else {
               handleStart();
