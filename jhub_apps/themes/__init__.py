@@ -13,11 +13,11 @@ DEFAULT_THEME = {
     "secondary_color_dark": "#12635e",
     "accent_color": "#eda61d",
     "accent_color_dark": "#a16d14",
-    "text_color": "#f00ad1",
+    "text_color": "#1c1d26",
     "h1_color": "#0f1015",
     "h2_color": "#0f1015",
     "navbar_text_color": "#2E2F33",
     "navbar_hover_color": "#00000008",
-    "navbar_color": "#1c1d26",
+    "navbar_color": "#ffffff",
     "version": get_version(),
 }

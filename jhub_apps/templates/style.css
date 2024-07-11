@@ -27,7 +27,7 @@
     --secondary-color-dark: {{ secondary_color_dark | default("#12635e") }};
     --accent-color: {{ accent_color | default("#eda61d") }};
     --accent-color-dark: {{ accent_color_dark | default("#a16d14") }};
-    --navbar-background-color: {{ navbar_color | default("#1c1d26") }};
+    --navbar-background-color: {{ navbar_color | default("#ffffff") }};
     --navbar-text-color: {{ navbar_text_color | default("#2E2F33") }};
     --navbar-hover-color: {{ navbar_hover_color | default("#20b1a8") }};
     --link-hover-color: {{ accent_color | default("#20b1a8") }};
@@ -276,8 +276,53 @@ a:focus {
     background-color: {{ navbar_hover_color | default("#00a3b0") }};
 }
 
-.MuiButtonBase-root.MuiListItemButton-root {
+/* NAVBAR/APP BAR Header */
+
+.MuiAppBar-root {
+    background-color: var(--navbar-background-color) !important;
 }
+
+.MuiAppBar-root .MuiButtonBase-root.MuiButton-root.MuiButton-text.MuiButton-textPrimary {
+    color: var(--navbar-text-color) !important;
+    font-weight: 700;
+}
+
+.MuiAppBar-root .MuiChip-root.MuiChip-filled {
+    background-color: var(--gray-color-dark) !important;
+    color: #0F1015 !important;
+}
+}
+
+/* Sidebar Home Button */
+
+.MuiButtonBase-root.MuiListItemButton-root { 
+    position: relative;
+    z-index: 1; 
+}
+
+.MuiButtonBase-root.MuiListItemButton-root::before { 
+    content: '';
+    position: absolute;
+    background: var(--primary-color);
+    opacity: 0.1;
+    z-index: -1; 
+}
+
+.MuiButtonBase-root.MuiListItemButton-root:hover::before {
+    background: rgba(0, 0, 0, .08) !important;
+  }
+  .MuiButtonBase-root.MuiListItemButton-root::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 8px;
+    background-color: var(--primary-color);
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+    z-index: 0;
+  }
 
 .progress-bar {
     background-color: var(--primary-color) !important;
