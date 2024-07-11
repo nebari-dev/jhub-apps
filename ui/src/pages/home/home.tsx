@@ -21,7 +21,7 @@ import { JhApp } from '@src/types/jupyterhub';
 import { UserState } from '@src/types/user';
 import axios from '@src/utils/axios';
 import { APP_BASE_URL } from '@src/utils/constants';
-import { getSpawnUrl } from '@src/utils/jupyterhub';
+import { getSpawnUrl, isDefaultApp } from '@src/utils/jupyterhub';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
@@ -141,6 +141,7 @@ export const Home = (): React.ReactElement => {
       { id: appId },
       {
         onSuccess: async () => {
+          setSubmitting(false);
           setIsStartOpen(false);
           setIsStartNotRunningOpen(false);
           queryClient.invalidateQueries({ queryKey: ['app-state'] });
@@ -161,6 +162,7 @@ export const Home = (): React.ReactElement => {
       { id: appId, remove: false },
       {
         onSuccess: () => {
+          setSubmitting(false);
           setIsStopOpen(false);
           queryClient.invalidateQueries({ queryKey: ['app-state'] });
           setSnackbarMessage('Server stopped successfully');
@@ -176,6 +178,7 @@ export const Home = (): React.ReactElement => {
 
   const handleStartNotRunning = async () => {
     if (!currentUser || !currentApp) {
+      setSubmitting(false);
       return;
     }
 
@@ -310,10 +313,7 @@ export const Home = (): React.ReactElement => {
           variant="contained"
           color="primary"
           onClick={() => {
-            if (
-              currentApp?.name === 'JupyterLab' ||
-              currentApp?.name === 'VSCode'
-            ) {
+            if (isDefaultApp(currentApp?.name || '')) {
               handleStartNotRunning();
             } else {
               handleStart();

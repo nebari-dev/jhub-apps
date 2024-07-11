@@ -20,6 +20,7 @@ import {
   currentNotification,
   currentProfiles as defaultProfiles,
   isDeleteOpen,
+  isStartNotRunningOpen,
   isStartOpen,
   isStopOpen,
 } from '../../store';
@@ -66,6 +67,7 @@ export const AppCard = ({
   const [, setIsStartOpen] = useRecoilState<boolean>(isStartOpen);
   const [, setIsStopOpen] = useRecoilState<boolean>(isStopOpen);
   const [, setIsDeleteOpen] = useRecoilState<boolean>(isDeleteOpen);
+  const [, setIsStartNotRunningOpen] = useRecoilState(isStartNotRunningOpen);
 
   useEffect(() => {
     if (!serverStatus) {
@@ -182,7 +184,26 @@ export const AppCard = ({
       id={`card-${id}`}
       tabIndex={0}
     >
-      <Link href={url}>
+      <Link
+        href={url}
+        onClick={(e) => {
+          if (app && serverStatus === 'Ready') {
+            e.preventDefault();
+            setCurrentApp({
+              id,
+              name: title,
+              framework: app?.framework || '',
+              url: app?.url || '',
+              ready: app?.ready || false,
+              public: app?.public || false,
+              shared: false,
+              last_activity: new Date(app?.last_activity || ''),
+              status: 'Ready',
+            });
+            setIsStartNotRunningOpen(true);
+          }
+        }}
+      >
         <Card id={`card-${id}`} tabIndex={0} className="Mui-card">
           <div
             className={`card-content-header ${isAppCard ? '' : 'card-content-header-service'}`}

@@ -125,6 +125,7 @@ export const ContextMenu = ({
               }}
               onClick={(e) => {
                 if (!item.disabled && item.onClick) {
+                  e.stopPropagation();
                   item.onClick(e);
                 }
                 handleClose();

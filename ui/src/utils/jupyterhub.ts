@@ -228,6 +228,14 @@ export const getStartNotRunningUrl = (appId: string) => {
   return `${APP_BASE_URL}/home?action=start-server&id=${appId}`;
 };
 
+export const isDefaultApp = (name: string) => {
+  if (name === 'JupyterLab' || name === 'VSCode') {
+    return true;
+  } else {
+    return false;
+  }
+};
+
 export const navigateToUrl = (url: string) => {
   document.location.href = url;
 };

@@ -1,4 +1,4 @@
-import { Box, Stack, Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import { AppQueryGetProps } from '@src/types/api';
 import { UserState } from '@src/types/user';
 import axios from '@src/utils/axios';
@@ -51,12 +51,10 @@ export const NotRunning = (): React.ReactElement => {
   }, [formData, id, currentUser]);
 
   return (
-    <Stack>
-      <Box sx={{ margin: 'auto auto' }}>
-        <Typography component="h1" variant="body1">
-          Redirecting...
-        </Typography>
-      </Box>
-    </Stack>
+    <Box>
+      <Typography component="h1" variant="body1">
+        Redirecting...
+      </Typography>
+    </Box>
   );
 };
