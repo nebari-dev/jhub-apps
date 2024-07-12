@@ -535,6 +535,7 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
                   paddingBottom: '8px',
                   borderColor: isFocused ? '#ba18da' : '#ccc',
                   letterSpacing: '.15px',
+                  backgroundColor: '#FAFAFA',
                 }}
               />
               <div ref={overlayRef} className="overlay-text">

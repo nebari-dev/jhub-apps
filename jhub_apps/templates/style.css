@@ -22,12 +22,13 @@
     --link-text-color: {{ text_color | default("#1c1d26") }};
     --primary-color: {{ primary_color | default("#ba18da") }};
     --primary-color-dark: {{ primary_color_dark | default("#9b00ce") }};
+    --primary-color-light: {{ primary_color_light | default("#ba18da10") }};
     --secondary-color: {{ secondary_color | default("#18817a") }};
     --secondary-color-dark: {{ secondary_color_dark | default("#12635e") }};
     --accent-color: {{ accent_color | default("#eda61d") }};
     --accent-color-dark: {{ accent_color_dark | default("#a16d14") }};
-    --navbar-background-color: {{ navbar_color | default("#1c1d26") }};
-    --navbar-text-color: {{ navbar_text_color | default("#ffffff") }};
+    --navbar-background-color: {{ navbar_color | default("#ffffff") }};
+    --navbar-text-color: {{ navbar_text_color | default("#2E2F33") }};
     --navbar-hover-color: {{ navbar_hover_color | default("#20b1a8") }};
     --link-hover-color: {{ accent_color | default("#20b1a8") }};
     --light-text-color: #f1f1f6;
@@ -36,6 +37,7 @@
     --gray-color: #EEEEEE;
     --gray-color-dark: #E0E0E0;
     --blue-link-color: #276BE9;
+
 
     /* Miscellaneous */
     --button-hover-shadow: 0 3px 0 var(--text-color);
@@ -274,6 +276,53 @@ a:focus {
     background-color: {{ navbar_hover_color | default("#00a3b0") }};
 }
 
+/* NAVBAR/APP BAR Header */
+
+.MuiAppBar-root {
+    background-color: var(--navbar-background-color) !important;
+}
+
+.MuiAppBar-root .MuiButtonBase-root.MuiButton-root.MuiButton-text.MuiButton-textPrimary, .MuiAppBar-root .MuiChip-root.MuiChip-filled {
+    color: var(--navbar-text-color) !important;
+    font-weight: 700;
+}
+
+.MuiButton-textPrimary#profile-menu-btn:hover {
+    background-color: var(--navbar-hover-color) !important;
+}
+
+
+/* Sidebar Home Button */
+
+.MuiButtonBase-root.MuiListItemButton-root { 
+    position: relative;
+    z-index: 1; 
+}
+
+.MuiButtonBase-root.MuiListItemButton-root::before { 
+    content: '';
+    position: absolute;
+    background: var(--primary-color);
+    opacity: 0.1;
+    z-index: -1; 
+}
+
+.MuiButtonBase-root.MuiListItemButton-root:hover::before {
+    background: rgba(0, 0, 0, .08) !important;
+  }
+  .MuiButtonBase-root.MuiListItemButton-root::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 8px;
+    background-color: var(--primary-color);
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+    z-index: 0;
+  }
+
 .progress-bar {
     background-color: var(--primary-color) !important;
 }
@@ -306,6 +355,7 @@ a:focus {
 }
 
 /* Style for the profile menu */
+
 .profile-menu {
     display: inline-block;
     position: relative;
@@ -316,9 +366,17 @@ a:focus {
     display: flex;
     align-items: center;
     cursor: pointer;
-    margin: 10px 0;
+    padding: 10px;
   }
-
+ .profile:hover {
+    background-color: var(--navbar-hover-color)!important;
+  }
+  .profile img {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    margin-right: 10px;
+ }
   .username {
     font-weight: bold;
   }
@@ -452,6 +510,10 @@ a:focus {
 
 .MuiButton-textPrimary#profile-menu-btn {
     color: var(--navbar-text-color) !important;
+}
+
+.MuiButton-textPrimary#profile-menu-btn:hover {
+    background-color: var(--navbar-hover-color) !important;
 }
 
 .MuiListItemButton-root::before  {

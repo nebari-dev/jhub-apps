@@ -30,11 +30,13 @@ declare module '@mui/material/styles' {
   interface Palette {
     accent: PaletteColor;
     gray: PaletteColor;
+    blue: PaletteColor;
   }
 
   interface PaletteOptions {
     accent?: PaletteColorOptions;
     gray?: PaletteColorOptions;
+    blue?: PaletteColorOptions;
   }
 
   interface PaletteColor {
@@ -177,6 +179,21 @@ export const theme = createTheme(baseTheme, {
         contrastText: white,
       },
       name: 'secondary',
+    }),
+    blue: baseTheme.palette.augmentColor({
+      color: {
+        50: blue[50],
+        100: blue[100],
+        200: blue[200],
+        300: blue[300],
+        400: blue[400],
+        500: blue[500],
+        600: blue[600],
+        700: blue[700],
+        800: blue[800],
+        900: blue[900],
+      },
+      name: 'blue',
     }),
     gray: baseTheme.palette.augmentColor({
       color: {

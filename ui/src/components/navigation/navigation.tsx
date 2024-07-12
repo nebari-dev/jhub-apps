@@ -6,6 +6,7 @@ import {
   AppBar,
   Box,
   Button,
+  Chip,
   Drawer,
   IconButton,
   Link,
@@ -41,6 +42,7 @@ import { useQuery } from '@tanstack/react-query';
 import React, { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { currentNotification, currentUser as defaultUser } from '../../store';
+import './navigation.css';
 export const StyledListItemTextHeader = styled(ListItemText)(({ theme }) => ({
   fontWeight: 400,
   fontSize: '16px',
@@ -165,7 +167,7 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
             sx={{
               px: '1.5rem',
               mx: '.5rem',
-              backgroundColor: theme.palette.gray.lighter,
+              backgroundColor: theme.palette.primary.light,
               borderRadius: '8px',
               position: 'relative',
               display: 'flex',
@@ -182,7 +184,7 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
                 borderBottomLeftRadius: '8px',
               },
               '&:hover': {
-                backgroundColor: theme.palette.gray.light,
+                backgroundColor: theme.palette.gray[50],
                 '&::before': {
                   backgroundColor: theme.palette.primary.main,
                 },
@@ -340,13 +342,14 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar
+        id="app-bar"
         position="fixed"
         sx={{
           zIndex: (theme) => theme.zIndex.drawer + 1,
-          backgroundColor: (theme) => theme.palette.common.black,
+          backgroundColor: (theme) => theme.palette.common.white,
         }}
       >
-        <Toolbar>
+        <Toolbar id="toolbar">
           <IconButton
             color="inherit"
             aria-label="open drawer"
@@ -367,6 +370,7 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
           <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
             <Button
               id="profile-menu-btn"
+              className="button-menu"
               aria-controls={profileMenuOpen ? 'profile-menu-list' : undefined}
               aria-haspopup="true"
               aria-expanded={profileMenuOpen ? 'true' : undefined}
@@ -378,9 +382,23 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
                   <KeyboardArrowDownRoundedIcon />
                 )
               }
-              sx={{ color: theme.palette.common.white, fontWeight: 700 }}
+              sx={{
+                '&:hover': {
+                  backgroundColor: theme.palette.gray[50],
+                },
+              }}
             >
-              {currentUser?.name} {currentUser?.admin ? '(admin)' : ''}
+              {currentUser?.name}{' '}
+              {currentUser?.admin && (
+                <Chip
+                  label="admin"
+                  size="small"
+                  className="chip"
+                  sx={{
+                    marginLeft: theme.spacing(1),
+                  }}
+                />
+              )}
             </Button>
             <Menu
               id="profile-menu-list"
