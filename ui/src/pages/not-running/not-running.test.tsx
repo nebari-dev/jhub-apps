@@ -54,9 +54,9 @@ describe('NotRunning', () => {
     const { baseElement } = render(componentWrapper);
     await act(async () => {
       expect(baseElement).toBeTruthy();
-      expect(baseElement.querySelector('h1')?.textContent).toEqual(
-        'Redirecting...',
-      );
+      expect(
+        baseElement.querySelector('.MuiCircularProgress-root'),
+      ).toBeTruthy();
     });
   });
 

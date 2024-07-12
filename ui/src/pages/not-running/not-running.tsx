@@ -1,4 +1,4 @@
-import { Box, Typography } from '@mui/material';
+import { Box, CircularProgress } from '@mui/material';
 import { AppQueryGetProps } from '@src/types/api';
 import { UserState } from '@src/types/user';
 import axios from '@src/utils/axios';
@@ -51,10 +51,8 @@ export const NotRunning = (): React.ReactElement => {
   }, [formData, id, currentUser]);
 
   return (
-    <Box>
-      <Typography component="h1" variant="body1">
-        Redirecting...
-      </Typography>
+    <Box sx={{ margin: 'auto auto' }}>
+      <CircularProgress />
     </Box>
   );
 };
