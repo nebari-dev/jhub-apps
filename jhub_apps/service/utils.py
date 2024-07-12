@@ -158,7 +158,11 @@ def get_shared_servers(current_hub_user):
     user_servers_without_default_jlab = list(filter(lambda server: server["name"] != "", all_users_servers))
     hub_client_user = HubClient(username=current_hub_user['name'])
     shared_servers = hub_client_user.get_shared_servers()
-    shared_server_names = {shared_server["server"]["name"] for shared_server in shared_servers}
+    shared_server_names = {
+        shared_server["server"]["name"] for shared_server in shared_servers
+        # remove shared apps by current user
+        if shared_server["server"]["user"]["name"] != current_hub_user['name']
+    }
     shared_servers_rich = [
         server for server in user_servers_without_default_jlab
         if server["name"] in shared_server_names
