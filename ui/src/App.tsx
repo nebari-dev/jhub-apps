@@ -96,7 +96,7 @@ export const App = (): React.ReactElement => {
           pt: 9,
           pl: { xs: 1, sm: 33 },
           pr: 1,
-          backgroundColor: '#FAFAFA',
+          backgroundColor: '#fafbfc',
         }}
       >
         {notification ? (

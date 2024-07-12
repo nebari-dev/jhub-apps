@@ -170,8 +170,10 @@ def test_shared_server_filtering(hub_get_shared_servers, get_users):
         }
     ]
     hub_get_shared_servers.return_value = [
-        {"server": {"name": "panel-56"}},
-        {"server": {"name": "panel-34"}},
+        {"server": {"name": "panel-56", "user": {"name": "another-user"}}},
+        {"server": {"name": "panel-34", "user": {"name": "another-user"}}},
+        {"server": {"name": "panel-23", "user": {"name": "fakeuser"}}},
+        {"server": {"name": "panel-42", "user": {"name": "fakeuser"}}},
     ]
     shared_servers = get_shared_servers(current_hub_user)
     assert shared_servers == [

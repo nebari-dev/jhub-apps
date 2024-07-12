@@ -1,5 +1,5 @@
 export const blue = {
-  50: '#2491FF',
+  50: '#FAFBFC',
   100: '#2491FF',
   200: '#2491FF',
   300: '#2491FF',
@@ -12,7 +12,7 @@ export const blue = {
 };
 
 export const gray = {
-  50: '#0F10150A',
+  50: 'rgba(0, 0, 0, .08)',
   100: '#E1E3E4',
   200: '#EEEEEE',
   300: '#E0E0E0',
