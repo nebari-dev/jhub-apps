@@ -70,9 +70,7 @@ export const AppCard = ({
   const [, setIsStartNotRunningOpen] = useRecoilState(isStartNotRunningOpen);
 
   useEffect(() => {
-    if (!serverStatus) {
-      setNotification('Server status id undefined.');
-    } else {
+    if (serverStatus) {
       setAppStatus(serverStatus);
     }
   }, [serverStatus, setNotification]);

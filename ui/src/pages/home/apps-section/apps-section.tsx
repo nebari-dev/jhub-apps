@@ -97,9 +97,7 @@ export const AppsSection = (): React.ReactElement => {
 
   useEffect(() => {
     const serverStatus = apps.map((app) => app.status);
-    if (serverStatus.length === 0) {
-      setNotification('Server status id undefined.');
-    } else {
+    if (serverStatus) {
       setAppStatus(serverStatus.join(', ')); // Convert the array of strings to a single string
     }
   }, [apps, setNotification, setAppStatus]);
