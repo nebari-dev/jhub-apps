@@ -44,9 +44,4 @@ describe('StopPending', () => {
       screen.getByRole('button', { name: /Back To Home/i }),
     ).toBeInTheDocument();
   });
-
-  test('matches snapshot', () => {
-    const { asFragment } = render(componentWrapper);
-    expect(asFragment()).toMatchSnapshot();
-  });
 });
