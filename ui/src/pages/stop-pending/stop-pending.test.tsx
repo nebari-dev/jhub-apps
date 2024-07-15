@@ -1,4 +1,3 @@
-// src/pages/stop-pending/StopPending.test.tsx
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/react';
