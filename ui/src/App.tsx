@@ -8,6 +8,7 @@ import { CreateApp } from './pages/create-app/create-app';
 import { EditApp } from './pages/edit-app/edit-app';
 import { Home } from './pages/home/home';
 import { ServerTypes } from './pages/server-types/server-types';
+import { StopPending } from './pages/stop-pending/stop-pending';
 import {
   currentNotification,
   currentJhData as defaultJhData,
@@ -111,6 +112,7 @@ export const App = (): React.ReactElement => {
           <Route path="/create-app" element={<CreateApp />} />
           <Route path="/edit-app" element={<EditApp />} />
           <Route path="/server-types" element={<ServerTypes />} />
+          <Route path="/stop-pending" element={<StopPending />} />
           <Route path="/" element={<Home />} />
         </Routes>
       </Box>

@@ -1,0 +1,62 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`StopPending matches snapshot 1`] = `
+<DocumentFragment>
+  <div
+    class="container MuiBox-root css-115nrsw"
+    id="stop-pending"
+  >
+    <div
+      class="MuiBox-root css-gdx2i7"
+    >
+      <h1
+        class="MuiTypography-root MuiTypography-h5 MuiTypography-gutterBottom css-1wm0rzi-MuiTypography-root"
+      >
+        Thank you for your patience
+        <br />
+        We are stopping your application, you may start it again when we have finished
+      </h1>
+      <span
+        class="MuiCircularProgress-root MuiCircularProgress-indeterminate MuiCircularProgress-colorPrimary css-18lrjg1-MuiCircularProgress-root"
+        role="progressbar"
+        style="width: 40px; height: 40px; color: rgb(160, 32, 240); margin: 20px 0px;"
+      >
+        <svg
+          class="MuiCircularProgress-svg css-1idz92c-MuiCircularProgress-svg"
+          viewBox="22 22 44 44"
+        >
+          <circle
+            class="MuiCircularProgress-circle MuiCircularProgress-circleIndeterminate css-176wh8e-MuiCircularProgress-circle"
+            cx="44"
+            cy="44"
+            fill="none"
+            r="20.2"
+            stroke-width="3.6"
+          />
+        </svg>
+      </span>
+    </div>
+    <div
+      class="MuiBox-root css-f3bpqo"
+    >
+      <p
+        class="MuiTypography-root MuiTypography-body1 MuiTypography-gutterBottom css-1orliad-MuiTypography-root"
+      >
+        You may return to the Application Screen at any time
+      </p>
+      <button
+        class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium css-25zfvl-MuiButtonBase-root-MuiButton-root"
+        id="back-btn"
+        style="background-color: rgb(160, 32, 240);"
+        tabindex="0"
+        type="button"
+      >
+        Back To Home
+        <span
+          class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+        />
+      </button>
+    </div>
+  </div>
+</DocumentFragment>
+`;
