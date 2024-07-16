@@ -57,8 +57,9 @@ export const ContextMenu = ({
     event.stopPropagation();
     setAnchorEl(event.currentTarget);
   };
-  const handleClose = () => {
+  const handleClose = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(null);
+    event.stopPropagation();
   };
 
   return (
@@ -128,7 +129,7 @@ export const ContextMenu = ({
                   e.stopPropagation();
                   item.onClick(e);
                 }
-                handleClose();
+                handleClose(e);
               }}
               disabled={item.disabled}
             >
