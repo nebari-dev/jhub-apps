@@ -146,9 +146,9 @@ class HubClient:
         else:
             # Get named server
             server = self.get_server(username, servername)
-            user_options = server["user_options"]
             if not server:
                 return None
+            user_options = server["user_options"]
         url = f"/users/{username}/servers/{servername}"
         data = {"name": servername, **user_options}
         r = requests.post(API_URL + url, headers=self._headers(), json=data)
