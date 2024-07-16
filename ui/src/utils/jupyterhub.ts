@@ -7,7 +7,11 @@ import {
 } from '@src/types/jupyterhub';
 import { JhData } from '@src/types/jupyterhub.ts';
 import { UserState } from '@src/types/user';
-import { DEFAULT_PINNED_SERVICES } from './constants';
+import {
+  APP_BASE_URL,
+  APP_TO_START_KEY,
+  DEFAULT_PINNED_SERVICES,
+} from './constants';
 
 export const getJhData = (): JhData => {
   return window.jhdata;
@@ -93,6 +97,7 @@ export const getApps = (
         ...server,
         id: app.name,
         name: app.display_name,
+        url: server.url?.replace('/user/', '/hub/user/'),
         framework: getFriendlyFrameworkName(app.framework),
         username: server.username || username,
         last_activity: server.last_activity,
@@ -201,6 +206,36 @@ export const getFullAppUrl = (url: string) => {
   return `${document.location.origin}${url}`;
 };
 
+export const getSpawnUrl = (currentUser: UserState, currentApp: JhApp) => {
+  const username = currentUser.name;
+  let appName = currentApp.name;
+  if (currentApp.name === 'JupyterLab') {
+    appName = 'lab';
+  } else if (currentApp.name === 'VSCode') {
+    appName = 'vscode';
+  }
+  const next = encodeURIComponent(
+    `${APP_BASE_URL}/user/${username}/${appName}`,
+  );
+
+  return `${APP_BASE_URL}/spawn/${username}?next=${next}`;
+};
+
+export const getSpawnPendingUrl = (currentUser: UserState, appId: string) => {
+  const username = currentUser?.name;
+  const next = encodeURIComponent(`${APP_BASE_URL}/user/${username}/${appId}`);
+
+  return `${APP_BASE_URL}/spawn-pending/${username}/${appId}?next=${next}`;
+};
+
+export const isDefaultApp = (name: string) => {
+  if (name === 'JupyterLab' || name === 'VSCode') {
+    return true;
+  } else {
+    return false;
+  }
+};
+
 export const navigateToUrl = (url: string) => {
   document.location.href = url;
 };
@@ -215,6 +250,18 @@ export const getAppStatus = (app: JhApp): string => {
   } else {
     return 'Unknown';
   }
+};
+
+export const getAppToStart = () => {
+  return window.sessionStorage.getItem(APP_TO_START_KEY);
+};
+
+export const storeAppToStart = (appId: string) => {
+  window.sessionStorage.setItem(APP_TO_START_KEY, appId);
+};
+
+export const clearAppToStart = () => {
+  window.sessionStorage.removeItem(APP_TO_START_KEY);
 };
 
 /* eslint-disable @typescript-eslint/no-explicit-any */

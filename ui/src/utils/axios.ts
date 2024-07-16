@@ -39,8 +39,13 @@ instance.interceptors.response.use(
       if (data) {
         response.data = data;
       } else if (url?.match(/^\/server\/.*$/)) {
+        let serverName = url.split('/')[2];
+        if (serverName === 'lab' || serverName === 'vscode') {
+          serverName = '';
+        }
+
         const serverApp = serverApps.user_apps.find(
-          (app) => app.name === url.split('/')[2],
+          (app) => app.name === serverName,
         );
         if (serverApp) {
           response.data = serverApp;

@@ -7,6 +7,7 @@ import { Navigation, NotificationBar } from './components';
 import { CreateApp } from './pages/create-app/create-app';
 import { EditApp } from './pages/edit-app/edit-app';
 import { Home } from './pages/home/home';
+import { NotRunning } from './pages/not-running/not-running';
 import { ServerTypes } from './pages/server-types/server-types';
 import { StopPending } from './pages/stop-pending/stop-pending';
 import {
@@ -109,6 +110,7 @@ export const App = (): React.ReactElement => {
         )}
         <Routes>
           <Route path="/home" element={<Home />} />
+          <Route path="/user/:id/*" element={<NotRunning />} />
           <Route path="/create-app" element={<CreateApp />} />
           <Route path="/edit-app" element={<EditApp />} />
           <Route path="/server-types" element={<ServerTypes />} />

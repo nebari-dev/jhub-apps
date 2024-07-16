@@ -441,6 +441,10 @@ a:focus {
     border: unset;
 }
 
+.card-dialog-body-wrapper {
+    padding: 0 24px 20px !important;
+}
+
 .MuiButton-containedPrimary:not(:disabled) {
     color: var(--light-text-color);
     background-color: var(--primary-color) !important;
@@ -519,6 +523,11 @@ a:focus {
 .MuiListItemButton-root::before  {
     background-color: var(--primary-color) !important;
 }   
+
+.MuiCircularProgress-colorPrimary {
+    color: var(--primary-color) !important;
+
+}
 
 /* Misc */
 .version {

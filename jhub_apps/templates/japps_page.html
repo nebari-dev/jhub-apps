@@ -1,0 +1,17 @@
+{% extends "page.html" %} {% block main %}
+
+<div id="root"></div>
+<script src="/services/japps/static/js/index.js?v={{version_hash}}"></script>
+<link
+  rel="stylesheet"
+  href="/services/japps/static/css/index.css?v={{version_hash}}"
+/>
+<script type="text/javascript">
+  window.theme = {
+    logo: "{{ logo }}",
+  };
+  // Hide the navbar since using new one
+  document.querySelector(".navbar")?.style.setProperty("display", "none");
+</script>
+
+{% endblock %}

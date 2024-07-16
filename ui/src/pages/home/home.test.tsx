@@ -1,4 +1,5 @@
-import { apps } from '@src/data/api';
+import { app, apps } from '@src/data/api';
+import { currentUser } from '@src/data/user';
 import axios from '@src/utils/axios';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import '@testing-library/jest-dom';
@@ -14,7 +15,9 @@ import { BrowserRouter } from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
 import {
   currentApp as defaultApp,
+  currentUser as defaultUser,
   isDeleteOpen,
+  isStartNotRunningOpen,
   isStartOpen,
   isStopOpen,
 } from '../../../src/store';
@@ -36,6 +39,7 @@ describe('Home', () => {
   beforeEach(() => {
     queryClient.clear();
     mock.reset();
+    sessionStorage.clear();
   });
 
   const componentWrapper = (
@@ -429,6 +433,186 @@ describe('Home', () => {
       deleteBtn.click();
     });
 
+    expect(document.location.pathname).toBe('/');
+  });
+
+  test('renders with server not running modal startAppId', async () => {
+    sessionStorage.setItem('startAppId', 'test-app-1');
+    mock.onGet(new RegExp('/server/app-1')).reply(200, app);
+    queryClient.setQueryData(['app-form'], app);
+    const { baseElement } = render(
+      <RecoilRoot initializeState={({ set }) => set(defaultUser, currentUser)}>
+        <QueryClientProvider client={queryClient}>
+          <Home />
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+    expect(baseElement).toBeTruthy();
+  });
+
+  test('should render with server not running modal', async () => {
+    mock.onGet(new RegExp('/server/app-1')).reply(200, app);
+    const { baseElement } = render(
+      <RecoilRoot
+        initializeState={({ set }) => set(isStartNotRunningOpen, true)}
+      >
+        <QueryClientProvider client={queryClient}>
+          <BrowserRouter>
+            <Home />
+          </BrowserRouter>
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+
+    await waitFor(() => {
+      const startModal = within(baseElement).getByTestId(
+        'StartNotRunningModal',
+      );
+      expect(startModal).toBeInTheDocument();
+    });
+
+    const cancelBtn = baseElement.querySelector(
+      '#cancel-btn',
+    ) as HTMLButtonElement;
+    await act(async () => {
+      cancelBtn.click();
+    });
+    expect(document.location.pathname).toBe('/');
+  });
+
+  test('should render with server not running modal and submit', async () => {
+    mock.onGet(`/server/test-app-1`).reply(200);
+    const { baseElement } = render(
+      <RecoilRoot
+        initializeState={({ set }) => {
+          set(isStartNotRunningOpen, true);
+          set(defaultApp, apps[0]);
+        }}
+      >
+        <QueryClientProvider client={queryClient}>
+          <BrowserRouter>
+            <Home />
+          </BrowserRouter>
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+
+    await waitFor(() => {
+      const startModal = within(baseElement).getByTestId(
+        'StartNotRunningModal',
+      );
+      expect(startModal).toBeInTheDocument();
+    });
+
+    const startBtn = baseElement.querySelector(
+      '#start-btn',
+    ) as HTMLButtonElement;
+    await act(async () => {
+      startBtn.click();
+    });
+    expect(document.location.pathname).toBe('/');
+  });
+
+  test('should render with server not running modal for default app and submit', async () => {
+    mock.onGet(`/server/test-app-1`).reply(200);
+    const app = { ...apps[0], id: '', name: 'JupyterLab' };
+    const { baseElement } = render(
+      <RecoilRoot
+        initializeState={({ set }) => {
+          set(isStartNotRunningOpen, true);
+          set(defaultApp, app);
+          set(defaultUser, currentUser);
+        }}
+      >
+        <QueryClientProvider client={queryClient}>
+          <BrowserRouter>
+            <Home />
+          </BrowserRouter>
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+
+    await waitFor(() => {
+      const startModal = within(baseElement).getByTestId(
+        'StartNotRunningModal',
+      );
+      expect(startModal).toBeInTheDocument();
+    });
+
+    const startBtn = baseElement.querySelector(
+      '#start-btn',
+    ) as HTMLButtonElement;
+    await act(async () => {
+      startBtn.click();
+    });
+    expect(document.location.pathname).toBe('/');
+  });
+
+  test('should render with server not running modal for default app and not submit', async () => {
+    mock.onGet(`/server/test-app-1`).reply(200);
+    const app = { ...apps[0], id: '', name: 'JupyterLab' };
+    const { baseElement } = render(
+      <RecoilRoot
+        initializeState={({ set }) => {
+          set(isStartNotRunningOpen, true);
+          set(defaultApp, app);
+          set(defaultUser, undefined);
+        }}
+      >
+        <QueryClientProvider client={queryClient}>
+          <BrowserRouter>
+            <Home />
+          </BrowserRouter>
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+
+    await waitFor(() => {
+      const startModal = within(baseElement).getByTestId(
+        'StartNotRunningModal',
+      );
+      expect(startModal).toBeInTheDocument();
+    });
+
+    const startBtn = baseElement.querySelector(
+      '#start-btn',
+    ) as HTMLButtonElement;
+    await act(async () => {
+      startBtn.click();
+    });
+    expect(document.location.pathname).toBe('/');
+  });
+
+  test('should render with server not running modal and not submit when no current app', async () => {
+    mock.onGet(new RegExp('/server/*')).reply(500, { message: 'Some error' });
+    const { baseElement } = render(
+      <RecoilRoot
+        initializeState={({ set }) => {
+          set(isStartNotRunningOpen, true);
+          set(defaultApp, undefined);
+        }}
+      >
+        <QueryClientProvider client={queryClient}>
+          <BrowserRouter>
+            <Home />
+          </BrowserRouter>
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+
+    await waitFor(() => {
+      const startModal = within(baseElement).getByTestId(
+        'StartNotRunningModal',
+      );
+      expect(startModal).toBeInTheDocument();
+    });
+
+    const startBtn = baseElement.querySelector(
+      '#start-btn',
+    ) as HTMLButtonElement;
+    await act(async () => {
+      startBtn.click();
+    });
     expect(document.location.pathname).toBe('/');
   });
 });

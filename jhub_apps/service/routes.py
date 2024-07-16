@@ -34,7 +34,8 @@ from jhub_apps.service.utils import (
     get_conda_envs,
     get_jupyterhub_config,
     get_spawner_profiles,
-    get_thumbnail_data_url, get_shared_servers,
+    get_thumbnail_data_url,
+    get_shared_servers,
 )
 from jhub_apps.spawner.types import FRAMEWORKS
 from jhub_apps.version import get_version
@@ -101,7 +102,12 @@ async def get_server(user: User = Depends(get_current_user), server_name=None):
     hub_client = HubClient(username=user.name)
     hub_user = hub_client.get_user()
     user_servers = hub_user["servers"]
-    if server_name:
+
+    # If server_name is 'lab' then it is the default user
+    if server_name == "lab" or server_name == "vscode":
+        server_name = ""
+
+    if server_name is not None:
         # Get a particular server
         for s_name, server_details in user_servers.items():
             if s_name == server_name:
