@@ -82,6 +82,9 @@ async def get_spawner_profiles(config, auth_state=None):
     # See: https://jupyterhub-kubespawner.readthedocs.io/en/latest/spawner.html#kubespawner.KubeSpawner.profile_list
     """
     profile_list = config.KubeSpawner.profile_list
+    logger.info(f"Get spawner profiles: {config}")
+    logger.info(f"Get spawner profiles: {config.Authenticator}")
+    logger.info(f"Get spawner profiles: {vars(config.KubeSpawner)}")
     if isinstance(profile_list, list):
         return config.KubeSpawner.profile_list
     elif isinstance(profile_list, LazyConfigValue):
