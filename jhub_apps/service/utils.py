@@ -50,13 +50,14 @@ def get_conda_envs(config, user):
         )
 
 
-def get_fake_spawner_object(auth_state):
+def get_fake_spawner_object(config, auth_state):
     fake_spawner = Mock()
 
     async def get_auth_state():
         return auth_state
 
     fake_spawner.user.get_auth_state = get_auth_state
+    fake_spawner.authenticator = config.Authenticator
     fake_spawner.log = logger
     return fake_spawner
 
@@ -82,9 +83,9 @@ async def get_spawner_profiles(config, auth_state=None):
     # See: https://jupyterhub-kubespawner.readthedocs.io/en/latest/spawner.html#kubespawner.KubeSpawner.profile_list
     """
     profile_list = config.KubeSpawner.profile_list
-    logger.info(f"Get spawner profiles: {config}")
-    logger.info(f"Get spawner profiles: {config.Authenticator}")
-    logger.info(f"Get spawner profiles: {vars(config.KubeSpawner)}")
+    logger.info(f"Get spawner profiles config: {config}")
+    logger.info(f"Get spawner profiles config.Authenticator: {config.Authenticator}")
+    logger.info(f"Get spawner profiles vars config.KubeSpawner: {vars(config.KubeSpawner)}")
     if isinstance(profile_list, list):
         return config.KubeSpawner.profile_list
     elif isinstance(profile_list, LazyConfigValue):
@@ -92,7 +93,7 @@ async def get_spawner_profiles(config, auth_state=None):
     elif callable(profile_list):
         try:
             logger.info("config.KubeSpawner.profile_list is a callable, calling now..")
-            profile_list = await profile_list(get_fake_spawner_object(auth_state))
+            profile_list = await profile_list(get_fake_spawner_object(config, auth_state))
             return _slugify_profile_list(profile_list)
         except Exception as e:
             logger.exception(e)
