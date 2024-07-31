@@ -106,10 +106,10 @@ def create_app(
         logger.info("Expect Small Instance to be visible")
         expect(small_instance_radio_button).to_be_visible()
         small_instance_radio_button.check()
-    create_app_locator = page.get_by_role("button", name="Create App")
-    logger.info("Expect Create App button to be visible")
+    create_app_locator = page.get_by_role("button", name="Deploy App")
+    logger.info("Expect Deploy App button to be visible")
     expect(create_app_locator).to_be_visible()
-    logger.info("Click Create App")
+    logger.info("Click Deploy App")
     create_app_locator.click()
 
 

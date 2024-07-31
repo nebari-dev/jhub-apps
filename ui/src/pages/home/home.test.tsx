@@ -67,7 +67,7 @@ describe('Home', () => {
     });
   });
 
-  test('should render create app button and respond to click events', async () => {
+  test('should render Deploy app button and respond to click events', async () => {
     const { getByText } = render(componentWrapper);
     await act(async () => {
       const button = getByText('Deploy App');

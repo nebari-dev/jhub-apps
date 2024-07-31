@@ -948,7 +948,7 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
             ) : id ? (
               <>Save</>
             ) : (
-              <>Create App</>
+              <>Deploy App</>
             )}
           </Button>
         </div>

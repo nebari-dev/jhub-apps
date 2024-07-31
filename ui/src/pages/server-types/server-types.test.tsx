@@ -214,7 +214,7 @@ describe('ServerTypes', () => {
     mockSearchParamsGet.mockRestore();
   });
 
-  test('clicks back to create app', async () => {
+  test('clicks back to deploy app', async () => {
     jest.mock('react-router-dom', () => ({
       ...jest.requireActual('react-router-dom'),
       useLocation: () => ({

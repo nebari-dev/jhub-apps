@@ -299,7 +299,7 @@ export const ServerTypes = (): React.ReactElement => {
                     color="primary"
                     loading={submitting}
                   >
-                    {id ? 'Save' : 'Create App'}
+                    {id ? 'Save' : 'Deploy App'}
                   </LoadingButton>
                 </div>
               </div>
