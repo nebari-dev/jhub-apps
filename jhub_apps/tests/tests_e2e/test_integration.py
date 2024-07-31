@@ -87,7 +87,7 @@ def create_app(
         share_with_groups=None,
 ):
     logger.info("Creating App")
-    page.get_by_role("button", name="Create App").click()
+    page.get_by_role("button", name="Deploy App").click()
     logger.info("Fill App display Name")
     page.get_by_label("*Name").click()
     page.get_by_label("*Name").fill(app_name)
