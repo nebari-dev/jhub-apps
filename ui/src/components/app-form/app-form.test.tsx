@@ -147,7 +147,7 @@ describe('AppForm', () => {
       // Attempt submitting without filling in required fields
       const btn = baseElement.querySelector('#submit-btn') as HTMLButtonElement;
       expect(btn).toBeInTheDocument();
-      expect(btn).toHaveTextContent('Create App');
+      expect(btn).toHaveTextContent('Deploy App');
       expect(btn).not.toHaveAttribute('disabled', 'disabled');
       await act(async () => {
         btn.click();
@@ -283,7 +283,7 @@ describe('AppForm', () => {
       // Attempt submitting without filling in required fields
       const btn = baseElement.querySelector('#submit-btn') as HTMLButtonElement;
       expect(btn).toBeInTheDocument();
-      expect(btn).toHaveTextContent('Create App');
+      expect(btn).toHaveTextContent('Deploy App');
       expect(btn).not.toHaveAttribute('disabled', 'disabled');
       await act(async () => {
         btn.click();
@@ -353,7 +353,7 @@ describe('AppForm', () => {
       // Attempt submitting without filling in required fields
       const btn = baseElement.querySelector('#submit-btn') as HTMLButtonElement;
       expect(btn).toBeInTheDocument();
-      expect(btn).toHaveTextContent('Create App');
+      expect(btn).toHaveTextContent('Deploy App');
       expect(btn).not.toHaveAttribute('disabled', 'disabled');
       await act(async () => {
         btn.click();
@@ -410,7 +410,7 @@ describe('AppForm', () => {
 
       const btn = baseElement.querySelector('#submit-btn') as HTMLButtonElement;
       expect(btn).toBeInTheDocument();
-      expect(btn).toHaveTextContent('Create App');
+      expect(btn).toHaveTextContent('Deploy App');
       expect(btn).not.toHaveAttribute('disabled', 'disabled');
       await act(async () => {
         btn.click();
@@ -556,7 +556,7 @@ describe('AppForm', () => {
 
       const btn = baseElement.querySelector('#submit-btn') as HTMLButtonElement;
       expect(btn).toBeInTheDocument();
-      expect(btn).toHaveTextContent('Create App');
+      expect(btn).toHaveTextContent('Deploy App');
       expect(btn).not.toHaveAttribute('disabled', 'disabled');
       await act(async () => {
         btn.click();
@@ -726,7 +726,7 @@ describe('AppForm', () => {
 
       const btn = baseElement.querySelector('#submit-btn') as HTMLButtonElement;
       expect(btn).toBeInTheDocument();
-      expect(btn).toHaveTextContent('Create App');
+      expect(btn).toHaveTextContent('Deploy App');
       expect(btn).not.toHaveAttribute('disabled', 'disabled');
       await act(async () => {
         btn.click();

@@ -201,7 +201,7 @@ export const AppsSection = (): React.ReactElement => {
                       window.location.href = `${API_BASE_URL}/create-app`;
                     }}
                   >
-                    Create App
+                    Deploy App
                   </Button>
                 </Item>
               </Grid>
