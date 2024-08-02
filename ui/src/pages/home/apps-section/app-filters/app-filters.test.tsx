@@ -396,10 +396,6 @@ describe('AppFilters', () => {
           baseElement.querySelector('#apply-filters-btn') as HTMLButtonElement,
       );
 
-      await act(async () => {
-        applyButton.click();
-      });
-
       await waitFor(() => {
         const filteredCount = baseElement.querySelector(
           '#apply-filters-btn',
@@ -408,6 +404,11 @@ describe('AppFilters', () => {
         expect(filteredCount.textContent).toContain('Show');
         expect(filteredCount.textContent).toContain('results');
       });
+
+      await act(async () => {
+        applyButton.click();
+      });
+      expect(spy).toHaveBeenCalled();
     }
   });
 });
