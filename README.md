@@ -38,6 +38,8 @@ conda install -c conda-forge jhub-apps
 conda env create -f environment-dev.yml
 conda activate jhub-apps-dev
 pip install -e .
+cd ui
+npm install
 ```
 
 ## Starting JupyterHub
