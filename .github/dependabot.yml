@@ -8,10 +8,10 @@ updates:
     labels:
       - "dependencies"
     groups:
-      typescript-eslint:
+      eslint:
         patterns:
-          - "@typescript-eslint/eslint-plugin"
-          - "@typescript-eslint/parser"
+          - "@eslint/js"
+          - "eslint"
     ignore:
       - dependency-name: react
         versions:
