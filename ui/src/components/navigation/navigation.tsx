@@ -69,6 +69,7 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const profileMenuOpen = Boolean(anchorEl);
   const isMobileBreakpoint = useMediaQuery(theme.breakpoints.down('sm')); // Use to determine if the drawer should be open or closed
+  // eslint-disable-next-line react/prop-types
   const { window } = props;
   const [mobileOpen, setMobileOpen] = useState(
     isMobileBreakpoint ? false : true,
@@ -89,7 +90,7 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
     queryKey: ['app-state'],
     queryFn: () =>
       axios
-        .get(`/server/`)
+        .get('/server/')
         .then((response) => {
           return response.data;
         })

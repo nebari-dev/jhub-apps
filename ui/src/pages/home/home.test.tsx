@@ -137,7 +137,7 @@ describe('Home', () => {
   });
 
   test('should render with start modal and submit', async () => {
-    mock.onPost(`/server/test-app-1`).reply(200); // Mock the delete API endpoint
+    mock.onPost('/server/test-app-1').reply(200); // Mock the delete API endpoint
     const { baseElement } = render(
       <RecoilRoot
         initializeState={({ set }) => {
@@ -249,7 +249,7 @@ describe('Home', () => {
   });
 
   test('should render with stop modal and submit', async () => {
-    mock.onDelete(`/server/test-app-1`).reply(200); // Mock the stop API endpoint
+    mock.onDelete('/server/test-app-1').reply(200); // Mock the stop API endpoint
     const { baseElement, getByText } = render(
       <RecoilRoot
         initializeState={({ set }) => {
@@ -366,7 +366,7 @@ describe('Home', () => {
   });
 
   test('should render with delete modal and submit', async () => {
-    mock.onDelete(`/server/test-app-1`).reply(200); // Mock the delete API endpoint
+    mock.onDelete('/server/test-app-1').reply(200); // Mock the delete API endpoint
     const { baseElement, getByText } = render(
       <RecoilRoot
         initializeState={({ set }) => {
@@ -481,7 +481,7 @@ describe('Home', () => {
   });
 
   test('should render with server not running modal and submit', async () => {
-    mock.onGet(`/server/test-app-1`).reply(200);
+    mock.onGet('/server/test-app-1').reply(200);
     const { baseElement } = render(
       <RecoilRoot
         initializeState={({ set }) => {
@@ -514,7 +514,7 @@ describe('Home', () => {
   });
 
   test('should render with server not running modal for default app and submit', async () => {
-    mock.onGet(`/server/test-app-1`).reply(200);
+    mock.onGet('/server/test-app-1').reply(200);
     const app = { ...apps[0], id: '', name: 'JupyterLab' };
     const { baseElement } = render(
       <RecoilRoot
@@ -549,7 +549,7 @@ describe('Home', () => {
   });
 
   test('should render with server not running modal for default app and not submit', async () => {
-    mock.onGet(`/server/test-app-1`).reply(200);
+    mock.onGet('/server/test-app-1').reply(200);
     const app = { ...apps[0], id: '', name: 'JupyterLab' };
     const { baseElement } = render(
       <RecoilRoot

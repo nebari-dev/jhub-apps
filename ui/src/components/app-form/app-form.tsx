@@ -696,9 +696,9 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
                   InputProps={{
                     style: errors.custom_command
                       ? {
-                          borderColor: '#d32f2f',
-                          // boxShadow: '0 0 0 2px rgba(211, 47, 47, 0.2)',
-                        }
+                        borderColor: '#d32f2f',
+                        // boxShadow: '0 0 0 2px rgba(211, 47, 47, 0.2)',
+                      }
                       : {},
                   }}
                   InputLabelProps={{

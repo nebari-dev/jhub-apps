@@ -38,7 +38,7 @@ export const App = (): React.ReactElement => {
     queryKey: ['user-state'],
     queryFn: () =>
       axios
-        .get(`/user`)
+        .get('/user')
         .then((response) => {
           return response.data;
         })

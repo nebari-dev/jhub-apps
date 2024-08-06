@@ -155,7 +155,7 @@ export const AppCard = ({
       return;
     }
 
-    const description = element.querySelector(`.card-description`);
+    const description = element.querySelector('.card-description');
     if (description) {
       const contentLength = description.textContent?.length || 0;
       if (contentLength > 170) {
