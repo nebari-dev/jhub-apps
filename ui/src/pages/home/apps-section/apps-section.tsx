@@ -67,7 +67,7 @@ export const AppsSection = (): React.ReactElement => {
     queryKey: ['app-state'],
     queryFn: () =>
       axios
-        .get(`/server/`)
+        .get('/server/')
         .then((response) => {
           return response.data;
         })

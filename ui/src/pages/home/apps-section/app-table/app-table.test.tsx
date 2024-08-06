@@ -148,7 +148,7 @@ describe('AppTable', () => {
   });
 
   test('simulate deleting an app', async () => {
-    mock.onDelete(`/server/testId`).reply(200); // Mock the delete API endpoint
+    mock.onDelete('/server/testId').reply(200); // Mock the delete API endpoint
 
     const { baseElement } = render(
       <RecoilRoot>
@@ -212,6 +212,7 @@ describe('AppTable', () => {
         if (error instanceof Error) {
           setNotification(error.message);
         } else {
+          // eslint-disable-next-line no-console
           console.error('An unknown error occurred', error);
         }
       } finally {

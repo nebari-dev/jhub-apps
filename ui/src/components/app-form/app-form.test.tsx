@@ -157,7 +157,7 @@ describe('AppForm', () => {
       fireEvent.change(frameworkField, { target: { value: 'panel' } });
 
       // prettier-ignore
-      const envJson = JSON.stringify({ "KEY": "VALUE", "KEY-1": "Value-1" });
+      const envJson = JSON.stringify({ 'KEY': 'VALUE', 'KEY-1': 'Value-1' });
       fireEvent.change(envVariableField, { target: { value: envJson } });
 
       // Submit with all required fields filled in
