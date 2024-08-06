@@ -1,6 +1,5 @@
 import { currentUser } from '@src/data/user';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import '@testing-library/jest-dom';
 import { act, render, waitFor } from '@testing-library/react';
 import { RecoilRoot } from 'recoil';
 import { AppSharing } from '..';
@@ -29,9 +28,9 @@ describe('AppSharing', () => {
               groups: ['group1', 'group2'],
             }}
             isPublic={true}
-            setIsPublic={jest.fn()}
-            setCurrentUserPermissions={jest.fn()}
-            setCurrentGroupPermissions={jest.fn()}
+            setIsPublic={vi.fn()}
+            setCurrentUserPermissions={vi.fn()}
+            setCurrentGroupPermissions={vi.fn()}
           />
         </QueryClientProvider>
       </RecoilRoot>,
@@ -51,9 +50,9 @@ describe('AppSharing', () => {
               groups: ['group1', 'group2', 'group3'],
             }}
             isPublic={true}
-            setIsPublic={jest.fn()}
-            setCurrentUserPermissions={jest.fn()}
-            setCurrentGroupPermissions={jest.fn()}
+            setIsPublic={vi.fn()}
+            setCurrentUserPermissions={vi.fn()}
+            setCurrentGroupPermissions={vi.fn()}
           />
         </QueryClientProvider>
       </RecoilRoot>,
@@ -90,9 +89,9 @@ describe('AppSharing', () => {
               groups: ['group1', 'group2'],
             }}
             isPublic={true}
-            setIsPublic={jest.fn()}
-            setCurrentUserPermissions={jest.fn()}
-            setCurrentGroupPermissions={jest.fn()}
+            setIsPublic={vi.fn()}
+            setCurrentUserPermissions={vi.fn()}
+            setCurrentGroupPermissions={vi.fn()}
           />
         </QueryClientProvider>
       </RecoilRoot>,
@@ -102,8 +101,8 @@ describe('AppSharing', () => {
   });
 
   test('Adds permissions to table', async () => {
-    const setUserPermissionMock = jest.fn();
-    const setGroupPermissionMock = jest.fn();
+    const setUserPermissionMock = vi.fn();
+    const setGroupPermissionMock = vi.fn();
     const { baseElement, getByText } = render(
       <RecoilRoot initializeState={({ set }) => set(defaultUser, currentUser)}>
         <QueryClientProvider client={queryClient}>
@@ -113,7 +112,7 @@ describe('AppSharing', () => {
               groups: ['group1', 'group2'],
             }}
             isPublic={false}
-            setIsPublic={jest.fn()}
+            setIsPublic={vi.fn()}
             setCurrentUserPermissions={setUserPermissionMock}
             setCurrentGroupPermissions={setGroupPermissionMock}
           />
@@ -170,9 +169,9 @@ describe('AppSharing', () => {
               groups: ['group1', 'group2'],
             }}
             isPublic={false}
-            setIsPublic={jest.fn()}
-            setCurrentUserPermissions={jest.fn()}
-            setCurrentGroupPermissions={jest.fn()}
+            setIsPublic={vi.fn()}
+            setCurrentUserPermissions={vi.fn()}
+            setCurrentGroupPermissions={vi.fn()}
           />
         </QueryClientProvider>
       </RecoilRoot>,
@@ -198,9 +197,9 @@ describe('AppSharing', () => {
         <QueryClientProvider client={queryClient}>
           <AppSharing
             isPublic={false}
-            setIsPublic={jest.fn()}
-            setCurrentUserPermissions={jest.fn()}
-            setCurrentGroupPermissions={jest.fn()}
+            setIsPublic={vi.fn()}
+            setCurrentUserPermissions={vi.fn()}
+            setCurrentGroupPermissions={vi.fn()}
           />
         </QueryClientProvider>
       </RecoilRoot>,
@@ -226,9 +225,9 @@ describe('AppSharing', () => {
           <AppSharing
             url="http://localhost:3000/"
             isPublic={true}
-            setIsPublic={jest.fn()}
-            setCurrentUserPermissions={jest.fn()}
-            setCurrentGroupPermissions={jest.fn()}
+            setIsPublic={vi.fn()}
+            setCurrentUserPermissions={vi.fn()}
+            setCurrentGroupPermissions={vi.fn()}
           />
         </QueryClientProvider>
       </RecoilRoot>,

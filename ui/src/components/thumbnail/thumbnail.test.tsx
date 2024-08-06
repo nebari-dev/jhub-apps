@@ -1,4 +1,3 @@
-import '@testing-library/jest-dom';
 import { fireEvent, render, screen } from '@testing-library/react';
 import Thumbnail from './thumbnail';
 
@@ -8,23 +7,23 @@ describe('Thumbnail', () => {
       <Thumbnail
         id="thumbnail"
         currentFile={undefined}
-        setCurrentFile={jest.fn()}
+        setCurrentFile={vi.fn()}
         currentImage={undefined}
-        setCurrentImage={jest.fn()}
+        setCurrentImage={vi.fn()}
       />,
     );
     expect(baseElement).toBeTruthy();
   });
 
   test('calls setCurrentFile when a file is selected', () => {
-    const setCurrentFile = jest.fn();
+    const setCurrentFile = vi.fn();
     const { baseElement } = render(
       <Thumbnail
         id="thumbnail"
         currentFile={undefined}
         setCurrentFile={setCurrentFile}
         currentImage={undefined}
-        setCurrentImage={jest.fn()}
+        setCurrentImage={vi.fn()}
       />,
     );
 
@@ -43,9 +42,9 @@ describe('Thumbnail', () => {
       <Thumbnail
         id="thumbnail"
         currentFile={undefined}
-        setCurrentFile={jest.fn()}
+        setCurrentFile={vi.fn()}
         currentImage={currentImage}
-        setCurrentImage={jest.fn()}
+        setCurrentImage={vi.fn()}
       />,
     );
 
@@ -58,9 +57,9 @@ describe('Thumbnail', () => {
       <Thumbnail
         id="thumbnail"
         currentFile={undefined}
-        setCurrentFile={jest.fn()}
+        setCurrentFile={vi.fn()}
         currentImage={undefined}
-        setCurrentImage={jest.fn()}
+        setCurrentImage={vi.fn()}
       />,
     );
 
@@ -78,9 +77,9 @@ describe('Thumbnail', () => {
       <Thumbnail
         id="thumbnail"
         currentFile={undefined}
-        setCurrentFile={jest.fn()}
+        setCurrentFile={vi.fn()}
         currentImage={currentImage}
-        setCurrentImage={jest.fn()}
+        setCurrentImage={vi.fn()}
       />,
     );
 
@@ -92,14 +91,14 @@ describe('Thumbnail', () => {
   });
 
   test('handles file drag and drop', () => {
-    const spy = jest.fn();
+    const spy = vi.fn();
     const { baseElement } = render(
       <Thumbnail
         id="thumbnail"
         currentFile={undefined}
         setCurrentFile={spy}
         currentImage={undefined}
-        setCurrentImage={jest.fn()}
+        setCurrentImage={vi.fn()}
       />,
     );
 
@@ -118,14 +117,14 @@ describe('Thumbnail', () => {
   });
 
   test('handles file drag enter and leave', () => {
-    const spy = jest.fn();
+    const spy = vi.fn();
     const { baseElement } = render(
       <Thumbnail
         id="thumbnail"
         currentFile={undefined}
         setCurrentFile={spy}
         currentImage={undefined}
-        setCurrentImage={jest.fn()}
+        setCurrentImage={vi.fn()}
       />,
     );
 

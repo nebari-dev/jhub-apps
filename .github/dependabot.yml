@@ -12,6 +12,10 @@ updates:
         patterns:
           - "@eslint/js"
           - "eslint"
+      vitest:
+        patterns:
+          - "@vitest/coverage-v8"
+          - "vitest"
     ignore:
       - dependency-name: react
         versions:

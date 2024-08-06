@@ -4,7 +4,7 @@ import { EnvironmentVariables } from '..';
 describe('EnvironmentVariables', () => {
   test('renders default successfully', () => {
     const { baseElement } = render(
-      <EnvironmentVariables variables={null} setVariables={jest.fn()} />,
+      <EnvironmentVariables variables={null} setVariables={vi.fn()} />,
     );
 
     expect(baseElement).toBeTruthy();
@@ -14,7 +14,7 @@ describe('EnvironmentVariables', () => {
     const { baseElement } = render(
       <EnvironmentVariables
         variables="{'key':'value'}"
-        setVariables={jest.fn()}
+        setVariables={vi.fn()}
       />,
     );
 
@@ -26,7 +26,7 @@ describe('EnvironmentVariables', () => {
 
   test('Adds a new row', async () => {
     const { baseElement, getByText } = render(
-      <EnvironmentVariables variables={null} setVariables={jest.fn()} />,
+      <EnvironmentVariables variables={null} setVariables={vi.fn()} />,
     );
 
     const button = getByText('Add Variable');
@@ -44,7 +44,7 @@ describe('EnvironmentVariables', () => {
     const { baseElement, getAllByTestId } = render(
       <EnvironmentVariables
         variables="{'key':'value'}"
-        setVariables={jest.fn()}
+        setVariables={vi.fn()}
       />,
     );
 
@@ -65,7 +65,7 @@ describe('EnvironmentVariables', () => {
     const { baseElement } = render(
       <EnvironmentVariables
         variables="{'key':'value'}"
-        setVariables={jest.fn()}
+        setVariables={vi.fn()}
       />,
     );
     let input = baseElement.querySelector(

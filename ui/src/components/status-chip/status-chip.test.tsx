@@ -1,5 +1,4 @@
 import { apps } from '@src/data/api';
-import '@testing-library/jest-dom';
 import { render, waitFor } from '@testing-library/react';
 import { act } from 'react-dom/test-utils';
 import { RecoilRoot } from 'recoil';

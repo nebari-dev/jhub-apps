@@ -4,7 +4,6 @@ import { servicesFull } from '@src/data/jupyterhub';
 import { currentUser } from '@src/data/user';
 import axios from '@src/utils/axios';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import '@testing-library/jest-dom';
 import { act, fireEvent, render } from '@testing-library/react';
 import MockAdapter from 'axios-mock-adapter';
 import { ReactNode } from 'react';
@@ -134,7 +133,7 @@ describe('Navigation', () => {
     );
 
     // Nav error expected, disable console.error
-    jest.spyOn(console, 'error').mockImplementation(() => {});
+    vi.spyOn(console, 'error').mockImplementation(() => {});
     const items = baseElement.querySelectorAll('#profile-menu-list li');
     await act(async () => {
       fireEvent.click(items[0]);

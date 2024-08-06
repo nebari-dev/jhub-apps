@@ -2,7 +2,6 @@ import { app, environments, frameworks, profiles } from '@src/data/api';
 import { currentUser } from '@src/data/user';
 import axios from '@src/utils/axios';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import '@testing-library/jest-dom';
 import { act, fireEvent, render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import MockAdapter from 'axios-mock-adapter';
@@ -14,7 +13,7 @@ import { AppForm } from './app-form';
 describe('AppForm', () => {
   Object.defineProperty(URL, 'createObjectURL', {
     writable: true,
-    value: jest.fn(),
+    value: vi.fn(),
   });
 
   const queryClient = new QueryClient({
@@ -30,7 +29,7 @@ describe('AppForm', () => {
   });
 
   beforeAll(() => {
-    window.scrollTo = jest.fn();
+    window.scrollTo = vi.fn();
   });
 
   beforeEach(() => {

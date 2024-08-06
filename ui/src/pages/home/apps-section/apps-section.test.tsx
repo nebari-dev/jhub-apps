@@ -2,7 +2,6 @@ import { serverApps } from '@src/data/api';
 import { currentUser } from '@src/data/user';
 import axios from '@src/utils/axios';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import '@testing-library/jest-dom';
 import { act, fireEvent, render } from '@testing-library/react';
 import MockAdapter from 'axios-mock-adapter';
 import { RecoilRoot } from 'recoil';
@@ -81,7 +80,7 @@ describe('AppsSection', () => {
   });
 
   test('renders a loading message', () => {
-    queryClient.isFetching = jest.fn().mockReturnValue(true);
+    queryClient.isFetching = vi.fn().mockReturnValue(true);
     mock.onGet(new RegExp('/server/')).reply(200, null);
     const { baseElement } = render(
       <RecoilRoot initializeState={({ set }) => set(defaultUser, currentUser)}>

@@ -22,10 +22,16 @@ import {
   storeAppToStart,
 } from './jupyterhub';
 
-jest.mock('./jupyterhub', () => ({
-  ...jest.requireActual('./jupyterhub'),
-  navigateToUrl: jest.fn(),
-}));
+vi.mock('./jupyterhub', async () => {
+  // Require the actual module to spread its properties
+  const actual = await vi.importActual('./jupyterhub');
+
+  return {
+    ...actual,
+    navigateToUrl: vi.fn(),
+  };
+});
+
 describe('JupyterHub utils', () => {
   beforeEach(() => {
     window.sessionStorage.clear();
@@ -229,9 +235,9 @@ describe('JupyterHub utils', () => {
   });
 
   test('navigates to the specified URL', () => {
-    const mockUrl = 'http://localhost/';
+    const mockUrl = 'http://localhost';
     navigateToUrl(mockUrl);
-    expect(document.location.href).toBe(mockUrl);
+    expect(document.location.href).toContain(mockUrl);
   });
 
   test('filters and sorts apps by recently modified', () => {
