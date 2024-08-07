@@ -3,8 +3,14 @@ name: Lint UI
 on:
   pull_request:
     branches: [main]
+    paths:
+      - ui/*
+      - .github/workflows/lint-ui.yml
   push:
     branches: [main]
+    paths:
+      - ui/*
+      - .github/workflows/lint-ui.yml
 
 jobs:
   lint:
