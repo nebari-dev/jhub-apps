@@ -281,8 +281,7 @@ async def app_from_git(
     a repository, read its app.yaml, and return specific values,
     which is a processing action.
     """
-    logger.info(f"Getting app configuration from git repository")
-    hub_client = HubClient(username=user.name)
+    logger.info("Getting app configuration from git repository")
     response = get_app_configuration_from_git(repo)
     if isinstance(response, InternalError):
         raise HTTPException(
