@@ -78,3 +78,29 @@ class UserOptions(BaseModel):
 class ServerCreation(BaseModel):
     servername: str
     user_options: UserOptions
+
+
+class Repository(BaseModel):
+    url: str
+    config_path: str = "jhub_app.yml"
+
+
+class AppConfigFromGit(BaseModel):
+    url: str
+    name: str
+    description: typing.Optional[str] = "App created from git repository"
+    framework: str = "panel"
+    filepath: str
+    # non-critical environment variables
+    environment: dict
+    keep_alive: typing.Optional[bool] = False
+    public: typing.Optional[bool] = False
+    thumbnail_path: typing.Optional[str] = None
+    # Users can provide either of thumbnail file or base64 encoded
+    # thumbnail image
+    thumbnail: typing.Optional[str] = None
+
+
+class InternalError(BaseModel):
+    status_code: int
+    message: str

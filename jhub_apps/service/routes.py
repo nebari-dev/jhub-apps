@@ -27,7 +27,7 @@ from jhub_apps.service.models import (
     AuthorizationError,
     HubApiError,
     ServerCreation,
-    User,
+    User, Repository, InternalError, AppConfigFromGit,
 )
 from jhub_apps.service.security import get_current_user
 from jhub_apps.service.utils import (
@@ -35,7 +35,7 @@ from jhub_apps.service.utils import (
     get_jupyterhub_config,
     get_spawner_profiles,
     get_thumbnail_data_url,
-    get_shared_servers,
+    get_shared_servers, get_app_configuration_from_git,
 )
 from jhub_apps.spawner.types import FRAMEWORKS
 from jhub_apps.version import get_version
@@ -269,6 +269,22 @@ async def hub_services(user: User = Depends(get_current_user)):
     logger.info(f"Getting hub services for user: {user}")
     hub_client = HubClient(username=user.name)
     return hub_client.get_services()
+
+@router.post("/app-from-git/", description="Get app configuration from git")
+async def app_from_git(
+        repo: Repository,
+        user: User = Depends(get_current_user)
+) -> AppConfigFromGit:
+    """Fetches jhub-apps application configuration from git repository"""
+    logger.info(f"Getting app configuration from git repository")
+    hub_client = HubClient(username=user.name)
+    response = get_app_configuration_from_git(repo)
+    if isinstance(response, InternalError):
+        raise HTTPException(
+            detail=response.message,
+            status_code=response.status_code,
+        )
+    return response
 
 
 @router.get("/")
