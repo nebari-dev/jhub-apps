@@ -28,6 +28,7 @@ dependencies = [
     "cachetools",
     "structlog",
     "PyJWT",
+    "GitPython"
 ]
 dynamic = ["version"]
 

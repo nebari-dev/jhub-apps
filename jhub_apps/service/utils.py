@@ -1,6 +1,11 @@
 import base64
 import itertools
+import tempfile
+import typing
+from pathlib import Path
 
+import git
+import yaml
 import structlog
 import os
 
@@ -8,9 +13,12 @@ from cachetools import cached, TTLCache
 from unittest.mock import Mock
 
 from jupyterhub.app import JupyterHub
+from pydantic import ValidationError
+from fastapi import status
 from traitlets.config import LazyConfigValue
 
 from jhub_apps.hub_client.hub_client import HubClient
+from jhub_apps.service.models import Repository, AppConfigFromGit, InternalError
 from jhub_apps.spawner.types import FrameworkConf, FRAMEWORKS_MAPPING
 from slugify import slugify
 
@@ -168,3 +176,39 @@ def get_shared_servers(current_hub_user):
         if server["name"] in shared_server_names
     ]
     return shared_servers_rich
+
+
+def get_app_configuration_from_git(
+        repository: Repository
+) -> typing.Union[InternalError, AppConfigFromGit]:
+    """Clones the git directory into a temporary path and extracts all the metadata
+    about the app
+    """
+    with tempfile.TemporaryDirectory() as temp_dir:
+        git.Repo.clone_from(repository.url, temp_dir, depth=1)
+        full_path = os.path.join(temp_dir, repository.config_path)
+        if os.path.exists(full_path):
+            with open(full_path, 'r') as file:
+                app_config_dict = yaml.safe_load(file)
+                app_config_dict_with_url = {
+                    **app_config_dict,
+                    "url": repository.url
+                }
+            try:
+                # Load YAML content into the Pydantic model
+                app_config = AppConfigFromGit(**app_config_dict_with_url)
+            except ValidationError as e:
+                message = f"Validation error: {e}"
+                logger.error(message)
+                return InternalError(status_code=status.HTTP_400_BAD_REQUEST, message=message)
+
+            if app_config.thumbnail_path:
+                thumbnail_path = Path(os.path.join(temp_dir, app_config.thumbnail_path))
+                app_config.thumbnail = encode_file_to_data_url(
+                    filename=thumbnail_path.name, file_contents=thumbnail_path.read_bytes()
+                )
+        else:
+            message = "jhub-apps configuration doesn't exits at the path"
+            logger.error(message)
+            return InternalError(status_code=status.HTTP_400_BAD_REQUEST, message=message)
+        return app_config
