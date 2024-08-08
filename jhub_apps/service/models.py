@@ -73,6 +73,7 @@ class UserOptions(BaseModel):
     # So that it's not killed by idle culler
     keep_alive: typing.Optional[bool] = False
     share_with: typing.Optional[SharePermissions] = None
+    git_url: typing.Optional[str] = None
 
 
 class ServerCreation(BaseModel):
