@@ -56,6 +56,16 @@ def subclass_spawner(base_spawner):
                     command = Command(args=GENERIC_ARGS + custom_cmd.split())
                 else:
                     command: Command = COMMANDS.get(framework)
+
+                git_url = self.user_options.get("git_url")
+                if git_url:
+                    logger.info(f"git_url found: {git_url}")
+                    command.args.extend([
+                        f"--repo={git_url}",
+                        f"--repofolder=/tmp/{self.name}",
+                        f"--repobranch={self.user_options.get('git_repo_branch', 'main')}"
+                    ])
+
                 command_args = command.get_substituted_args(
                     python_exec=self.config.JAppsConfig.python_exec,
                     filepath=app_filepath,
