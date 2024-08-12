@@ -55,5 +55,8 @@
     "vite-plugin-eslint": "1.8.1",
     "vite-tsconfig-paths": "5.0.1",
     "vitest": "^2.0.5"
+  },
+  "optionalDependencies": {
+    "@rollup/rollup-linux-x64-gnu": "4.20.0"
   }
 }
