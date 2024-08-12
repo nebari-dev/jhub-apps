@@ -33,6 +33,8 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
     setupFiles: './vitest.setup.ts',
+    minWorkers: 1,
+    maxWorkers: 1,
     coverage: {
       all: false,
       provider: 'v8',
