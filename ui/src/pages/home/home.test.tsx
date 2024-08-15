@@ -2,7 +2,6 @@ import { app, apps } from '@src/data/api';
 import { currentUser } from '@src/data/user';
 import axios from '@src/utils/axios';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import '@testing-library/jest-dom';
 import {
   act,
   fireEvent,
@@ -55,7 +54,7 @@ describe('Home', () => {
   beforeAll(() => {
     Object.defineProperty(window, 'location', {
       writable: true,
-      value: { assign: jest.fn() },
+      value: { assign: vi.fn() },
     });
   });
 

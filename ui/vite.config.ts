@@ -29,4 +29,23 @@ export default defineConfig({
   server: {
     port: 8080,
   },
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    setupFiles: './vitest.setup.ts',
+    minWorkers: 1,
+    maxWorkers: 1,
+    coverage: {
+      all: false,
+      provider: 'v8',
+      thresholds: {
+        global: {
+          statements: 80,
+          branches: 80,
+          functions: 80,
+          lines: 80,
+        },
+      },
+    },
+  },
 });

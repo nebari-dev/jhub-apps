@@ -1,7 +1,6 @@
 import { JhApp } from '@src/types/jupyterhub';
 import axios from '@src/utils/axios';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import '@testing-library/jest-dom';
 import {
   act,
   fireEvent,
@@ -192,11 +191,11 @@ describe('AppTable', () => {
   });
 
   test('handleStop behaves correctly', async () => {
-    const deleteQuery = jest.fn();
-    const setIsStopOpen = jest.fn();
-    const setNotification = jest.fn();
-    const setSubmitting = jest.fn();
-    const queryClient = { invalidateQueries: jest.fn() };
+    const deleteQuery = vi.fn();
+    const setIsStopOpen = vi.fn();
+    const setNotification = vi.fn();
+    const setSubmitting = vi.fn();
+    const queryClient = { invalidateQueries: vi.fn() };
     const currentApp = { id: 'testId' };
 
     const handleStop = async (id?: string) => {
@@ -295,7 +294,7 @@ describe('AppTable', () => {
   });
 
   test('clicking the Cancel button cancels the Start action', () => {
-    const setIsStartOpen = jest.fn();
+    const setIsStartOpen = vi.fn();
 
     const { getByRole } = render(
       <button onClick={() => setIsStartOpen(false)}>Test Button</button>,
@@ -327,7 +326,7 @@ describe('AppTable', () => {
   });
 
   test('clicking Cancel closes Delete Modal', () => {
-    const setIsDeleteOpen = jest.fn();
+    const setIsDeleteOpen = vi.fn();
 
     const { getByRole } = render(
       <button onClick={() => setIsDeleteOpen(false)}>Test Button</button>,
@@ -339,7 +338,7 @@ describe('AppTable', () => {
   });
 
   test('clicking Cancel closes the Stop modal', () => {
-    const setIsStopOpen = jest.fn();
+    const setIsStopOpen = vi.fn();
 
     const { getByRole } = render(
       <button onClick={() => setIsStopOpen(false)}>Test Button</button>,

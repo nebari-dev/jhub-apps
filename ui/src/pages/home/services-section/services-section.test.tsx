@@ -2,7 +2,6 @@ import { serverApps, services } from '@src/data/api';
 import { currentUser } from '@src/data/user';
 import axios from '@src/utils/axios';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import '@testing-library/jest-dom';
 import { fireEvent, render } from '@testing-library/react';
 import MockAdapter from 'axios-mock-adapter';
 import { RecoilRoot } from 'recoil';
@@ -54,7 +53,7 @@ describe('ServicesSection', () => {
   });
 
   test('renders a loading message', () => {
-    queryClient.isFetching = jest.fn().mockReturnValue(true);
+    queryClient.isFetching = vi.fn().mockReturnValue(true);
     const { baseElement } = render(
       <RecoilRoot initializeState={({ set }) => set(defaultUser, currentUser)}>
         <QueryClientProvider client={queryClient}>
@@ -96,7 +95,7 @@ describe('ServicesSection', () => {
   });
 
   test('handles button click for external URL', () => {
-    const mockResponse = jest.fn();
+    const mockResponse = vi.fn();
     Object.defineProperty(window, 'open', {
       value: mockResponse,
       writable: true,
@@ -120,7 +119,7 @@ describe('ServicesSection', () => {
   });
 
   test('handles button click for internal URL', () => {
-    const mockResponse = jest.fn();
+    const mockResponse = vi.fn();
     Object.defineProperty(window, 'location', {
       value: {
         hash: {

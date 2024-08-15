@@ -2,7 +2,6 @@ import { app } from '@src/data/api';
 import { currentUser } from '@src/data/user';
 import axios from '@src/utils/axios';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import '@testing-library/jest-dom';
 import { act, render } from '@testing-library/react';
 import MockAdapter from 'axios-mock-adapter';
 import { BrowserRouter } from 'react-router-dom';
@@ -42,7 +41,7 @@ describe('NotRunning', () => {
   beforeAll(() => {
     Object.defineProperty(window, 'location', {
       writable: true,
-      value: { assign: jest.fn() },
+      value: { assign: vi.fn() },
     });
   });
 
@@ -79,7 +78,7 @@ describe('NotRunning', () => {
   });
 
   test('renders with mock data', async () => {
-    const mockResponse = jest.fn();
+    const mockResponse = vi.fn();
     Object.defineProperty(window, 'location', {
       value: {
         pathname: '/user/app-1',
@@ -107,7 +106,7 @@ describe('NotRunning', () => {
   });
 
   test('renders for started server', async () => {
-    const mockResponse = jest.fn();
+    const mockResponse = vi.fn();
     Object.defineProperty(window, 'location', {
       value: {
         href: 'http://localhost:3000/hub',
@@ -137,7 +136,7 @@ describe('NotRunning', () => {
   });
 
   test('renders for pending server', async () => {
-    const mockResponse = jest.fn();
+    const mockResponse = vi.fn();
     Object.defineProperty(window, 'location', {
       value: {
         href: 'http://localhost:3000/hub',
@@ -167,7 +166,7 @@ describe('NotRunning', () => {
   });
 
   test('renders for stopped server', async () => {
-    const mockResponse = jest.fn();
+    const mockResponse = vi.fn();
     Object.defineProperty(window, 'location', {
       value: {
         href: 'http://localhost:3000/hub',

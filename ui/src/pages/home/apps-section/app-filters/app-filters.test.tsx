@@ -2,7 +2,6 @@ import { frameworks, serverApps, userState } from '@src/data/api';
 import { currentUser } from '@src/data/user';
 import axios from '@src/utils/axios';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import '@testing-library/jest-dom';
 import { act, render, waitFor } from '@testing-library/react';
 import MockAdapter from 'axios-mock-adapter';
 import { RecoilRoot } from 'recoil';
@@ -34,7 +33,7 @@ describe('AppFilters', () => {
           <AppFilters
             data={serverApps}
             currentUser={userState}
-            setApps={jest.fn()}
+            setApps={vi.fn()}
             isGridViewActive={false}
             toggleView={function (): void {
               throw new Error('Function not implemented.');
@@ -47,7 +46,7 @@ describe('AppFilters', () => {
   });
 
   test('should sort apps', async () => {
-    const spy = jest.fn();
+    const spy = vi.fn();
     const { baseElement } = render(
       <RecoilRoot initializeState={({ set }) => set(defaultUser, currentUser)}>
         <QueryClientProvider client={queryClient}>
@@ -115,7 +114,7 @@ describe('AppFilters', () => {
   });
 
   test('should filter all apps', async () => {
-    const spy = jest.fn();
+    const spy = vi.fn();
     mock.onGet(new RegExp('/frameworks')).reply(200, frameworks);
     queryClient.setQueryData(['app-frameworks'], frameworks);
     const { baseElement } = render(
@@ -180,7 +179,7 @@ describe('AppFilters', () => {
   });
 
   test('should filter my apps', async () => {
-    const spy = jest.fn();
+    const spy = vi.fn();
     mock.onGet(new RegExp('/frameworks')).reply(200, frameworks);
     queryClient.setQueryData(['app-frameworks'], frameworks);
     const { baseElement } = render(
@@ -247,7 +246,7 @@ describe('AppFilters', () => {
   });
 
   test('should filter by server statuses', async () => {
-    const spy = jest.fn();
+    const spy = vi.fn();
     mock.onGet(new RegExp('/frameworks')).reply(200, frameworks);
     queryClient.setQueryData(['app-frameworks'], frameworks);
     const { baseElement } = render(
@@ -310,7 +309,7 @@ describe('AppFilters', () => {
   });
 
   test('should clear filters', async () => {
-    const spy = jest.fn();
+    const spy = vi.fn();
     mock.onGet(new RegExp('/frameworks')).reply(200, frameworks);
     queryClient.setQueryData(['app-frameworks'], frameworks);
     const { baseElement } = render(
@@ -351,7 +350,7 @@ describe('AppFilters', () => {
   });
 
   test('should calculate filtered count', async () => {
-    const spy = jest.fn();
+    const spy = vi.fn();
     mock.onGet(new RegExp('/frameworks')).reply(200, frameworks);
     queryClient.setQueryData(['app-frameworks'], frameworks);
     const { baseElement } = render(

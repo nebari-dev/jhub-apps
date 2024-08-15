@@ -1,7 +1,6 @@
 import { app, environments, frameworks, profiles } from '@src/data/api';
 import axios from '@src/utils/axios';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import '@testing-library/jest-dom';
 import { act, render, waitFor } from '@testing-library/react';
 import MockAdapter from 'axios-mock-adapter';
 import { RecoilRoot } from 'recoil';
@@ -299,7 +298,7 @@ describe('AppCard', () => {
 
   test('simulates editing an app', async () => {
     Object.defineProperty(window, 'location', {
-      value: { href: jest.fn() },
+      value: { href: vi.fn() },
     });
     mock.onGet(new RegExp('/frameworks')).reply(200, frameworks);
     mock.onGet(new RegExp('/conda-environments')).reply(200, environments);

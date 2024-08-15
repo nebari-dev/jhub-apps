@@ -1,10 +1,9 @@
-import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/react';
 import { CustomLabel } from './custom-label';
 
 describe('CustomLabel', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('when rendering the CustomLabel', () => {
