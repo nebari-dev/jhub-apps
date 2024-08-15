@@ -8,14 +8,10 @@ updates:
     labels:
       - "dependencies"
     groups:
-      eslint:
+      minors:
         patterns:
-          - "@eslint/js"
-          - "eslint"
-      vitest:
-        patterns:
-          - "@vitest/coverage-v8"
-          - "vitest"
+          - "patch"
+          - "minor"
     ignore:
       - dependency-name: react
         versions:
@@ -29,3 +25,5 @@ updates:
       - dependency-name: "@types/react-dom"
         versions:
           - ">=18.2.0"
+      - dependency-name: "@mui/material"
+      - dependency-name: "@mui/icons-material"
