@@ -10,8 +10,10 @@ updates:
     groups:
       minors:
         patterns:
-          - "patch"
+          - "*"
+        update-types:
           - "minor"
+          - "patch"
     ignore:
       - dependency-name: react
         versions:
