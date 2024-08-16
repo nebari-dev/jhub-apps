@@ -38,8 +38,14 @@ conda install -c conda-forge jhub-apps
 conda env create -f environment-dev.yml
 conda activate jhub-apps-dev
 pip install -e .
+```
+
+To develop the React UI frontend, also run:
+
+```bash
 cd ui
 npm install
+cd -
 ```
 
 ## Starting JupyterHub
