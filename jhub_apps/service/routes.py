@@ -270,6 +270,7 @@ async def hub_services(user: User = Depends(get_current_user)):
     hub_client = HubClient(username=user.name)
     return hub_client.get_services()
 
+
 @router.post("/app-config-from-git/", description="Get app configuration from git")
 async def app_from_git(
         repo: Repository,
