@@ -271,16 +271,19 @@ async def hub_services(user: User = Depends(get_current_user)):
     return hub_client.get_services()
 
 
-@router.post("/app-config-from-git/", description="Get app configuration from git")
+@router.post("/app-config-from-git/",)
 async def app_from_git(
         repo: Repository,
         user: User = Depends(get_current_user)
 ) -> AppConfigFromGit:
-    """Fetches jhub-apps application configuration from git repository.
-    This endpoint is kept as POST intentionally because the client is
+    """
+    ## Fetches jhub-apps application configuration from a git repository.
+
+    Note: This endpoint is kept as POST intentionally because the client is
     requesting the server to process some data, in this case, to fetch
-    a repository, read its app.yaml, and return specific values,
+    a repository, read its `jhub_app.yml`, and return specific values,
     which is a processing action.
+
     """
     logger.info("Getting app configuration from git repository")
     response = get_app_configuration_from_git(repo)
