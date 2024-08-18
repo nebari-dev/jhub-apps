@@ -185,7 +185,14 @@ def get_app_configuration_from_git(
     about the app
     """
     with tempfile.TemporaryDirectory() as temp_dir:
-        git.Repo.clone_from(repository.url, temp_dir, depth=1, branch=repository.ref)
+        try:
+            logger.info("Trying to clone repository", repo_url=repository.url)
+            git.Repo.clone_from(repository.url, temp_dir, depth=1, branch=repository.ref)
+        except Exception as e:
+            message = f"Repository clone failed: {repository.url}"
+            logger.error(message, repo_url=repository.url)
+            logger.error(e)
+            return InternalError(status_code=status.HTTP_400_BAD_REQUEST, message=message)
         full_path = os.path.join(temp_dir, repository.config_path)
         if os.path.exists(full_path):
             with open(full_path, 'r') as file:
