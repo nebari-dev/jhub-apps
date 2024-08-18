@@ -48,6 +48,8 @@ def test_app_config_from_git_api(
 @pytest.mark.parametrize("repo_url, config_path, response_status_code,detail", [
     (EXAMPLE_TEST_REPO, "jhub_app_wrong_path.yml", 400,
      "jhub-apps configuration doesn't exits at the path"),
+    ("http://invalid-repo/", "jhub_app.yml", 400,
+     "Repository clone failed: http://invalid-repo/"),
 ])
 def test_app_config_from_git_api_invalid(
         client,
