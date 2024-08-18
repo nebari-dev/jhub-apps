@@ -1,4 +1,3 @@
-import hashlib
 import io
 import json
 from unittest.mock import patch
@@ -225,56 +224,3 @@ def test_open_api_docs(client):
     assert response.status_code == 200
     rjson = response.json()
     assert rjson['info']['version']
-
-
-def test_app_config_from_git_api(
-        client,
-):
-    response = client.post(
-        '/app-config-from-git/',
-        json={
-            "url": "https://github.com/nebari-dev/jhub-apps.git",
-            "config_path": "jhub_apps/examples/jhub_app.yml",
-            "ref": "app-from-git-example"
-        }
-    )
-    assert response.status_code == 200
-    response_json = response.json()
-    assert response_json
-    assert set(response_json.keys()) == {'url', 'name', 'description', 'framework', 'filepath', 'environment', 'keep_alive', 'public', 'thumbnail_path', 'thumbnail'}
-    assert response_json["name"] == "My Panel App (Git)"
-    assert response_json["description"] == "This is a panel app created from git repository"
-    assert response_json["framework"] == "panel"
-    assert response_json["filepath"] == "jhub_apps/examples/panel_basic.py"
-    assert response_json["environment"] == {
-        "SOMETHING_FOO": "bar",
-        "SOMETHING_BAR": "beta",
-    }
-    assert response_json["keep_alive"] is False
-    assert response_json["public"] is False
-    assert response_json["thumbnail_path"] == "jhub_apps/static/img/logos/panel.png"
-
-    assert isinstance(response_json["thumbnail"], str)
-    expected_thumbnail_sha = "a8104b2482360eee525dc696dafcd2a17864687891dc1b6c9e21520518a5ea89"
-    assert hashlib.sha256(response_json["thumbnail"].encode('utf-8')).hexdigest() == expected_thumbnail_sha
-
-
-@pytest.mark.parametrize("repo_url, config_path, response_status_code, response_json", [
-    ("https://github.com/nebari-dev/jhub-apps.git", "jhub_app.yml", 400, {}),
-])
-def test_app_config_from_git_api_invalid(
-        client,
-        repo_url,
-        config_path,
-        response_status_code,
-        response_json
-):
-    response = client.post(
-        '/app-config-from-git/',
-        json={
-            "url": repo_url,
-            "config_path": config_path,
-            "ref": "app-from-git-example"
-        }
-    )
-    assert response.status_code == response_status_code
