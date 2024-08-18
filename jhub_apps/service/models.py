@@ -74,6 +74,7 @@ class UserOptions(BaseModel):
     keep_alive: typing.Optional[bool] = False
     share_with: typing.Optional[SharePermissions] = None
     git_url: typing.Optional[str] = None
+    git_repo_branch: typing.Optional[str] = "main"
 
 
 class ServerCreation(BaseModel):
