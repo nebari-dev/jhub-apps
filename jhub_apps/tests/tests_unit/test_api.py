@@ -224,3 +224,24 @@ def test_open_api_docs(client):
     assert response.status_code == 200
     rjson = response.json()
     assert rjson['info']['version']
+
+
+@pytest.mark.parametrize("repo_url, config_path, response_status_code, response_json", [
+    ("https://github.com/nebari-dev/jhub-apps.git", "jhub_apps/examples/jhub_app.yml", 200, {}),
+])
+def test_app_config_from_git_api(
+        client,
+        repo_url,
+        config_path,
+        response_status_code,
+        response_json
+):
+    response = client.post(
+        '/app-config-from-git/',
+        json={
+            "url": repo_url,
+            "config_path": config_path
+        }
+    )
+    assert response.status_code == response_status_code
+    assert response.json() == response_json
