@@ -185,7 +185,7 @@ def get_app_configuration_from_git(
     about the app
     """
     with tempfile.TemporaryDirectory() as temp_dir:
-        git.Repo.clone_from(repository.url, temp_dir, depth=1)
+        git.Repo.clone_from(repository.url, temp_dir, depth=1, branch=repository.ref)
         full_path = os.path.join(temp_dir, repository.config_path)
         if os.path.exists(full_path):
             with open(full_path, 'r') as file:
