@@ -1,5 +1,7 @@
 import hashlib
+
 import pytest
+
 
 EXAMPLE_TEST_REPO = "https://github.com/nebari-dev/jhub-apps-from-git-repo-example.git"
 
