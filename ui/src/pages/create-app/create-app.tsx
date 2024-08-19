@@ -27,11 +27,11 @@ export const CreateApp = (): React.ReactElement => {
         </Item>
         <Item>
           <Typography component="h1" variant="h5">
-            Create a new app
+            Deploy a new app
           </Typography>
           <StyledFormParagraph>
             Begin your project by entering the details below. For more
-            information about creating an app,{' '}
+            information about deploying an app,{' '}
             <a
               href="https://jhub-apps.nebari.dev/docs/category/create-apps"
               target="_blank"
