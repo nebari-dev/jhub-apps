@@ -38,7 +38,7 @@ def mock_user_options():
 @patch.object(HubClient, "get_user")
 def test_api_get_server(get_user, client):
     server_data = {"panel-app": {}}
-    get_users_response = {'name': 'aktech', 'servers': server_data}
+    get_users_response = {'name': 'jovyan', 'servers': server_data}
     get_user.return_value = get_users_response
     response = client.get("/server/panel-app")
     get_user.assert_called_once_with()
@@ -49,7 +49,7 @@ def test_api_get_server(get_user, client):
 @patch.object(HubClient, "get_user")
 def test_api_get_server_not_found(get_user, client):
     server_data = {"panel-app": {}}
-    get_users_response = {'name': 'aktech', 'servers': server_data}
+    get_users_response = {'name': 'jovyan', 'servers': server_data}
     get_user.return_value = get_users_response
     response = client.get("/server/panel-app-not-found")
     get_user.assert_called_once_with()
@@ -62,7 +62,7 @@ def test_api_get_server_not_found(get_user, client):
 @patch.object(HubClient, "create_server")
 def test_api_create_server(create_server, client):
     from jhub_apps.service.models import UserOptions
-    create_server_response = {"user": "aktech"}
+    create_server_response = {"user": "jovyan"}
     create_server.return_value = create_server_response
     user_options = mock_user_options()
     thumbnail = b"contents of thumbnail"
@@ -85,7 +85,7 @@ def test_api_create_server(create_server, client):
 
 @patch.object(HubClient, "start_server")
 def test_api_start_server(create_server, client):
-    start_server_response = {"user": "aktech"}
+    start_server_response = {"user": "jovyan"}
     create_server.return_value = start_server_response
     server_name = "server-name"
     response = client.post(
@@ -121,7 +121,7 @@ def test_api_start_server_404(start_server, client):
 ])
 @patch.object(HubClient, "delete_server")
 def test_api_delete_server(delete_server, name, remove, client):
-    create_server_response = {"user": "aktech"}
+    create_server_response = {"user": "jovyan"}
     delete_server.return_value = create_server_response
     response = client.delete("/server/panel-app", params={"remove": remove})
     delete_server.assert_called_once_with(
@@ -137,7 +137,7 @@ def test_api_delete_server(delete_server, name, remove, client):
 def test_api_update_server(edit_server, client):
     from jhub_apps.service.models import UserOptions
 
-    create_server_response = {"user": "aktech"}
+    create_server_response = {"user": "jovyan"}
     edit_server.return_value = create_server_response
     user_options = mock_user_options()
     thumbnail = b"contents of thumbnail"
