@@ -5,6 +5,7 @@ from unittest.mock import patch
 import pytest
 
 from jhub_apps.hub_client.hub_client import HubClient
+from jhub_apps.service.models import UserOptions, ServerCreation
 from jhub_apps.service.utils import get_shared_servers
 from jhub_apps.spawner.types import FRAMEWORKS
 from jhub_apps.tests.common.constants import MOCK_USER
@@ -224,3 +225,28 @@ def test_open_api_docs(client):
     assert response.status_code == 200
     rjson = response.json()
     assert rjson['info']['version']
+
+
+@patch.object(HubClient, "create_server")
+def test_create_server_with_git_repository(
+        hub_create_server,
+        client,
+):
+    user_options = UserOptions(
+        jhub_app=True,
+        display_name="Test Application",
+        description="App description",
+        framework="panel",
+        thumbnail="data:image/png;base64,ZHVtbXkgaW1hZ2UgZGF0YQ=="
+    )
+    server_data = ServerCreation(servername="test server", user_options=user_options)
+    files = {"thumbnail": ("test.png", b"dummy image data", "image/png")}
+    data = {"data": server_data.model_dump_json()}
+    hub_create_server.return_value = (201, 'test-server-abcdef')
+    response = client.post("/server", data=data, files=files)
+    assert response.status_code == 200
+    assert response.json() == [201, 'test-server-abcdef']
+    hub_create_server.assert_called_once_with(
+        username="aktech", servername=server_data.servername,
+        user_options=user_options
+    )
