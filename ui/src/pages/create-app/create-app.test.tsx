@@ -34,7 +34,7 @@ describe('CreateApp', () => {
     await act(async () => {
       expect(baseElement).toBeTruthy();
       expect(baseElement.querySelector('h1')?.textContent).toEqual(
-        'Create a new app',
+        'Deploy a new app',
       );
     });
   });
