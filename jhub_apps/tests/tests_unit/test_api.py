@@ -247,6 +247,6 @@ def test_create_server_with_git_repository(
     assert response.status_code == 200
     assert response.json() == [201, 'test-server-abcdef']
     hub_create_server.assert_called_once_with(
-        username="aktech", servername=server_data.servername,
+        username="jovyan", servername=server_data.servername,
         user_options=user_options
     )
