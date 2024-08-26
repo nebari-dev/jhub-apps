@@ -58,8 +58,6 @@ router = APIRouter(prefix=service_prefix)
 @router.get("/oauth_callback", include_in_schema=False)
 async def get_token(code: str):
     "Callback function for OAuth2AuthorizationCodeBearer scheme"
-    # The only thing we need in this form post is the code
-    # Everything else we can hardcode / pull from env
     logger.info(f"Getting token for code {code}")
     async with get_client() as client:
         redirect_uri = (
@@ -77,7 +75,6 @@ async def get_token(code: str):
     access_token = create_access_token(
         data={"sub": resp.json()}, expires_delta=access_token_expires
     )
-    ### resp.json() is {'access_token': <token>, 'token_type': 'Bearer'}
     response = RedirectResponse(
         os.environ["PUBLIC_HOST"] + "/hub/home", status_code=302
     )
@@ -102,10 +99,20 @@ async def get_server(user: User = Depends(get_current_user), server_name=None):
     hub_client = HubClient(username=user.name)
     hub_user = hub_client.get_user()
     user_servers = hub_user["servers"]
+    
+    if not hub_user:  
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, detail="Access denied."
+        )
 
     # If server_name is 'lab' then it is the default user
     if server_name == "lab" or server_name == "vscode":
         server_name = ""
+        
+    if not hub_user:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, detail="Access denied."
+        )
 
     if server_name is not None:
         # Get a particular server
@@ -123,6 +130,7 @@ async def get_server(user: User = Depends(get_current_user), server_name=None):
         }
 
 
+# Checker class for validating incoming JSON data
 class Checker:
     def __init__(self, model: BaseModel):
         self.model = model
@@ -143,7 +151,6 @@ async def create_server(
     thumbnail: typing.Optional[UploadFile] = File(None),
     user: User = Depends(get_current_user),
 ):
-    # server.servername is not necessary to supply for create server
     server_name = server.user_options.display_name
     logger.info("Creating server", server_name=server_name, user=user.name)
     server.user_options.thumbnail = await get_thumbnail_data_url(
@@ -157,30 +164,57 @@ async def create_server(
     )
 
 
-@router.post("/server/")
 @router.post("/server/{server_name}")
 async def start_server(
     server_name=None,
     user: User = Depends(get_current_user),
 ):
-    """Start an already existing server."""
-    logger.info("Starting server", server_name=server_name, user=user.name)
     hub_client = HubClient(username=user.name)
+    
+    hub_user = hub_client.get_user()
+    user_servers = hub_user["servers"]
+    
+    if server_name and server_name not in user_servers:
+        server_creator = user_servers[server_name]['creator']  # Assuming `creator` is a field
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=f"You don't have permission to start the app {server_creator} created",
+        )
+
     try:
         response = hub_client.start_server(
             username=user.name,
             servername=server_name,
         )
     except requests.exceptions.HTTPError as e:
-        raise HTTPException(
-            detail=f"Probably server '{server_name}' is already running: {e}",
-            status_code=status.HTTP_400_BAD_REQUEST,
-        )
+        if e.response.status_code == 403:
+            server_creator = user_servers[server_name]['creator']  # Reuse the creator info
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail=f"You don't have permission to start the app {server_creator} created",
+            )
+        elif e.response.status_code == 404:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Server '{server_name}' not found",
+            )
+        elif e.response.status_code == 400:
+            raise HTTPException(
+                detail=f"Probably server '{server_name}' is already running: {e}",
+                status_code=status.HTTP_400_BAD_REQUEST,
+            )
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="An unexpected error occurred.",
+            )
+    
     if response is None:
         raise HTTPException(
-            detail=f"server '{server_name}' not found",
             status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Server '{server_name}' not found",
         )
+    
     return response
 
 
@@ -269,7 +303,7 @@ async def hub_services(user: User = Depends(get_current_user)):
     logger.info(f"Getting hub services for user: {user}")
     hub_client = HubClient(username=user.name)
     return hub_client.get_services()
-
+  
 
 @router.get("/")
 @router.get("/status")
@@ -277,3 +311,9 @@ async def status_endpoint():
     """Check API Status"""
     version = get_version()
     return {"status": "ok", "version": str(version)}
+
+
+@router.get("/user_identity", description="Get the identity of the authenticated user")
+async def get_user_identity(user: User = Depends(get_current_user)):
+    """Endpoint to return the authenticated user's identity"""
+    return {"username": user.name, "email": user.email}

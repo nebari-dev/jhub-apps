@@ -1,4 +1,6 @@
+
 import CheckIcon from '@mui/icons-material/Check';
+import ErrorIcon from '@mui/icons-material/Error'; 
 import {
   Alert,
   Box,
@@ -28,7 +30,6 @@ import {
 } from '@src/utils/jupyterhub';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import React, { useEffect, useState } from 'react';
-
 import { useRecoilState } from 'recoil';
 import {
   currentNotification,
@@ -44,6 +45,17 @@ import { AppsSection } from './apps-section/apps-section';
 import './home.css';
 import { ServicesSection } from './services-section/services-section';
 
+interface ErrorResponse {
+  status: number;
+  data: {
+    detail?: string;
+  };
+}
+
+interface CustomError extends Error {
+  response?: ErrorResponse;
+}
+
 const CustomCheckIcon = () => (
   <SvgIcon
     sx={{
@@ -54,6 +66,19 @@ const CustomCheckIcon = () => (
     }}
   >
     <CheckIcon />
+  </SvgIcon>
+);
+
+const CustomErrorIcon = () => (
+  <SvgIcon
+    sx={{
+      backgroundColor: 'red',
+      color: 'white',
+      borderRadius: '50%',
+      padding: '2px',
+    }}
+  >
+    <ErrorIcon />
   </SvgIcon>
 );
 
@@ -76,11 +101,47 @@ export const Home = (): React.ReactElement => {
   const queryClient = useQueryClient();
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>('success');
+
+  const handleRequestError = (error: CustomError) => {
+    setSnackbarSeverity('error');
+    if (error.response) {
+      const { status, data } = error.response;
+      if (status === 400) {
+        // setSnackbarMessage(`Bad Request: ${data.detail}`);
+        setSnackbarMessage('Bad Request');
+      } else if (status === 403) {
+        setSnackbarMessage('Access denied. You don\'t have permission to perform this action.');
+      } else if (status === 404) {
+        setSnackbarMessage(`Resource not found: ${data.detail}`);
+      } else if (status === 500) {
+        setSnackbarMessage('Internal server error. Please try again later.');
+      } else {
+        setSnackbarMessage(data.detail || 'An unexpected error occurred.');
+      }
+    } else {
+      setSnackbarMessage('An unexpected error occurred. Please check your connection.');
+    }
+    setSnackbarOpen(true);
+    setNotification(error.message);
+  };
 
   const handleStartRequest = async ({ id }: AppQueryPostProps) => {
     const response = await axios.post(`/server/${id}`);
+    
     return response;
   };
+   
+   
+   
+  // const handleStartRequest = async ({ id }: AppQueryPostProps) => {
+  //   throw {
+  //     response: {
+  //       status: 500,
+  //       data: { detail: 'Internal server error' },
+  //     },
+  //   };
+  // };
 
   const handleDeleteRequest = async ({ id, remove }: AppQueryDeleteProps) => {
     const response = await axios.delete(`/server/${id}`, {
@@ -103,16 +164,49 @@ export const Home = (): React.ReactElement => {
     enabled: !!currentAppId,
   });
 
-  // Mutations
   const { mutate: startQuery } = useMutation({
     mutationFn: handleStartRequest,
     retry: 1,
+    onError: handleRequestError, 
   });
 
   const { mutate: deleteQuery } = useMutation({
     mutationFn: handleDeleteRequest,
     retry: 1,
+    onError: handleRequestError, 
   });
+
+  const handleStart = async () => {
+    const appId = currentApp?.id || '';
+    setSubmitting(true);
+    
+    startQuery(
+      { id: appId },
+      {
+        onSuccess: async () => {
+    
+  
+          setSubmitting(false);
+          setSnackbarSeverity('success');
+          setSnackbarMessage('App started successfully');
+          setSnackbarOpen(true);
+          setIsStartOpen(false); // Close the modal
+          setIsStartNotRunningOpen(false);
+          queryClient.invalidateQueries({ queryKey: ['app-state'] });
+        },
+        onError: (error) => {
+          //eslint-disable-next-line
+          console.log('Start Query Error:', error); // Log the error response
+  
+          setSubmitting(false);
+          setIsStartOpen(false); // Close the modal on error as well
+          handleRequestError(error);
+        },
+      },
+    );
+  };
+  
+  
 
   const handleDelete = () => {
     const appId = currentApp?.id || '';
@@ -122,40 +216,20 @@ export const Home = (): React.ReactElement => {
       {
         onSuccess: async () => {
           setSubmitting(false);
-          setIsDeleteOpen(false);
-          queryClient.invalidateQueries({ queryKey: ['app-state'] });
+          setSnackbarSeverity('success');
           setSnackbarMessage('App deleted successfully');
           setSnackbarOpen(true);
-        },
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onError: async (error: any) => {
-          setSubmitting(false);
-          setNotification(error.message);
-        },
-      },
-    );
-  };
-
-  const handleStart = async () => {
-    const appId = currentApp?.id || '';
-    setSubmitting(true);
-    startQuery(
-      { id: appId },
-      {
-        onSuccess: async () => {
-          setSubmitting(false);
-          setIsStartOpen(false);
-          setIsStartNotRunningOpen(false);
+          setIsDeleteOpen(false);
           queryClient.invalidateQueries({ queryKey: ['app-state'] });
         },
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onError: (error: any) => {
+        onError: (error: CustomError) => {
           setSubmitting(false);
-          setNotification(error.message);
+          handleRequestError(error); // Handle errors using the common function
         },
       },
     );
   };
+  
 
   const handleStop = async () => {
     const appId = currentApp?.id || '';
@@ -165,18 +239,20 @@ export const Home = (): React.ReactElement => {
       {
         onSuccess: () => {
           setSubmitting(false);
-          setIsStopOpen(false);
-          queryClient.invalidateQueries({ queryKey: ['app-state'] });
+          setSnackbarSeverity('success');
           setSnackbarMessage('Server stopped successfully');
           setSnackbarOpen(true);
+          setIsStopOpen(false);
+          queryClient.invalidateQueries({ queryKey: ['app-state'] });
         },
-        onError: (error: unknown) => {
+        onError: (error: CustomError) => {
           setSubmitting(false);
-          setNotification((error as Error).message);
+          handleRequestError(error); // Handle errors using the common function
         },
       },
     );
   };
+  
 
   const handleStartNotRunning = async () => {
     if (!currentUser || !currentApp) {
@@ -273,7 +349,6 @@ export const Home = (): React.ReactElement => {
         >
           Cancel
         </Button>
-
         <Button
           id="delete-btn"
           data-testid="delete-btn"
@@ -430,6 +505,7 @@ export const Home = (): React.ReactElement => {
       )}
       <Snackbar
         open={snackbarOpen}
+        data-testid="snackbar-id"
         autoHideDuration={6000}
         onClose={() => setSnackbarOpen(false)}
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
@@ -439,12 +515,22 @@ export const Home = (): React.ReactElement => {
       >
         <Alert
           onClose={() => setSnackbarOpen(false)}
-          severity="success"
-          icon={<CustomCheckIcon />}
+          severity={snackbarSeverity} // Error severity set here
+          icon={
+            snackbarSeverity === 'success' ? (
+              <CustomCheckIcon />
+            ) : (
+              <CustomErrorIcon />
+            )
+          }
           sx={{
             width: '100%',
-            backgroundColor: 'success.main',
-            color: 'rgba(30, 70, 32, 1)',
+            backgroundColor:
+              snackbarSeverity === 'success' ? 'success.main' : 'error-light',
+            color:
+              snackbarSeverity === 'success'
+                ? 'rgba(30, 70, 32, 1)'
+                : 'error.dark)',
             fontFamily: 'Inter, sans-serif',
             fontWeight: 600,
           }}
@@ -455,3 +541,4 @@ export const Home = (): React.ReactElement => {
     </Box>
   );
 };
+

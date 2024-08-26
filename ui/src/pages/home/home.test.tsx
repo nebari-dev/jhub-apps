@@ -6,6 +6,7 @@ import {
   act,
   fireEvent,
   render,
+  screen,
   waitFor,
   within,
 } from '@testing-library/react';
@@ -614,4 +615,189 @@ describe('Home', () => {
     });
     expect(document.location.pathname).toBe('/');
   });
+
+  // /////////////////////////// ERROR MESSAGING ///////////////////////////
+  // test('simulates starting an app with a 403 error', async () => {
+  //   mock.onPost('/server/test-app-1').reply(403, {
+  //     detail: 'You don\'t have permission to perform this action.',
+  //   });
+  //   const { baseElement, getByText } = render(
+  //     <RecoilRoot
+  //       initializeState={({ set }) => {
+  //         set(isStartOpen, true);
+  //         set(defaultApp, apps[0]);
+  //       }}
+  //     >
+  //       <QueryClientProvider client={queryClient}>
+  //         <BrowserRouter>
+  //           <Home />
+  //         </BrowserRouter>
+  //       </QueryClientProvider>
+  //     </RecoilRoot>,
+  //   );
+  
+  //   await waitFor(() => {
+  //     const startModal = within(baseElement).getByTestId('StartModal');
+  //     expect(startModal).toBeInTheDocument();
+  //   });
+  
+  //   const startBtn = baseElement.querySelector('#start-btn') as HTMLButtonElement;
+  //   await act(async () => {
+  //     startBtn.click();
+  //   });
+  
+  //   await waitFor(() => {
+  //     const snackbar = getByText('Access denied. You don\'t have permission to perform this action.');
+  //     expect(snackbar).toBeInTheDocument();
+  //   });
+  // });
+  
+  // test('simulates starting an app with a 404 error', async () => {
+  //   mock.onPost('/server/test-app-1').reply(404, {
+  //     detail: 'Resource not found.',
+  //   });
+  //   const { baseElement, getByText } = render(
+  //     <RecoilRoot
+  //       initializeState={({ set }) => {
+  //         set(isStartOpen, true);
+  //         set(defaultApp, apps[0]);
+  //       }}
+  //     >
+  //       <QueryClientProvider client={queryClient}>
+  //         <BrowserRouter>
+  //           <Home />
+  //         </BrowserRouter>
+  //       </QueryClientProvider>
+  //     </RecoilRoot>,
+  //   );
+  
+  //   await waitFor(() => {
+  //     const startModal = within(baseElement).getByTestId('StartModal');
+  //     expect(startModal).toBeInTheDocument();
+  //   });
+  
+  //   const startBtn = baseElement.querySelector('#start-btn') as HTMLButtonElement;
+  //   await act(async () => {
+  //     startBtn.click();
+  //   });
+  
+  //   await waitFor(() => {
+  //     const snackbar = getByText('Resource not found:');
+  //     expect(snackbar).toBeInTheDocument();
+  //   });
+  // });
+  
+  // test('simulates starting an app with a network error', async () => {
+  //   mock.onPost('/server/test-app-1').networkError();
+  //   const { baseElement, getByText } = render(
+  //     <RecoilRoot
+  //       initializeState={({ set }) => {
+  //         set(isStartOpen, true);
+  //         set(defaultApp, apps[0]);
+  //       }}
+  //     >
+  //       <QueryClientProvider client={queryClient}>
+  //         <BrowserRouter>
+  //           <Home />
+  //         </BrowserRouter>
+  //       </QueryClientProvider>
+  //     </RecoilRoot>,
+  //   );
+  
+  //   await waitFor(() => {
+  //     const startModal = within(baseElement).getByTestId('StartModal');
+  //     expect(startModal).toBeInTheDocument();
+  //   });
+  
+  //   const startBtn = baseElement.querySelector('#start-btn') as HTMLButtonElement;
+  //   await act(async () => {
+  //     startBtn.click();
+  //   });
+  
+  //   await waitFor(() => {
+  //     const snackbar = getByText('An unexpected error occurred. Please check your connection.');
+  //     expect(snackbar).toBeInTheDocument();
+  //   });
+  // });
+
+  // test.only('simulates starting an app with a 500 error', async () => {
+  //   // Reset and ensure no previous responses interfere
+  //   mock.resetHandlers();
+    
+  //   // Mock the POST request to return a 500 error
+  //   mock.onPost('/server/test-app-1').reply(500, { detail: 'Internal server error' });
+  
+  //   // Render the Home component with the necessary context and state
+  //   const { baseElement, getByTestId } = render(
+  //     <RecoilRoot
+  //       initializeState={({ set }) => {
+  //         set(isStartOpen, true);
+  //         set(defaultApp, apps[0]);
+  //       }}
+  //     >
+  //       <QueryClientProvider client={queryClient}>
+  //         <BrowserRouter>
+  //           <Home />
+  //         </BrowserRouter>
+  //       </QueryClientProvider>
+  //     </RecoilRoot>,
+  //   );
+  
+  //   // Find the Start button in the modal and click it
+  //   const startBtn = baseElement.querySelector('#start-btn') as HTMLButtonElement;
+  //   expect(startBtn).toBeInTheDocument();
+  //   await act(async () => {
+  //     startBtn.click();
+  //   });
+  
+  //   // Wait for the Snackbar to appear and log the output
+  //   await waitFor(() => {
+  //     const snackbar = getByTestId('snackbar-id');
+  //     console.log('Snackbar found:', snackbar.textContent); // Log the Snackbar content
+  //     expect(snackbar).toHaveTextContent(/internal server error/i);
+  //   });
+  // });
+  
+ 
+
+  test('simulates starting an app with a 500 error', async () => {
+    // Mock API response to include apps
+    mock.onGet('/api/apps').reply(200, { apps: [{ id: 'test-app-1', name: 'Test App 1' }] });
+  
+    // Mock API throws a 500 error
+    mock.onPost('/api/apps/start').reply(500, { detail: 'Internal server error' });
+  
+    render(
+      <RecoilRoot>
+        <QueryClientProvider client={queryClient}>
+          <BrowserRouter>
+            <Home />
+          </BrowserRouter>
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+  
+    // Ensure the "Deploy App" button is clicked
+    const startButton = await screen.findByText('Deploy App');
+    fireEvent.click(startButton);
+  
+
+    screen.debug();
+  
+    // Ensure the modal opens
+    const startModal = await screen.findByTestId('StartModal');
+    expect(startModal).toBeInTheDocument();
+  
+    // Simulate the 500 error and verify the error message
+    await waitFor(() => expect(screen.getByText(/internal server error/i)).toBeInTheDocument());
+  });
+  
+  
+  
+  
+  
+  
+  
+  
+  
 });
