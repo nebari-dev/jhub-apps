@@ -58,6 +58,8 @@ router = APIRouter(prefix=service_prefix)
 @router.get("/oauth_callback", include_in_schema=False)
 async def get_token(code: str):
     "Callback function for OAuth2AuthorizationCodeBearer scheme"
+    # The only thing we need in this form post is the code
+    # Everything else we can hardcode / pull from env
     logger.info(f"Getting token for code {code}")
     async with get_client() as client:
         redirect_uri = (
@@ -75,6 +77,7 @@ async def get_token(code: str):
     access_token = create_access_token(
         data={"sub": resp.json()}, expires_delta=access_token_expires
     )
+     ### resp.json() is {'access_token': <token>, 'token_type': 'Bearer'}
     response = RedirectResponse(
         os.environ["PUBLIC_HOST"] + "/hub/home", status_code=302
     )
@@ -151,6 +154,7 @@ async def create_server(
     thumbnail: typing.Optional[UploadFile] = File(None),
     user: User = Depends(get_current_user),
 ):
+    # server.servername is not necessary to supply for create server
     server_name = server.user_options.display_name
     logger.info("Creating server", server_name=server_name, user=user.name)
     server.user_options.thumbnail = await get_thumbnail_data_url(
@@ -163,24 +167,28 @@ async def create_server(
         user_options=server.user_options,
     )
 
-
+@router.post("/server/")
 @router.post("/server/{server_name}")
 async def start_server(
     server_name=None,
     user: User = Depends(get_current_user),
 ):
+    """Start an already existing server."""
+    logger.info("Starting server", server_name=server_name, user=user.name)
     hub_client = HubClient(username=user.name)
     
     hub_user = hub_client.get_user()
     user_servers = hub_user["servers"]
     
     if server_name and server_name not in user_servers:
-        server_creator = user_servers[server_name]['creator']  # Assuming `creator` is a field
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail=f"You don't have permission to start the app {server_creator} created",
-        )
-
+        share_permissions = user_servers[server_name]['share_permissions']
+        
+        if user.name not in share_permissions.get('users', []):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail=f"You don't have permission to start the server '{server_name}'",
+            )
+    
     try:
         response = hub_client.start_server(
             username=user.name,
@@ -188,10 +196,9 @@ async def start_server(
         )
     except requests.exceptions.HTTPError as e:
         if e.response.status_code == 403:
-            server_creator = user_servers[server_name]['creator']  # Reuse the creator info
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
-                detail=f"You don't have permission to start the app {server_creator} created",
+                detail=f"You don't have permission to start the server '{server_name}'",
             )
         elif e.response.status_code == 404:
             raise HTTPException(
@@ -200,7 +207,7 @@ async def start_server(
             )
         elif e.response.status_code == 400:
             raise HTTPException(
-                detail=f"Probably server '{server_name}' is already running: {e}",
+                detail=f"Server '{server_name}' might already be running: {e}",
                 status_code=status.HTTP_400_BAD_REQUEST,
             )
         else:
@@ -216,6 +223,7 @@ async def start_server(
         )
     
     return response
+
 
 
 @router.put("/server/{server_name}")
