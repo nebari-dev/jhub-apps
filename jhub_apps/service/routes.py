@@ -77,7 +77,7 @@ async def get_token(code: str):
     access_token = create_access_token(
         data={"sub": resp.json()}, expires_delta=access_token_expires
     )
-    resp.json() is {'access_token': <token>, 'token_type': 'Bearer'}
+    ### resp.json() is {'access_token': <token>, 'token_type': 'Bearer'}
     response = RedirectResponse(
         os.environ["PUBLIC_HOST"] + "/hub/home", status_code=302
     )
