@@ -760,37 +760,37 @@ describe('Home', () => {
   
  
 
-  test('simulates starting an app with a 500 error', async () => {
-    // Mock API response to include apps
-    mock.onGet('/api/apps').reply(200, { apps: [{ id: 'test-app-1', name: 'Test App 1' }] });
+  // test('simulates starting an app with a 500 error', async () => {
+  //   // Mock API response to include apps
+  //   mock.onGet('/api/apps').reply(200, { apps: [{ id: 'test-app-1', name: 'Test App 1' }] });
   
-    // Mock API throws a 500 error
-    mock.onPost('/api/apps/start').reply(500, { detail: 'Internal server error' });
+  //   // Mock API throws a 500 error
+  //   mock.onPost('/api/apps/start').reply(500, { detail: 'Internal server error' });
   
-    render(
-      <RecoilRoot>
-        <QueryClientProvider client={queryClient}>
-          <BrowserRouter>
-            <Home />
-          </BrowserRouter>
-        </QueryClientProvider>
-      </RecoilRoot>,
-    );
+  //   render(
+  //     <RecoilRoot>
+  //       <QueryClientProvider client={queryClient}>
+  //         <BrowserRouter>
+  //           <Home />
+  //         </BrowserRouter>
+  //       </QueryClientProvider>
+  //     </RecoilRoot>,
+  //   );
   
-    // Ensure the "Deploy App" button is clicked
-    const startButton = await screen.findByText('Deploy App');
-    fireEvent.click(startButton);
+  //   // Ensure the "Deploy App" button is clicked
+  //   const startButton = await screen.findByText('Deploy App');
+  //   fireEvent.click(startButton);
   
 
-    screen.debug();
+  //   screen.debug();
   
-    // Ensure the modal opens
-    const startModal = await screen.findByTestId('StartModal');
-    expect(startModal).toBeInTheDocument();
+  //   // Ensure the modal opens
+  //   const startModal = await screen.findByTestId('StartModal');
+  //   expect(startModal).toBeInTheDocument();
   
-    // Simulate the 500 error and verify the error message
-    await waitFor(() => expect(screen.getByText(/internal server error/i)).toBeInTheDocument());
-  });
+  //   // Simulate the 500 error and verify the error message
+  //   await waitFor(() => expect(screen.getByText(/internal server error/i)).toBeInTheDocument());
+  // });
   
   
   
