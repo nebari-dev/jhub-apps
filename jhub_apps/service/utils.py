@@ -5,7 +5,6 @@ import typing
 from pathlib import Path
 
 import git
-import yaml
 import structlog
 import os
 
