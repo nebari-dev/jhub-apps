@@ -28,6 +28,10 @@ dependencies = [
     "cachetools",
     "structlog",
     "PyJWT",
+    "GitPython",
+    # pinning to avoid unexpected changes in spec causing
+    # unexpected breakage
+    "conda-project==0.4.2"
 ]
 dynamic = ["version"]
 
