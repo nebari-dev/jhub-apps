@@ -11,7 +11,6 @@ import os
 from cachetools import cached, TTLCache
 from unittest.mock import Mock
 
-from conda_project import CondaProject, CondaProjectError
 from jupyterhub.app import JupyterHub
 from pydantic import ValidationError
 from fastapi import status
@@ -184,6 +183,9 @@ def get_app_configuration_from_git(
     """Clones the git directory into a temporary path and extracts all the metadata
     about the app
     """
+    # Moving this to top level import causes this problem:
+    # https://github.com/jupyter/jupyter_events/issues/99
+    from conda_project import CondaProject, CondaProjectError
     with tempfile.TemporaryDirectory() as temp_dir:
         try:
             logger.info("Trying to clone repository", repo_url=repository.url)
