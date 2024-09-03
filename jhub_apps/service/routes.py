@@ -27,7 +27,8 @@ from jhub_apps.service.models import (
     AuthorizationError,
     HubApiError,
     ServerCreation,
-    User, Repository, AppConfigFromGit,
+    User, Repository,
+    AppConfigFromGit,
 )
 from jhub_apps.service.security import get_current_user
 from jhub_apps.service.utils import (
@@ -35,7 +36,8 @@ from jhub_apps.service.utils import (
     get_jupyterhub_config,
     get_spawner_profiles,
     get_thumbnail_data_url,
-    get_shared_servers, )
+    get_shared_servers,
+)
 from jhub_apps.service.app_from_git import _get_app_configuration_from_git
 from jhub_apps.spawner.types import FRAMEWORKS
 from jhub_apps.version import get_version

@@ -55,6 +55,13 @@ class HubApiError(BaseModel):
     detail: HubResponse
 
 
+class Repository(BaseModel):
+    url: str
+    config_directory: str = "."
+    # git ref
+    ref: str = "main"
+
+
 class UserOptions(BaseModel):
     jhub_app: bool
     display_name: str
@@ -73,20 +80,12 @@ class UserOptions(BaseModel):
     # So that it's not killed by idle culler
     keep_alive: typing.Optional[bool] = False
     share_with: typing.Optional[SharePermissions] = None
-    git_url: typing.Optional[str] = None
-    git_repo_branch: typing.Optional[str] = "main"
+    repository: typing.Optional[Repository] = None
 
 
 class ServerCreation(BaseModel):
     servername: str
     user_options: UserOptions
-
-
-class Repository(BaseModel):
-    url: str
-    config_directory: str = "."
-    # git ref
-    ref: str = "main"
 
 
 class AppConfigFromGit(BaseModel):

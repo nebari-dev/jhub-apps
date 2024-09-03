@@ -57,13 +57,13 @@ def subclass_spawner(base_spawner):
                 else:
                     command: Command = COMMANDS.get(framework)
 
-                git_url = self.user_options.get("git_url")
-                if git_url:
-                    logger.info(f"git_url found: {git_url}")
+                repository = self.user_options.get("repository")
+                if repository:
+                    logger.info(f"repository found: {repository}")
                     command.args.extend([
-                        f"--repo={git_url}",
+                        f"--repo={repository.get('url')}",
                         f"--repofolder=/tmp/{self.name}",
-                        f"--repobranch={self.user_options.get('git_repo_branch', 'main')}"
+                        f"--repobranch={repository.get('ref')}"
                     ])
 
                 command_args = command.get_substituted_args(
