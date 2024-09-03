@@ -281,9 +281,8 @@ async def app_from_git(
 
     Note: This endpoint is kept as POST intentionally because the client is
     requesting the server to process some data, in this case, to fetch
-    a repository, read its `jhub_app.yml`, and return specific values,
+    a repository, read its conda project config, and return specific values,
     which is a processing action.
-
     """
     logger.info("Getting app configuration from git repository")
     response = get_app_configuration_from_git(repo)

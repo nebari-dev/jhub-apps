@@ -1,5 +1,6 @@
 import base64
 import itertools
+import pathlib
 import tempfile
 import typing
 from pathlib import Path
@@ -196,6 +197,13 @@ def get_app_configuration_from_git(
             logger.error(e)
             return InternalError(status_code=status.HTTP_400_BAD_REQUEST, message=message)
 
+        temp_dir_path = pathlib.Path(temp_dir)
+        conda_project_dir = temp_dir_path / repository.config_directory
+
+        if not conda_project_dir.exists():
+            message = f"Path '{repository.config_directory}' doesn't exists in the repository."
+            logger.error(message, repo_url=repository.url)
+            return InternalError(status_code=status.HTTP_400_BAD_REQUEST, message=message)
         try:
             conda_project = CondaProject(temp_dir)
             # This is a private attribute, ideally we shouldn't access it,
@@ -218,7 +226,8 @@ def get_app_configuration_from_git(
             # Load YAML content into the Pydantic model
             app_config = AppConfigFromGit(**{
                 **jhub_apps_variables,
-                "environment": environment_variables
+                "environment": environment_variables,
+                "url": repository.url
             })
         except ValidationError as e:
             message = f"Validation error: {e}"

@@ -84,7 +84,7 @@ class ServerCreation(BaseModel):
 
 class Repository(BaseModel):
     url: str
-    config_path: str = "jhub_app.yml"
+    config_directory: str = "."
     # git ref
     ref: str = "main"
 
