@@ -31,7 +31,7 @@ def _get_app_configuration_from_git(
         repository: Repository
 ) -> AppConfigFromGit:
     """Clones the git directory into a temporary path and extracts all the metadata
-    about the app
+    about the app from conda-project's config yaml.
     """
     with tempfile.TemporaryDirectory() as temp_dir:
         _clone_repo(repository, temp_dir)
