@@ -240,7 +240,7 @@ def test_create_server_with_git_repository(
         thumbnail="data:image/png;base64,ZHVtbXkgaW1hZ2UgZGF0YQ==",
         filepath="panel_basic.py",
         repository=Repository(
-            url="git@github.com:nebari-dev/jhub-apps-from-git-repo-example.git",
+            url="https://github.com/nebari-dev/jhub-apps-from-git-repo-example.git",
         )
     )
     server_data = ServerCreation(servername="test server", user_options=user_options)

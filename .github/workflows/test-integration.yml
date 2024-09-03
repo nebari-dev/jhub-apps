@@ -92,6 +92,7 @@ jobs:
 
     - name: Create artifact name
       id: artifact-name
+      if: always()
       run: |
         if [ "${{ matrix.jupyterhub }}" = "4.1.5" ]; then
             jhub_suffix="4x"
