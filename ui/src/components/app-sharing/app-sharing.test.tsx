@@ -243,4 +243,36 @@ describe('AppSharing', () => {
       });
     }
   });
+  test('sorts permissions with users first and groups second', () => {
+    const availablePermissions = [
+      { name: 'group2', type: 'group' },
+      { name: 'user3', type: 'user' },
+      { name: 'group1', type: 'group' },
+      { name: 'user1', type: 'user' },
+      { name: 'user2', type: 'user' },
+    ];
+
+    const sortedPermissions = availablePermissions.sort((a, b) => {
+      const labelA = a.type === 'user' ? a.name : `${a.name} (Group)`;
+      const labelB = b.type === 'user' ? b.name : `${b.name} (Group)`;
+
+      // First, compare by type: users first, groups second
+      if (a.type === 'user' && b.type !== 'user') {
+        return -1;
+      }
+      if (a.type !== 'user' && b.type === 'user') {
+        return 1;
+      }
+
+      return labelA.localeCompare(labelB);
+    });
+
+    expect(sortedPermissions).toEqual([
+      { name: 'user1', type: 'user' },
+      { name: 'user2', type: 'user' },
+      { name: 'user3', type: 'user' },
+      { name: 'group1', type: 'group' },
+      { name: 'group2', type: 'group' },
+    ]);
+  });
 });

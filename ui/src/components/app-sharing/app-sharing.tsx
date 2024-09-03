@@ -115,6 +115,21 @@ export const AppSharing = ({
   const [rowsPerPage] = useState(5);
   const [selectedValue, setSelectedValue] = useState<AppSharingItem[]>([]);
 
+  const sortedPermissions = availablePermissions.sort((a, b) => {
+    const labelA = a.type === 'user' ? a.name : `${a.name} (Group)`;
+    const labelB = b.type === 'user' ? b.name : `${b.name} (Group)`;
+  
+    // First, compare by type: users first, groups second
+    if (a.type === 'user' && b.type !== 'user') {
+      return -1;
+    }
+    if (a.type !== 'user' && b.type === 'user') {
+      return 1;
+    }
+  
+    return labelA.localeCompare(labelB);
+  });
+  
   const handleShare = () => {
     if (currentShare.length > 0) {
       const allItems = [...new Set([...currentItems, ...currentShare])];
@@ -224,7 +239,7 @@ export const AppSharing = ({
                   <Autocomplete
                     disablePortal
                     id="share-permissions-autocomplete"
-                    options={availablePermissions}
+                    options={sortedPermissions}
                     getOptionLabel={(option) =>
                       option.type === 'user'
                         ? option.name
