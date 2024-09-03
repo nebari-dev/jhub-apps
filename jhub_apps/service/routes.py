@@ -27,7 +27,7 @@ from jhub_apps.service.models import (
     AuthorizationError,
     HubApiError,
     ServerCreation,
-    User, Repository, InternalError, AppConfigFromGit,
+    User, Repository, AppConfigFromGit,
 )
 from jhub_apps.service.security import get_current_user
 from jhub_apps.service.utils import (
@@ -36,7 +36,7 @@ from jhub_apps.service.utils import (
     get_spawner_profiles,
     get_thumbnail_data_url,
     get_shared_servers, )
-from jhub_apps.service.app_from_git import get_app_configuration_from_git
+from jhub_apps.service.app_from_git import _get_app_configuration_from_git
 from jhub_apps.spawner.types import FRAMEWORKS
 from jhub_apps.version import get_version
 
@@ -285,12 +285,7 @@ async def app_from_git(
     which is a processing action.
     """
     logger.info("Getting app configuration from git repository")
-    response = get_app_configuration_from_git(repo)
-    if isinstance(response, InternalError):
-        raise HTTPException(
-            detail=response.message,
-            status_code=response.status_code,
-        )
+    response = _get_app_configuration_from_git(repo)
     return response
 
 

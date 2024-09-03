@@ -103,8 +103,3 @@ class AppConfigFromGit(BaseModel):
     # Users can provide either of thumbnail file or base64 encoded
     # thumbnail image
     thumbnail: typing.Optional[str] = None
-
-
-class InternalError(BaseModel):
-    status_code: int
-    message: str
