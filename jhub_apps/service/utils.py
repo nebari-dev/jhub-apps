@@ -211,6 +211,7 @@ def get_app_configuration_from_git(
             conda_project_yaml = conda_project._project_file
         except CondaProjectError as e:
             message = "Invalid conda-project"
+            logger.error(message)
             logger.exception(e)
             return InternalError(status_code=status.HTTP_400_BAD_REQUEST, message=message)
 
