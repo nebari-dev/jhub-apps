@@ -5,7 +5,7 @@ from unittest.mock import patch
 import pytest
 
 from jhub_apps.hub_client.hub_client import HubClient
-from jhub_apps.service.models import UserOptions, ServerCreation
+from jhub_apps.service.models import UserOptions, ServerCreation, Repository
 from jhub_apps.service.utils import get_shared_servers
 from jhub_apps.spawner.types import FRAMEWORKS
 from jhub_apps.tests.common.constants import MOCK_USER
@@ -237,7 +237,10 @@ def test_create_server_with_git_repository(
         display_name="Test Application",
         description="App description",
         framework="panel",
-        thumbnail="data:image/png;base64,ZHVtbXkgaW1hZ2UgZGF0YQ=="
+        thumbnail="data:image/png;base64,ZHVtbXkgaW1hZ2UgZGF0YQ==",
+        repository=Repository(
+            url="git@github.com:nebari-dev/jhub-apps-from-git-repo-example.git",
+        )
     )
     server_data = ServerCreation(servername="test server", user_options=user_options)
     files = {"thumbnail": ("test.png", b"dummy image data", "image/png")}
