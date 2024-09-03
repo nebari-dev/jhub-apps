@@ -2,6 +2,9 @@ import hashlib
 
 import pytest
 
+from jhub_apps.service.models import Repository, UserOptions, ServerCreation
+from jhub_apps.tests.common.constants import JHUB_APPS_API_BASE_URL, JUPYTERHUB_HOSTNAME
+from jhub_apps.tests.tests_e2e.utils import get_jhub_apps_session, fetch_url_until_title_found
 
 EXAMPLE_TEST_REPO = "https://github.com/nebari-dev/jhub-apps-from-git-repo-example.git"
 
@@ -72,3 +75,36 @@ def test_app_config_from_git_api_invalid(
     response_json = response.json()
     assert "detail" in response_json
     assert response_json["detail"] == detail
+
+
+def test_create_server_with_git_repository():
+    user_options = UserOptions(
+        jhub_app=True,
+        display_name="Test Application",
+        description="App description",
+        framework="panel",
+        thumbnail="data:image/png;base64,ZHVtbXkgaW1hZ2UgZGF0YQ==",
+        filepath="panel_basic.py",
+        repository=Repository(
+            url="git@github.com:nebari-dev/jhub-apps-from-git-repo-example.git",
+        )
+    )
+    files = {"thumbnail": ("test.png", b"dummy image data", "image/png")}
+    server_data = ServerCreation(
+        servername="test server from git repo",
+        user_options=user_options
+    )
+    data = {"data": server_data.model_dump_json()}
+    session = get_jhub_apps_session()
+    response = session.post(
+        f"{JHUB_APPS_API_BASE_URL}/server",
+        verify=False,
+        data=data,
+        files=files
+    )
+    assert response.status_code == 200
+    server_name = response.json()[-1]
+    created_app_url = f"http://{JUPYTERHUB_HOSTNAME}/user/admin/{server_name}/"
+    fetch_url_until_title_found(
+        session, url=created_app_url, expected_title="Panel Test App from Git Repository"
+    )
