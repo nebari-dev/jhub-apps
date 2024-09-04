@@ -21,7 +21,7 @@ from pydantic import BaseModel, ValidationError
 from starlette.responses import RedirectResponse
 
 from jhub_apps.hub_client.hub_client import HubClient
-from jhub_apps.service.auth import create_access_token
+from jhub_apps.service.auth import _create_access_token
 from jhub_apps.service.client import get_client
 from jhub_apps.service.models import (
     AuthorizationError,
@@ -29,7 +29,7 @@ from jhub_apps.service.models import (
     ServerCreation,
     User,
 )
-from jhub_apps.service.security import get_current_user
+from jhub_apps.service.security import get_current_user, JHUB_APPS_AUTH_COOKIE_NAME
 from jhub_apps.service.utils import (
     get_conda_envs,
     get_jupyterhub_config,
@@ -74,14 +74,14 @@ async def get_token(code: str):
         }
         resp = await client.post("/oauth2/token", data=data)
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    access_token = create_access_token(
+    access_token = _create_access_token(
         data={"sub": resp.json()}, expires_delta=access_token_expires
     )
     ### resp.json() is {'access_token': <token>, 'token_type': 'Bearer'}
     response = RedirectResponse(
         os.environ["PUBLIC_HOST"] + "/hub/home", status_code=302
     )
-    response.set_cookie(key="access_token", value=access_token, httponly=True)
+    response.set_cookie(key=JHUB_APPS_AUTH_COOKIE_NAME, value=access_token, httponly=True)
     return response
 
 
