@@ -30,20 +30,20 @@ def test_app_config_from_git_api(
     response_json = response.json()
     assert response_json
     assert set(response_json.keys()) == {
-        'url', 'name', 'description', 'framework', 'filepath',
-        'environment', 'keep_alive', 'public', 'thumbnail_path', 'thumbnail'
+        "display_name", "description", "framework", "filepath",
+        "env", "keep_alive", "public", "thumbnail",
+        "custom_command", "repository"
     }
-    assert response_json["name"] == "My Panel App (Git)"
+    assert response_json["display_name"] == "My Panel App (Git)"
     assert response_json["description"] == "This is a panel app created from git repository"
     assert response_json["framework"] == "panel"
     assert response_json["filepath"] == "panel_basic.py"
-    assert response_json["environment"] == {
+    assert response_json["env"] == {
         "SOMETHING_FOO": "bar",
         "SOMETHING_BAR": "beta",
     }
     assert response_json["keep_alive"] is False
     assert response_json["public"] is False
-    assert response_json["thumbnail_path"] == "panel.png"
 
     assert isinstance(response_json["thumbnail"], str)
     expected_thumbnail_sha = "a8104b2482360eee525dc696dafcd2a17864687891dc1b6c9e21520518a5ea89"

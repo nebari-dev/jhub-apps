@@ -62,43 +62,30 @@ class Repository(BaseModel):
     ref: str = "main"
 
 
-class UserOptions(BaseModel):
-    jhub_app: bool
+class JHubAppConfig(BaseModel):
     display_name: str
     description: str
     thumbnail: str = None
     filepath: typing.Optional[str] = str()
     framework: str = "panel"
     custom_command: typing.Optional[str] = str()
-    conda_env: typing.Optional[str] = str()
-    # Environment variables
-    env: typing.Optional[dict] = dict()
-    profile: typing.Optional[str] = str()
     # Make app available to public (unauthenticated Hub users)
     public: typing.Optional[bool] = False
     # Keep app alive, even when there is no activity
     # So that it's not killed by idle culler
     keep_alive: typing.Optional[bool] = False
-    share_with: typing.Optional[SharePermissions] = None
+    # Environment variables
+    env: typing.Optional[dict] = dict()
     repository: typing.Optional[Repository] = None
+
+
+class UserOptions(JHubAppConfig):
+    jhub_app: bool
+    conda_env: typing.Optional[str] = str()
+    profile: typing.Optional[str] = str()
+    share_with: typing.Optional[SharePermissions] = None
 
 
 class ServerCreation(BaseModel):
     servername: str
     user_options: UserOptions
-
-
-class AppConfigFromGit(BaseModel):
-    url: str
-    name: str
-    description: typing.Optional[str] = "App created from git repository"
-    framework: str = "panel"
-    filepath: str
-    # non-critical environment variables
-    environment: dict
-    keep_alive: typing.Optional[bool] = False
-    public: typing.Optional[bool] = False
-    thumbnail_path: typing.Optional[str] = None
-    # Users can provide either of thumbnail file or base64 encoded
-    # thumbnail image
-    thumbnail: typing.Optional[str] = None

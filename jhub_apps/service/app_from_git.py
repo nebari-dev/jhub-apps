@@ -8,7 +8,7 @@ from fastapi import HTTPException
 from pydantic import ValidationError
 from starlette import status
 
-from jhub_apps.service.models import Repository, AppConfigFromGit
+from jhub_apps.service.models import Repository, JHubAppConfig
 from jhub_apps.service.utils import logger, encode_file_to_data_url
 
 
@@ -29,7 +29,7 @@ def _clone_repo(repository: Repository, temp_dir):
 
 def _get_app_configuration_from_git(
         repository: Repository
-) -> AppConfigFromGit:
+) -> JHubAppConfig:
     """Clones the git directory into a temporary path and extracts all the metadata
     about the app from conda-project's config yaml.
     """
@@ -50,11 +50,20 @@ def _load_jhub_app_config_to_pydantic_model(
         jhub_apps_config_dict: dict, repository: Repository, temp_dir: str
 ):
     """Load the parsed jhub-apps config into pydantic model for validation"""
+    thumbnail_base64 = ""
+    thumbnail_path_from_config = jhub_apps_config_dict.get("thumbnail_path")
+    if thumbnail_path_from_config:
+        thumbnail_path = Path(os.path.join(temp_dir, thumbnail_path_from_config))
+        thumbnail_base64 = encode_file_to_data_url(
+            filename=thumbnail_path.name, file_contents=thumbnail_path.read_bytes()
+        )
     try:
         # Load YAML content into the Pydantic model
-        app_config = AppConfigFromGit(**{
+        app_config = JHubAppConfig(**{
             **jhub_apps_config_dict,
-            "url": repository.url
+            "repository": repository,
+            "thumbnail": thumbnail_base64,
+            "env": jhub_apps_config_dict.get("environment", {})
         })
     except ValidationError as e:
         message = f"Validation error: {e}"
@@ -62,11 +71,6 @@ def _load_jhub_app_config_to_pydantic_model(
         raise HTTPException(
             detail=message,
             status_code=status.HTTP_400_BAD_REQUEST,
-        )
-    if app_config.thumbnail_path:
-        thumbnail_path = Path(os.path.join(temp_dir, app_config.thumbnail_path))
-        app_config.thumbnail = encode_file_to_data_url(
-            filename=thumbnail_path.name, file_contents=thumbnail_path.read_bytes()
         )
     return app_config
 

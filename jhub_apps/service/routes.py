@@ -28,7 +28,7 @@ from jhub_apps.service.models import (
     HubApiError,
     ServerCreation,
     User, Repository,
-    AppConfigFromGit,
+    JHubAppConfig,
 )
 from jhub_apps.service.security import get_current_user
 from jhub_apps.service.utils import (
@@ -277,7 +277,7 @@ async def hub_services(user: User = Depends(get_current_user)):
 async def app_from_git(
         repo: Repository,
         user: User = Depends(get_current_user)
-) -> AppConfigFromGit:
+) -> JHubAppConfig:
     """
     ## Fetches jhub-apps application configuration from a git repository.
 
