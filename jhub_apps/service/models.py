@@ -55,23 +55,34 @@ class HubApiError(BaseModel):
     detail: HubResponse
 
 
-class UserOptions(BaseModel):
-    jhub_app: bool
+class Repository(BaseModel):
+    url: str
+    config_directory: str = "."
+    # git ref
+    ref: str = "main"
+
+
+class JHubAppConfig(BaseModel):
     display_name: str
     description: str
     thumbnail: str = None
     filepath: typing.Optional[str] = str()
     framework: str = "panel"
     custom_command: typing.Optional[str] = str()
-    conda_env: typing.Optional[str] = str()
-    # Environment variables
-    env: typing.Optional[dict] = dict()
-    profile: typing.Optional[str] = str()
     # Make app available to public (unauthenticated Hub users)
     public: typing.Optional[bool] = False
     # Keep app alive, even when there is no activity
     # So that it's not killed by idle culler
     keep_alive: typing.Optional[bool] = False
+    # Environment variables
+    env: typing.Optional[dict] = dict()
+    repository: typing.Optional[Repository] = None
+
+
+class UserOptions(JHubAppConfig):
+    jhub_app: bool
+    conda_env: typing.Optional[str] = str()
+    profile: typing.Optional[str] = str()
     share_with: typing.Optional[SharePermissions] = None
 
 

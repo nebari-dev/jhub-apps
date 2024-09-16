@@ -22,3 +22,5 @@ dependencies:
   - cachetools
   - structlog
   - gradio
+  - gitpython
+  - conda-project=0.4.2
