@@ -157,7 +157,7 @@ export const Home = (): React.ReactElement => {
     const sharedApp = currentApp?.shared;
     if (sharedApp) {
       setSubmitting(false);
-      setSnackbarMessage('You don\'t have permission to start this app (403 Forbidden).');
+      setSnackbarMessage('You don\'t have permission to start this app (403 Forbidden). Please ask the owner to start it.');
       setSnackbarSeverity('error');
       setSnackbarOpen(true);
       return;
@@ -179,7 +179,7 @@ export const Home = (): React.ReactElement => {
           if (isErrorWithResponse(error)) {
             const status = error.response?.status;
             if (status === 403) {
-              setSnackbarMessage('You don\'t have permission to start this app (403 Forbidden).');
+              setSnackbarMessage('You don\'t have permission to start this app (403 Forbidden). Please ask the owner to start it.');
             } else if (status === 404) {
               setSnackbarMessage('App not found (404).');
             } else if (status === 500) {
@@ -209,7 +209,7 @@ export const Home = (): React.ReactElement => {
     const sharedApp = currentApp?.shared;
     if (sharedApp) {
       setSubmitting(false);
-      setSnackbarMessage('You don\'t have permission to stop this app (403 Forbidden).');
+      setSnackbarMessage('You don\'t have permission to stop this app (403 Forbidden). Please ask the owner to stop it.');
       setSnackbarSeverity('error');
       setSnackbarOpen(true);
       return;
@@ -230,7 +230,7 @@ export const Home = (): React.ReactElement => {
           if (isErrorWithResponse(error)) {
             const status = error.response?.status;
             if (status === 403) {
-              setSnackbarMessage('You don\'t have permission to stop this app (403 Forbidden).');
+              setSnackbarMessage('You don\'t have permission to stop this app (403 Forbidden). Please ask the owner to stop it.');
             } else if (status === 404) {
               setSnackbarMessage('App not found (404).');
             } else if (status === 500) {
