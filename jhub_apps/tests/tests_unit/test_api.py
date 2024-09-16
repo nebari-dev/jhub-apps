@@ -1,10 +1,11 @@
 import io
 import json
 import logging
-import os
-from fastapi import Response
-import requests
-from unittest.mock import MagicMock, patch
+# import os
+# from fastapi import Response
+# import requests
+# from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import pytest
 
