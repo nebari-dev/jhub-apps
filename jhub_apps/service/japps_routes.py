@@ -27,6 +27,8 @@ async def handle_apps(request: Request):
         {
             "request": request,
             "version_hash": now.strftime("%Y%m%d%H%M%S"),
+            "hub_title": config.get("hub_title", "JupyterHub"),
+            "favicon": theme.get("favicon", "/service/japps/static/favicon.ico"),
             **theme,
         },
     )
