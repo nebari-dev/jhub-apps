@@ -1,4 +1,5 @@
 import CheckIcon from '@mui/icons-material/Check';
+import ErrorRoundedIcon from '@mui/icons-material/ErrorRounded';
 import {
   Alert,
   Box,
@@ -57,6 +58,7 @@ const CustomCheckIcon = () => (
   </SvgIcon>
 );
 
+
 export const Home = (): React.ReactElement => {
   const [, setNotification] = useRecoilState<string | undefined>(
     currentNotification,
@@ -76,6 +78,8 @@ export const Home = (): React.ReactElement => {
   const queryClient = useQueryClient();
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>('success'); // Set severity
+
 
   const handleStartRequest = async ({ id }: AppQueryPostProps) => {
     const response = await axios.post(`/server/${id}`);
@@ -136,22 +140,59 @@ export const Home = (): React.ReactElement => {
     );
   };
 
+  // Type guard to check if error has a 'response' property
+  const isErrorWithResponse = (error: unknown): error is { response: { status: number } } => {
+    return typeof error === 'object' && error !== null && 'response' in error;
+  };
+
   const handleStart = async () => {
     const appId = currentApp?.id || '';
     setSubmitting(true);
+  
+    // Close the modal immediately when the Start button is clicked
+    setIsStartOpen(false);
+    setIsStartNotRunningOpen(false);
+
+    // Check if the app is shared and if the user has permissions
+    const sharedApp = currentApp?.shared;
+    if (sharedApp) {
+      setSubmitting(false);
+      setSnackbarMessage('You don\'t have permission to start this app (403 Forbidden).');
+      setSnackbarSeverity('error');
+      setSnackbarOpen(true);
+      return;
+    }
+
     startQuery(
       { id: appId },
       {
         onSuccess: async () => {
           setSubmitting(false);
-          setIsStartOpen(false);
-          setIsStartNotRunningOpen(false);
           queryClient.invalidateQueries({ queryKey: ['app-state'] });
+          setSnackbarMessage('App started successfully');
+          setSnackbarSeverity('success');
+          setSnackbarOpen(true);
         },
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onError: (error: any) => {
+        onError: (error: unknown) => {
           setSubmitting(false);
-          setNotification(error.message);
+  
+          if (isErrorWithResponse(error)) {
+            const status = error.response?.status;
+            if (status === 403) {
+              setSnackbarMessage('You don\'t have permission to start this app (403 Forbidden).');
+            } else if (status === 404) {
+              setSnackbarMessage('App not found (404).');
+            } else if (status === 500) {
+              setSnackbarMessage('Internal server error (500).');
+            } else {
+              setSnackbarMessage('An unknown server error occurred.');
+            }
+          } else {
+            setSnackbarMessage('An unknown error occurred.');
+          }
+  
+          setSnackbarSeverity('error');
+          setSnackbarOpen(true);
         },
       },
     );
@@ -160,23 +201,54 @@ export const Home = (): React.ReactElement => {
   const handleStop = async () => {
     const appId = currentApp?.id || '';
     setSubmitting(true);
+  
+    // Close the modal immediately when the Stop button is clicked
+    setIsStopOpen(false);
+  
+    // Check if the app is shared and if the user has permissions
+    const sharedApp = currentApp?.shared;
+    if (sharedApp) {
+      setSubmitting(false);
+      setSnackbarMessage('You don\'t have permission to stop this app (403 Forbidden).');
+      setSnackbarSeverity('error');
+      setSnackbarOpen(true);
+      return;
+    }
+  
     deleteQuery(
       { id: appId, remove: false },
       {
         onSuccess: () => {
           setSubmitting(false);
-          setIsStopOpen(false);
           queryClient.invalidateQueries({ queryKey: ['app-state'] });
           setSnackbarMessage('Server stopped successfully');
+          setSnackbarSeverity('success');
           setSnackbarOpen(true);
         },
         onError: (error: unknown) => {
           setSubmitting(false);
-          setNotification((error as Error).message);
+          if (isErrorWithResponse(error)) {
+            const status = error.response?.status;
+            if (status === 403) {
+              setSnackbarMessage('You don\'t have permission to stop this app (403 Forbidden).');
+            } else if (status === 404) {
+              setSnackbarMessage('App not found (404).');
+            } else if (status === 500) {
+              setSnackbarMessage('Internal server error (500).');
+            } else {
+              setSnackbarMessage('An unknown server error occurred.');
+            }
+          } else {
+            setSnackbarMessage('An unknown error occurred.');
+          }
+          setSnackbarSeverity('error');
+          setSnackbarOpen(true);
         },
       },
     );
   };
+  
+  
 
   const handleStartNotRunning = async () => {
     if (!currentUser || !currentApp) {
@@ -439,14 +511,16 @@ export const Home = (): React.ReactElement => {
       >
         <Alert
           onClose={() => setSnackbarOpen(false)}
-          severity="success"
-          icon={<CustomCheckIcon />}
+          severity={snackbarSeverity}
+          // Conditionally render either the success or error icon based on severity
+          icon={snackbarSeverity === 'success' ? <CustomCheckIcon /> : <ErrorRoundedIcon />}
           sx={{
             width: '100%',
-            backgroundColor: 'success.main',
-            color: 'rgba(30, 70, 32, 1)',
             fontFamily: 'Inter, sans-serif',
             fontWeight: 600,
+            // Use background and text color based on severity
+            backgroundColor: snackbarSeverity === 'success' ? '#D1FAE5' : '#FEE2E2', // Light green for success, light red for error
+            color: snackbarSeverity === 'success' ? '#065F46' : '#B91C1C', // Dark green for success, dark red for error
           }}
         >
           {snackbarMessage}

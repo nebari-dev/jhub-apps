@@ -2,6 +2,7 @@ import typing
 from concurrent.futures import ThreadPoolExecutor
 from functools import wraps
 
+
 import structlog
 import os
 import re
@@ -16,7 +17,6 @@ API_URL = os.environ.get("JUPYTERHUB_API_URL")
 JUPYTERHUB_API_TOKEN = os.environ.get("JUPYTERHUB_API_TOKEN")
 
 logger = structlog.get_logger(__name__)
-
 
 def requires_user_token(func):
     """Decorator to apply to methods of HubClient to create user token before
@@ -34,6 +34,7 @@ def requires_user_token(func):
             self._revoke_token(token_id=token_id)
         return original_method_return
     return wrapper
+
 
 
 class HubClient:

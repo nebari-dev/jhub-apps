@@ -114,17 +114,17 @@ export const AppCard = ({
         setCurrentApp(app!); // Add the non-null assertion operator (!) to ensure that app is not undefined
       },
       visible: true,
-      disabled: serverStatus !== 'Ready',
+      disabled: serverStatus === 'Running', // Disable start if the app is already running
     },
     {
       id: 'stop',
       title: 'Stop',
       onClick: () => {
         setIsStopOpen(true);
-        setCurrentApp(app!);
+        setCurrentApp(app!); // Set the current app when Stop is clicked
       },
       visible: true,
-      disabled: serverStatus !== 'Running' || isShared,
+      disabled: serverStatus !== 'Running', // Disable stop if the app is not running
     },
     {
       id: 'edit',
@@ -132,7 +132,7 @@ export const AppCard = ({
       onClick: () =>
         (window.location.href = `${API_BASE_URL}/edit-app?id=${id}`),
       visible: true,
-      disabled: isShared || id === '' || !isAppCard,
+      disabled: isShared || id === '' || !isAppCard, // Disable edit for shared apps
     },
     {
       id: 'delete',
@@ -142,11 +142,12 @@ export const AppCard = ({
         setCurrentApp(app!);
       },
       visible: true,
-      disabled: isShared || id === '' || !isAppCard,
+      disabled: isShared || id === '' || !isAppCard, // Disable delete for shared apps
       danger: true,
     },
   ];
-
+  
+  
   const getHoverClass = (id: string) => {
     const element = document.querySelector(
       `#card-content-container-${id}`,

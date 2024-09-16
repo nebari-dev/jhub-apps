@@ -160,27 +160,67 @@ async def create_server(
 @router.post("/server/")
 @router.post("/server/{server_name}")
 async def start_server(
-    server_name=None,
+    server_name: str = None,
     user: User = Depends(get_current_user),
 ):
     """Start an already existing server."""
-    logger.info("Starting server", server_name=server_name, user=user.name)
+    logger.info(f"Starting server with name '{server_name}' for user '{user.name}'")
+    
     hub_client = HubClient(username=user.name)
+
+    # Check if the server is shared and whether the user has permission to start it
     try:
+        shared_servers = get_shared_servers(current_hub_user=user)
+        if server_name and any(server['name'] == server_name for server in shared_servers):
+            # User is trying to start a shared server without permission
+            raise HTTPException(
+                detail=f"User '{user.name}' does not have permission to start server '{server_name}'",
+                status_code=status.HTTP_403_FORBIDDEN,
+            )
+    except ValueError as e:
+        logger.error(f"Error in shared servers check: {e}")
+        raise HTTPException(
+            detail=f"Failed to check shared servers: {e}",
+            status_code=status.HTTP_400_BAD_REQUEST,
+        )
+    
+    try:
+        logger.info(f"Attempting to start server '{server_name}' for user '{user.name}'")
         response = hub_client.start_server(
             username=user.name,
             servername=server_name,
         )
+        
+        # Log the actual response from the JupyterHub API
+        logger.info(f"Received response from JupyterHub API: {response}")
+        
     except requests.exceptions.HTTPError as e:
-        raise HTTPException(
-            detail=f"Probably server '{server_name}' is already running: {e}",
-            status_code=status.HTTP_400_BAD_REQUEST,
-        )
+        logger.error(f"HTTPError occurred while starting server '{server_name}': {e}")
+        
+        if e.response.status_code == 403:
+            raise HTTPException(
+                detail=f"User '{user.name}' does not have permission to start server '{server_name}'",
+                status_code=status.HTTP_403_FORBIDDEN,
+            )
+        elif e.response.status_code == 500:
+            raise HTTPException(
+                detail="Internal server error occurred while trying to start the server.",
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+        else:
+            raise HTTPException(
+                detail=f"Unexpected error occurred while starting server '{server_name}': {e}",
+                status_code=status.HTTP_400_BAD_REQUEST,
+            )
+
     if response is None:
+        logger.error(f"Server '{server_name}' not found for user '{user.name}'")
         raise HTTPException(
-            detail=f"server '{server_name}' not found",
+            detail=f"Server '{server_name}' not found",
             status_code=status.HTTP_404_NOT_FOUND,
         )
+
+    logger.info(f"Successfully started server '{server_name}' for user '{user.name}'")
     return response
 
 
