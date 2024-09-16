@@ -4,9 +4,8 @@ import tempfile
 from pathlib import Path
 
 import git
-from fastapi import HTTPException
+from fastapi import HTTPException, status
 from pydantic import ValidationError
-from starlette import status
 
 from jhub_apps.service.models import Repository, JHubAppConfig
 from jhub_apps.service.utils import logger, encode_file_to_data_url

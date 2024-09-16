@@ -27,7 +27,8 @@ from jhub_apps.service.models import (
     AuthorizationError,
     HubApiError,
     ServerCreation,
-    User, Repository,
+    User,
+    Repository,
     JHubAppConfig,
 )
 from jhub_apps.service.security import get_current_user
