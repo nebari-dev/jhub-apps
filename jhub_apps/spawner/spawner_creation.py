@@ -59,7 +59,9 @@ def subclass_spawner(base_spawner):
 
                 repository = self.user_options.get("repository")
                 if repository:
-                    logger.info(f"repository found: {repository}")
+                    logger.info(f"repository specified: {repository}")
+                    # The repository will be cloned during spawn time to
+                    # deploy the app from the repository.
                     command.args.extend([
                         f"--repo={repository.get('url')}",
                         f"--repofolder=/tmp/{self.name}",
