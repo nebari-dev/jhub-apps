@@ -1,3 +1,5 @@
+import uuid
+
 import structlog
 
 from jhub_apps.spawner.utils import get_origin_host
@@ -64,7 +66,7 @@ def subclass_spawner(base_spawner):
                     # deploy the app from the repository.
                     command.args.extend([
                         f"--repo={repository.get('url')}",
-                        f"--repofolder=/tmp/{self.name}",
+                        f"--repofolder=/tmp/{self.name}-{uuid.uuid4().hex[:6]}",
                         f"--repobranch={repository.get('ref')}"
                     ])
 
