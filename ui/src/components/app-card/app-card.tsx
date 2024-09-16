@@ -69,6 +69,7 @@ export const AppCard = ({
   const [, setIsDeleteOpen] = useRecoilState<boolean>(isDeleteOpen);
   const [, setIsStartNotRunningOpen] = useRecoilState(isStartNotRunningOpen);
 
+
   useEffect(() => {
     if (serverStatus) {
       setAppStatus(serverStatus);
@@ -110,6 +111,11 @@ export const AppCard = ({
       id: 'start',
       title: 'Start',
       onClick: () => {
+        if (isShared) {
+          // Show error if it's a shared app
+          setNotification('You don\'t have permission to start this app. Please ask the owner to start it.');
+          return;
+        }
         setIsStartOpen(true);
         setCurrentApp(app!); // Add the non-null assertion operator (!) to ensure that app is not undefined
       },
@@ -120,8 +126,12 @@ export const AppCard = ({
       id: 'stop',
       title: 'Stop',
       onClick: () => {
+        if (isShared) {
+          setNotification('You don\'t have permission to stop this app. Please ask the owner to stop it.');
+          return;
+        }
         setIsStopOpen(true);
-        setCurrentApp(app!); // Set the current app when Stop is clicked
+        setCurrentApp(app!); 
       },
       visible: true,
       disabled: serverStatus !== 'Running', // Disable stop if the app is not running
@@ -132,7 +142,7 @@ export const AppCard = ({
       onClick: () =>
         (window.location.href = `${API_BASE_URL}/edit-app?id=${id}`),
       visible: true,
-      disabled: isShared || id === '' || !isAppCard, // Disable edit for shared apps
+      disabled: isShared || id === '' || !isAppCard,
     },
     {
       id: 'delete',
@@ -146,6 +156,7 @@ export const AppCard = ({
       danger: true,
     },
   ];
+  
   
   
   const getHoverClass = (id: string) => {
@@ -195,7 +206,7 @@ export const AppCard = ({
               url: app?.url || '',
               ready: app?.ready || false,
               public: app?.public || false,
-              shared: false,
+              shared: app?.shared || isShared || false,
               last_activity: new Date(app?.last_activity || ''),
               status: 'Ready',
             });

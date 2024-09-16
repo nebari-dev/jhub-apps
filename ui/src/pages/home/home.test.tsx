@@ -758,7 +758,7 @@ describe('Home', () => {
 
     // Expect the snackbar to display the 403 Forbidden error message
     await waitFor(() => {
-      const snackbar = getByText(/You don't have permission to start this app \(403 Forbidden\)/);
+      const snackbar = getByText(/You don't have permission to start this app. Please ask the owner to start it./);
       expect(snackbar).toBeInTheDocument();
     });
   });
@@ -804,7 +804,7 @@ describe('Home', () => {
 
     // Expect the snackbar to display the 403 Forbidden error message
     await waitFor(() => {
-      const snackbar = getByText(/You don't have permission to stop this app \(403 Forbidden\)/);
+      const snackbar = getByText(/You don't have permission to stop this app. Please ask the owner/);
       expect(snackbar).toBeInTheDocument();
     });
   });
