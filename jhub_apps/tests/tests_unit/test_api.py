@@ -90,60 +90,28 @@ def test_api_create_server(create_server, client):
     assert response.json() == create_server_response
 
 
-# @patch.dict(os.environ, {"API_URL": "http://mocked-api-url"})
-# @patch("requests.get")
-# @patch("requests.post")
-# @patch.object(HubClient, "start_server")
-# def test_api_start_server(mock_get, mock_post, create_server, client):
-#     # Create a mock response object for requests.get
-#     mock_response = MagicMock(spec=Response)  # Mock Response object, not a dict
-#     mock_response.status_code = 200
-#     mock_response.json = MagicMock(return_value={
-#         "users": [{"name": "jovyan", "servers": {}}]
-#     })
-#     # Mock raise_for_status to simulate a successful response
-#     mock_response.raise_for_status = MagicMock(return_value=None)
-    
-#     # Add mock for the background attribute
-#     mock_response.background = None
-
-#     # Set this mock response for requests.get
-#     mock_get.return_value = mock_response
-
-#     # Mock response for creating server
-#     start_server_response = {"user": "jovyan"}
-#     create_server.return_value = start_server_response
-
-#     server_name = "server-name"
-
-#     # Make the POST request
-#     response = client.post(f"/server/{server_name}")
-
-#     # Check assertions
-#     assert response.status_code == 200
-#     assert mock_get.called
-#     assert mock_post.called
-#     assert create_server.called
+@patch.object(HubClient, "get_user")
+def test_api_get_server(get_user, client):
+    server_data = {"panel-app": {}}
+    get_users_response = {'name': 'jovyan', 'servers': server_data}
+    get_user.return_value = get_users_response
+    response = client.get("/server/panel-app")
+    get_user.assert_called_once_with()
+    assert response.status_code == 200
+    assert response.json() == server_data["panel-app"]
 
 
-
-
-
-
-
-    
-
-# @patch.dict(os.environ, {"API_URL": "http://mocked-api-url"})
-# @patch("requests.post")
-# def test_api_start_server_404(mock_post, client):
-#     # Mock the response of requests.post
-#     mock_post.return_value.status_code = 404
-
-#     # Make the request
-#     response = client.post("/server/server-name")
-    
-#     # Assertions
-#     assert response.status_code == 404
+@patch.object(HubClient, "get_user")
+def test_api_get_server_not_found(get_user, client):
+    server_data = {"panel-app": {}}
+    get_users_response = {'name': 'jovyan', 'servers': server_data}
+    get_user.return_value = get_users_response
+    response = client.get("/server/panel-app-not-found")
+    get_user.assert_called_once_with()
+    assert response.status_code == 404
+    assert response.json() == {
+        'detail': "server 'panel-app-not-found' not found",
+    }
     
     
 
