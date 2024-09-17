@@ -41,6 +41,28 @@ def mock_user_options():
     }
     return user_options
 
+@patch.object(HubClient, "get_user")
+def test_api_get_server(get_user, client):
+    server_data = {"panel-app": {}}
+    get_users_response = {'name': 'jovyan', 'servers': server_data}
+    get_user.return_value = get_users_response
+    response = client.get("/server/panel-app")
+    get_user.assert_called_once_with()
+    assert response.status_code == 200
+    assert response.json() == server_data["panel-app"]
+
+
+@patch.object(HubClient, "get_user")
+def test_api_get_server_not_found(get_user, client):
+    server_data = {"panel-app": {}}
+    get_users_response = {'name': 'jovyan', 'servers': server_data}
+    get_user.return_value = get_users_response
+    response = client.get("/server/panel-app-not-found")
+    get_user.assert_called_once_with()
+    assert response.status_code == 404
+    assert response.json() == {
+        'detail': "server 'panel-app-not-found' not found",
+    }
 
 @patch.object(HubClient, "create_server")
 def test_api_create_server(create_server, client):
