@@ -120,7 +120,7 @@ export const AppCard = ({
         setCurrentApp(app!); // Add the non-null assertion operator (!) to ensure that app is not undefined
       },
       visible: true,
-      disabled: serverStatus === 'Running', // Disable start if the app is already running
+      disabled: serverStatus !== 'Ready', // Disable start if the app is already running
     },
     {
       id: 'stop',
