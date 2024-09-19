@@ -25,7 +25,7 @@ Some frameworks may have additional package or code requirements.
 Check out their specific documentation pages for details.
 :::
 
-## Deploy app process
+## App deployment process
 
 From the JHub App Launcher Home Screen, click on the **"Deploy App"** button. You'll be
 brought to the app-creation form. Fill out the form using the guide below (detailed 
@@ -36,11 +36,11 @@ The first portion of the form includes details about the app and its configurati
 ![Create app form, info and configuration sections](/img/create_app_info_and_configuration.png)
 
 The next section of the form allows users the option to specify environment variables which will 
-be set on the server. 
+be set in the process of deploying the app. 
 
 ![Create app form, environment variables section, none added](/img/create_app_env_var_1.png)
 
-When a environment variables is added, users can then enter the key/value pair.
+To add environment variables, users can enter the key/value pair for each variable.
 
 ![Create app form, environment variables section, one added](/img/create_app_env_var_2.png)
 
@@ -76,9 +76,9 @@ when the app is ready for viewing.
 | Description (optional)                                         | Add addition information about the application. |
 | Framework                                                      | Select the framework used by your application from the dropdown. |
 | Software Environment                                           | Provide the environment used while developing your notebook/script which has `jhsingle-native-proxy`, the corresponding framework (e.g., `panel`, `gradio`, etc.), and additional requirements documented in framework-specific pages. |
-| Filepath                                                       | Provide the path (from root in JupyterLab) to your application's code. |
+| Filepath                                                       | Provide the path (from root in JupyterLab or absolute path) to your application's code. |
 | Keep alive                                                     | Toggle on to keep app alive indefinitely. If toggled off, app server will be shut down according to the `jupyter-idle-culler` timeout settings. |
-| Environment Variables (optional)                               | The set of environment variables, defined as valid JSON, to set before starting the app. This is useful when creating custom apps. |
+| Environment Variables (optional)                               | The set of environment variables to set before starting the app. This is useful when creating custom apps. |
 | Custom Command (required if the Framework is "Custom Command") | Python command to start an arbitrary app (only visible if using "Custom Command" option). |
 | Sharing                                                        | To share the application with a set of users and or groups. |
 | Allow Public Access                                            | Toggle to share the application with anyone on the internet, including unauthenticated users. |
@@ -87,7 +87,7 @@ when the app is ready for viewing.
 
 ## Modifying existing apps
 
-Once your app is running, it will appear on the jhub-apps homepage as an individual card.
+Once your app is running, it will appear on the JHub Apps homepage as an individual card.
 
 ![App card for running app](/img/app_card.png)
 
