@@ -34,5 +34,5 @@ This is different from the typical `python http.server 8000` command in the foll
 * In `jhub-apps`, Python is pulled from the conda environment mentioned in the form, so 
 do NOT include `python`.
 * Specifying the exact port is unnecessary because the created app will be deployed 
-behind a proxy in JuptyterHub. Hence, jhub-apps will substitude the placeholder `{port}` 
+behind a proxy in JupyterHub. Hence, jhub-apps will substitude the placeholder `{port}` 
 with an arbitrary port.

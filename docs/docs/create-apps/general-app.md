@@ -45,7 +45,7 @@ When a environment variables is added, users can then enter the key/value pair.
 ![Create app form, environment variables section, one added](/img/create_app_env_var_2.png)
 
 JHub-apps allows the optional sharing of apps with others on the JupyterHub deployment. Users can 
-give either individuals or groups access to your apps. Additionally, users have the option to make
+give either individuals or groups access to their apps. Additionally, users have the option to make
 an app fully open to the public - without authenticating via JupyterHub. All sharing options 
 should be set with care since from within the app, all users will have the permissions of the 
 original app creator. 
