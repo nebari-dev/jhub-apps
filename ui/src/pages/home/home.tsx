@@ -107,6 +107,16 @@ export const Home = (): React.ReactElement => {
     enabled: !!currentAppId,
   });
 
+  // Fetch user data and check admin status
+  const { data: currentUserData } = useQuery<UserState>({
+    queryKey: ['current-user'],
+    queryFn: () =>
+      axios.get('/user').then((response) => {
+        return response.data;
+      }),
+    enabled: true,
+  });    
+
   // Mutations
   const { mutate: startQuery } = useMutation({
     mutationFn: handleStartRequest,
@@ -155,7 +165,7 @@ export const Home = (): React.ReactElement => {
 
     // Check if the app is shared and if the user has permissions
     const sharedApp = currentApp?.shared;
-    if (sharedApp) {
+    if (sharedApp && !currentUserData?.admin) {
       setSubmitting(false);
       setSnackbarMessage('You don\'t have permission to start this app. Please ask the owner to start it.');
       setSnackbarSeverity('error');
@@ -207,7 +217,7 @@ export const Home = (): React.ReactElement => {
   
     // Check if the app is shared and if the user has permissions
     const sharedApp = currentApp?.shared;
-    if (sharedApp) {
+    if (sharedApp && !currentUserData?.admin) {
       setSubmitting(false);
       setSnackbarMessage('You don\'t have permission to stop this app. Please ask the owner to stop it.');
       setSnackbarSeverity('error');

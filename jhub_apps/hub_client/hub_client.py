@@ -127,6 +127,19 @@ class HubClient:
             if name == servername:
                 return server
 
+    @requires_user_token
+    def get_server_owner(self, servername: str):
+        """Get the owner of the server by server name."""
+        # Iterate through all users to find the owner of the given server
+        users = self.get_users()
+        for user in users:
+            user_servers = user.get("servers", {})
+            if servername in user_servers:
+                return user["name"]
+        return None
+
+
+
     def normalize_server_name(self, servername):
         # Convert text to lowercase
         text = servername.lower()
@@ -280,15 +293,26 @@ class HubClient:
 
     @requires_user_token
     def delete_server(self, username, server_name, remove=False):
+        """Stop or delete a server."""
         if server_name is None:
             # Default server and not named server
             server_name = ""
         url = f"/users/{username}/servers/{server_name}"
-        # This will remove it from the database, otherwise it will just stop the server
+        # This will remove it from the database if `remove` is True; otherwise, it will just stop the server
         params = {"remove": remove}
+        logger.info(f"Stopping server '{server_name}' for user '{username}', remove: {remove}")
+        
         r = requests.delete(API_URL + url, headers=self._headers(), json=params)
-        r.raise_for_status()
+        
+        try:
+            r.raise_for_status()  # Ensure request was successful
+        except requests.exceptions.HTTPError as e:
+            logger.error(f"Error while stopping/deleting server '{server_name}' for user '{username}': {e}")
+            raise e  # Re-raise the error to be handled in the route
+
+        logger.info(f"Successfully stopped/deleted server '{server_name}' for user '{username}'")
         return r.status_code
+
 
     @requires_user_token
     def get_services(self):

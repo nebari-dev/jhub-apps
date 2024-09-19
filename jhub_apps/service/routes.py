@@ -168,35 +168,31 @@ async def start_server(
     
     hub_client = HubClient(username=user.name)
 
-    # Check if the server is shared and whether the user has permission to start it
     try:
-        shared_servers = get_shared_servers(current_hub_user=user)
-        if server_name and any(server['name'] == server_name for server in shared_servers):
-            # User is trying to start a shared server without permission
-            raise HTTPException(
-                detail=f"User '{user.name}' does not have permission to start server '{server_name}'",
-                status_code=status.HTTP_403_FORBIDDEN,
-            )
-    except ValueError as e:
-        logger.error(f"Error in shared servers check: {e}")
-        raise HTTPException(
-            detail=f"Failed to check shared servers: {e}",
-            status_code=status.HTTP_400_BAD_REQUEST,
-        )
-    
-    try:
-        logger.info(f"Attempting to start server '{server_name}' for user '{user.name}'")
-        response = hub_client.start_server(
-            username=user.name,
-            servername=server_name,
-        )
-        
+        # Check if user is an admin
+        if user.admin:
+            logger.info(f"User {user.name} is an admin and can start shared apps.")
+
+            # Check if the server belongs to another user
+            server_owner = hub_client.get_server_owner(server_name)
+            if server_owner and server_owner != user.name:
+                logger.info(f"Starting server '{server_name}' on behalf of user '{server_owner}'")
+                # Start the server on behalf of the owner if the user is an admin
+                response = hub_client.start_server(username=server_owner, servername=server_name)
+            else:
+                response = hub_client.start_server(username=user.name, servername=server_name)
+        else:
+            logger.info(f"User {user.name} is not an admin. Checking ownership.")
+            # Regular user starts their own server
+            response = hub_client.start_server(username=user.name, servername=server_name)
+
         # Log the actual response from the JupyterHub API
         logger.info(f"Received response from JupyterHub API: {response}")
-        
+
     except requests.exceptions.HTTPError as e:
         logger.error(f"HTTPError occurred while starting server '{server_name}': {e}")
-        
+
+        # Handle JupyterHub's response errors based on the status code
         if e.response.status_code == 403:
             raise HTTPException(
                 detail=f"User '{user.name}' does not have permission to start server '{server_name}'",
@@ -252,14 +248,64 @@ async def update_server(
 @router.delete("/server/{server_name}")
 @router.delete("/server/")
 async def delete_server(
-    user: User = Depends(get_current_user),
-    server_name=None,
+    server_name: str = None,
     remove: bool = False,
+    user: User = Depends(get_current_user),
 ):
-    """Delete or stop server. Delete if remove is True otherwise stop the server"""
+    """Stop or delete a server. Delete if `remove` is True; otherwise, stop the server."""
+    logger.info(f"Stopping server with name '{server_name}' for user '{user.name}'")
+
     hub_client = HubClient(username=user.name)
-    logger.info("Deleting server", server_name=server_name, user=user.name)
-    return hub_client.delete_server(user.name, server_name=server_name, remove=remove)
+
+    try:
+        # Check if user is an admin
+        if user.admin:
+            logger.info(f"User {user.name} is an admin and can stop shared apps.")
+
+            # Check if the server belongs to another user
+            server_owner = hub_client.get_server_owner(server_name)
+            if server_owner and server_owner != user.name:
+                logger.info(f"Stopping server '{server_name}' on behalf of user '{server_owner}'")
+                # Stop the server on behalf of the owner if the user is an admin
+                response = hub_client.delete_server(username=server_owner, server_name=server_name, remove=remove)
+            else:
+                response = hub_client.delete_server(username=user.name, server_name=server_name, remove=remove)
+        else:
+            logger.info(f"User {user.name} is not an admin. Checking ownership.")
+            # Regular user stops their own server
+            response = hub_client.delete_server(username=user.name, server_name=server_name, remove=remove)
+
+        logger.info(f"Received response from JupyterHub API: {response}")
+
+    except requests.exceptions.HTTPError as e:
+        logger.error(f"HTTPError occurred while stopping server '{server_name}': {e}")
+
+        # Handle JupyterHub's response errors based on the status code
+        if e.response.status_code == 403:
+            raise HTTPException(
+                detail=f"User '{user.name}' does not have permission to stop server '{server_name}'",
+                status_code=status.HTTP_403_FORBIDDEN,
+            )
+        elif e.response.status_code == 500:
+            raise HTTPException(
+                detail="Internal server error occurred while trying to stop the server.",
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+        else:
+            raise HTTPException(
+                detail=f"Unexpected error occurred while stopping server '{server_name}': {e}",
+                status_code=status.HTTP_400_BAD_REQUEST,
+            )
+
+    if response is None:
+        logger.error(f"Server '{server_name}' not found for user '{user.name}'")
+        raise HTTPException(
+            detail=f"Server '{server_name}' not found",
+            status_code=status.HTTP_404_NOT_FOUND,
+        )
+
+    logger.info(f"Successfully stopped server '{server_name}' for user '{user.name}'")
+    return response
 
 
 @router.get(
@@ -269,6 +315,7 @@ async def delete_server(
 )
 async def me(user: User = Depends(get_current_user)):
     """Authenticated function that returns the User model"""
+    logger.info("Getting user", user=user)
     return user
 
 

@@ -3,6 +3,7 @@ import LockRoundedIcon from '@mui/icons-material/LockRounded';
 import PublicRoundedIcon from '@mui/icons-material/PublicRounded';
 import PushPinRoundedIcon from '@mui/icons-material/PushPinRounded';
 import { Box, Link, Tooltip } from '@mui/material';
+import { useQuery } from '@tanstack/react-query'; 
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
@@ -26,6 +27,8 @@ import {
 } from '../../store';
 import ContextMenu, { ContextMenuItem } from '../context-menu/context-menu';
 import './app-card.css';
+import axios from 'axios';
+import { UserState } from '@src/types/user';
 interface AppCardProps {
   id: string;
   title: string;
@@ -76,6 +79,16 @@ export const AppCard = ({
     }
   }, [serverStatus, setNotification]);
 
+  // Fetch user data and check admin status
+  const { data: currentUserData } = useQuery<UserState>({
+    queryKey: ['current-user'],
+    queryFn: () =>
+      axios.get('/user').then((response) => {
+        return response.data;
+      }),
+    enabled: true,
+  });
+
   const getIcon = () => {
     if (!isAppCard)
       return (
@@ -111,7 +124,8 @@ export const AppCard = ({
       id: 'start',
       title: 'Start',
       onClick: () => {
-        if (isShared) {
+        // Allow admins to start shared apps
+        if (isShared && !currentUserData?.admin) {
           // Show error if it's a shared app
           setNotification('You don\'t have permission to start this app. Please ask the owner to start it.');
           return;
@@ -126,7 +140,8 @@ export const AppCard = ({
       id: 'stop',
       title: 'Stop',
       onClick: () => {
-        if (isShared) {
+        // Allow admins to stop shared apps
+        if (isShared && !currentUserData?.admin) {
           setNotification('You don\'t have permission to stop this app. Please ask the owner to stop it.');
           return;
         }

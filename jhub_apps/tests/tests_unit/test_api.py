@@ -81,7 +81,39 @@ def test_api_create_server(create_server, client):
         user_options=final_user_options,
     )
     assert response.status_code == 200
-    assert response.json() == create_server_response    
+    assert response.json() == create_server_response
+
+
+@patch.object(HubClient, "start_server")
+def test_api_start_server(create_server, client):
+    start_server_response = {"user": "jovyan"}
+    create_server.return_value = start_server_response
+    server_name = "server-name"
+    response = client.post(
+        f"/server/{server_name}",
+    )
+    create_server.assert_called_once_with(
+        username=MOCK_USER.name,
+        servername=server_name,
+    )
+    assert response.status_code == 200
+    assert response.json() == start_server_response
+
+
+@patch.object(HubClient, "start_server")
+def test_api_start_server_404(start_server, client):
+    start_server_response = None
+    start_server.return_value = start_server_response
+    server_name = "server-name"
+    response = client.post(
+        f"/server/{server_name}",
+    )
+    start_server.assert_called_once_with(
+        username=MOCK_USER.name,
+        servername=server_name,
+    )
+    assert response.status_code == 404
+    assert response.json() == {"detail": "server 'server-name' not found"}    
     
 
 @pytest.mark.parametrize("name,remove", [
