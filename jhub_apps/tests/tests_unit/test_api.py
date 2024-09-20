@@ -2,7 +2,6 @@ import io
 import json
 from unittest.mock import patch
 import os
-import pytest
 
 from jhub_apps.hub_client.hub_client import HubClient
 from jhub_apps.service.models import UserOptions, ServerCreation, Repository
