@@ -148,8 +148,6 @@ def sign_in_and_authorize(page, username, password):
     page.get_by_label("Password:").fill(password)
     logger.info("Pressing Sign in button")
     page.get_by_role("button", name="Sign in").click()
-    logger.info("Click Authorize button")
-    page.get_by_role("button", name="Authorize").click()
 
 
 def sign_out(page):

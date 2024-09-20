@@ -28,6 +28,8 @@ from jhub_apps.service.models import (
     HubApiError,
     ServerCreation,
     User,
+    Repository,
+    JHubAppConfig,
 )
 from jhub_apps.service.security import get_current_user
 from jhub_apps.service.utils import (
@@ -37,6 +39,7 @@ from jhub_apps.service.utils import (
     get_thumbnail_data_url,
     get_shared_servers,
 )
+from jhub_apps.service.app_from_git import _get_app_configuration_from_git
 from jhub_apps.spawner.types import FRAMEWORKS
 from jhub_apps.version import get_version
 
@@ -356,6 +359,24 @@ async def hub_services(user: User = Depends(get_current_user)):
     logger.info(f"Getting hub services for user: {user}")
     hub_client = HubClient(username=user.name)
     return hub_client.get_services()
+
+
+@router.post("/app-config-from-git/",)
+async def app_from_git(
+        repo: Repository,
+        user: User = Depends(get_current_user)
+) -> JHubAppConfig:
+    """
+    ## Fetches jhub-apps application configuration from a git repository.
+
+    Note: This endpoint is kept as POST intentionally because the client is
+    requesting the server to process some data, in this case, to fetch
+    a repository, read its conda project config, and return specific values,
+    which is a processing action.
+    """
+    logger.info("Getting app configuration from git repository")
+    response = _get_app_configuration_from_git(repo)
+    return response
 
 
 @router.get("/")

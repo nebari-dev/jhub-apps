@@ -19,7 +19,7 @@ c.JAppsConfig.conda_envs = []
 c.JAppsConfig.service_workers = 1
 c.JupyterHub.default_url = "/hub/home"
 
-c = install_jhub_apps(c, spawner_to_subclass=SimpleLocalProcessSpawner)
+c = install_jhub_apps(c, spawner_to_subclass=SimpleLocalProcessSpawner, oauth_no_confirm=True)
 
 c.JupyterHub.template_paths = theme_template_paths
 
