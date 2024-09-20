@@ -1,8 +1,7 @@
 import io
 import json
-import logging
 from unittest.mock import patch
-
+import os
 import pytest
 
 from jhub_apps.hub_client.hub_client import HubClient
@@ -11,8 +10,7 @@ from jhub_apps.service.utils import get_shared_servers
 from jhub_apps.spawner.types import FRAMEWORKS
 from jhub_apps.tests.common.constants import MOCK_USER
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+
 
 def mock_user_options():
     user_options = {
@@ -63,7 +61,6 @@ def test_api_get_server_not_found(get_user, client):
 
 @patch.object(HubClient, "create_server")
 def test_api_create_server(create_server, client):
-    from jhub_apps.service.models import UserOptions
     create_server_response = {"user": "jovyan"}
     create_server.return_value = create_server_response
     user_options = mock_user_options()
@@ -85,60 +82,65 @@ def test_api_create_server(create_server, client):
     assert response.json() == create_server_response
 
 
+@patch.dict(os.environ, {"JUPYTERHUB_API_URL": "http://localhost:8000", "JUPYTERHUB_API_TOKEN": "test-token"})
+@patch.object(HubClient, "_create_token_for_user")
+@patch.object(HubClient, "get_server_owner")
 @patch.object(HubClient, "start_server")
-def test_api_start_server(create_server, client):
+def test_api_start_server(start_server_mock, get_server_owner_mock, create_token_mock, client):
     start_server_response = {"user": "jovyan"}
-    create_server.return_value = start_server_response
+    start_server_mock.return_value = start_server_response
+    create_token_mock.return_value = {"token": "mocked-token"}
+    get_server_owner_mock.return_value = "mocked-owner"
     server_name = "server-name"
-    response = client.post(
-        f"/server/{server_name}",
-    )
-    create_server.assert_called_once_with(
-        username=MOCK_USER.name,
-        servername=server_name,
-    )
+    response = client.post(f"/server/{server_name}")
     assert response.status_code == 200
     assert response.json() == start_server_response
-
-
-@patch.object(HubClient, "start_server")
-def test_api_start_server_404(start_server, client):
-    start_server_response = None
-    start_server.return_value = start_server_response
-    server_name = "server-name"
-    response = client.post(
-        f"/server/{server_name}",
+    start_server_mock.assert_called_once_with(
+        username="mocked-owner",
+        servername=server_name,
     )
-    start_server.assert_called_once_with(
-        username=MOCK_USER.name,
+
+
+@patch.dict(os.environ, {"JUPYTERHUB_API_URL": "http://localhost:8000", "JUPYTERHUB_API_TOKEN": "test-token"})
+@patch.object(HubClient, "get_server_owner")
+@patch.object(HubClient, "start_server")
+def test_api_start_server_404(start_server_mock, get_server_owner_mock, client):
+    start_server_mock.return_value = None
+    get_server_owner_mock.return_value = "mocked-owner"
+    server_name = "server-name"
+    response = client.post(f"/server/{server_name}")
+    start_server_mock.assert_called_once_with(
+        username="mocked-owner",
         servername=server_name,
     )
     assert response.status_code == 404
-    assert response.json() == {"detail": "server 'server-name' not found"}    
-    
+    assert response.json() == {'detail': "Server 'server-name' not found"}
 
-@pytest.mark.parametrize("name,remove", [
-    ('delete', True,),
-    ('stop', False,),
-])
+
+@patch.dict(os.environ, {"JUPYTERHUB_API_URL": "http://localhost:8000", "JUPYTERHUB_API_TOKEN": "test-token"})
+@patch.object(HubClient, "_create_token_for_user")
+@patch.object(HubClient, "get_server_owner")
 @patch.object(HubClient, "delete_server")
-def test_api_delete_server(delete_server, name, remove, client):
-    create_server_response = {"user": "jovyan"}
-    delete_server.return_value = create_server_response
-    response = client.delete("/server/panel-app", params={"remove": remove})
-    delete_server.assert_called_once_with(
-        MOCK_USER.name,
-        server_name="panel-app",
-        remove=remove
-    )
+def test_api_delete_server(delete_server_mock, get_server_owner_mock, create_token_mock, client):
+    delete_server_response = {"user": "jovyan"}
+    delete_server_mock.return_value = delete_server_response
+    create_token_mock.return_value = {"token": "mocked-token"}
+    get_server_owner_mock.return_value = "mocked-owner"
+    server_name = "server-name"
+    remove_param = True
+    response = client.delete(f"/server/{server_name}", params={"remove": remove_param})
     assert response.status_code == 200
-    assert response.json() == create_server_response
+    assert response.json() == delete_server_response
+    get_server_owner_mock.assert_called_once_with(server_name)
+    delete_server_mock.assert_called_once_with(
+        username="mocked-owner",
+        server_name=server_name,
+        remove=remove_param
+    )
 
 
 @patch.object(HubClient, "edit_server")
 def test_api_update_server(edit_server, client):
-    from jhub_apps.service.models import UserOptions
-
     create_server_response = {"user": "jovyan"}
     edit_server.return_value = create_server_response
     user_options = mock_user_options()
@@ -200,19 +202,13 @@ def test_shared_server_filtering(hub_get_shared_servers, get_users):
 
 
 def test_api_frameworks(client):
-    response = client.get(
-        "/frameworks",
-    )
-    frameworks = []
-    for framework in FRAMEWORKS:
-        frameworks.append(framework.json())
+    response = client.get("/frameworks")
+    frameworks = [framework.json() for framework in FRAMEWORKS]
     assert response.json() == frameworks
 
 
 def test_api_status(client):
-    response = client.get(
-        "/status",
-    )
+    response = client.get("/status")
     assert response.status_code == 200
     rjson = response.json()
     assert rjson["status"] == "ok"
@@ -220,19 +216,14 @@ def test_api_status(client):
 
 
 def test_open_api_docs(client):
-    response = client.get(
-        "/openapi.json",
-    )
+    response = client.get("/openapi.json")
     assert response.status_code == 200
     rjson = response.json()
     assert rjson['info']['version']
 
 
 @patch.object(HubClient, "create_server")
-def test_create_server_with_git_repository(
-        hub_create_server,
-        client,
-):
+def test_create_server_with_git_repository(hub_create_server, client):
     user_options = UserOptions(
         jhub_app=True,
         display_name="Test Application",
