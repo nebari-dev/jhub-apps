@@ -50,6 +50,53 @@ describe('AppForm', () => {
     expect(baseElement.querySelector('#app-form')).toBeTruthy();
   });
 
+  describe('filepath field behavior based on query parameter', () => {
+    test('navigates to the URL with a filepath query parameter and checks the value of the filepath field in the form', async () => {
+      const testFilePath = '/path/to/test/file.ipynb';
+      const testUrl = `?filepath=${encodeURIComponent(testFilePath)}`;
+      window.history.pushState({}, 'Test Page', testUrl);
+
+      const { baseElement } = render(
+        <RecoilRoot>
+          <QueryClientProvider client={queryClient}>
+            <BrowserRouter>
+              <AppForm />
+            </BrowserRouter>
+          </QueryClientProvider>
+        </RecoilRoot>,
+      );
+
+      const filePathField = baseElement.querySelector(
+        '#filepath',
+      ) as HTMLInputElement;
+
+      expect(filePathField).toBeInTheDocument();
+      expect(filePathField.value).toBe(testFilePath);
+    });
+
+    test('navigates to the URL without a filepath query parameter and checks the value of the filepath field in the form', async () => {
+      const testUrl = '/';
+      window.history.pushState({}, 'Test Page', testUrl);
+
+      const { baseElement } = render(
+        <RecoilRoot>
+          <QueryClientProvider client={queryClient}>
+            <BrowserRouter>
+              <AppForm />
+            </BrowserRouter>
+          </QueryClientProvider>
+        </RecoilRoot>,
+      );
+
+      const filePathField = baseElement.querySelector(
+        '#filepath',
+      ) as HTMLInputElement;
+
+      expect(filePathField).toBeInTheDocument();
+      expect(filePathField.value).toBe('');
+    });
+  });
+
   test('handles getStyledText correctly', () => {
     const { baseElement } = render(
       <RecoilRoot>

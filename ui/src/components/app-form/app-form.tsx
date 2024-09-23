@@ -33,7 +33,7 @@ import {
 import { useMutation, useQuery } from '@tanstack/react-query';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import { AppSharing, EnvironmentVariables, Thumbnail } from '..';
 import {
@@ -63,6 +63,12 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
   const firstErrorRef = useRef<HTMLInputElement | null>(null);
   const appInfoRef = useRef<HTMLDivElement | null>(null);
   const [isHeadless] = useRecoilState<boolean>(defaultIsHeadless);
+
+  const [searchParams] = useSearchParams();
+
+  const initialFilepath = decodeURIComponent(
+    searchParams.get('filepath') || '',
+  );
 
   const adjustTextareaHeight = (
     textarea: EventTarget & HTMLTextAreaElement,
@@ -155,7 +161,7 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
       description: '',
       framework: '',
       thumbnail: '',
-      filepath: '',
+      filepath: initialFilepath,
       conda_env: '',
       custom_command: '',
       profile: '',
