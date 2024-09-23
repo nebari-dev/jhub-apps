@@ -103,7 +103,8 @@ class HubClient:
         r = requests.get(
             API_URL + "/users",
             params={"include_stopped_servers": True},
-            headers=self._headers()
+            # We explicitly want to use japps app token for this
+            headers=self._headers(token=self.tokens[0])
         )
         r.raise_for_status()
         users = r.json()
@@ -137,8 +138,21 @@ class HubClient:
         # Max limit for servername is 255 chars
         return text[:240]
 
+    def _find_user_server(
+            self, servername
+    ) -> typing.Tuple[typing.Optional[dict], typing.Optional[dict]]:
+        """Given a server name, return the user and the server object from
+        the user who owns the server.
+        """
+        users = self.get_users()
+        for user in users:
+            if servername in user["servers"]:
+                return user["name"], user["servers"][servername]
+        return None, None
+
     @requires_user_token
     def start_server(self, username, servername):
+        server_owner = username
         if not servername:
             logger.info("Starting JupyterLab server")
             # Default server, which is JupyterLab (not named server)
@@ -148,9 +162,12 @@ class HubClient:
             # Get named server
             server = self.get_server(username, servername)
             if not server:
+                # Shared server (not owned the given user)
+                server_owner, server = self._find_user_server(servername)
+            if not server:
                 return None
             user_options = server["user_options"]
-        url = f"/users/{username}/servers/{servername}"
+        url = f"/users/{server_owner}/servers/{servername}"
         data = {"name": servername, **user_options}
         r = requests.post(API_URL + url, headers=self._headers(), json=data)
         r.raise_for_status()
