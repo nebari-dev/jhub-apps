@@ -85,13 +85,13 @@ class HubClient:
     def _revoke_token(self, token_id):
         assert self.username
         assert token_id
-        logger.info(f"Revoking token: {token_id}")
+        logger.debug(f"Revoking token: {token_id}")
         r = requests.delete(
             API_URL + f"/users/{self.username}/tokens/{token_id}",
             headers=self._headers(token=JUPYTERHUB_API_TOKEN),
         )
         r.raise_for_status()
-        logger.info(
+        logger.debug(
             "Token revoked",
             status_code=r.status_code,
             username=self.username
@@ -169,9 +169,9 @@ class HubClient:
             user_options = server["user_options"]
         url = f"/users/{server_owner}/servers/{servername}"
         data = {"name": servername, **user_options}
-        r = requests.post(API_URL + url, headers=self._headers(), json=data)
-        r.raise_for_status()
-        return r.status_code, servername
+        response = requests.post(API_URL + url, headers=self._headers(), json=data)
+        logger.info("Start server response", status_code=response.status_code, servername=servername)
+        return response
 
     @requires_user_token
     def create_server(self, username: str, servername: str, user_options: UserOptions = None):

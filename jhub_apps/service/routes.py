@@ -184,6 +184,11 @@ async def start_server(
             detail=f"server '{server_name}' not found",
             status_code=status.HTTP_404_NOT_FOUND,
         )
+    if response.status_code in [403, 404]:
+        raise HTTPException(
+            detail=f"User doesn't have permissions to start server: '{server_name}'",
+            status_code=status.HTTP_403_FORBIDDEN,
+        )
     return response
 
 
