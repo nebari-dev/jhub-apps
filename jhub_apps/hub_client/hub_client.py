@@ -162,7 +162,7 @@ class HubClient:
             # Get named server
             server = self.get_server(username, servername)
             if not server:
-                # Shared server (not owned the given user)
+                # Shared server (not owned by the given user)
                 server_owner, server = self._find_user_server(servername)
             if not server:
                 return None

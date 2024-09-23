@@ -185,6 +185,11 @@ async def start_server(
             detail=f"Probably server '{server_name}' is already running: {e}",
             status_code=status.HTTP_400_BAD_REQUEST,
         )
+    if response is None:
+        raise HTTPException(
+            detail=f"server '{server_name}' not found",
+            status_code=status.HTTP_404_NOT_FOUND,
+        )
     return response.status_code
 
 
