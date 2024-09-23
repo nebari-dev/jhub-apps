@@ -2,25 +2,33 @@ import time
 
 import requests
 
-from jhub_apps.tests.common.constants import JUPYTERHUB_HOSTNAME, JUPYTERHUB_USERNAME, JUPYTERHUB_PASSWORD
+from jhub_apps.tests.common import constants
 
 
-def get_jhub_apps_session():
+def get_jhub_apps_session(username=None):
     """Get jhub-apps session with authenticated cookies to be able to call jhub-apps API"""
     session = requests.Session()
     session.cookies.clear()
+    if username:
+        # Since we're using jupyterhub.auth.DummyAuthenticator,
+        # any pair of username/password will work fine.
+        login_username = username
+        login_password = username
+    else:
+        login_username = constants.JUPYTERHUB_USERNAME
+        login_password = constants.JUPYTERHUB_PASSWORD
     try:
         response = session.get(
-            f"http://{JUPYTERHUB_HOSTNAME}/hub/login", verify=False
+            f"http://{constants.JUPYTERHUB_HOSTNAME}/hub/login", verify=False
         )
         response.raise_for_status()
         auth_data = {
             "_xsrf": session.cookies['_xsrf'],
-            "username": JUPYTERHUB_USERNAME,
-            "password": JUPYTERHUB_PASSWORD,
+            "username": login_username,
+            "password": login_password,
         }
         response = session.post(
-            f"http://{JUPYTERHUB_HOSTNAME}/hub/login?next=",
+            f"http://{constants.JUPYTERHUB_HOSTNAME}/hub/login?next=",
             headers={"Content-Type": "application/x-www-form-urlencoded"},
             data=auth_data,
             verify=False,
@@ -31,11 +39,11 @@ def get_jhub_apps_session():
         raise ValueError(f"An error occurred during authentication: {e}")
 
     response_login = session.get(
-        f"http://{JUPYTERHUB_HOSTNAME}/services/japps/jhub-login",
+        f"http://{constants.JUPYTERHUB_HOSTNAME}/services/japps/jhub-login",
     )
     response_login.raise_for_status()
     response_user = session.get(
-        f"http://{JUPYTERHUB_HOSTNAME}/services/japps/user",
+        f"http://{constants.JUPYTERHUB_HOSTNAME}/services/japps/user",
         verify=False
     )
     response_user.raise_for_status()
