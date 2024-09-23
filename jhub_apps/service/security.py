@@ -20,6 +20,7 @@ JHUB_APPS_AUTH_COOKIE_NAME = "jhub_apps_access_token"
 auth_by_param = APIKeyQuery(name="token", auto_error=False)
 
 auth_by_cookie = APIKeyCookie(name=JHUB_APPS_AUTH_COOKIE_NAME)
+auth_by_cookie_deprecated = APIKeyCookie(name="access_token")   # will be removed in next version
 auth_url = os.environ["PUBLIC_HOST"] + "/hub/api/oauth2/authorize"
 auth_by_header = OAuth2AuthorizationCodeBearer(
     authorizationUrl=auth_url, tokenUrl="oauth_callback", auto_error=False
@@ -43,9 +44,10 @@ else:
 async def get_current_user(
     auth_param: str = Security(auth_by_param),
     auth_header: str = Security(auth_by_header),
-    auth_cookie: str = Security(auth_by_cookie)
+    auth_cookie: str = Security(auth_by_cookie),
+    # auth_cookie_deprecated: str = Security(auth_by_cookie_deprecated),
 ):
-    token = auth_param or auth_header or auth_cookie
+    token = auth_param or auth_header or auth_cookie or auth_by_cookie_deprecated
     if token is None:
         raise HTTPException(
             status.HTTP_401_UNAUTHORIZED,
