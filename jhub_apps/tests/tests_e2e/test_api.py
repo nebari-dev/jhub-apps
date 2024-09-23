@@ -6,7 +6,8 @@ import pytest
 from jhub_apps.service.models import Repository, UserOptions, ServerCreation, SharePermissions
 from jhub_apps.spawner.types import Framework
 from jhub_apps.tests.common.constants import JHUB_APPS_API_BASE_URL, JUPYTERHUB_HOSTNAME
-from jhub_apps.tests.tests_e2e.utils import get_jhub_apps_session, fetch_url_until_title_found
+from jhub_apps.tests.tests_e2e.utils import get_jhub_apps_session, fetch_url_until_title_found, \
+    skip_if_jupyterhub_less_than_5
 
 EXAMPLE_TEST_REPO = "https://github.com/nebari-dev/jhub-apps-from-git-repo-example.git"
 
@@ -112,6 +113,7 @@ def test_create_server_with_git_repository():
     )
 
 
+@skip_if_jupyterhub_less_than_5()
 @pytest.mark.parametrize("framework, response_status_code,", [
     (Framework.panel.value, 200),
     (Framework.jupyterlab.value, 403),

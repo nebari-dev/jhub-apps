@@ -1,7 +1,9 @@
 import time
 
+import pytest
 import requests
 
+from jhub_apps.hub_client.utils import is_jupyterhub_5
 from jhub_apps.tests.common import constants
 
 
@@ -66,3 +68,8 @@ def fetch_url_until_title_found(
             if time_elapsed > timeout:
                 raise TimeoutError(f"Failed to get the title {expected_title} within {timeout} seconds") from e
             time.sleep(interval)
+
+
+def skip_if_jupyterhub_less_than_5():
+    """Skip test if JupyterHub < 5"""
+    return pytest.mark.skipif(not is_jupyterhub_5(), reason="Skipping test because JupyterHub<5")
