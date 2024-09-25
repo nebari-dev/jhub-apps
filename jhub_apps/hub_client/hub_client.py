@@ -11,6 +11,7 @@ import requests
 
 from jhub_apps.service.models import UserOptions, SharePermissions
 from jhub_apps.hub_client.utils import is_jupyterhub_5
+from jhub_apps.spawner.types import Framework
 
 API_URL = os.environ.get("JUPYTERHUB_API_URL")
 JUPYTERHUB_API_TOKEN = os.environ.get("JUPYTERHUB_API_TOKEN")
@@ -183,15 +184,19 @@ class HubClient:
         logger.info("Creating new server", server_name=servername)
         r = requests.post(API_URL + url, headers=self._headers(), json=data)
         r.raise_for_status()
-        if is_jupyterhub_5():
-            logger.info("Sharing", share_with=user_options.share_with)
-            self._share_server_with_multiple_entities(
-                username,
-                servername,
-                share_with=user_options.share_with
-            )
+        if user_options.framework != Framework.jupyterlab.value:
+            if is_jupyterhub_5():
+                logger.info("Sharing", share_with=user_options.share_with)
+                self._share_server_with_multiple_entities(
+                    username,
+                    servername,
+                    share_with=user_options.share_with
+                )
+            else:
+                logger.info("Not sharing server as JupyterHub < 5.x")
         else:
-            logger.info("Not sharing server as JupyterHub < 5.x")
+            logger.info(f"Not sharing the server as Framework is {user_options.framework}, "
+                        f"sharing JupyterLab servers is not allowed.")
         return r.status_code, servername
 
     def _share_server(
