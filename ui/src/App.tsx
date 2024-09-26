@@ -2,6 +2,8 @@ import { Box } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 import React, { useEffect } from 'react';
 import { Route, Routes } from 'react-router';
+
+import { useSearchParams } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import { Navigation, NotificationBar } from './components';
 import { CreateApp } from './pages/create-app/create-app';
@@ -12,6 +14,7 @@ import { ServerTypes } from './pages/server-types/server-types';
 import { StopPending } from './pages/stop-pending/stop-pending';
 import {
   currentNotification,
+  isHeadless as defaultIsHeadless,
   currentJhData as defaultJhData,
   currentProfiles as defaultProfiles,
   currentUser as defaultUser,
@@ -23,6 +26,7 @@ import axios from './utils/axios';
 import { getJhData } from './utils/jupyterhub';
 
 export const App = (): React.ReactElement => {
+  const [searchParams] = useSearchParams();
   const [, setCurrentJhData] = useRecoilState<JhData>(defaultJhData);
   const [, setCurrentUser] = useRecoilState<UserState | undefined>(defaultUser);
   const [, setCurrentProfiles] =
@@ -30,6 +34,8 @@ export const App = (): React.ReactElement => {
   const [notification, setNotification] = useRecoilState<string | undefined>(
     currentNotification,
   );
+  const [isHeadless, setIsHeadless] =
+    useRecoilState<boolean>(defaultIsHeadless);
 
   const { error: userError, data: userData } = useQuery<
     UserState,
@@ -87,6 +93,12 @@ export const App = (): React.ReactElement => {
     }
   }, [profileData, setCurrentProfiles]);
 
+  useEffect(() => {
+    if (searchParams.get('headless') === 'true') {
+      setIsHeadless(true);
+    }
+  }, [searchParams]);
+
   return (
     <div>
       <Navigation />
@@ -94,8 +106,8 @@ export const App = (): React.ReactElement => {
         component="main"
         sx={{
           flexGrow: 1,
-          pt: 9,
-          pl: { xs: 1, sm: 33 },
+          pt: isHeadless ? 1 : 9,
+          pl: { xs: 1, sm: isHeadless ? 1 : 33 },
           pr: 1,
           backgroundColor: '#fafbfc',
         }}
