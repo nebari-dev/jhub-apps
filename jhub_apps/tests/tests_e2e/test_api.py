@@ -153,6 +153,8 @@ def test_server_sharing(framework, response_status_code):
 
 @skip_if_jupyterhub_less_than_5()
 @pytest.mark.parametrize("shared_username, response_status_code,", [
+    # This user has been given special permission to start shared server
+    # in jupyterhub_config.py
     ("user-with-permission-to-start-shared", 200),
     ("user-without-permission-to-start-shared", 403),
 ])
