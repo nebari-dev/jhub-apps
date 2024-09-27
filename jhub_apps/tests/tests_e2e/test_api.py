@@ -7,7 +7,7 @@ from jhub_apps.service.models import Repository, UserOptions, ServerCreation, Sh
 from jhub_apps.spawner.types import Framework
 from jhub_apps.tests.common.constants import JHUB_APPS_API_BASE_URL, JUPYTERHUB_HOSTNAME
 from jhub_apps.tests.tests_e2e.utils import get_jhub_apps_session, fetch_url_until_title_found, \
-    skip_if_jupyterhub_less_than_5
+    skip_if_jupyterhub_less_than_5, create_server, stop_server, start_server
 
 EXAMPLE_TEST_REPO = "https://github.com/nebari-dev/jhub-apps-from-git-repo-example.git"
 
@@ -149,3 +149,37 @@ def test_server_sharing(framework, response_status_code):
     created_app_url = f"http://{JUPYTERHUB_HOSTNAME}/user/admin/{server_name}/"
     response = shared_user_session.get(created_app_url)
     assert response.status_code == response_status_code
+
+
+@skip_if_jupyterhub_less_than_5()
+@pytest.mark.parametrize("shared_username, response_status_code,", [
+    ("user-with-permission-to-start-shared", 200),
+    ("user-without-permission-to-start-shared", 403),
+])
+def test_starting_stopped_server(shared_username, response_status_code):
+    app_author_user = f"app-author-user-{uuid.uuid4().hex[:6]}"
+    share_with_user = shared_username
+    app_author_user_session = get_jhub_apps_session(username=app_author_user)
+    share_with_user_session = get_jhub_apps_session(username=share_with_user)
+    user_options = UserOptions(
+        jhub_app=True,
+        display_name="Test Application",
+        description="App description",
+        framework="panel",
+        thumbnail="data:image/png;base64,ZHVtbXkgaW1hZ2UgZGF0YQ==",
+        filepath="",
+        share_with=SharePermissions(
+            users=[share_with_user],
+            groups=[]
+        )
+    )
+    # create server
+    server_name = create_server(app_author_user_session, user_options)
+
+    # stop server
+    stop_server_response = stop_server(app_author_user_session, server_name)
+    assert stop_server_response.status_code == 200
+
+    # Start server from shared user's session
+    start_server_response = start_server(share_with_user_session, server_name)
+    assert start_server_response.status_code == response_status_code
