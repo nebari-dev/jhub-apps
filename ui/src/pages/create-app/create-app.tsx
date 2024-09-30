@@ -4,14 +4,17 @@ import { AppForm } from '@src/components';
 import { APP_BASE_URL } from '@src/utils/constants';
 import { navigateToUrl } from '@src/utils/jupyterhub';
 import React from 'react';
+import { useRecoilState } from 'recoil';
+import { isHeadless as defaultIsHeadless } from '../../store';
 import { StyledFormParagraph } from '../../styles/styled-form-paragraph';
 import { Item } from '../../styles/styled-item';
 
 export const CreateApp = (): React.ReactElement => {
+  const [isHeadless] = useRecoilState<boolean>(defaultIsHeadless);
   return (
     <Box className="container">
       <Stack>
-        <Item>
+        <Item hidden={isHeadless}>
           <div className="form-breadcrumb">
             <Button
               id="back-btn"
