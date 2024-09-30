@@ -4,7 +4,9 @@ import pytest
 import requests
 
 from jhub_apps.hub_client.utils import is_jupyterhub_5
+from jhub_apps.service.models import ServerCreation, UserOptions
 from jhub_apps.tests.common import constants
+from jhub_apps.tests.common.constants import JHUB_APPS_API_BASE_URL
 
 
 def get_jhub_apps_session(username=None):
@@ -73,3 +75,38 @@ def fetch_url_until_title_found(
 def skip_if_jupyterhub_less_than_5():
     """Skip test if JupyterHub < 5"""
     return pytest.mark.skipif(not is_jupyterhub_5(), reason="Skipping test because JupyterHub<5")
+
+
+def create_server(user_session: requests.Session, user_options: UserOptions) -> str:
+    """Create server from given user's session and user options"""
+    server_data = ServerCreation(
+        servername="test server sharing",
+        user_options=user_options
+    )
+    data = {"data": server_data.model_dump_json()}
+    response = user_session.post(
+        f"{JHUB_APPS_API_BASE_URL}/server",
+        verify=False,
+        data=data,
+    )
+    assert response.status_code == 200
+    server_name = response.json()[-1]
+    return server_name
+
+
+def stop_server(user_session: requests.Session, server_name: str) -> requests.Response:
+    """Stop the given server's name via given user's session."""
+    response = user_session.delete(
+        f"{JHUB_APPS_API_BASE_URL}/server/{server_name}",
+        verify=False,
+    )
+    return response
+
+
+def start_server(user_session: requests.Session, server_name: str) -> requests.Response:
+    """Start the given server via given user's session."""
+    response = user_session.post(
+        f"{JHUB_APPS_API_BASE_URL}/server/{server_name}",
+        verify=False,
+    )
+    return response

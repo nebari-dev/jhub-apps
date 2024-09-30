@@ -1,6 +1,6 @@
 import io
 import json
-from unittest.mock import patch
+from unittest.mock import patch, Mock
 
 import pytest
 
@@ -86,7 +86,7 @@ def test_api_create_server(create_server, client):
 
 @patch.object(HubClient, "start_server")
 def test_api_start_server(create_server, client):
-    start_server_response = {"user": "jovyan"}
+    start_server_response = Mock(status_code=200)
     create_server.return_value = start_server_response
     server_name = "server-name"
     response = client.post(
@@ -97,12 +97,11 @@ def test_api_start_server(create_server, client):
         servername=server_name,
     )
     assert response.status_code == 200
-    assert response.json() == start_server_response
 
 
 @patch.object(HubClient, "start_server")
 def test_api_start_server_404(start_server, client):
-    start_server_response = None
+    start_server_response = Mock(status_code=404)
     start_server.return_value = start_server_response
     server_name = "server-name"
     response = client.post(
@@ -112,8 +111,7 @@ def test_api_start_server_404(start_server, client):
         username=MOCK_USER.name,
         servername=server_name,
     )
-    assert response.status_code == 404
-    assert response.json() == {"detail": "server 'server-name' not found"}
+    assert response.status_code == 403
 
 
 @pytest.mark.parametrize("name,remove", [

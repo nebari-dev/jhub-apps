@@ -85,13 +85,13 @@ class HubClient:
     def _revoke_token(self, token_id):
         assert self.username
         assert token_id
-        logger.info(f"Revoking token: {token_id}")
+        logger.debug(f"Revoking token: {token_id}")
         r = requests.delete(
             API_URL + f"/users/{self.username}/tokens/{token_id}",
             headers=self._headers(token=JUPYTERHUB_API_TOKEN),
         )
         r.raise_for_status()
-        logger.info(
+        logger.debug(
             "Token revoked",
             status_code=r.status_code,
             username=self.username
@@ -103,7 +103,8 @@ class HubClient:
         r = requests.get(
             API_URL + "/users",
             params={"include_stopped_servers": True},
-            headers=self._headers()
+            # We explicitly want to use japps app token for this
+            headers=self._headers(token=self.tokens[0])
         )
         r.raise_for_status()
         users = r.json()
@@ -137,8 +138,21 @@ class HubClient:
         # Max limit for servername is 255 chars
         return text[:240]
 
+    def _find_user_server(
+            self, servername
+    ) -> typing.Tuple[typing.Optional[str], typing.Optional[dict]]:
+        """Given a server name, return the user and the server object from
+        the user who owns the server.
+        """
+        users = self.get_users()
+        for user in users:
+            if servername in user["servers"]:
+                return user["name"], user["servers"][servername]
+        return None, None
+
     @requires_user_token
     def start_server(self, username, servername):
+        server_owner = username
         if not servername:
             logger.info("Starting JupyterLab server")
             # Default server, which is JupyterLab (not named server)
@@ -148,13 +162,16 @@ class HubClient:
             # Get named server
             server = self.get_server(username, servername)
             if not server:
+                # Shared server (not owned by the given user)
+                server_owner, server = self._find_user_server(servername)
+            if not server:
                 return None
             user_options = server["user_options"]
-        url = f"/users/{username}/servers/{servername}"
+        url = f"/users/{server_owner}/servers/{servername}"
         data = {"name": servername, **user_options}
-        r = requests.post(API_URL + url, headers=self._headers(), json=data)
-        r.raise_for_status()
-        return r.status_code, servername
+        response = requests.post(API_URL + url, headers=self._headers(), json=data)
+        logger.info("Start server response", status_code=response.status_code, servername=servername)
+        return response
 
     @requires_user_token
     def create_server(self, username: str, servername: str, user_options: UserOptions = None):

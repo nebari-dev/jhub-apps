@@ -174,6 +174,13 @@ async def start_server(
             username=user.name,
             servername=server_name,
         )
+        if response.status_code in [403, 404]:
+            raise HTTPException(
+                detail=f"User doesn't have permissions to start server: '{server_name}' "
+                       f"or the server with this name does not exist",
+                status_code=status.HTTP_403_FORBIDDEN,
+            )
+        response.raise_for_status()
     except requests.exceptions.HTTPError as e:
         raise HTTPException(
             detail=f"Probably server '{server_name}' is already running: {e}",
@@ -184,7 +191,7 @@ async def start_server(
             detail=f"server '{server_name}' not found",
             status_code=status.HTTP_404_NOT_FOUND,
         )
-    return response
+    return response.status_code
 
 
 @router.put("/server/{server_name}")

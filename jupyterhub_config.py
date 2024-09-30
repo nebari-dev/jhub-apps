@@ -72,3 +72,14 @@ for role in c.JupyterHub.load_roles:
             "read:groups:name",
         ] + ["shares!user"] if is_jupyterhub_5() else [])
         break
+
+c.JupyterHub.load_roles = c.JupyterHub.load_roles + [
+    {
+        'name': 'allow-access-to-start-shared-server',
+        'description': 'Allows users to start shared server',
+        'scopes': [
+            "servers",
+        ],
+        'users': ["user-with-permission-to-start-shared"],
+    }
+]
