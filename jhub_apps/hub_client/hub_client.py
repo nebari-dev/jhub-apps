@@ -140,7 +140,7 @@ class HubClient:
 
     def _find_user_server(
             self, servername
-    ) -> typing.Tuple[typing.Optional[dict], typing.Optional[dict]]:
+    ) -> typing.Tuple[typing.Optional[str], typing.Optional[dict]]:
         """Given a server name, return the user and the server object from
         the user who owns the server.
         """
