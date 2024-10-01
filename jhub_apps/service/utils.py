@@ -1,6 +1,6 @@
 import base64
 import itertools
-import json
+
 import structlog
 import os
 
@@ -150,54 +150,21 @@ def get_theme(config):
 
 
 def get_shared_servers(current_hub_user):
-    # Check if current_hub_user is a dictionary or an object
-    if isinstance(current_hub_user, dict):
-        username = current_hub_user.get('name')
-    else:
-        username = getattr(current_hub_user, 'name', None)
-
-    if not username:
-        raise ValueError("User name is missing in current_hub_user")
-
-    # Initialize hub client for the user
-    hub_client_user = HubClient(username=username)
-
     # Filter servers shared with the user
     hub_client_service = HubClient()
-
-    try:
-        users = hub_client_service.get_users()
-        # Check if users is a string, if so, parse it as JSON
-        if isinstance(users, str):
-            users = json.loads(users)
-
-        # Ensure that users is a list of dictionaries
-        if not isinstance(users, list):
-            raise TypeError("Expected a list of users from hub_client_service.get_users()")
-        
-        # Iterate over users to get their servers
-        all_users_servers = list(itertools.chain.from_iterable([
-            list(user.get('servers', {}).values()) for user in users if isinstance(user, dict)
-        ]))
-
-    except (json.JSONDecodeError, TypeError, KeyError) as e:
-        print(f"Error while fetching or parsing user servers: {e}")
-        return []
-
-    # Filter out default JupyterLab server (name="")
+    all_users_servers = list(itertools.chain.from_iterable([
+        list(user['servers'].values()) for user in hub_client_service.get_users()
+    ]))
     user_servers_without_default_jlab = list(filter(lambda server: server["name"] != "", all_users_servers))
-    
-    # Get shared servers for the current user
+    hub_client_user = HubClient(username=current_hub_user['name'])
     shared_servers = hub_client_user.get_shared_servers()
     shared_server_names = {
         shared_server["server"]["name"] for shared_server in shared_servers
-        # Remove shared apps by current user
-        if shared_server["server"]["user"]["name"] != username
+        # remove shared apps by current user
+        if shared_server["server"]["user"]["name"] != current_hub_user['name']
     }
-    
     shared_servers_rich = [
         server for server in user_servers_without_default_jlab
         if server["name"] in shared_server_names
     ]
-    
     return shared_servers_rich
