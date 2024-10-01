@@ -1,5 +1,6 @@
+import { useState } from 'react';
 import ArrowBackIcon from '@mui/icons-material/ArrowBackRounded';
-import { Box, Button, Stack, Typography } from '@mui/material';
+import { Box, Button, Stack, Typography, FormControl, Radio, RadioGroup, FormControlLabel } from '@mui/material';
 import { AppForm } from '@src/components';
 import { APP_BASE_URL } from '@src/utils/constants';
 import { navigateToUrl } from '@src/utils/jupyterhub';
@@ -16,6 +17,7 @@ export const CreateApp = (): React.ReactElement => {
       <Stack>
         <Item hidden={isHeadless}>
           <div className="form-breadcrumb">
+            {/* Back button */}
             <Button
               id="back-btn"
               type="button"
@@ -28,9 +30,34 @@ export const CreateApp = (): React.ReactElement => {
             </Button>
           </div>
         </Item>
+
+        {/* Radio buttons right after Back button */}
+        <Item>
+          <FormControl component="fieldset">
+            <RadioGroup
+              aria-label="deployOption"
+              name="deployOption"
+              value={deployOption}
+              onChange={handleDeployOptionChange}
+            >
+              <FormControlLabel
+                value="launcher"
+                control={<Radio />}
+                label="Deploy from App Launcher"
+              />
+              <FormControlLabel
+                value="git"
+                control={<Radio />}
+                label="Deploy from Git Repository"
+              />
+            </RadioGroup>
+          </FormControl>
+        </Item>
+
+
         <Item>
           <Typography component="h1" variant="h5">
-            Deploy a new app
+            {deployOption === 'launcher' ? 'Deploy a new app' : 'Deploy an app from a Git repository'}
           </Typography>
           <StyledFormParagraph>
             Begin your project by entering the details below. For more
@@ -46,8 +73,10 @@ export const CreateApp = (): React.ReactElement => {
             .
           </StyledFormParagraph>
         </Item>
+        
         <Item>
-          <AppForm />
+          {/* Pass the selected deployment option to the AppForm */}
+          <AppForm deployOption={deployOption} />
         </Item>
       </Stack>
     </Box>
