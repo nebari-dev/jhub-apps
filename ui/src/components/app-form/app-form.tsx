@@ -33,7 +33,7 @@ import {
 import { useMutation, useQuery } from '@tanstack/react-query';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import { AppSharing, EnvironmentVariables, Thumbnail } from '..';
 import {
@@ -41,6 +41,7 @@ import {
   currentFile as defaultFile,
   currentFormInput as defaultFormInput,
   currentImage as defaultImage,
+  isHeadless as defaultIsHeadless,
   currentServerName as defaultServerName,
   currentUser as defaultUser,
 } from '../../store';
@@ -61,6 +62,13 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
   const [isFocused, setIsFocused] = useState<boolean>(false);
   const firstErrorRef = useRef<HTMLInputElement | null>(null);
   const appInfoRef = useRef<HTMLDivElement | null>(null);
+  const [isHeadless] = useRecoilState<boolean>(defaultIsHeadless);
+
+  const [searchParams] = useSearchParams();
+
+  const initialFilepath = decodeURIComponent(
+    searchParams.get('filepath') || '',
+  );
 
   const adjustTextareaHeight = (
     textarea: EventTarget & HTMLTextAreaElement,
@@ -153,7 +161,7 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
       description: '',
       framework: '',
       thumbnail: '',
-      filepath: '',
+      filepath: initialFilepath,
       conda_env: '',
       custom_command: '',
       profile: '',
@@ -695,10 +703,7 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
                   }
                   InputProps={{
                     style: errors.custom_command
-                      ? {
-                        borderColor: '#d32f2f',
-                        // boxShadow: '0 0 0 2px rgba(211, 47, 47, 0.2)',
-                      }
+                      ? { borderColor: '#d32f2f' }
                       : {},
                   }}
                   InputLabelProps={{
@@ -918,7 +923,7 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
       </StyledFormSection>
       <hr />
       <div className="button-section">
-        <div className="prev">
+        <div className="prev" hidden={isHeadless}>
           <Button
             id="cancel-btn"
             type="button"

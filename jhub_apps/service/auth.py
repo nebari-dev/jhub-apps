@@ -9,7 +9,7 @@ from fastapi import HTTPException, status
 logger = structlog.get_logger(__name__)
 
 
-def create_access_token(data: dict, expires_delta: typing.Optional[timedelta] = None):
+def _create_access_token(data: dict, expires_delta: typing.Optional[timedelta] = None):
     logger.info("Creating access token")
     to_encode = data.copy()
     if expires_delta:
@@ -22,7 +22,7 @@ def create_access_token(data: dict, expires_delta: typing.Optional[timedelta] = 
     return encoded_jwt
 
 
-def get_jhub_token_from_jwt_token(token):
+def _get_jhub_token_from_jwt_token(token):
     logger.info("Trying to get JHub Apps token from JWT Token")
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,

@@ -41,7 +41,11 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import React, { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
-import { currentNotification, currentUser as defaultUser } from '../../store';
+import {
+  currentNotification,
+  isHeadless as defaultIsHeadless,
+  currentUser as defaultUser,
+} from '../../store';
 import './navigation.css';
 export const StyledListItemTextHeader = styled(ListItemText)(({ theme }) => ({
   fontWeight: 400,
@@ -82,6 +86,8 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
   const [services, setServices] = useState<JhService[]>([]);
   const [pinnedApps, setPinnedApps] = useState<JhApp[]>([]);
   const [pinnedServices, setPinnedServices] = useState<JhServiceApp[]>([]);
+  const [isHeadless] = useRecoilState<boolean>(defaultIsHeadless);
+
   const {
     isLoading: appsLoading,
     error: appsError,
@@ -341,7 +347,7 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
   );
 
   return (
-    <Box sx={{ flexGrow: 1 }}>
+    <Box sx={{ flexGrow: 1 }} hidden={isHeadless}>
       <AppBar
         id="app-bar"
         position="fixed"

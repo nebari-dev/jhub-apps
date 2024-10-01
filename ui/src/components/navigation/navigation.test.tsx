@@ -4,14 +4,17 @@ import { servicesFull } from '@src/data/jupyterhub';
 import { currentUser } from '@src/data/user';
 import axios from '@src/utils/axios';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { act, fireEvent, render } from '@testing-library/react';
+import { act, fireEvent, render, waitFor } from '@testing-library/react';
 import MockAdapter from 'axios-mock-adapter';
 import { ReactNode } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { JSX } from 'react/jsx-runtime';
 import { RecoilRoot } from 'recoil';
 import { Navigation } from '..';
-import { currentUser as defaultUser } from '../../store';
+import {
+  isHeadless as defaultIsHeadless,
+  currentUser as defaultUser,
+} from '../../store';
 import { theme } from '../../theme/theme';
 describe('Navigation', () => {
   const queryClient = new QueryClient({
@@ -112,6 +115,23 @@ describe('Navigation', () => {
     expect(baseElement.querySelectorAll('.MuiListItem-root')).not.toHaveLength(
       0,
     );
+  });
+
+  test('does not render navigation when headless', async () => {
+    const { baseElement } = renderWithTheme(
+      <RecoilRoot initializeState={({ set }) => set(defaultIsHeadless, true)}>
+        <QueryClientProvider client={queryClient}>
+          <BrowserRouter>
+            <Navigation />
+          </BrowserRouter>
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+
+    waitFor(() => {
+      expect(baseElement.querySelector('.MuiListItem-root')).toBeFalsy();
+      expect(baseElement.querySelector('.MuiDrawer-root')).toBeFalsy();
+    });
   });
 
   test('handles profile menu click', async () => {
