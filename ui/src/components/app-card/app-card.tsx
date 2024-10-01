@@ -3,6 +3,7 @@ import LockRoundedIcon from '@mui/icons-material/LockRounded';
 import PublicRoundedIcon from '@mui/icons-material/PublicRounded';
 import PushPinRoundedIcon from '@mui/icons-material/PushPinRounded';
 import { Box, Link, Tooltip } from '@mui/material';
+import { useQuery } from '@tanstack/react-query'; 
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
@@ -26,6 +27,8 @@ import {
 } from '../../store';
 import ContextMenu, { ContextMenuItem } from '../context-menu/context-menu';
 import './app-card.css';
+import axios from 'axios';
+import { UserState } from '@src/types/user';
 interface AppCardProps {
   id: string;
   title: string;
@@ -69,11 +72,22 @@ export const AppCard = ({
   const [, setIsDeleteOpen] = useRecoilState<boolean>(isDeleteOpen);
   const [, setIsStartNotRunningOpen] = useRecoilState(isStartNotRunningOpen);
 
+
   useEffect(() => {
     if (serverStatus) {
       setAppStatus(serverStatus);
     }
   }, [serverStatus, setNotification]);
+
+  // Fetch user data and check admin status
+  const { data: currentUserData } = useQuery<UserState>({
+    queryKey: ['current-user'],
+    queryFn: () =>
+      axios.get('/user').then((response) => {
+        return response.data;
+      }),
+    enabled: true,
+  });
 
   const getIcon = () => {
     if (!isAppCard)
@@ -110,21 +124,32 @@ export const AppCard = ({
       id: 'start',
       title: 'Start',
       onClick: () => {
+        // Allow admins to start shared apps
+        if (isShared && !currentUserData?.admin) {
+          // Show error if it's a shared app
+          setNotification('You don\'t have permission to start this app. Please ask the owner to start it.');
+          return;
+        }
         setIsStartOpen(true);
         setCurrentApp(app!); // Add the non-null assertion operator (!) to ensure that app is not undefined
       },
       visible: true,
-      disabled: serverStatus !== 'Ready',
+      disabled: serverStatus !== 'Ready', // Disable start if the app is already running
     },
     {
       id: 'stop',
       title: 'Stop',
       onClick: () => {
+        // Allow admins to stop shared apps
+        if (isShared && !currentUserData?.admin) {
+          setNotification('You don\'t have permission to stop this app. Please ask the owner to stop it.');
+          return;
+        }
         setIsStopOpen(true);
-        setCurrentApp(app!);
+        setCurrentApp(app!); 
       },
       visible: true,
-      disabled: serverStatus !== 'Running' || isShared,
+      disabled: serverStatus !== 'Running', // Disable stop if the app is not running
     },
     {
       id: 'edit',
@@ -142,11 +167,13 @@ export const AppCard = ({
         setCurrentApp(app!);
       },
       visible: true,
-      disabled: isShared || id === '' || !isAppCard,
+      disabled: isShared || id === '' || !isAppCard, // Disable delete for shared apps
       danger: true,
     },
   ];
-
+  
+  
+  
   const getHoverClass = (id: string) => {
     const element = document.querySelector(
       `#card-content-container-${id}`,
@@ -194,7 +221,7 @@ export const AppCard = ({
               url: app?.url || '',
               ready: app?.ready || false,
               public: app?.public || false,
-              shared: false,
+              shared: app?.shared || isShared || false,
               last_activity: new Date(app?.last_activity || ''),
               status: 'Ready',
             });

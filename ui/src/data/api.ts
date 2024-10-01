@@ -235,6 +235,30 @@ export const serverApps = {
         username: 'Test User',
       },
     },
+    {
+      name: 'shared-appII',
+      url: '/shared/test/shared-app/',
+      started: '2021-02-01T00:00:00.000Z',
+      pending: null,
+      ready: true,
+      last_activity: getMockDate(48),
+      stopped: true,
+      user_options: {
+        name: 'shared-appII',
+        jhub_app: true,
+        display_name: 'Shared App Stopped',
+        description:
+          'Lorem ipsum dolor sit amet consectetur. Sit vestibulum facilisis auctor pulvinar ac. Cras.',
+        thumbnail: DEFAULT_APP_LOGO,
+        framework: 'panel',
+        conda_env: 'env-1',
+        profile: 'small0',
+        env: null,
+        public: false,
+        keep_alive: false,
+        username: 'Test User',
+      },
+    },
   ],
 };
 

@@ -85,7 +85,7 @@ describe('JupyterHub utils', () => {
 
   test('returns an array of JhApp for shared apps', () => {
     const result = getApps(serverApps, 'shared', 'testUser');
-    expect(result.length).toEqual(1);
+    expect(result.length).toEqual(2);
   });
 
   test('returns an array of JhApp for non-shared apps', () => {
@@ -95,7 +95,7 @@ describe('JupyterHub utils', () => {
 
   test('returns an array of JhApp for all apps', () => {
     const result = getApps(serverApps, 'all', 'testUser');
-    expect(result.length).toEqual(5);
+    expect(result.length).toEqual(6);
   });
 
   test('returns a jupyterhub friendly url for JupyterLab with no encoding needed', () => {
