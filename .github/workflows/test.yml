@@ -19,6 +19,7 @@ jobs:
           - "3.10"
           - "3.11"
           - "3.12"
+          - "3.13.0rc2"
         test_type:
           - tests_unit
         jupyterhub:
@@ -33,7 +34,7 @@ jobs:
         environment-file: environment-dev.yml
         create-args: >-
           python=${{ matrix.python-version }}
-          -c conda-forge
+          -c conda-forge -c conda-forge/label/python_rc
 
     - name: Install JHub Apps
       run: |
