@@ -38,6 +38,7 @@ from jhub_apps.service.utils import (
     get_spawner_profiles,
     get_thumbnail_data_url,
     get_shared_servers,
+    _check_multiple_jlab_allowed_if_framework_jlab,
 )
 from jhub_apps.service.app_from_git import _get_app_configuration_from_git
 from jhub_apps.spawner.types import FRAMEWORKS, Framework
@@ -147,6 +148,7 @@ async def create_server(
     user: User = Depends(get_current_user),
 ):
     # server.servername is not necessary to supply for create server
+    _check_multiple_jlab_allowed_if_framework_jlab(server.user_options)
     server_name = server.user_options.display_name
     logger.info("Creating server", server_name=server_name, user=user.name)
     server.user_options.thumbnail = await get_thumbnail_data_url(
@@ -202,6 +204,7 @@ async def update_server(
     user: User = Depends(get_current_user),
     server_name=None,
 ):
+    _check_multiple_jlab_allowed_if_framework_jlab(server.user_options)
     if thumbnail_data_url:
         server.user_options.thumbnail = thumbnail_data_url
     else:

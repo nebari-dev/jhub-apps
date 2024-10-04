@@ -7,11 +7,13 @@ import os
 from cachetools import cached, TTLCache
 from unittest.mock import Mock
 
+from fastapi import HTTPException, status
 from jupyterhub.app import JupyterHub
 from traitlets.config import LazyConfigValue
 
 from jhub_apps.hub_client.hub_client import HubClient
-from jhub_apps.spawner.types import FrameworkConf, FRAMEWORKS_MAPPING
+from jhub_apps.service.models import UserOptions
+from jhub_apps.spawner.types import FrameworkConf, FRAMEWORKS_MAPPING, Framework
 from slugify import slugify
 
 
@@ -168,3 +170,16 @@ def get_shared_servers(current_hub_user):
         if server["name"] in shared_server_names
     ]
     return shared_servers_rich
+
+
+def _check_multiple_jlab_allowed_if_framework_jlab(user_options: UserOptions):
+    """Checks if spinning up multiple JupyterLab servers per user is enabled, in case the selected
+    framework is JupyterLab.
+    """
+    config = get_jupyterhub_config()
+    is_jupyterlab = user_options.framework == Framework.jupyterlab.value
+    if is_jupyterlab and not config.JAppsConfig.allow_multiple_jupyterlab:
+        raise HTTPException(
+            detail=f"Multiple JupyterLabs are not allowed on this deployment, please contact admin.",
+            status_code=status.HTTP_403_FORBIDDEN,
+        )
