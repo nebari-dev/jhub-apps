@@ -1,4 +1,4 @@
-from traitlets import Unicode, Union, List, Callable, Integer
+from traitlets import Unicode, Union, List, Callable, Integer, Bool
 from traitlets.config import SingletonConfigurable, Enum
 
 
@@ -47,4 +47,9 @@ class JAppsConfig(SingletonConfigurable):
     service_workers = Integer(
         2,
         help="The number of workers to create for the JHub Apps FastAPI service",
+    ).tag(config=True)
+
+    allow_multiple_jupyterlab = Bool(
+        False,
+        help="Allow users to spinup multiple JupyterLab servers",
     ).tag(config=True)

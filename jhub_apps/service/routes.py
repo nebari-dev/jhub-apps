@@ -40,7 +40,7 @@ from jhub_apps.service.utils import (
     get_shared_servers,
 )
 from jhub_apps.service.app_from_git import _get_app_configuration_from_git
-from jhub_apps.spawner.types import FRAMEWORKS
+from jhub_apps.spawner.types import FRAMEWORKS, Framework
 from jhub_apps.version import get_version
 
 app = FastAPI()
@@ -245,8 +245,12 @@ async def me(user: User = Depends(get_current_user)):
 @router.get("/frameworks/", description="Get all frameworks")
 async def get_frameworks(user: User = Depends(get_current_user)):
     logger.info("Getting all the frameworks")
+    config = get_jupyterhub_config()
     frameworks = []
     for framework in FRAMEWORKS:
+        is_jupyterlab = framework.name == Framework.jupyterlab.value
+        if is_jupyterlab and not config.JAppsConfig.allow_multiple_jupyterlab:
+            continue
         frameworks.append(framework.json())
     return frameworks
 
