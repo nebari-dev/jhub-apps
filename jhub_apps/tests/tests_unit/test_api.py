@@ -66,8 +66,9 @@ def test_api_get_server_not_found(get_user, client):
     }
 
 
+@patch("jhub_apps.service.utils.get_jupyterhub_config")
 @patch.object(HubClient, "create_server")
-def test_api_create_server(create_server, client):
+def test_api_create_server(create_server, get_jupyterhub_config, client):
     from jhub_apps.service.models import UserOptions
     create_server_response = {"user": "jovyan"}
     create_server.return_value = create_server_response
@@ -138,8 +139,9 @@ def test_api_delete_server(delete_server, name, remove, client):
     assert response.json() == create_server_response
 
 
+@patch("jhub_apps.service.utils.get_jupyterhub_config")
 @patch.object(HubClient, "edit_server")
-def test_api_update_server(edit_server, client):
+def test_api_update_server(edit_server, get_jupyterhub_config, client):
     from jhub_apps.service.models import UserOptions
 
     create_server_response = {"user": "jovyan"}
@@ -239,9 +241,11 @@ def test_open_api_docs(client):
     assert rjson['info']['version']
 
 
+@patch("jhub_apps.service.utils.get_jupyterhub_config")
 @patch.object(HubClient, "create_server")
 def test_create_server_with_git_repository(
         hub_create_server,
+        get_jupyterhub_config,
         client,
 ):
     user_options = UserOptions(
