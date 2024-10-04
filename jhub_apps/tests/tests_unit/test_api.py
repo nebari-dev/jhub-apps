@@ -7,8 +7,14 @@ import pytest
 from jhub_apps.hub_client.hub_client import HubClient
 from jhub_apps.service.models import UserOptions, ServerCreation, Repository
 from jhub_apps.service.utils import get_shared_servers
-from jhub_apps.spawner.types import FRAMEWORKS
+from jhub_apps.spawner.types import FRAMEWORKS, Framework, JUPYTERLAB_FRAMEWORK_CONFIG
 from jhub_apps.tests.common.constants import MOCK_USER
+
+frameworks_config_without_jupyterlab = [
+    f for f in FRAMEWORKS if f.name != Framework.jupyterlab.name
+]
+
+all_frameworks_config = frameworks_config_without_jupyterlab + [JUPYTERLAB_FRAMEWORK_CONFIG]
 
 
 def mock_user_options():
@@ -196,12 +202,20 @@ def test_shared_server_filtering(hub_get_shared_servers, get_users):
     get_users.assert_called_once_with()
 
 
-def test_api_frameworks(client):
+@pytest.mark.parametrize("allow_multiple_jupyterlab,frameworks_config", [
+    (True, all_frameworks_config),
+    (False, frameworks_config_without_jupyterlab)
+])
+@patch("jhub_apps.service.routes.get_jupyterhub_config")
+def test_api_frameworks(get_jupyterhub_config, client, allow_multiple_jupyterlab, frameworks_config):
+    JAppsConfig = Mock()
+    JAppsConfig.allow_multiple_jupyterlab = allow_multiple_jupyterlab
+    get_jupyterhub_config.return_value = Mock(JAppsConfig=JAppsConfig)
     response = client.get(
         "/frameworks",
     )
     frameworks = []
-    for framework in FRAMEWORKS:
+    for framework in frameworks_config:
         frameworks.append(framework.json())
     assert response.json() == frameworks
 
