@@ -180,6 +180,6 @@ def _check_multiple_jlab_allowed_if_framework_jlab(user_options: UserOptions):
     is_jupyterlab = user_options.framework == Framework.jupyterlab.value
     if is_jupyterlab and not config.JAppsConfig.allow_multiple_jupyterlab:
         raise HTTPException(
-            detail=f"Multiple JupyterLabs are not allowed on this deployment, please contact admin.",
+            detail="Multiple JupyterLabs are not allowed on this deployment, please contact admin.",
             status_code=status.HTTP_403_FORBIDDEN,
         )
