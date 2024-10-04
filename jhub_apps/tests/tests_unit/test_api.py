@@ -70,6 +70,9 @@ def test_api_get_server_not_found(get_user, client):
 @patch.object(HubClient, "create_server")
 def test_api_create_server(create_server, get_jupyterhub_config, client):
     from jhub_apps.service.models import UserOptions
+    get_jupyterhub_config.return_value = Mock(
+        JAppsConfig=Mock(allow_multiple_jupyterlab=True)
+    )
     create_server_response = {"user": "jovyan"}
     create_server.return_value = create_server_response
     user_options = mock_user_options()
@@ -143,7 +146,9 @@ def test_api_delete_server(delete_server, name, remove, client):
 @patch.object(HubClient, "edit_server")
 def test_api_update_server(edit_server, get_jupyterhub_config, client):
     from jhub_apps.service.models import UserOptions
-
+    get_jupyterhub_config.return_value = Mock(
+        JAppsConfig=Mock(allow_multiple_jupyterlab=True)
+    )
     create_server_response = {"user": "jovyan"}
     edit_server.return_value = create_server_response
     user_options = mock_user_options()
@@ -210,9 +215,9 @@ def test_shared_server_filtering(hub_get_shared_servers, get_users):
 ])
 @patch("jhub_apps.service.routes.get_jupyterhub_config")
 def test_api_frameworks(get_jupyterhub_config, client, allow_multiple_jupyterlab, frameworks_config):
-    JAppsConfig = Mock()
-    JAppsConfig.allow_multiple_jupyterlab = allow_multiple_jupyterlab
-    get_jupyterhub_config.return_value = Mock(JAppsConfig=JAppsConfig)
+    get_jupyterhub_config.return_value = Mock(
+        JAppsConfig=Mock(allow_multiple_jupyterlab=allow_multiple_jupyterlab)
+    )
     response = client.get(
         "/frameworks",
     )
@@ -248,6 +253,9 @@ def test_create_server_with_git_repository(
         get_jupyterhub_config,
         client,
 ):
+    get_jupyterhub_config.return_value = Mock(
+        JAppsConfig=Mock(allow_multiple_jupyterlab=True)
+    )
     user_options = UserOptions(
         jhub_app=True,
         display_name="Test Application",
