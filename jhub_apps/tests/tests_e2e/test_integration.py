@@ -87,8 +87,12 @@ def create_app(
         share_with_groups=None,
 ):
     logger.info("Creating App")
-    page.get_by_role("button", name="Deploy App").click()
+    deploy_button = page.get_by_role("button", name="Deploy App")
+    expect(deploy_button).to_be_visible()
+    deploy_button.click()
     logger.info("Fill App display Name")
+    display_name_field = page.get_by_label("*Name")
+    expect(display_name_field).to_be_visible()
     page.get_by_label("*Name").click()
     page.get_by_label("*Name").fill(app_name)
     logger.info("Select Framework")
