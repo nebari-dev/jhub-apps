@@ -590,7 +590,11 @@ describe('AppCard', () => {
             url="/some-url"
             serverStatus="Ready"
             isShared={false}
-            app={{ id: '1', name: 'Test App', framework: 'Some Framework', description: 'Test App 1',
+            app={{
+              id: '1',
+              name: 'Test App',
+              framework: 'Some Framework',
+              description: 'Test App 1',
               url: '/user/test/test-app-1/',
               thumbnail: '',
               username: 'test',
@@ -600,30 +604,30 @@ describe('AppCard', () => {
               last_activity: new Date(),
               pending: false,
               stopped: false,
-              status: 'false' }}
+              status: 'false',
+            }}
           />
         </QueryClientProvider>
       </RecoilRoot>,
     );
-  
+
     // Open context menu first
     const contextMenuButton = getByTestId('context-menu-button-card-menu-1');
     act(() => {
       contextMenuButton.click();
     });
-  
+
     const startMenuItem = await waitFor(() => getByText('Start'));
     const stopMenuItem = getByText('Stop');
     const editMenuItem = getByText('Edit');
     const deleteMenuItem = getByText('Delete');
-  
+
     expect(startMenuItem).toBeInTheDocument();
     expect(stopMenuItem).toBeInTheDocument();
     expect(editMenuItem).toBeInTheDocument();
     expect(deleteMenuItem).toBeInTheDocument();
   });
-  
-  
+
   test('disables stop action if app is not running', async () => {
     const { getByTestId, getByText } = render(
       <RecoilRoot>
@@ -636,7 +640,10 @@ describe('AppCard', () => {
             url="/some-url"
             serverStatus="Pending" // App is not running
             isShared={false}
-            app={{ id: '1', name: 'Test App', framework: 'Some Framework', 
+            app={{
+              id: '1',
+              name: 'Test App',
+              framework: 'Some Framework',
               description: 'Test App 1',
               url: '/user/test/test-app-1/',
               thumbnail: '',
@@ -647,24 +654,24 @@ describe('AppCard', () => {
               last_activity: new Date(),
               pending: true,
               stopped: false,
-              status: 'false' }}
+              status: 'false',
+            }}
           />
         </QueryClientProvider>
       </RecoilRoot>,
     );
-  
+
     // Open context menu first
     const contextMenuButton = getByTestId('context-menu-button-card-menu-1');
     act(() => {
       contextMenuButton.click();
     });
-  
+
     const stopMenuItem = await waitFor(() => getByText('Stop'));
     expect(stopMenuItem).toBeInTheDocument();
     expect(stopMenuItem).toHaveAttribute('aria-disabled', 'true');
   });
-  
-  
+
   test('disables edit and delete for shared apps', async () => {
     const { getByTestId, getByText } = render(
       <RecoilRoot>
@@ -681,19 +688,17 @@ describe('AppCard', () => {
         </QueryClientProvider>
       </RecoilRoot>,
     );
-  
+
     // Open context menu first
     const contextMenuButton = getByTestId('context-menu-button-card-menu-1');
     act(() => {
       contextMenuButton.click();
     });
-  
+
     const editMenuItem = await waitFor(() => getByText('Edit'));
     const deleteMenuItem = getByText('Delete');
-  
+
     expect(editMenuItem).toHaveAttribute('aria-disabled', 'true');
     expect(deleteMenuItem).toHaveAttribute('aria-disabled', 'true');
   });
-  
-  
 });
