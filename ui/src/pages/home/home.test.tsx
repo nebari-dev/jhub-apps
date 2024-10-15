@@ -617,7 +617,7 @@ describe('Home', () => {
 
   test('should render with start modal and submit with success snackbar', async () => {
     mock.onPost('/server/test-app-1').reply(200); // Mock the start API endpoint
-  
+
     const { baseElement, getByText } = render(
       <RecoilRoot
         initializeState={({ set }) => {
@@ -632,17 +632,19 @@ describe('Home', () => {
         </QueryClientProvider>
       </RecoilRoot>,
     );
-  
+
     await waitFor(() => {
       const startModal = within(baseElement).getByTestId('StartModal');
       expect(startModal).toBeInTheDocument();
     });
-  
-    const startBtn = baseElement.querySelector('#start-btn') as HTMLButtonElement;
+
+    const startBtn = baseElement.querySelector(
+      '#start-btn',
+    ) as HTMLButtonElement;
     await act(async () => {
       startBtn.click();
     });
-  
+
     await waitFor(() => {
       const snackbar = getByText('App started successfully');
       expect(snackbar).toBeInTheDocument();
@@ -651,7 +653,7 @@ describe('Home', () => {
 
   test('should render with stop modal and submit with success snackbar', async () => {
     mock.onDelete('/server/test-app-1').reply(200); // Mock the stop API endpoint
-  
+
     const { baseElement, getByText } = render(
       <RecoilRoot
         initializeState={({ set }) => {
@@ -666,17 +668,17 @@ describe('Home', () => {
         </QueryClientProvider>
       </RecoilRoot>,
     );
-  
+
     await waitFor(() => {
       const stopModal = within(baseElement).getByTestId('StopModal');
       expect(stopModal).toBeInTheDocument();
     });
-  
+
     const stopBtn = baseElement.querySelector('#stop-btn') as HTMLButtonElement;
     await act(async () => {
       stopBtn.click();
     });
-  
+
     await waitFor(() => {
       const snackbar = getByText('Server stopped successfully');
       expect(snackbar).toBeInTheDocument();
@@ -684,7 +686,7 @@ describe('Home', () => {
   });
   test('should render with delete modal and submit with success snackbar', async () => {
     mock.onDelete('/server/test-app-1').reply(200); // Mock the delete API endpoint
-  
+
     const { baseElement, getByText } = render(
       <RecoilRoot
         initializeState={({ set }) => {
@@ -699,17 +701,19 @@ describe('Home', () => {
         </QueryClientProvider>
       </RecoilRoot>,
     );
-  
+
     await waitFor(() => {
       const deleteModal = within(baseElement).getByTestId('DeleteModal');
       expect(deleteModal).toBeInTheDocument();
     });
-  
-    const deleteBtn = baseElement.querySelector('#delete-btn') as HTMLButtonElement;
+
+    const deleteBtn = baseElement.querySelector(
+      '#delete-btn',
+    ) as HTMLButtonElement;
     await act(async () => {
       deleteBtn.click();
     });
-  
+
     await waitFor(() => {
       const snackbar = getByText('App deleted successfully');
       expect(snackbar).toBeInTheDocument();
@@ -725,14 +729,14 @@ describe('Home', () => {
           set(isStartOpen, true);
           set(defaultApp, {
             id: 'test-app-1',
-            name: 'Test App',               
-            framework: 'JupyterLab',         
-            url: 'https://example.com',      
-            ready: true,                     
-            public: false,                   
-            shared: true,                    
-            last_activity: new Date(),       
-            status: 'Ready',               
+            name: 'Test App',
+            framework: 'JupyterLab',
+            url: 'https://example.com',
+            ready: true,
+            public: false,
+            shared: true,
+            last_activity: new Date(),
+            status: 'Ready',
           }); // App is shared
         }}
       >
@@ -751,14 +755,18 @@ describe('Home', () => {
     });
 
     // Simulate clicking the Start button
-    const startBtn = baseElement.querySelector('#start-btn') as HTMLButtonElement;
+    const startBtn = baseElement.querySelector(
+      '#start-btn',
+    ) as HTMLButtonElement;
     await act(async () => {
       startBtn.click();
     });
 
     // Expect the snackbar to display the 403 Forbidden error message
     await waitFor(() => {
-      const snackbar = getByText(/You don't have permission to start this app. Please ask the owner to start it./);
+      const snackbar = getByText(
+        /You don't have permission to start this app. Please ask the owner to start it./,
+      );
       expect(snackbar).toBeInTheDocument();
     });
   });
@@ -771,14 +779,14 @@ describe('Home', () => {
           set(isStopOpen, true);
           set(defaultApp, {
             id: 'test-app-1',
-            name: 'Test App',               
-            framework: 'JupyterLab',         
-            url: 'https://example.com',      
-            ready: true,                     
-            public: false,                   
-            shared: true,                    
-            last_activity: new Date(),       
-            status: 'Running',               
+            name: 'Test App',
+            framework: 'JupyterLab',
+            url: 'https://example.com',
+            ready: true,
+            public: false,
+            shared: true,
+            last_activity: new Date(),
+            status: 'Running',
           }); // App is shared
         }}
       >
@@ -804,10 +812,10 @@ describe('Home', () => {
 
     // Expect the snackbar to display the 403 Forbidden error message
     await waitFor(() => {
-      const snackbar = getByText(/You don't have permission to stop this app. Please ask the owner/);
+      const snackbar = getByText(
+        /You don't have permission to stop this app. Please ask the owner/,
+      );
       expect(snackbar).toBeInTheDocument();
     });
   });
-  
-  
 });
