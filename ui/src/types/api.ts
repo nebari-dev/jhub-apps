@@ -49,6 +49,8 @@ export interface AppQueryGetProps {
   user_options: UserOptions;
   progress_url: string;
   state: Record<string, unknown>;
+  defaultBranch?: string;
+  condaPath?: string;
 }
 
 export interface AppFrameworkProps {
