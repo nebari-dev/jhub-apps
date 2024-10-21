@@ -76,6 +76,7 @@ export const AppCard = ({
     if (serverStatus) {
       setAppStatus(serverStatus);
     }
+    console.log('Current App:', app);
   }, [serverStatus, setNotification]);
 
   // Fetch user data and check admin status

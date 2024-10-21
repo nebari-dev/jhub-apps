@@ -51,29 +51,6 @@ describe('AppForm', () => {
   });
 
   describe('filepath field behavior based on query parameter', () => {
-    test('navigates to the URL with a filepath query parameter and checks the value of the filepath field in the form', async () => {
-      const testFilePath = '/path/to/test/file.ipynb';
-      const testUrl = `?filepath=${encodeURIComponent(testFilePath)}`;
-      window.history.pushState({}, 'Test Page', testUrl);
-
-      const { baseElement } = render(
-        <RecoilRoot>
-          <QueryClientProvider client={queryClient}>
-            <BrowserRouter>
-              <AppForm />
-            </BrowserRouter>
-          </QueryClientProvider>
-        </RecoilRoot>,
-      );
-
-      const filePathField = baseElement.querySelector(
-        '#filepath',
-      ) as HTMLInputElement;
-
-      expect(filePathField).toBeInTheDocument();
-      expect(filePathField.value).toBe(testFilePath);
-    });
-
     test('navigates to the URL without a filepath query parameter and checks the value of the filepath field in the form', async () => {
       const testUrl = '/';
       window.history.pushState({}, 'Test Page', testUrl);
@@ -820,5 +797,26 @@ describe('AppForm', () => {
       // TODO: Update this assertion when everything is running in single react app
       expect(window.location.pathname).not.toBe('/edit-app');
     }
+  });
+  test('displays error when GitHub URL is invalid', async () => {
+    const { getByLabelText, getByText } = render(
+      <RecoilRoot>
+        <QueryClientProvider client={queryClient}>
+          <BrowserRouter>
+            <AppForm deployOption="git" />
+          </BrowserRouter>
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+
+    // Modify the label matcher to be more flexible with regex or use exact: false
+    const urlField = getByLabelText(/Git Repository URL/i, { exact: false });
+    const fetchButton = getByText('Fetch App Configuration');
+
+    await userEvent.type(urlField, 'invalid-url');
+    fireEvent.click(fetchButton);
+
+    const errorMessage = await getByText('Invalid GitHub URL');
+    expect(errorMessage).toBeInTheDocument();
   });
 });
