@@ -19,9 +19,39 @@ export interface AppFormInput {
   profile?: string;
   thumbnail?: string;
   share_with: SharePermissions;
+  repository_url?: string;
+  branch?: string;
+  conda_project_yml?: string;
 }
 
 export interface AppSharingItem {
   name: string;
   type: 'user' | 'group';
+}
+
+export interface AppFormProps {
+  deployOption?: string;
+  id?: string;
+}
+
+export interface RepoData {
+  display_name: string;
+  description: string;
+  thumbnail: string; // Base64 encoded image string
+  filepath: string;
+  framework: string;
+  custom_command: string;
+  conda_project_yml: string;
+  env: {
+    conda_env: string;
+    SOMETHING_BAR: string;
+    SOMETHING_FOO: string;
+  };
+  keep_alive: boolean;
+  public: boolean;
+  repository: {
+    config_directory: string;
+    ref: string;
+    url: string;
+  };
 }

@@ -1,10 +1,18 @@
-import { useState } from 'react';
 import ArrowBackIcon from '@mui/icons-material/ArrowBackRounded';
-import { Box, Button, Stack, Typography, FormControl, Radio, RadioGroup, FormControlLabel } from '@mui/material';
+import {
+  Box,
+  Button,
+  FormControl,
+  FormControlLabel,
+  Radio,
+  RadioGroup,
+  Stack,
+  Typography,
+} from '@mui/material';
 import { AppForm } from '@src/components';
 import { APP_BASE_URL } from '@src/utils/constants';
 import { navigateToUrl } from '@src/utils/jupyterhub';
-import React from 'react';
+import React, { useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { isHeadless as defaultIsHeadless } from '../../store';
 import { StyledFormParagraph } from '../../styles/styled-form-paragraph';
@@ -12,6 +20,13 @@ import { Item } from '../../styles/styled-item';
 
 export const CreateApp = (): React.ReactElement => {
   const [isHeadless] = useRecoilState<boolean>(defaultIsHeadless);
+  const [deployOption, setDeployOption] = useState<string>('launcher'); // Track selected deployment option
+
+  const handleDeployOptionChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    setDeployOption(event.target.value);
+  };
   return (
     <Box className="container">
       <Stack>
@@ -54,10 +69,11 @@ export const CreateApp = (): React.ReactElement => {
           </FormControl>
         </Item>
 
-
         <Item>
           <Typography component="h1" variant="h5">
-            {deployOption === 'launcher' ? 'Deploy a new app' : 'Deploy an app from a Git repository'}
+            {deployOption === 'launcher'
+              ? 'Deploy a new app'
+              : 'Deploy an app from a Git repository'}
           </Typography>
           <StyledFormParagraph>
             Begin your project by entering the details below. For more
@@ -73,7 +89,7 @@ export const CreateApp = (): React.ReactElement => {
             .
           </StyledFormParagraph>
         </Item>
-        
+
         <Item>
           {/* Pass the selected deployment option to the AppForm */}
           <AppForm deployOption={deployOption} />
