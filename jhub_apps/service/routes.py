@@ -38,10 +38,11 @@ from jhub_apps.service.utils import (
     get_spawner_profiles,
     get_thumbnail_data_url,
     get_shared_servers,
-    _check_multiple_jlab_allowed_if_framework_jlab,
+    _check_if_framework_allowed,
+    _get_allowed_frameworks,
 )
 from jhub_apps.service.app_from_git import _get_app_configuration_from_git
-from jhub_apps.spawner.types import FRAMEWORKS, Framework
+from jhub_apps.spawner.types import FRAMEWORKS
 from jhub_apps.version import get_version
 
 app = FastAPI()
@@ -148,7 +149,7 @@ async def create_server(
     user: User = Depends(get_current_user),
 ):
     # server.servername is not necessary to supply for create server
-    _check_multiple_jlab_allowed_if_framework_jlab(server.user_options)
+    _check_if_framework_allowed(server.user_options)
     server_name = server.user_options.display_name
     logger.info("Creating server", server_name=server_name, user=user.name)
     server.user_options.thumbnail = await get_thumbnail_data_url(
@@ -204,7 +205,7 @@ async def update_server(
     user: User = Depends(get_current_user),
     server_name=None,
 ):
-    _check_multiple_jlab_allowed_if_framework_jlab(server.user_options)
+    _check_if_framework_allowed(server.user_options)
     if thumbnail_data_url:
         server.user_options.thumbnail = thumbnail_data_url
     else:
@@ -249,13 +250,9 @@ async def me(user: User = Depends(get_current_user)):
 async def get_frameworks(user: User = Depends(get_current_user)):
     logger.info("Getting all the frameworks")
     config = get_jupyterhub_config()
-    frameworks = []
-    for framework in FRAMEWORKS:
-        is_jupyterlab = framework.name == Framework.jupyterlab.value
-        if is_jupyterlab and not config.JAppsConfig.allow_multiple_jupyterlab:
-            continue
-        frameworks.append(framework.json())
-    return frameworks
+    return [
+        framework for framework in FRAMEWORKS if framework.name in _get_allowed_frameworks(config)
+    ]
 
 
 @router.get("/conda-environments/", description="Get all conda environments")

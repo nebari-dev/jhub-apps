@@ -49,7 +49,12 @@ class JAppsConfig(SingletonConfigurable):
         help="The number of workers to create for the JHub Apps FastAPI service",
     ).tag(config=True)
 
-    allow_multiple_jupyterlab = Bool(
-        False,
-        help="Allow users to spinup multiple JupyterLab servers",
+    allowed_frameworks = Bool(
+        None,
+        help="Allow only a specific set of frameworks to spun up apps.",
+    ).tag(config=True)
+
+    blocked_frameworks = Bool(
+        None,
+        help="Disallow a set of frameworks to avoid spinning up apps using those frameworks",
     ).tag(config=True)

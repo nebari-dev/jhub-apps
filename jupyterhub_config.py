@@ -16,7 +16,6 @@ hub_url = "http://127.0.0.1:8000"
 c.JupyterHub.bind_url = hub_url
 c.JAppsConfig.jupyterhub_config_path = "jupyterhub_config.py"
 c.JAppsConfig.conda_envs = []
-c.JAppsConfig.allow_multiple_jupyterlab = True
 c.JAppsConfig.service_workers = 1
 c.JupyterHub.default_url = "/hub/home"
 

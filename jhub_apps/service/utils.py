@@ -13,7 +13,7 @@ from traitlets.config import LazyConfigValue
 
 from jhub_apps.hub_client.hub_client import HubClient
 from jhub_apps.service.models import UserOptions
-from jhub_apps.spawner.types import FrameworkConf, FRAMEWORKS_MAPPING, Framework
+from jhub_apps.spawner.types import FrameworkConf, FRAMEWORKS_MAPPING, FRAMEWORKS
 from slugify import slugify
 
 
@@ -172,14 +172,27 @@ def get_shared_servers(current_hub_user):
     return shared_servers_rich
 
 
-def _check_multiple_jlab_allowed_if_framework_jlab(user_options: UserOptions):
-    """Checks if spinning up multiple JupyterLab servers per user is enabled, in case the selected
-    framework is JupyterLab.
+def _check_if_framework_allowed(user_options: UserOptions):
+    """Checks if spinning up apps via the provided framework is allowed.
     """
     config = get_jupyterhub_config()
-    is_jupyterlab = user_options.framework == Framework.jupyterlab.value
-    if is_jupyterlab and not config.JAppsConfig.allow_multiple_jupyterlab:
+    allowed_frameworks = _get_allowed_frameworks(config)
+    if user_options.framework not in allowed_frameworks:
         raise HTTPException(
-            detail="Multiple JupyterLabs are not allowed on this deployment, please contact admin.",
+            detail=f"Given framework {user_options.framework} is not allowed on this deployment, "
+                   f"please contact admin.",
             status_code=status.HTTP_403_FORBIDDEN,
         )
+
+
+def _get_allowed_frameworks(config):
+    """Given the JupyterHub config, find out allowed frameworks."""
+    all_frameworks = {framework.name for framework in FRAMEWORKS}
+    allowed_frameworks = all_frameworks
+    if config.JAppsConfig.allowed_frameworks is not None:
+        allowed_frameworks_by_admin = set(config.JAppsConfig.allowed_frameworks)
+        allowed_frameworks = all_frameworks.intersection(allowed_frameworks_by_admin)
+    if config.JAppsConfig.blocked_frameworks is not None:
+        blocked_frameworks_by_admin = set(config.JAppsConfig.blocked_frameworks)
+        allowed_frameworks -= blocked_frameworks_by_admin
+    return allowed_frameworks

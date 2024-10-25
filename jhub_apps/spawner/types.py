@@ -39,15 +39,6 @@ class Framework(Enum):
         return [member.value for role, member in cls.__members__.items()]
 
 
-JUPYTERLAB_FRAMEWORK_CONFIG = FrameworkConf(
-        name=Framework.jupyterlab.value,
-        display_name="JupyterLab",
-        logo_path=STATIC_PATH.joinpath("jupyter.png"),
-        logo=f"{LOGO_BASE_PATH}/jupyter.png",
-    )
-
-
-
 FRAMEWORKS = [
     FrameworkConf(
         name=Framework.panel.value,
@@ -91,6 +82,11 @@ FRAMEWORKS = [
         logo_path=STATIC_PATH.joinpath("custom.png"),
         logo=f"{LOGO_BASE_PATH}/custom.png"
     ),
-    JUPYTERLAB_FRAMEWORK_CONFIG,
+    FrameworkConf(
+        name=Framework.jupyterlab.value,
+        display_name="JupyterLab",
+        logo_path=STATIC_PATH.joinpath("jupyter.png"),
+        logo=f"{LOGO_BASE_PATH}/jupyter.png",
+    ),
 ]
 FRAMEWORKS_MAPPING = {framework.name: framework for framework in FRAMEWORKS}
