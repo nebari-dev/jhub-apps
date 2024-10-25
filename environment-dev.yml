@@ -4,7 +4,9 @@ channels:
 dependencies:
   - uvicorn
   - fastapi
-  - python-multipart
+  # Later versions were yanked in PyPi, but unfortunately not on conda-forge
+  # https://pypi.org/project/python-multipart/0.0.14/
+  - python-multipart <= 0.0.12
   - jupyter
   - plotlydash-tornado-cmd
   - bokeh-root-cmd
