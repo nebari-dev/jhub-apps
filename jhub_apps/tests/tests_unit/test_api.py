@@ -7,8 +7,15 @@ import pytest
 from jhub_apps.hub_client.hub_client import HubClient
 from jhub_apps.service.models import UserOptions, ServerCreation, Repository
 from jhub_apps.service.utils import get_shared_servers
-from jhub_apps.spawner.types import FRAMEWORKS
+from jhub_apps.spawner.types import FRAMEWORKS, Framework
 from jhub_apps.tests.common.constants import MOCK_USER
+
+MOCK_ALLOW_ALL_FRAMEWORKS_CONFIG = Mock(
+    JAppsConfig=Mock(
+        allowed_frameworks=[f.name for f in FRAMEWORKS],
+        blocked_frameworks=[]
+    )
+)
 
 
 def mock_user_options():
@@ -60,9 +67,11 @@ def test_api_get_server_not_found(get_user, client):
     }
 
 
+@patch("jhub_apps.service.utils.get_jupyterhub_config")
 @patch.object(HubClient, "create_server")
-def test_api_create_server(create_server, client):
+def test_api_create_server(create_server, get_jupyterhub_config, client):
     from jhub_apps.service.models import UserOptions
+    get_jupyterhub_config.return_value = MOCK_ALLOW_ALL_FRAMEWORKS_CONFIG
     create_server_response = {"user": "jovyan"}
     create_server.return_value = create_server_response
     user_options = mock_user_options()
@@ -132,10 +141,11 @@ def test_api_delete_server(delete_server, name, remove, client):
     assert response.json() == create_server_response
 
 
+@patch("jhub_apps.service.utils.get_jupyterhub_config")
 @patch.object(HubClient, "edit_server")
-def test_api_update_server(edit_server, client):
+def test_api_update_server(edit_server, get_jupyterhub_config, client):
     from jhub_apps.service.models import UserOptions
-
+    get_jupyterhub_config.return_value = MOCK_ALLOW_ALL_FRAMEWORKS_CONFIG
     create_server_response = {"user": "jovyan"}
     edit_server.return_value = create_server_response
     user_options = mock_user_options()
@@ -196,14 +206,27 @@ def test_shared_server_filtering(hub_get_shared_servers, get_users):
     get_users.assert_called_once_with()
 
 
-def test_api_frameworks(client):
+@pytest.mark.parametrize("allowed_frameworks, blocked_frameworks,", [
+    ([f.name for f in FRAMEWORKS if f.name != Framework.jupyterlab.name], []),
+    ([f.name for f in FRAMEWORKS], []),
+    ([], [Framework.jupyterlab.name]),
+    ([Framework.panel.name], [Framework.bokeh.name]),
+])
+@patch("jhub_apps.service.routes.get_jupyterhub_config")
+def test_api_frameworks(get_jupyterhub_config, client, allowed_frameworks, blocked_frameworks):
+    get_jupyterhub_config.return_value = Mock(
+        JAppsConfig=Mock(
+            allowed_frameworks=allowed_frameworks,
+            blocked_frameworks=blocked_frameworks
+        )
+    )
+
     response = client.get(
         "/frameworks",
     )
-    frameworks = []
-    for framework in FRAMEWORKS:
-        frameworks.append(framework.json())
-    assert response.json() == frameworks
+    response_json = response.json()
+    returned_frameworks = {f["name"] for f in response_json}
+    assert returned_frameworks == set(allowed_frameworks) - set(blocked_frameworks)
 
 
 def test_api_status(client):
@@ -225,11 +248,19 @@ def test_open_api_docs(client):
     assert rjson['info']['version']
 
 
+@patch("jhub_apps.service.utils.get_jupyterhub_config")
 @patch.object(HubClient, "create_server")
 def test_create_server_with_git_repository(
         hub_create_server,
+        get_jupyterhub_config,
         client,
 ):
+    get_jupyterhub_config.return_value = Mock(
+        JAppsConfig=Mock(
+            allowed_frameworks=[f.name for f in FRAMEWORKS],
+            blocked_frameworks=[]
+        )
+    )
     user_options = UserOptions(
         jhub_app=True,
         display_name="Test Application",
