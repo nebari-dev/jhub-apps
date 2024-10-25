@@ -33,7 +33,8 @@ accessing configurations.
 
 ### `conda_envs`
 
-A list of conda environments that JHub Apps can access or use.
+A list of conda environments that JHub Apps can access or use. This can either be a static list
+or a callable.
 
 - **Example**:
   ```python
