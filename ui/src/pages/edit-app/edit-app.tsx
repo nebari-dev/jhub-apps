@@ -51,7 +51,7 @@ export const EditApp = (): React.ReactElement => {
           </StyledFormParagraph>
         </Item>
         <Item>
-          <>{id ? <AppForm id={id} /> : <>No app found.</>}</>
+          <>{id ? <AppForm isEditMode={true} id={id} /> : <>No app found.</>}</>
         </Item>
       </Stack>
     </Box>

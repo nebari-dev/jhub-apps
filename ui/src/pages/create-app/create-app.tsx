@@ -92,7 +92,7 @@ export const CreateApp = (): React.ReactElement => {
 
         <Item>
           {/* Pass the selected deployment option to the AppForm */}
-          <AppForm deployOption={deployOption} />
+          <AppForm isEditMode={false} deployOption={deployOption} />
         </Item>
       </Stack>
     </Box>

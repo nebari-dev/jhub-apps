@@ -63,6 +63,7 @@ export const AppCard = ({
 }: AppCardProps): React.ReactElement => {
   const [appStatus, setAppStatus] = useState('');
   const [currentProfiles] = useRecoilState<AppProfileProps[]>(defaultProfiles);
+  const [, setIsEditMode] = useState(false);
   const [, setCurrentApp] = useRecoilState<JhApp | undefined>(currentApp);
   const [, setNotification] = useRecoilState<string | undefined>(
     currentNotification,
@@ -76,7 +77,6 @@ export const AppCard = ({
     if (serverStatus) {
       setAppStatus(serverStatus);
     }
-    console.log('Current App:', app);
   }, [serverStatus, setNotification]);
 
   // Fetch user data and check admin status
@@ -123,8 +123,7 @@ export const AppCard = ({
     {
       id: 'start',
       title: 'Start',
-      onClick: () => {
-        // Allow admins to start shared apps
+      onClick: async () => {
         if (isShared && !currentUserData?.admin) {
           // Show error if it's a shared app
           setNotification(
@@ -132,6 +131,7 @@ export const AppCard = ({
           );
           return;
         }
+
         setIsStartOpen(true);
         setCurrentApp(app!); // Add the non-null assertion operator (!) to ensure that app is not undefined
       },
@@ -141,25 +141,28 @@ export const AppCard = ({
     {
       id: 'stop',
       title: 'Stop',
-      onClick: () => {
-        // Allow admins to stop shared apps
+      onClick: async () => {
         if (isShared && !currentUserData?.admin) {
           setNotification(
             "You don't have permission to stop this app. Please ask the owner to stop it.",
           );
           return;
         }
+        // stopApp(); // Call the refactored stopApp function
         setIsStopOpen(true);
         setCurrentApp(app!);
       },
       visible: true,
-      disabled: serverStatus !== 'Running', // Disable stop if the app is not running
+      disabled: serverStatus !== 'Running',
     },
+
     {
       id: 'edit',
       title: 'Edit',
-      onClick: () =>
-        (window.location.href = `${API_BASE_URL}/edit-app?id=${id}`),
+      onClick: () => {
+        setIsEditMode(true);
+        window.location.href = `${API_BASE_URL}/edit-app?id=${id}`;
+      },
       visible: true,
       disabled: isShared || id === '' || !isAppCard,
     },

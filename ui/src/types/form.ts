@@ -19,7 +19,10 @@ export interface AppFormInput {
   profile?: string;
   thumbnail?: string;
   share_with: SharePermissions;
-  repository_url?: string;
+  repository?: {
+    url: string;
+  };
+
   branch?: string;
   conda_project_yml?: string;
 }
@@ -32,6 +35,7 @@ export interface AppSharingItem {
 export interface AppFormProps {
   deployOption?: string;
   id?: string;
+  isEditMode: boolean;
 }
 
 export interface RepoData {

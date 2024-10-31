@@ -42,7 +42,7 @@ describe('AppForm', () => {
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
-            <AppForm />
+            <AppForm isEditMode={false} />
           </BrowserRouter>
         </QueryClientProvider>
       </RecoilRoot>,
@@ -59,7 +59,7 @@ describe('AppForm', () => {
         <RecoilRoot>
           <QueryClientProvider client={queryClient}>
             <BrowserRouter>
-              <AppForm />
+              <AppForm isEditMode={false} />
             </BrowserRouter>
           </QueryClientProvider>
         </RecoilRoot>,
@@ -79,7 +79,7 @@ describe('AppForm', () => {
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
-            <AppForm />
+            <AppForm isEditMode={false} />
           </BrowserRouter>
         </QueryClientProvider>
       </RecoilRoot>,
@@ -105,7 +105,7 @@ describe('AppForm', () => {
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
-            <AppForm />
+            <AppForm isEditMode={false} />
           </BrowserRouter>
         </QueryClientProvider>
       </RecoilRoot>,
@@ -129,7 +129,7 @@ describe('AppForm', () => {
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
-            <AppForm />
+            <AppForm isEditMode={false} />
           </BrowserRouter>
         </QueryClientProvider>
       </RecoilRoot>,
@@ -151,7 +151,7 @@ describe('AppForm', () => {
       <RecoilRoot initializeState={({ set }) => set(defaultUser, currentUser)}>
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
-            <AppForm />
+            <AppForm isEditMode={false} />
           </BrowserRouter>
         </QueryClientProvider>
       </RecoilRoot>,
@@ -197,7 +197,7 @@ describe('AppForm', () => {
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
-            <AppForm />
+            <AppForm isEditMode={false} />
           </BrowserRouter>
         </QueryClientProvider>
       </RecoilRoot>,
@@ -249,7 +249,7 @@ describe('AppForm', () => {
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
-            <AppForm />
+            <AppForm isEditMode={false} />
           </BrowserRouter>
         </QueryClientProvider>
       </RecoilRoot>,
@@ -287,7 +287,7 @@ describe('AppForm', () => {
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
-            <AppForm />
+            <AppForm isEditMode={false} />
           </BrowserRouter>
         </QueryClientProvider>
       </RecoilRoot>,
@@ -341,7 +341,7 @@ describe('AppForm', () => {
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
-            <AppForm />
+            <AppForm isEditMode={false} />
           </BrowserRouter>
         </QueryClientProvider>
       </RecoilRoot>,
@@ -411,7 +411,7 @@ describe('AppForm', () => {
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
-            <AppForm />
+            <AppForm isEditMode={false} />
           </BrowserRouter>
         </QueryClientProvider>
       </RecoilRoot>,
@@ -455,7 +455,7 @@ describe('AppForm', () => {
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
-            <AppForm id="app-1" />
+            <AppForm isEditMode={true} id="app-1" />
           </BrowserRouter>
         </QueryClientProvider>
       </RecoilRoot>,
@@ -497,7 +497,7 @@ describe('AppForm', () => {
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
-            <AppForm id="app-1" />
+            <AppForm isEditMode={true} id="app-1" />
           </BrowserRouter>
         </QueryClientProvider>
       </RecoilRoot>,
@@ -536,7 +536,7 @@ describe('AppForm', () => {
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
-            <AppForm />
+            <AppForm isEditMode={false} />
           </BrowserRouter>
         </QueryClientProvider>
       </RecoilRoot>,
@@ -561,7 +561,7 @@ describe('AppForm', () => {
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
-            <AppForm />
+            <AppForm isEditMode={false} />
           </BrowserRouter>
         </QueryClientProvider>
       </RecoilRoot>,
@@ -601,7 +601,7 @@ describe('AppForm', () => {
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
-            <AppForm id="app-1" />
+            <AppForm isEditMode={true} id="app-1" />
           </BrowserRouter>
         </QueryClientProvider>
       </RecoilRoot>,
@@ -636,7 +636,7 @@ describe('AppForm', () => {
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
-            <AppForm />
+            <AppForm isEditMode={false} />
           </BrowserRouter>
         </QueryClientProvider>
       </RecoilRoot>,
@@ -668,7 +668,7 @@ describe('AppForm', () => {
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
-            <AppForm />
+            <AppForm isEditMode={false} />
           </BrowserRouter>
         </QueryClientProvider>
       </RecoilRoot>,
@@ -702,7 +702,7 @@ describe('AppForm', () => {
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
-            <AppForm />
+            <AppForm isEditMode={false} />
           </BrowserRouter>
         </QueryClientProvider>
       </RecoilRoot>,
@@ -724,7 +724,7 @@ describe('AppForm', () => {
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
-            <AppForm />
+            <AppForm isEditMode={false} />
           </BrowserRouter>
         </QueryClientProvider>
       </RecoilRoot>,
@@ -770,7 +770,7 @@ describe('AppForm', () => {
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
-            <AppForm id="app-1" />
+            <AppForm isEditMode={true} id="app-1" />
           </BrowserRouter>
         </QueryClientProvider>
       </RecoilRoot>,
@@ -803,7 +803,7 @@ describe('AppForm', () => {
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
-            <AppForm deployOption="git" />
+            <AppForm isEditMode={false} deployOption="git" />
           </BrowserRouter>
         </QueryClientProvider>
       </RecoilRoot>,
