@@ -7,13 +7,11 @@ import os
 from cachetools import cached, TTLCache
 from unittest.mock import Mock
 
-from fastapi import HTTPException, status
 from jupyterhub.app import JupyterHub
 from traitlets.config import LazyConfigValue
 
 from jhub_apps.hub_client.hub_client import HubClient
-from jhub_apps.service.models import UserOptions
-from jhub_apps.spawner.types import FrameworkConf, FRAMEWORKS_MAPPING, FRAMEWORKS
+from jhub_apps.spawner.types import FrameworkConf, FRAMEWORKS_MAPPING
 from slugify import slugify
 
 
@@ -170,29 +168,3 @@ def get_shared_servers(current_hub_user):
         if server["name"] in shared_server_names
     ]
     return shared_servers_rich
-
-
-def _check_if_framework_allowed(user_options: UserOptions):
-    """Checks if spinning up apps via the provided framework is allowed.
-    """
-    config = get_jupyterhub_config()
-    allowed_frameworks = _get_allowed_frameworks(config)
-    if user_options.framework not in allowed_frameworks:
-        raise HTTPException(
-            detail=f"Given framework {user_options.framework} is not allowed on this deployment, "
-                   f"please contact admin.",
-            status_code=status.HTTP_403_FORBIDDEN,
-        )
-
-
-def _get_allowed_frameworks(config):
-    """Given the JupyterHub config, find out allowed frameworks."""
-    all_frameworks = {framework.name for framework in FRAMEWORKS}
-    allowed_frameworks = all_frameworks
-    if config.JAppsConfig.allowed_frameworks is not None:
-        allowed_frameworks_by_admin = set(config.JAppsConfig.allowed_frameworks)
-        allowed_frameworks = all_frameworks.intersection(allowed_frameworks_by_admin)
-    if config.JAppsConfig.blocked_frameworks is not None:
-        blocked_frameworks_by_admin = set(config.JAppsConfig.blocked_frameworks)
-        allowed_frameworks -= blocked_frameworks_by_admin
-    return allowed_frameworks
