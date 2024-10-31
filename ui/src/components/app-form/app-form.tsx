@@ -16,7 +16,6 @@ import {
   FormControl,
   FormControlLabel,
   FormHelperText,
-  // InputAdornment,
   InputLabel,
   MenuItem,
   Select,
@@ -62,6 +61,7 @@ import './app-form.css';
 export const AppForm = ({
   deployOption,
   id,
+  isEditMode,
 }: AppFormProps): React.ReactElement => {
   const navigate = useNavigate();
   const [submitting, setSubmitting] = useState(false);
@@ -112,16 +112,33 @@ export const AppForm = ({
       profile: '',
       is_public: false,
       keep_alive: false,
+      share_with: {
+        users: [],
+        groups: [],
+      },
     },
   });
-  // Use useEffect to log currentUser when the component renders or the user changes
-  useEffect(() => {
-    if (currentUser) {
-      console.log('Current User from Recoil:', currentUser); // Log the user if available
-    } else {
-      console.log('No current user available'); // Log when no user is available
-    }
-  }, [currentUser]); // Add currentUser as a dependency to trigger when it changes
+
+  const initialValues = {
+    display_name: '',
+    description: '',
+    framework: '',
+    thumbnail: '',
+    filepath: initialFilepath,
+    conda_env: '',
+    custom_command: '',
+    profile: '',
+    is_public: false,
+    keep_alive: false,
+    share_with: {
+      users: [],
+      groups: [],
+    },
+  };
+
+  const watchedFields = watch();
+  const hasChanges =
+    JSON.stringify(watchedFields) !== JSON.stringify(initialValues);
 
   useEffect(() => {
     // Reset form fields when deployOption changes
@@ -168,10 +185,14 @@ export const AppForm = ({
     // Trigger validation after the button is clicked
     setShouldValidate(true);
 
-    const gitHubUrlPattern =
-      /^(https?:\/\/)?(www\.)?github\.com\/[\w-]+\/[\w-]+$/;
-    if (!gitHubUrlPattern.test(gitUrl)) {
-      setError('Invalid GitHub URL');
+    // const gitRepoUrlPattern =
+    //   /^(https?:\/\/)?(www\.)?([\w-]+\.)?(github|gitlab|bitbucket|azure|devops)\.com\/[\w-]+\/[\w-]+(\.git)?$/i;
+
+    const gitRepoUrlPattern =
+      /^(https?:\/\/)?[\w.-]+\/[\w-]+\/[\w-]+(\.git)?$/i;
+
+    if (!gitRepoUrlPattern.test(gitUrl)) {
+      setError('Invalid Git repository URL');
       setIsUrlValid(false);
       setOpenModal(true);
       return;
@@ -348,8 +369,7 @@ export const AppForm = ({
 
       // If the app is running, redirect to the running app
       if (response.data?.status === 'Running') {
-        console.log('App is running:', appId);
-        window.location.assign(`${APP_BASE_URL}/apps/${appId}`);
+        window.location.assign(`${APP_BASE_URL}/user/${username}/${appId}/`);
       } else {
         // If not running yet, poll again after 3 seconds
         setTimeout(() => checkAppStatus(appId, username), 3000);
@@ -427,6 +447,12 @@ export const AppForm = ({
         },
         keep_alive: keepAlive,
       };
+
+      // Add repository details only if it's a Git-based app
+      if (deployOption === 'git') {
+        payload.repository = { url: gitUrl };
+      }
+
       // Check if the app is a Git app
       if (deployOption === 'git') {
         // Use the createOrUpdateAppFromGit function for Git apps
@@ -460,6 +486,7 @@ export const AppForm = ({
             groups: currentGroupPermissions,
           },
           keep_alive: keepAlive,
+          repository: { url: gitUrl },
         },
       };
 
@@ -532,9 +559,12 @@ export const AppForm = ({
           groups: payload.share_with?.groups || [],
         },
         keep_alive: payload.keep_alive,
+
+        repository: {
+          url: payload.repository?.url || '',
+        },
       },
     };
-
     setSubmitting(true);
     if (id) {
       console.log('Updating App with ID:', id);
@@ -560,7 +590,6 @@ export const AppForm = ({
         },
       });
     } else {
-      console.log('Creating New App');
       createQuery(gitPayload, {
         onSuccess: async (data) => {
           console.log('SUCCZESS', data);
@@ -586,7 +615,7 @@ export const AppForm = ({
         onError: async (error: unknown) => {
           setSubmitting(false);
           setIsProcessing(false);
-          handleError(error); // Log or handle the error
+          handleError(error);
         },
       });
     }
@@ -653,7 +682,6 @@ export const AppForm = ({
     servername,
     user_options,
   }: AppQueryUpdateProps) => {
-    console.log('Creating request:', { servername, user_options });
     const headers = {
       accept: 'application/json',
       'Content-Type': 'multipart/form-data',
@@ -666,7 +694,6 @@ export const AppForm = ({
     }
 
     const response = await axios.post('/server', formData, { headers });
-    console.log('Response from server:', response.data);
 
     return response.data;
   };
@@ -686,7 +713,6 @@ export const AppForm = ({
     } else if (currentImage) {
       formData.append('thumbnail_data_url', currentImage);
     }
-
     const response = await axios.put(`/server/${servername}`, formData, {
       headers,
     });
@@ -801,12 +827,6 @@ export const AppForm = ({
         id="app-form"
         onSubmit={(e) => {
           e.preventDefault();
-          // Log form state and specific field value
-
-          console.log('Is form valid:', isValid);
-          console.log('Is form dirty:', isDirty);
-          console.log('Form errors:', errors);
-          console.log('repository_url value:', watch('repository_url'));
 
           // Proceed to call handleSubmit
           handleSubmit(onFormSubmit, scrollToFirstError)(e);
@@ -823,14 +843,14 @@ export const AppForm = ({
             <>
               {/* Git Repository URL Input */}
               <Controller
-                name="repository_url"
+                name="repository.url"
                 control={control}
                 render={({ field }) => (
                   <FormControl error={!!error && shouldValidate}>
                     <TextField
                       {...field}
                       inputRef={repoUrlRef}
-                      id="repository_url"
+                      id="repository.url"
                       label="Git Repository URL"
                       placeholder="Enter Git repository URL"
                       required
@@ -887,15 +907,6 @@ export const AppForm = ({
                     <InputLabel
                       htmlFor="conda_project_yml"
                       shrink
-                      // sx={{
-                      //   fontSize: '1rem',
-                      //   transform: 'translate(14px, -6px) scale(0.75)',
-                      //   color: isCondaYamlEnabled ? 'rgba(0, 0, 0, 0.87)' : 'rgba(0, 0, 0, 0.54)',
-                      //   top: '-2px',
-                      //   left: '-5px',
-                      //   padding: '0 4px',
-                      //   zIndex: 1,
-                      // }}
                       sx={labelStyle}
                     >
                       Conda YAML Directory
@@ -1540,7 +1551,9 @@ export const AppForm = ({
                 profilesLoading ||
                 submitting ||
                 isProcessing || // Disable button while processing
-                description.length > 200
+                description.length > 200 ||
+                (!isDirty && isEditMode && !hasChanges) || // Prevent submission if no changes have been made
+                !isValid
               }
             >
               {isProcessing ? (

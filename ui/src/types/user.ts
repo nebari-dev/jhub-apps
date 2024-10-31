@@ -2,6 +2,7 @@ import { SharePermissions } from './api';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export interface UserState {
+  username: string | undefined;
   admin: boolean;
   auth_state: string | null;
   created: string | null;
