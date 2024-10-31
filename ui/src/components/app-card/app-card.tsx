@@ -148,7 +148,6 @@ export const AppCard = ({
           );
           return;
         }
-        // stopApp(); // Call the refactored stopApp function
         setIsStopOpen(true);
         setCurrentApp(app!);
       },
