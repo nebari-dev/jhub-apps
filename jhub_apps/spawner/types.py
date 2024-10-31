@@ -77,16 +77,17 @@ FRAMEWORKS = [
         logo=f"{LOGO_BASE_PATH}/gradio.png"
     ),
     FrameworkConf(
-        name=Framework.custom.value,
-        display_name="Custom Command",
-        logo_path=STATIC_PATH.joinpath("custom.png"),
-        logo=f"{LOGO_BASE_PATH}/custom.png"
-    ),
-    FrameworkConf(
         name=Framework.jupyterlab.value,
         display_name="JupyterLab",
         logo_path=STATIC_PATH.joinpath("jupyter.png"),
         logo=f"{LOGO_BASE_PATH}/jupyter.png",
     ),
+    FrameworkConf(
+        name=Framework.custom.value,
+        display_name="Custom Command",
+        logo_path=STATIC_PATH.joinpath("custom.png"),
+        logo=f"{LOGO_BASE_PATH}/custom.png"
+    ),
 ]
+
 FRAMEWORKS_MAPPING = {framework.name: framework for framework in FRAMEWORKS}
