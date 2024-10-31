@@ -91,7 +91,7 @@ def create_app(
     expect(deploy_button).to_be_visible()
     deploy_button.click()
     logger.info("Fill App display Name")
-    display_name_field = page.get_by_label("*Name")
+    display_name_field = page.get_by_label("Name")
     expect(display_name_field).to_be_visible()
     display_name_field.click()
     display_name_field.fill(app_name)
