@@ -185,9 +185,6 @@ export const AppForm = ({
     // Trigger validation after the button is clicked
     setShouldValidate(true);
 
-    // const gitRepoUrlPattern =
-    //   /^(https?:\/\/)?(www\.)?([\w-]+\.)?(github|gitlab|bitbucket|azure|devops)\.com\/[\w-]+\/[\w-]+(\.git)?$/i;
-
     const gitRepoUrlPattern =
       /^(https?:\/\/)?[\w.-]+\/[\w-]+\/[\w-]+(\.git)?$/i;
 

@@ -816,7 +816,7 @@ describe('AppForm', () => {
     await userEvent.type(urlField, 'invalid-url');
     fireEvent.click(fetchButton);
 
-    const errorMessage = await getByText('Invalid GitHub URL');
+    const errorMessage = await getByText('Invalid Git repository URL');
     expect(errorMessage).toBeInTheDocument();
   });
 });
