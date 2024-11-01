@@ -16,6 +16,7 @@ router = APIRouter(prefix="/services/japps")
 @router.get("/create-app", response_class=HTMLResponse)
 @router.get("/edit-app", response_class=HTMLResponse)
 @router.get("/server-types", response_class=HTMLResponse)
+@router.get("/success", response_class=HTMLResponse)
 async def handle_apps(request: Request):
     now = datetime.now(timezone.utc)
     config = get_jupyterhub_config()
