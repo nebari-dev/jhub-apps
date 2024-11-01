@@ -118,7 +118,7 @@ export const AppSharing = ({
   const sortedPermissions = availablePermissions.sort((a, b) => {
     const labelA = a.type === 'user' ? a.name : `${a.name} (Group)`;
     const labelB = b.type === 'user' ? b.name : `${b.name} (Group)`;
-  
+
     // First, compare by type: users first, groups second
     if (a.type === 'user' && b.type !== 'user') {
       return -1;
@@ -126,10 +126,10 @@ export const AppSharing = ({
     if (a.type !== 'user' && b.type === 'user') {
       return 1;
     }
-  
+
     return labelA.localeCompare(labelB);
   });
-  
+
   const handleShare = () => {
     if (currentShare.length > 0) {
       const allItems = [...new Set([...currentItems, ...currentShare])];
