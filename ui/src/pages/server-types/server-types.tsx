@@ -135,6 +135,7 @@ export const ServerTypes = (): React.ReactElement => {
           const username = currentUser?.name;
           if (username && data?.length > 1) {
             const server = data[1];
+            // If headless, navigate to success page, else redirect to spawn-pending page
             if (isHeadless) {
               navigate(`/success?id=${server}`);
             } else {
