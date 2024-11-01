@@ -1,7 +1,7 @@
 import { Box, Stack, Typography } from '@mui/material';
 import { UserState } from '@src/types/user';
 import { APP_BASE_URL } from '@src/utils/constants';
-import React, { SyntheticEvent } from 'react';
+import React, { SyntheticEvent, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import { StyledFormParagraph } from 'src/styles/styled-form-paragraph';
@@ -22,6 +22,10 @@ export const Success = (): React.ReactElement => {
       '_blank',
     );
   };
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   return (
     <Box
