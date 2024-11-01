@@ -135,7 +135,13 @@ export const ServerTypes = (): React.ReactElement => {
           const username = currentUser?.name;
           if (username && data?.length > 1) {
             const server = data[1];
-            window.location.assign(`/hub/spawn-pending/${username}/${server}`);
+            if (isHeadless) {
+              navigate(`/success?id=${server}`);
+            } else {
+              window.location.assign(
+                `/hub/spawn-pending/${username}/${server}`,
+              );
+            }
           }
         },
         // eslint-disable-next-line @typescript-eslint/no-explicit-any

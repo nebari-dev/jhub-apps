@@ -271,9 +271,14 @@ export const AppForm = ({ id }: AppFormProps): React.ReactElement => {
             const username = currentUser?.name;
             if (username && data?.length > 1) {
               const server = data[1];
-              window.location.assign(
-                `${APP_BASE_URL}/spawn-pending/${username}/${server}`,
-              );
+              // If headless, navigate to success page, else redirect to spawn-pending page
+              if (isHeadless) {
+                navigate(`/success?id=${server}`);
+              } else {
+                window.location.assign(
+                  `${APP_BASE_URL}/spawn-pending/${username}/${server}`,
+                );
+              }
             }
           },
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
