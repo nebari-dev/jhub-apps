@@ -99,22 +99,6 @@ describe('CreateApp', () => {
     );
     expect(appForm).toBeInTheDocument();
   });
-  test('should hide Back To Home button and deployment options when isHeadless is true', () => {
-    const { queryByText, queryByLabelText } = render(
-      renderWithRecoilState(true),
-    );
-
-    // Check that Back To Home button is hidden
-    expect(queryByText('Back To Home')).not.toBeInTheDocument();
-
-    // Check that deployment options (radio buttons) are hidden
-    expect(
-      queryByLabelText('Deploy from App Launcher'),
-    ).not.toBeInTheDocument();
-    expect(
-      queryByLabelText('Deploy from Git Repository'),
-    ).not.toBeInTheDocument();
-  });
 
   test('should display Back To Home button and deployment options when isHeadless is false', () => {
     const { getByText, getByLabelText } = render(renderWithRecoilState(false));

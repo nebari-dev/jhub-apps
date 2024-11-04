@@ -697,6 +697,7 @@ export const AppForm = ({
   const { mutate: createQuery } = useMutation({
     mutationFn: createRequest,
     retry: 1,
+    // eslint-disable-next-line no-console
     onError: (error) => console.error('Create request error:', error),
   });
 
