@@ -40,6 +40,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
+import { AppSharing, EnvironmentVariables, Thumbnail } from '..';
 import {
   currentNotification,
   currentFile as defaultFile,
@@ -50,10 +51,7 @@ import {
   currentUser as defaultUser,
 } from '../../store';
 import { StyledFormSection } from '../../styles/styled-form-section';
-import AppSharing from '../app-sharing/app-sharing';
 import CustomLabel from '../custom-label/custom-label';
-import EnvironmentVariables from '../environment-variables/environment-variables';
-import Thumbnail from '../thumbnail/thumbnail';
 import './app-form.css';
 
 export const AppForm = ({
@@ -435,15 +433,10 @@ export const AppForm = ({
       // Add repository details only if it's a Git-based app
       if (deployOption === 'git') {
         payload.repository = { url: gitUrl };
-      }
-
-      // Check if the app is a Git app
-      if (deployOption === 'git') {
-        // Use the createOrUpdateAppFromGit function for Git apps
-        createOrUpdateAppFromGit(payload);
-      } else {
-        // Use the createOrUpdateApp function for user-created apps
-        createOrUpdateApp(payload);
+        // createOrUpdateAppFromGit(payload);
+        // } else {
+        //   // Use the createOrUpdateApp function for user-created apps
+        //   createOrUpdateApp(payload);
       }
       // After successful submission, start checking the app status
       checkAppStatus(displayName, currentUser?.name || '');
@@ -510,150 +503,150 @@ export const AppForm = ({
       }
     }
   };
-  const handleError = (error: unknown) => {
-    if (error instanceof AxiosError && error.response) {
-      // Error from Axios response
-      setNotification(
-        `Error: ${error.response.status} - ${error.response.data?.message || 'Unknown error'}`,
-      );
-    } else if (error instanceof Error) {
-      // Generic JavaScript error
-      setNotification(`Error: ${error.message}`);
-    } else {
-      // Unknown error
-      setNotification('Unknown error occurred');
-    }
-  };
+  // const handleError = (error: unknown) => {
+  //   if (error instanceof AxiosError && error.response) {
+  //     // Error from Axios response
+  //     setNotification(
+  //       `Error: ${error.response.status} - ${error.response.data?.message || 'Unknown error'}`,
+  //     );
+  //   } else if (error instanceof Error) {
+  //     // Generic JavaScript error
+  //     setNotification(`Error: ${error.message}`);
+  //   } else {
+  //     // Unknown error
+  //     setNotification('Unknown error occurred');
+  //   }
+  // };
 
-  const createOrUpdateAppFromGit = (payload: AppFormInput) => {
-    const gitPayload: AppQueryUpdateProps = {
-      servername: payload.display_name,
-      user_options: {
-        jhub_app: true,
-        display_name: payload.display_name,
-        description: payload.description || '',
-        framework: payload.framework,
-        thumbnail: payload.thumbnail || '',
-        filepath: payload.filepath || '',
-        conda_env: payload.conda_env || '',
-        env: payload.env,
-        custom_command: payload.custom_command || '',
-        profile: payload.profile || '',
-        public: payload.is_public,
-        share_with: {
-          users: payload.share_with?.users || [],
-          groups: payload.share_with?.groups || [],
-        },
-        keep_alive: payload.keep_alive,
+  // const createOrUpdateAppFromGit = (payload: AppFormInput) => {
+  //   const gitPayload: AppQueryUpdateProps = {
+  //     servername: payload.display_name,
+  //     user_options: {
+  //       jhub_app: true,
+  //       display_name: payload.display_name,
+  //       description: payload.description || '',
+  //       framework: payload.framework,
+  //       thumbnail: payload.thumbnail || '',
+  //       filepath: payload.filepath || '',
+  //       conda_env: payload.conda_env || '',
+  //       env: payload.env,
+  //       custom_command: payload.custom_command || '',
+  //       profile: payload.profile || '',
+  //       public: payload.is_public,
+  //       share_with: {
+  //         users: payload.share_with?.users || [],
+  //         groups: payload.share_with?.groups || [],
+  //       },
+  //       keep_alive: payload.keep_alive,
 
-        repository: {
-          url: payload.repository?.url || '',
-        },
-      },
-    };
-    setSubmitting(true);
-    if (id) {
-      updateQuery(gitPayload, {
-        onSuccess: async (data) => {
-          const username = currentUser?.name;
-          const serverId = data[1]; // Assuming the second element is the server ID
-          if (username && serverId) {
-            checkAppStatus(serverId, username); // Check the app status and redirect when running
-            navigate(`${APP_BASE_URL}/apps/${serverId}`); // Navigate to the app's page after success
-          }
-          setIsProcessing(false);
-        },
-        onError: async (error: unknown) => {
-          setSubmitting(false);
-          setIsProcessing(false);
-          handleError(error); // Use the new handleError function
-        },
-      });
-    } else {
-      createQuery(gitPayload, {
-        onSuccess: async (data) => {
-          const username = currentUser?.name;
+  //       repository: {
+  //         url: payload.repository?.url || '',
+  //       },
+  //     },
+  //   };
+  //   setSubmitting(true);
+  //   if (id) {
+  //     updateQuery(gitPayload, {
+  //       onSuccess: async (data) => {
+  //         const username = currentUser?.name;
+  //         const serverId = data[1]; // Assuming the second element is the server ID
+  //         if (username && serverId) {
+  //           checkAppStatus(serverId, username); // Check the app status and redirect when running
+  //           navigate(`${APP_BASE_URL}/apps/${serverId}`); // Navigate to the app's page after success
+  //         }
+  //         setIsProcessing(false);
+  //       },
+  //       onError: async (error: unknown) => {
+  //         setSubmitting(false);
+  //         setIsProcessing(false);
+  //         handleError(error); // Use the new handleError function
+  //       },
+  //     });
+  //   } else {
+  //     createQuery(gitPayload, {
+  //       onSuccess: async (data) => {
+  //         const username = currentUser?.name;
 
-          // Restore the original logic, checking if username and data are valid
-          if (username && data?.length > 1) {
-            const server = data[1];
+  //         // Restore the original logic, checking if username and data are valid
+  //         if (username && data?.length > 1) {
+  //           const server = data[1];
 
-            // Redirect to the spawn-pending page while checking the app status
-            window.location.assign(
-              `${APP_BASE_URL}/spawn-pending/${username}/${server}`,
-            );
+  //           // Redirect to the spawn-pending page while checking the app status
+  //           window.location.assign(
+  //             `${APP_BASE_URL}/spawn-pending/${username}/${server}`,
+  //           );
 
-            // After redirecting to the pending page, start checking the app status
-            checkAppStatus(server, username); // Check the app status and redirect when running
-            navigate(`${APP_BASE_URL}/apps/${server}`); // Navigate to the app's page after success
-          }
-          setIsProcessing(false);
-        },
-        onError: async (error: unknown) => {
-          setSubmitting(false);
-          setIsProcessing(false);
-          handleError(error);
-        },
-      });
-    }
-  };
+  //           // After redirecting to the pending page, start checking the app status
+  //           checkAppStatus(server, username); // Check the app status and redirect when running
+  //           navigate(`${APP_BASE_URL}/apps/${server}`); // Navigate to the app's page after success
+  //         }
+  //         setIsProcessing(false);
+  //       },
+  //       onError: async (error: unknown) => {
+  //         setSubmitting(false);
+  //         setIsProcessing(false);
+  //         handleError(error);
+  //       },
+  //     });
+  //   }
+  // };
 
-  const createOrUpdateApp = (formInput: AppFormInput) => {
-    setSubmitting(true);
+  // const createOrUpdateApp = (formInput: AppFormInput) => {
+  //   setSubmitting(true);
 
-    // Construct the correct payload format for AppQueryUpdateProps
-    const payload: AppQueryUpdateProps = {
-      servername: formInput.display_name, // Assuming display_name is the servername
-      user_options: {
-        jhub_app: true,
-        display_name: formInput.display_name,
-        description: formInput.description || '',
-        framework: formInput.framework,
-        thumbnail: formInput.thumbnail || '',
-        filepath: formInput.filepath || '',
-        conda_env: formInput.conda_env || '',
-        env: getFriendlyEnvironmentVariables(variables),
-        custom_command: formInput.custom_command || '',
-        profile: formInput.profile || '',
-        public: formInput.is_public,
-        share_with: {
-          users: currentUserPermissions, // Assuming this comes from the component's state
-          groups: currentGroupPermissions, // Assuming this comes from the component's state
-        },
-        keep_alive: formInput.keep_alive,
-      },
-    };
+  //   // Construct the correct payload format for AppQueryUpdateProps
+  //   const payload: AppQueryUpdateProps = {
+  //     servername: formInput.display_name, // Assuming display_name is the servername
+  //     user_options: {
+  //       jhub_app: true,
+  //       display_name: formInput.display_name,
+  //       description: formInput.description || '',
+  //       framework: formInput.framework,
+  //       thumbnail: formInput.thumbnail || '',
+  //       filepath: formInput.filepath || '',
+  //       conda_env: formInput.conda_env || '',
+  //       env: getFriendlyEnvironmentVariables(variables),
+  //       custom_command: formInput.custom_command || '',
+  //       profile: formInput.profile || '',
+  //       public: formInput.is_public,
+  //       share_with: {
+  //         users: currentUserPermissions, // Assuming this comes from the component's state
+  //         groups: currentGroupPermissions, // Assuming this comes from the component's state
+  //       },
+  //       keep_alive: formInput.keep_alive,
+  //     },
+  //   };
 
-    if (id) {
-      // If the app already exists (editing an app)
-      updateQuery(payload, {
-        onSuccess: async () => {
-          window.location.assign(APP_BASE_URL);
-        },
-        onError: async (error: unknown) => {
-          setSubmitting(false);
-          handleError(error); // Use the new handleError function
-        },
-      });
-    } else {
-      // If it's a new app (creating an app)
-      createQuery(payload, {
-        onSuccess: async (data) => {
-          const username = currentUser?.name;
-          if (username && data?.length > 1) {
-            const server = data[1];
-            window.location.assign(
-              `${APP_BASE_URL}/spawn-pending/${username}/${server}`,
-            );
-          }
-        },
-        onError: async (error: unknown) => {
-          setSubmitting(false);
-          handleError(error); // Use the new handleError function
-        },
-      });
-    }
-  };
+  //   if (id) {
+  //     // If the app already exists (editing an app)
+  //     updateQuery(payload, {
+  //       onSuccess: async () => {
+  //         window.location.assign(APP_BASE_URL);
+  //       },
+  //       onError: async (error: unknown) => {
+  //         setSubmitting(false);
+  //         handleError(error); // Use the new handleError function
+  //       },
+  //     });
+  //   } else {
+  //     // If it's a new app (creating an app)
+  //     createQuery(payload, {
+  //       onSuccess: async (data) => {
+  //         const username = currentUser?.name;
+  //         if (username && data?.length > 1) {
+  //           const server = data[1];
+  //           window.location.assign(
+  //             `${APP_BASE_URL}/spawn-pending/${username}/${server}`,
+  //           );
+  //         }
+  //       },
+  //       onError: async (error: unknown) => {
+  //         setSubmitting(false);
+  //         handleError(error); // Use the new handleError function
+  //       },
+  //     });
+  //   }
+  // };
   const createRequest = async ({
     servername,
     user_options,
@@ -893,9 +886,6 @@ export const AppForm = ({
                       disabled={!isCondaYamlEnabled} // Disable until configuration is fetched
                       value={repoData?.conda_project_yml || ''}
                       onChange={(e) => field.onChange(e.target.value)}
-                      // InputProps={{
-                      //   style: { opacity: isCondaYamlEnabled ? 1 : 0.8 },
-                      // }}
                       helperText="Optional: if conda-project.yml is not present in root directory"
                     />
                   </FormControl>

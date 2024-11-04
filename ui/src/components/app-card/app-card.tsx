@@ -18,6 +18,7 @@ import { UserState } from '@src/types/user';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
+
 import {
   currentApp,
   currentNotification,
@@ -63,7 +64,7 @@ export const AppCard = ({
 }: AppCardProps): React.ReactElement => {
   const [appStatus, setAppStatus] = useState('');
   const [currentProfiles] = useRecoilState<AppProfileProps[]>(defaultProfiles);
-  const [, setIsEditMode] = useState(false);
+  // const [, setIsEditMode] = useState(false);
   const [, setCurrentApp] = useRecoilState<JhApp | undefined>(currentApp);
   const [, setNotification] = useRecoilState<string | undefined>(
     currentNotification,
@@ -159,7 +160,7 @@ export const AppCard = ({
       id: 'edit',
       title: 'Edit',
       onClick: () => {
-        setIsEditMode(true);
+        // setIsEditMode(true);
         window.location.href = `${API_BASE_URL}/edit-app?id=${id}`;
       },
       visible: true,
