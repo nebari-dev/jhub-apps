@@ -45,8 +45,7 @@ export const CreateApp = (): React.ReactElement => {
             </Button>
           </div>
         </Item>
-        {/* Radio buttons right after Back button */}
-        <Item>
+        <Item hidden={isHeadless}>
           <FormControl component="fieldset">
             <RadioGroup
               aria-label="deployOption"

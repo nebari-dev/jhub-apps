@@ -4,6 +4,7 @@ import { act, fireEvent, render } from '@testing-library/react';
 import MockAdapter from 'axios-mock-adapter';
 import { BrowserRouter } from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
+import { isHeadless as defaultIsHeadless } from '../../store';
 import { CreateApp } from './create-app';
 
 describe('CreateApp', () => {
@@ -18,6 +19,18 @@ describe('CreateApp', () => {
   beforeAll(() => {
     mock.reset();
   });
+
+  const renderWithRecoilState = (isHeadlessValue: boolean) => (
+    <RecoilRoot
+      initializeState={({ set }) => set(defaultIsHeadless, isHeadlessValue)}
+    >
+      <QueryClientProvider client={queryClient}>
+        <BrowserRouter>
+          <CreateApp />
+        </BrowserRouter>
+      </QueryClientProvider>
+    </RecoilRoot>
+  );
 
   const componentWrapper = (
     <RecoilRoot>
@@ -85,5 +98,32 @@ describe('CreateApp', () => {
       /Begin your project by entering the details below\./i,
     );
     expect(appForm).toBeInTheDocument();
+  });
+  test('should hide Back To Home button and deployment options when isHeadless is true', () => {
+    const { queryByText, queryByLabelText } = render(
+      renderWithRecoilState(true),
+    );
+
+    // Check that Back To Home button is hidden
+    expect(queryByText('Back To Home')).not.toBeInTheDocument();
+
+    // Check that deployment options (radio buttons) are hidden
+    expect(
+      queryByLabelText('Deploy from App Launcher'),
+    ).not.toBeInTheDocument();
+    expect(
+      queryByLabelText('Deploy from Git Repository'),
+    ).not.toBeInTheDocument();
+  });
+
+  test('should display Back To Home button and deployment options when isHeadless is false', () => {
+    const { getByText, getByLabelText } = render(renderWithRecoilState(false));
+
+    // Check that Back To Home button is visible
+    expect(getByText('Back To Home')).toBeInTheDocument();
+
+    // Check that deployment options (radio buttons) are visible
+    expect(getByLabelText('Deploy from App Launcher')).toBeInTheDocument();
+    expect(getByLabelText('Deploy from Git Repository')).toBeInTheDocument();
   });
 });

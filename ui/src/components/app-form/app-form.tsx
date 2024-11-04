@@ -11,7 +11,6 @@ import {
   FormControl,
   FormControlLabel,
   FormHelperText,
-  // InputAdornment,
   InputLabel,
   MenuItem,
   Select,
@@ -352,13 +351,9 @@ export const AppForm = ({
     return () => currentTextAreaRef?.removeEventListener('scroll', syncScroll);
   }, []);
   const checkAppStatus = async (appId: string, username: string) => {
-    console.log('CHECKING APP STATUS:', appId, username);
     try {
       // Make the request to check the app status
       const response = await axios.get(`/server-status/${appId}`);
-
-      // Log the response to see what is being returned
-      console.log('App status response:', response.data);
 
       // If the app is running, redirect to the running app
       if (response.data?.status === 'Running') {
@@ -368,11 +363,9 @@ export const AppForm = ({
         setTimeout(() => checkAppStatus(appId, username), 3000);
       }
     } catch (error) {
-      console.error('Error checking app status:', error);
-
       // If there's an error, stop the spinner and show a notification
       setIsProcessing(false); // Stop the spinner
-      setNotification('Failed to check app status. Please try again.');
+      setNotification(`Failed to check app status. Please try again: ${error}`);
     }
   };
   const getStyledText = () => {
@@ -417,7 +410,6 @@ export const AppForm = ({
     custom_command,
     profile,
   }) => {
-    console.log('Form is being submitted', display_name, description);
     setIsProcessing(true);
     const displayName = getFriendlyDisplayName(display_name);
     if (profiles && profiles.length > 0) {
@@ -561,13 +553,8 @@ export const AppForm = ({
     };
     setSubmitting(true);
     if (id) {
-      console.log('Updating App with ID:', id);
       updateQuery(gitPayload, {
-        // onSuccess: async () => {
-        //   window.location.assign(APP_BASE_URL);
-        // },
         onSuccess: async (data) => {
-          console.log('SUCCZESS UPDATEZ', data);
           const username = currentUser?.name;
           const serverId = data[1]; // Assuming the second element is the server ID
           if (username && serverId) {
@@ -577,7 +564,6 @@ export const AppForm = ({
           setIsProcessing(false);
         },
         onError: async (error: unknown) => {
-          console.error('ERROR: Create Query', error);
           setSubmitting(false);
           setIsProcessing(false);
           handleError(error); // Use the new handleError function
@@ -586,7 +572,6 @@ export const AppForm = ({
     } else {
       createQuery(gitPayload, {
         onSuccess: async (data) => {
-          console.log('SUCCZESS', data);
           const username = currentUser?.name;
 
           // Restore the original logic, checking if username and data are valid
@@ -601,8 +586,6 @@ export const AppForm = ({
             // After redirecting to the pending page, start checking the app status
             checkAppStatus(server, username); // Check the app status and redirect when running
             navigate(`${APP_BASE_URL}/apps/${server}`); // Navigate to the app's page after success
-          } else {
-            console.error('Username or server data is missing.');
           }
           setIsProcessing(false);
         },
@@ -681,7 +664,6 @@ export const AppForm = ({
     };
     const formData = new FormData();
     formData.append('data', JSON.stringify({ servername, user_options }));
-    if (formError) console.error('Form query error:', formError);
     if (currentFile) {
       formData.append('thumbnail', currentFile as Blob);
     }
@@ -862,7 +844,6 @@ export const AppForm = ({
               />
 
               {/* Show loader while fetching */}
-              {/* {isFetching && <Typography sx={{ margin: '1.5rem 0' }}>{displayedText}</Typography>} */}
               {isFetching && !isUrlValid && (
                 // Set a fixed width to prevent jumping
                 <Typography
