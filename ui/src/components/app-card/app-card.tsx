@@ -160,7 +160,6 @@ export const AppCard = ({
       id: 'edit',
       title: 'Edit',
       onClick: () => {
-        // setIsEditMode(true);
         window.location.href = `${API_BASE_URL}/edit-app?id=${id}`;
       },
       visible: true,
