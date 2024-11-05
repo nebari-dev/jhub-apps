@@ -6,6 +6,7 @@ dependencies:
   - fastapi
   # Later versions were yanked in PyPi, but unfortunately not on conda-forge
   # https://pypi.org/project/python-multipart/0.0.14/
+  - requests
   - python-multipart <= 0.0.12
   - jupyter
   - plotlydash-tornado-cmd
@@ -23,6 +24,9 @@ dependencies:
   - python-slugify
   - cachetools
   - structlog
+  - pyjwt
   - gradio
   - gitpython
+  - playwright
+  - pytest-playwright
   - conda-project=0.4.2

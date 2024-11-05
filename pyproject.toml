@@ -33,6 +33,17 @@ dependencies = [
     # unexpected breakage
     "conda-project==0.4.2"
 ]
+[project.optional-dependencies]
+dev = [
+    "ruff",
+    "voila",
+    "dash",
+    "streamlit",
+    "gradio",
+    "pytest",
+    "playwright",
+    "pytest-playwright",
+]
 dynamic = ["version"]
 
 [project.entry-points.jhub_apps]
