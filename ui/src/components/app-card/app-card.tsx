@@ -64,7 +64,6 @@ export const AppCard = ({
 }: AppCardProps): React.ReactElement => {
   const [appStatus, setAppStatus] = useState('');
   const [currentProfiles] = useRecoilState<AppProfileProps[]>(defaultProfiles);
-  // const [, setIsEditMode] = useState(false);
   const [, setCurrentApp] = useRecoilState<JhApp | undefined>(currentApp);
   const [, setNotification] = useRecoilState<string | undefined>(
     currentNotification,

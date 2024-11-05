@@ -348,24 +348,7 @@ export const AppForm = ({
     currentTextAreaRef?.addEventListener('scroll', syncScroll);
     return () => currentTextAreaRef?.removeEventListener('scroll', syncScroll);
   }, []);
-  const checkAppStatus = async (appId: string, username: string) => {
-    try {
-      // Make the request to check the app status
-      const response = await axios.get(`/server-status/${appId}`);
 
-      // If the app is running, redirect to the running app
-      if (response.data?.status === 'Running') {
-        window.location.assign(`${APP_BASE_URL}/user/${username}/${appId}/`);
-      } else {
-        // If not running yet, poll again after 3 seconds
-        setTimeout(() => checkAppStatus(appId, username), 3000);
-      }
-    } catch (error) {
-      // If there's an error, stop the spinner and show a notification
-      setIsProcessing(false); // Stop the spinner
-      setNotification(`Failed to check app status. Please try again: ${error}`);
-    }
-  };
   const getStyledText = () => {
     const normalText = description.slice(0, 200);
     const excessText = description.slice(200);
@@ -434,8 +417,6 @@ export const AppForm = ({
       if (deployOption === 'git') {
         payload.repository = { url: gitUrl };
       }
-      // After successful submission, start checking the app status
-      checkAppStatus(displayName, currentUser?.name || '');
       setCurrentFormInput(payload);
       navigate(`/server-types${id ? `?id=${id}` : ''}`);
     } else {
