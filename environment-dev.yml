@@ -4,9 +4,9 @@ channels:
 dependencies:
   - uvicorn
   - fastapi
+  - requests
   # Later versions were yanked in PyPi, but unfortunately not on conda-forge
   # https://pypi.org/project/python-multipart/0.0.14/
-  - requests
   - python-multipart <= 0.0.12
   - jupyter
   - plotlydash-tornado-cmd
