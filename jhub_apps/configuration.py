@@ -5,7 +5,9 @@ from secrets import token_bytes
 from traitlets.config import LazyConfigValue
 
 from jhub_apps import JAppsConfig
+from jhub_apps.hub_client.hub_client import HubClient
 from jhub_apps.hub_client.utils import is_jupyterhub_5
+from jhub_apps.service.models import UserOptions
 from jhub_apps.spawner.spawner_creation import subclass_spawner
 
 
@@ -124,4 +126,8 @@ def install_jhub_apps(c, spawner_to_subclass, *, oauth_no_confirm=False):
         c.JupyterHub.load_roles = c.JupyterHub.load_roles + services_roles
     else:
         c.JupyterHub.load_roles = services_roles
+    
+    # I conisdered instantiating startup_apps here.
     return c
+
+    

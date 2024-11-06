@@ -1,5 +1,7 @@
-from traitlets import Unicode, Union, List, Callable, Integer, Bool
+from traitlets import Instance, Unicode, Union, List, Callable, Integer, Bool
 from traitlets.config import SingletonConfigurable, Enum
+
+from jhub_apps.service.models import JHubAppConfig
 
 
 class JAppsConfig(SingletonConfigurable):
@@ -57,4 +59,10 @@ class JAppsConfig(SingletonConfigurable):
     blocked_frameworks = Bool(
         None,
         help="Disallow a set of frameworks to avoid spinning up apps using those frameworks",
+    ).tag(config=True)
+
+    startup_apps = List(
+        trait=Unicode,  # TODO: Change this, use Instance() maybe or define a new type - https://traitlets.readthedocs.io/en/stable/defining_traits.html
+        default_value=[],
+        help="List of apps to start on JHub Apps Launcher startup",
     ).tag(config=True)
