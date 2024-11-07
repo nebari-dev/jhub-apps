@@ -45,6 +45,7 @@ dev = [
     "pytest",
     "playwright",
     "pytest-playwright",
+    "pre-commit",
 ]
 
 [project.entry-points.jhub_apps]

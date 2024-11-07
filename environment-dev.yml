@@ -29,4 +29,5 @@ dependencies:
   - gitpython
   - playwright
   - pytest-playwright
+  - pre-commit
   - conda-project=0.4.2
