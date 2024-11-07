@@ -22,7 +22,7 @@ STATIC_DIR = Path(__file__).parent.parent / "static"
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # TODO: Not sure how to get access to c.JAppsConfig.startup_apps here
+    # TODO: I'm not sure how to get access to c.JAppsConfig.startup_apps here
     user_options_dict = {'display_name': 'My Startup App', 'description': 'description', 'thumbnail': 'data:image/jpeg;base64,Y29udGVudHMgb2YgdGh1bWJuYWls', 'filepath': '', 'framework': 'panel', 'custom_command': '', 'public': False, 'keep_alive': False, 'env': {'ENV_VAR_KEY_1': 'ENV_VAR_KEY_1', 'ENV_VAR_KEY_2': 'ENV_VAR_KEY_2'}, 'repository': None, 'jhub_app': True, 'conda_env': '', 'profile': '', 'share_with': {'users': ['alice', 'john'], 'groups': ['alpha', 'beta']}}
     instantiate_startup_apps(user_options_dict, 'admin')
     
