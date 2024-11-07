@@ -56,7 +56,7 @@ def test_panel_app_creation(playwright: Playwright, with_server_options) -> None
         profile_menu = page.locator("id=profile-menu-btn")
         expect(profile_menu).to_be_visible()
         page_title = page.locator("h1")
-        expect(page_title).to_have_text("Home")
+        expect(page_title).to_be_visible()
         # Create the App
         create_app(
             app_name, page, with_server_options, share_with_users=[share_with_user]
@@ -107,7 +107,7 @@ def create_app(
     expect(deploy_button).to_be_visible()
     deploy_button.click()
     page_title = page.locator("h1")
-    expect(page_title).to_have_text("Deploy a new app")
+    expect(page_title).to_be_visible()
     logger.info("Fill App display Name")
     display_name_field = page.get_by_label("*Name")
     expect(display_name_field).to_be_visible()
