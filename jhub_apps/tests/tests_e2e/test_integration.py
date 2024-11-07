@@ -47,6 +47,7 @@ def test_panel_app_creation(playwright: Playwright, with_server_options) -> None
         page.goto(BASE_URL)
         share_with_user = f"admin-{uuid.uuid4().hex[:6]}"
         create_users(page, users=[share_with_user])
+        logger.info(f"Go to home page: {BASE_URL}")
         page.goto(BASE_URL)
         sign_in_and_authorize(page, username=f"admin-{app_suffix}", password="password")
         create_app(
@@ -88,7 +89,9 @@ def create_app(
 ):
     logger.info("Creating App")
     deploy_button = page.get_by_role("button", name="Deploy App")
+    logger.info("Waiting for deploy button to be visible")
     expect(deploy_button).to_be_visible()
+    logger.info("Clicking Deploy button")
     deploy_button.click()
     logger.info("Fill App display Name")
     display_name_field = page.get_by_label("*Name")
@@ -141,17 +144,21 @@ def select_share_options(page, users=None, groups=None):
 def create_users(page, users):
     """Create users by logging in"""
     for user in users:
+        logger.info(f"Creating user: {user}")
         sign_in_and_authorize(page, user, password="password")
+        logger.info(f"user: {user} logged in, now signing out")
         sign_out(page)
 
 
 def sign_in_and_authorize(page, username, password):
-    logger.info("Signing in")
+    logger.info(f"Signing in: {username}")
     page.get_by_label("Username:").click()
     page.get_by_label("Username:").fill(username)
     page.get_by_label("Password:").fill(password)
-    logger.info("Pressing Sign in button")
-    page.get_by_role("button", name="Sign in").click()
+    logger.info(f"Pressing Sign in button for user: {username}")
+    sign_in_button = page.get_by_role("button", name="Sign in")
+    expect(sign_in_button).to_be_visible()
+    sign_in_button.click()
 
 
 def sign_out(page):
