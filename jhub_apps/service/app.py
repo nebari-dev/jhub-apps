@@ -1,9 +1,12 @@
 from contextlib import asynccontextmanager
+import json
 import os
 from pathlib import Path
+import pprint
 
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
+from typing import Any
 
 from jhub_apps.hub_client.hub_client import HubClient
 from jhub_apps.service.japps_routes import router as japps_router
@@ -11,6 +14,7 @@ from jhub_apps.service.logging_utils import setup_logging
 from jhub_apps.service.middlewares import create_middlewares
 from jhub_apps.service.models import UserOptions
 from jhub_apps.service.routes import router
+from jhub_apps.service.utils import get_jupyterhub_config
 from jhub_apps.version import get_version
 
 ### When managed by Jupyterhub, the actual endpoints
@@ -22,21 +26,22 @@ STATIC_DIR = Path(__file__).parent.parent / "static"
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # TODO: I'm not sure how to get access to c.JAppsConfig.startup_apps here
-    user_options_dict = {'display_name': 'My Startup App', 'description': 'description', 'thumbnail': 'data:image/jpeg;base64,Y29udGVudHMgb2YgdGh1bWJuYWls', 'filepath': '', 'framework': 'panel', 'custom_command': '', 'public': False, 'keep_alive': False, 'env': {'ENV_VAR_KEY_1': 'ENV_VAR_KEY_1', 'ENV_VAR_KEY_2': 'ENV_VAR_KEY_2'}, 'repository': None, 'jhub_app': True, 'conda_env': '', 'profile': '', 'share_with': {'users': ['alice', 'john'], 'groups': ['alpha', 'beta']}}
-    instantiate_startup_apps(user_options_dict, 'admin')
+    config = get_jupyterhub_config()
+    user_options_list = config['JAppsConfig']['startup_apps']
+    instantiate_startup_apps(user_options_list, 'admin')
     
     yield
 
-def instantiate_startup_apps(user_options_dict, username):
+def instantiate_startup_apps(user_options_list: list[dict[str, Any]], username: str):
         # instantiate custom apps
-        user_options = UserOptions(**user_options_dict)
-        hub_client = HubClient(username=username)
-        hub_client.create_server(
-            username=username,
-            servername='my-startup-server',
-            user_options=user_options,
-        )
+        for user_options_dict in user_options_list:
+            user_options = UserOptions(**user_options_dict)
+            hub_client = HubClient(username=username)
+            hub_client.create_server(
+                username=username,
+                servername='my-startup-server',  # TODO: Use some passed in value
+                user_options=user_options,
+            )
 
 app = FastAPI(
     title="JApps Service",
