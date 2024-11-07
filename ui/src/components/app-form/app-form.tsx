@@ -87,7 +87,7 @@ export const AppForm = ({
   const [openModal, setOpenModal] = useState(false); // State to control modal visibility
 
   const [repoData, setRepoData] = useState<RepoData | null>(null); // Store fetched repo data
-  const [isCondaYamlEnabled, setIsCondaYamlEnabled] = useState(false);
+  // const [isCondaYamlEnabled, setIsCondaYamlEnabled] = useState(false);
   const [error, setError] = useState<string | null>(null); // Store validation errors
   const [shouldValidate, setShouldValidate] = useState(false); // To control validation trigger
   const repoUrlRef = useRef<HTMLInputElement>(null); // Ref for Git Repository URL field
@@ -200,12 +200,18 @@ export const AppForm = ({
 
       const response = await axios.post('/app-config-from-git/', {
         url: gitUrl,
+        config_directory: '.',
+        ref: 'main',
       });
 
       if (response && response.status === 200) {
         setIsUrlValid(true);
         setRepoData(response.data);
-        setIsCondaYamlEnabled(true);
+        setValue(
+          'repository.config_directory',
+          response.data.config_directory || '.',
+        );
+        setValue('repository.ref', response.data.ref || 'main');
       } else {
         setIsUrlValid(false);
         setError('Repository not found or invalid.');
@@ -430,12 +436,11 @@ export const AppForm = ({
           groups: currentGroupPermissions,
         },
         keep_alive: keepAlive,
+        repository:
+          deployOption === 'git'
+            ? { url: gitUrl, config_directory: '.', ref: 'main' }
+            : undefined,
       };
-
-      // Add repository details only if it's a Git-based app
-      if (deployOption === 'git') {
-        payload.repository = { url: gitUrl };
-      }
 
       // Check if the app is a Git app
       if (deployOption === 'git') {
@@ -803,7 +808,6 @@ export const AppForm = ({
         id="app-form"
         onSubmit={(e) => {
           e.preventDefault();
-
           // Proceed to call handleSubmit
           handleSubmit(onFormSubmit, scrollToFirstError)(e);
         }}
@@ -828,7 +832,7 @@ export const AppForm = ({
                       inputRef={repoUrlRef}
                       id="repository.url"
                       label="Git Repository URL"
-                      placeholder="Enter Git repository URL"
+                      placeholder="https://github.com/nebari-dev/jhub-apps-from-git-repo-example.git"
                       required
                       value={gitUrl}
                       onChange={(e) => setGitUrl(e.target.value)} // Don't validate here, just set the value
@@ -865,7 +869,6 @@ export const AppForm = ({
                       label="Branch"
                       placeholder="e.g., main"
                       defaultValue={formData?.defaultBranch || 'main'} // Prepopulate if data is fetched
-                      disabled={!isUrlValid} // Disable field until URL is validated
                     />
                   </FormControl>
                 )}
@@ -882,7 +885,7 @@ export const AppForm = ({
                       shrink
                       sx={labelStyle}
                     >
-                      Conda YAML Directory
+                      Conda Project YAML Directory
                     </InputLabel>
 
                     {/* Conda YAML Directory TextField */}
@@ -890,13 +893,9 @@ export const AppForm = ({
                       {...field}
                       id="conda_project_yml"
                       placeholder="Enter path to conda-project.yml"
-                      disabled={!isCondaYamlEnabled} // Disable until configuration is fetched
-                      value={repoData?.conda_project_yml || ''}
+                      value={repoData?.conda_project_yml || field.value}
                       onChange={(e) => field.onChange(e.target.value)}
-                      // InputProps={{
-                      //   style: { opacity: isCondaYamlEnabled ? 1 : 0.8 },
-                      // }}
-                      helperText="Optional: if conda-project.yml is not present in root directory"
+                      helperText="Optional: if conda-project.yml is not present in repository's root directory"
                     />
                   </FormControl>
                 )}

@@ -21,6 +21,8 @@ export interface AppFormInput {
   share_with: SharePermissions;
   repository?: {
     url: string;
+    config_directory?: string;
+    ref?: string;
   };
 
   branch?: string;
