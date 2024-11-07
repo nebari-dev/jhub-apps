@@ -51,7 +51,7 @@ def test_panel_app_creation(playwright: Playwright, with_server_options) -> None
         page.goto(BASE_URL)
         sign_in_and_authorize(page, username=f"admin-{app_suffix}", password="password")
         # Verify that the page is loaded
-        logo = page.locator("alt=logo")
+        logo = page.get_by_alt_text("logo")
         expect(logo).to_be_visible()
         profile_menu = page.locator("id=profile-menu-btn")
         expect(profile_menu).to_be_visible()
@@ -97,7 +97,7 @@ def create_app(
 ):
     logger.info("Creating App")
     # Verify that the page is loaded
-    logo = page.locator("alt=logo")
+    logo = page.get_by_alt_text("logo")
     expect(logo).to_be_visible()
     profile_menu = page.locator("id=profile-menu-btn")
     expect(profile_menu).to_be_visible()
