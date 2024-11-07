@@ -51,9 +51,9 @@ def test_panel_app_creation(playwright: Playwright, with_server_options) -> None
         page.goto(BASE_URL)
         sign_in_and_authorize(page, username=f"admin-{app_suffix}", password="password")
         # Verify that the page is loaded
-        logo = page.get_by_alt_text("logo").last()
+        logo = page.locator("id=app-logo")
         expect(logo).to_be_visible()
-        profile_menu = page.locator("id=profile-menu-btn").last()
+        profile_menu = page.locator("id=profile-menu-btn")
         expect(profile_menu).to_be_visible()
         page_title = page.locator("h1")
         expect(page_title).to_have_text("Home")
@@ -97,16 +97,17 @@ def create_app(
 ):
     logger.info("Creating App")
     # Verify that the page is loaded
-    logo = page.get_by_alt_text("logo").last()
+    logo = page.locator("id=app-logo")
     expect(logo).to_be_visible()
-    profile_menu = page.locator("id=profile-menu-btn").last()
+    profile_menu = page.locator("id=profile-menu-btn")
     expect(profile_menu).to_be_visible()
-    page_title = page.locator("h1")
-    expect(page_title).to_have_text("Deploy a new app")
+
     # Deploy App
     deploy_button = page.get_by_role("button", name="Deploy App")
     expect(deploy_button).to_be_visible()
     deploy_button.click()
+    page_title = page.locator("h1")
+    expect(page_title).to_have_text("Deploy a new app")
     logger.info("Fill App display Name")
     display_name_field = page.get_by_label("*Name")
     expect(display_name_field).to_be_visible()
