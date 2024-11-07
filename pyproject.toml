@@ -35,6 +35,19 @@ dependencies = [
 ]
 dynamic = ["version"]
 
+[project.optional-dependencies]
+dev = [
+    "ruff",
+    "voila",
+    "dash",
+    "streamlit",
+    "gradio",
+    "pytest",
+    "playwright",
+    "pytest-playwright",
+    "pre-commit",
+]
+
 [project.entry-points.jhub_apps]
 jhub_apps = "jhub_apps"
 
