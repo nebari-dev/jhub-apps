@@ -45,6 +45,27 @@ export const CreateApp = (): React.ReactElement => {
             </Button>
           </div>
         </Item>
+
+        <Item>
+          <Typography component="h1" variant="h5">
+            {deployOption === 'launcher'
+              ? 'Deploy a new app'
+              : 'Deploy an app from a Git repository'}
+          </Typography>
+          <StyledFormParagraph>
+            Begin your project by entering the details below. For more
+            information about deploying an app,{' '}
+            <a
+              href="https://jhub-apps.nebari.dev/docs/category/create-apps"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="form-paragraph-link"
+            >
+              visit our docs
+            </a>
+            .
+          </StyledFormParagraph>
+        </Item>
         <Item hidden={isHeadless}>
           <FormControl component="fieldset">
             <RadioGroup
@@ -65,26 +86,6 @@ export const CreateApp = (): React.ReactElement => {
               />
             </RadioGroup>
           </FormControl>
-        </Item>
-        <Item>
-          <Typography component="h1" variant="h5">
-            {deployOption === 'launcher'
-              ? 'Deploy a new app'
-              : 'Deploy an app from a Git repository'}
-          </Typography>
-          <StyledFormParagraph>
-            Begin your project by entering the details below. For more
-            information about deploying an app,{' '}
-            <a
-              href="https://jhub-apps.nebari.dev/docs/category/create-apps"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="form-paragraph-link"
-            >
-              visit our docs
-            </a>
-            .
-          </StyledFormParagraph>
         </Item>
         <Item>
           {/* Pass the selected deployment option to the AppForm */}
