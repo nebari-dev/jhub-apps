@@ -371,7 +371,7 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
             sx={{ flexGrow: 1, display: { xs: 'none', sm: 'block' } }}
           >
             <Link href={APP_BASE_URL}>
-              <img src={getAppLogoUrl()} alt="logo" height="28" />
+              <img id="app-logo" src={getAppLogoUrl()} alt="logo" height="28" />
             </Link>
           </Box>
           <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
