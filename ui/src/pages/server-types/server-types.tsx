@@ -32,6 +32,7 @@ import {
   currentFile as defaultFile,
   currentFormInput as defaultFormInput,
   currentImage as defaultImage,
+  isHeadless as defaultIsHeadless,
   currentServerName as defaultServerName,
   currentUser as defaultUser,
 } from '../../store';
@@ -60,6 +61,7 @@ export const ServerTypes = (): React.ReactElement => {
   const [selectedServerType, setSelectedServerType] = React.useState<string>(
     currentFormInput?.profile || '',
   );
+  const [isHeadless] = useRecoilState<boolean>(defaultIsHeadless);
   const id = searchParams.get('id');
 
   // Use `useQuery` with an inline async function for the Axios call
@@ -133,7 +135,14 @@ export const ServerTypes = (): React.ReactElement => {
           const username = currentUser?.name;
           if (username && data?.length > 1) {
             const server = data[1];
-            window.location.assign(`/hub/spawn-pending/${username}/${server}`);
+            // If headless, navigate to success page, else redirect to spawn-pending page
+            if (isHeadless) {
+              navigate(`/success?id=${server}`);
+            } else {
+              window.location.assign(
+                `/hub/spawn-pending/${username}/${server}`,
+              );
+            }
           }
         },
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -206,7 +215,7 @@ export const ServerTypes = (): React.ReactElement => {
   return (
     <Box className="container">
       <Stack>
-        <Item>
+        <Item hidden={isHeadless}>
           <div className="form-breadcrumb">
             <Button
               id="back-btn"

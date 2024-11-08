@@ -1,4 +1,4 @@
-from traitlets import Unicode, Union, List, Callable, Integer
+from traitlets import Unicode, Union, List, Callable, Integer, Bool
 from traitlets.config import SingletonConfigurable, Enum
 
 
@@ -47,4 +47,14 @@ class JAppsConfig(SingletonConfigurable):
     service_workers = Integer(
         2,
         help="The number of workers to create for the JHub Apps FastAPI service",
+    ).tag(config=True)
+
+    allowed_frameworks = Bool(
+        None,
+        help="Allow only a specific set of frameworks to spun up apps.",
+    ).tag(config=True)
+
+    blocked_frameworks = Bool(
+        None,
+        help="Disallow a set of frameworks to avoid spinning up apps using those frameworks",
     ).tag(config=True)

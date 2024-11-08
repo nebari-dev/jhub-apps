@@ -546,6 +546,13 @@ a:focus {
     border-top: 1px solid #e6e6e6;
 }
 
+/* Ensures admin dashboard server thumbnails with base64 encoded image text do not blowup the page width */
+.server-dashboard-container .table.table-bordered table.table-bordered table.table-bordered > tbody > tr > td {
+    max-width: 400px;
+    text-overflow: clip;
+    overflow: hidden;
+}
+
 @media only screen and (max-width: 480px) {
     .navbar-nav {
         margin: 0;

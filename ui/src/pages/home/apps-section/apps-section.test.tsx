@@ -50,7 +50,7 @@ describe('AppsSection', () => {
         </QueryClientProvider>
       </RecoilRoot>,
     );
-    expect(baseElement.querySelectorAll('.card')).toHaveLength(5);
+    expect(baseElement.querySelectorAll('.card')).toHaveLength(6);
   });
 
   test('renders with mocked data and no current user', async () => {
@@ -63,7 +63,7 @@ describe('AppsSection', () => {
         </QueryClientProvider>
       </RecoilRoot>,
     );
-    expect(baseElement.querySelectorAll('.card')).toHaveLength(5);
+    expect(baseElement.querySelectorAll('.card')).toHaveLength(6);
   });
 
   test('renders a message when no apps', () => {
@@ -130,7 +130,7 @@ describe('AppsSection', () => {
       fireEvent.change(input, { target: { value: 'panel' } });
     });
     const cards = baseElement.querySelectorAll('.card');
-    expect(cards).toHaveLength(2);
+    expect(cards).toHaveLength(3);
   });
 
   test('should toggle app table view', async () => {
