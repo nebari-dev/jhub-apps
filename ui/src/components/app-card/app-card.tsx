@@ -3,7 +3,6 @@ import LockRoundedIcon from '@mui/icons-material/LockRounded';
 import PublicRoundedIcon from '@mui/icons-material/PublicRounded';
 import PushPinRoundedIcon from '@mui/icons-material/PushPinRounded';
 import { Box, Link, Tooltip } from '@mui/material';
-import { useQuery } from '@tanstack/react-query'; 
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
@@ -11,9 +10,12 @@ import Chip from '@mui/material/Chip';
 import Typography from '@mui/material/Typography';
 import { StatusChip } from '@src/components';
 import { API_BASE_URL } from '@src/utils/constants';
+import { useQuery } from '@tanstack/react-query';
 
 import { AppProfileProps } from '@src/types/api';
 import { JhApp } from '@src/types/jupyterhub';
+import { UserState } from '@src/types/user';
+import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import {
@@ -27,8 +29,6 @@ import {
 } from '../../store';
 import ContextMenu, { ContextMenuItem } from '../context-menu/context-menu';
 import './app-card.css';
-import axios from 'axios';
-import { UserState } from '@src/types/user';
 interface AppCardProps {
   id: string;
   title: string;
@@ -71,7 +71,6 @@ export const AppCard = ({
   const [, setIsStopOpen] = useRecoilState<boolean>(isStopOpen);
   const [, setIsDeleteOpen] = useRecoilState<boolean>(isDeleteOpen);
   const [, setIsStartNotRunningOpen] = useRecoilState(isStartNotRunningOpen);
-
 
   useEffect(() => {
     if (serverStatus) {
@@ -127,7 +126,9 @@ export const AppCard = ({
         // Allow admins to start shared apps
         if (isShared && !currentUserData?.admin) {
           // Show error if it's a shared app
-          setNotification('You don\'t have permission to start this app. Please ask the owner to start it.');
+          setNotification(
+            "You don't have permission to start this app. Please ask the owner to start it.",
+          );
           return;
         }
         setIsStartOpen(true);
@@ -142,11 +143,13 @@ export const AppCard = ({
       onClick: () => {
         // Allow admins to stop shared apps
         if (isShared && !currentUserData?.admin) {
-          setNotification('You don\'t have permission to stop this app. Please ask the owner to stop it.');
+          setNotification(
+            "You don't have permission to stop this app. Please ask the owner to stop it.",
+          );
           return;
         }
         setIsStopOpen(true);
-        setCurrentApp(app!); 
+        setCurrentApp(app!);
       },
       visible: true,
       disabled: serverStatus !== 'Running', // Disable stop if the app is not running
@@ -171,9 +174,7 @@ export const AppCard = ({
       danger: true,
     },
   ];
-  
-  
-  
+
   const getHoverClass = (id: string) => {
     const element = document.querySelector(
       `#card-content-container-${id}`,

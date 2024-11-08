@@ -12,6 +12,7 @@ import { Home } from './pages/home/home';
 import { NotRunning } from './pages/not-running/not-running';
 import { ServerTypes } from './pages/server-types/server-types';
 import { StopPending } from './pages/stop-pending/stop-pending';
+import { Success } from './pages/success/success';
 import {
   currentNotification,
   isHeadless as defaultIsHeadless,
@@ -127,6 +128,7 @@ export const App = (): React.ReactElement => {
           <Route path="/edit-app" element={<EditApp />} />
           <Route path="/server-types" element={<ServerTypes />} />
           <Route path="/stop-pending" element={<StopPending />} />
+          <Route path="/success" element={<Success />} />
           <Route path="/" element={<Home />} />
         </Routes>
       </Box>

@@ -58,7 +58,6 @@ const CustomCheckIcon = () => (
   </SvgIcon>
 );
 
-
 export const Home = (): React.ReactElement => {
   const [, setNotification] = useRecoilState<string | undefined>(
     currentNotification,
@@ -78,8 +77,9 @@ export const Home = (): React.ReactElement => {
   const queryClient = useQueryClient();
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
-  const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>('success'); // Set severity
-
+  const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>(
+    'success',
+  ); // Set severity
 
   const handleStartRequest = async ({ id }: AppQueryPostProps) => {
     const response = await axios.post(`/server/${id}`);
@@ -115,7 +115,7 @@ export const Home = (): React.ReactElement => {
         return response.data;
       }),
     enabled: true,
-  });    
+  });
 
   // Mutations
   const { mutate: startQuery } = useMutation({
@@ -151,14 +151,16 @@ export const Home = (): React.ReactElement => {
   };
 
   // Type guard to check if error has a 'response' property
-  const isErrorWithResponse = (error: unknown): error is { response: { status: number } } => {
+  const isErrorWithResponse = (
+    error: unknown,
+  ): error is { response: { status: number } } => {
     return typeof error === 'object' && error !== null && 'response' in error;
   };
 
   const handleStart = async () => {
     const appId = currentApp?.id || '';
     setSubmitting(true);
-  
+
     // Close the modal immediately when the Start button is clicked
     setIsStartOpen(false);
     setIsStartNotRunningOpen(false);
@@ -167,7 +169,9 @@ export const Home = (): React.ReactElement => {
     const sharedApp = currentApp?.shared;
     if (sharedApp && !currentUserData?.admin) {
       setSubmitting(false);
-      setSnackbarMessage('You don\'t have permission to start this app. Please ask the owner to start it.');
+      setSnackbarMessage(
+        "You don't have permission to start this app. Please ask the owner to start it.",
+      );
       setSnackbarSeverity('error');
       setSnackbarOpen(true);
       return;
@@ -185,11 +189,13 @@ export const Home = (): React.ReactElement => {
         },
         onError: (error: unknown) => {
           setSubmitting(false);
-  
+
           if (isErrorWithResponse(error)) {
             const status = error.response?.status;
             if (status === 403) {
-              setSnackbarMessage('You don\'t have permission to start this app. Please ask the owner to start it.');
+              setSnackbarMessage(
+                "You don't have permission to start this app. Please ask the owner to start it.",
+              );
             } else if (status === 404) {
               setSnackbarMessage('App not found (404).');
             } else if (status === 500) {
@@ -200,7 +206,7 @@ export const Home = (): React.ReactElement => {
           } else {
             setSnackbarMessage('An unknown error occurred.');
           }
-  
+
           setSnackbarSeverity('error');
           setSnackbarOpen(true);
         },
@@ -211,20 +217,22 @@ export const Home = (): React.ReactElement => {
   const handleStop = async () => {
     const appId = currentApp?.id || '';
     setSubmitting(true);
-  
+
     // Close the modal immediately when the Stop button is clicked
     setIsStopOpen(false);
-  
+
     // Check if the app is shared and if the user has permissions
     const sharedApp = currentApp?.shared;
     if (sharedApp && !currentUserData?.admin) {
       setSubmitting(false);
-      setSnackbarMessage('You don\'t have permission to stop this app. Please ask the owner to stop it.');
+      setSnackbarMessage(
+        "You don't have permission to stop this app. Please ask the owner to stop it.",
+      );
       setSnackbarSeverity('error');
       setSnackbarOpen(true);
       return;
     }
-  
+
     deleteQuery(
       { id: appId, remove: false },
       {
@@ -240,7 +248,9 @@ export const Home = (): React.ReactElement => {
           if (isErrorWithResponse(error)) {
             const status = error.response?.status;
             if (status === 403) {
-              setSnackbarMessage('You don\'t have permission to stop this app. Please ask the owner to stop it.');
+              setSnackbarMessage(
+                "You don't have permission to stop this app. Please ask the owner to stop it.",
+              );
             } else if (status === 404) {
               setSnackbarMessage('App not found (404).');
             } else if (status === 500) {
@@ -257,8 +267,6 @@ export const Home = (): React.ReactElement => {
       },
     );
   };
-  
-  
 
   const handleStartNotRunning = async () => {
     if (!currentUser || !currentApp) {
@@ -523,13 +531,20 @@ export const Home = (): React.ReactElement => {
           onClose={() => setSnackbarOpen(false)}
           severity={snackbarSeverity}
           // Conditionally render either the success or error icon based on severity
-          icon={snackbarSeverity === 'success' ? <CustomCheckIcon /> : <ErrorRoundedIcon />}
+          icon={
+            snackbarSeverity === 'success' ? (
+              <CustomCheckIcon />
+            ) : (
+              <ErrorRoundedIcon />
+            )
+          }
           sx={{
             width: '100%',
             fontFamily: 'Inter, sans-serif',
             fontWeight: 600,
             // Use background and text color based on severity
-            backgroundColor: snackbarSeverity === 'success' ? '#D1FAE5' : '#FEE2E2', // Light green for success, light red for error
+            backgroundColor:
+              snackbarSeverity === 'success' ? '#D1FAE5' : '#FEE2E2', // Light green for success, light red for error
             color: snackbarSeverity === 'success' ? '#065F46' : '#B91C1C', // Dark green for success, dark red for error
           }}
         >
