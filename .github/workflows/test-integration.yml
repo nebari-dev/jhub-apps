@@ -88,7 +88,7 @@ jobs:
 
     - name: Run Tests
       run: |
-        pytest jhub_apps/tests/tests_e2e/ -vvv -m "${{ matrix.test_type }}"
+        pytest jhub_apps/tests/tests_e2e/ -vvv -s -m "${{ matrix.test_type }}"
 
     - name: Create artifact name
       id: artifact-name

@@ -5,17 +5,20 @@ import { APP_BASE_URL } from '@src/utils/constants';
 import { navigateToUrl } from '@src/utils/jupyterhub';
 import React from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { useRecoilState } from 'recoil';
+import { isHeadless as defaultIsHeadless } from '../../store';
 import { StyledFormParagraph } from '../../styles/styled-form-paragraph';
 import { Item } from '../../styles/styled-item';
 
 export const EditApp = (): React.ReactElement => {
+  const [isHeadless] = useRecoilState<boolean>(defaultIsHeadless);
   const [searchParams] = useSearchParams();
   const id = searchParams.get('id');
 
   return (
     <Box className="container">
       <Stack>
-        <Item>
+        <Item hidden={isHeadless}>
           <div className="form-breadcrumb">
             <Button
               id="back-btn"

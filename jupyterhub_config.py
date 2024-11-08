@@ -19,7 +19,9 @@ c.JAppsConfig.conda_envs = []
 c.JAppsConfig.service_workers = 1
 c.JupyterHub.default_url = "/hub/home"
 
-c = install_jhub_apps(c, spawner_to_subclass=SimpleLocalProcessSpawner, oauth_no_confirm=True)
+c = install_jhub_apps(
+    c, spawner_to_subclass=SimpleLocalProcessSpawner, oauth_no_confirm=True
+)
 
 c.JupyterHub.template_paths = theme_template_paths
 
@@ -51,12 +53,12 @@ c.JupyterHub.template_vars = {
     "hub_subtitle": "your open source data science platform",
     "welcome": "Running in dev mode",
     "display_version": True,
-    **themes.DEFAULT_THEME
+    **themes.DEFAULT_THEME,
 }
 
 c.JupyterHub.load_groups = {
-    'class-A': {"users": ['john', 'alice']},
-    'class-B': {"users": ['john', 'alice']}
+    "class-A": {"users": ["john", "alice"]},
+    "class-B": {"users": ["john", "alice"]},
 }
 
 # Add permission to share servers/apps
@@ -65,10 +67,35 @@ c.JupyterHub.load_groups = {
 # they can define permissions as per their preferences
 for role in c.JupyterHub.load_roles:
     if role["name"] == "user":
-        role["scopes"].extend([
-            # Need scope 'read:users:name' to share with users by name
-            "read:users:name",
-            # Need scope 'read:groups:name' to share with groups by name
-            "read:groups:name",
-        ] + ["shares!user"] if is_jupyterhub_5() else [])
+        role["scopes"].extend(
+            [
+                # Need scope 'read:users:name' to share with users by name
+                "read:users:name",
+                # Need scope 'read:groups:name' to share with groups by name
+                "read:groups:name",
+            ]
+            + ["shares!user"]
+            if is_jupyterhub_5()
+            else []
+        )
         break
+
+c.JupyterHub.load_roles = c.JupyterHub.load_roles + [
+    {
+        "name": "allow-access-to-start-shared-server",
+        "description": "Allows users to start shared server",
+        "scopes": [
+            "servers",
+        ],
+        "users": ["user-with-permission-to-start-shared"],
+    }
+]
+
+# Uncomment to add a profile to the spawner
+# c.KubeSpawner.profile_list = [
+#     {
+#         "description": "Stable environment with 0.5-1 cpu / 0.5-1 GB ram",
+#         "display_name": "Small Instance",
+#         "slug": "small-instance",
+#     },
+# ]

@@ -13,7 +13,7 @@ from jhub_apps.version import get_version
 ### When managed by Jupyterhub, the actual endpoints
 ### will be served out prefixed by /services/:name.
 ### One way to handle this with FastAPI is to use an APIRouter.
-### All routes are defined in service.py
+### All routes are defined in routes.py
 
 STATIC_DIR = Path(__file__).parent.parent / "static"
 

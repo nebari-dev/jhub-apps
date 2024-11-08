@@ -1,11 +1,18 @@
 import pluginJs from '@eslint/js';
-import stylisticTs from '@stylistic/eslint-plugin-ts';
+import prettierRecommended from 'eslint-plugin-prettier/recommended';
 import reactPlugin from 'eslint-plugin-react';
+import hooksPlugin from 'eslint-plugin-react-hooks';
 import tseslint from 'typescript-eslint';
 
 export default [
+  // Flat Configs
+  pluginJs.configs.recommended,
+  ...tseslint.configs.recommended,
+  prettierRecommended,
+  reactPlugin.configs.flat.recommended,
+  // Default Configs
   {
-    files: ['**/*.{js,mjs,cjs,ts,jsx,tsx}'],
+    files: ['**/*.{ts,tsx}'],
     settings: {
       react: {
         version: 'detect',
@@ -19,31 +26,29 @@ export default [
       },
     },
     plugins: {
-      '@stylistic/ts': stylisticTs,
+      'react-hooks': hooksPlugin,
     },
-  },
-  pluginJs.configs.recommended,
-  ...tseslint.configs.recommended,
-  reactPlugin.configs.flat.recommended,
-  {
     rules: {
       // Base Warnings
       'no-console': 'warn',
 
-      // Stylistic Issues
-      '@stylistic/ts/quotes': ['error', 'single'],
-      '@stylistic/ts/indent': ['error', 2],
-      '@stylistic/ts/semi': ['error', 'always'],
-      '@stylistic/ts/comma-dangle': ['error', 'always-multiline'],
+      // Formatting
+      'prettier/prettier': [
+        'error',
+        {
+          semi: true,
+          tabWidth: 2,
+          singleQuote: true,
+          trailingComma: 'all',
+          bracketSpacing: true,
+          useTabs: false,
+        },
+      ],
 
-      // TypeScript
-      '@typescript-eslint/no-unused-vars': 'error',
-    },
-  },
-  {
-    rules: {
+      // React
+      ...hooksPlugin.configs.recommended.rules,
+      'react-hooks/exhaustive-deps': 'off',
       'react/react-in-jsx-scope': 'off',
     },
-    ignores: ['*.test.tsx'],
   },
 ];

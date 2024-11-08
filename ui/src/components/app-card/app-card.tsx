@@ -10,9 +10,12 @@ import Chip from '@mui/material/Chip';
 import Typography from '@mui/material/Typography';
 import { StatusChip } from '@src/components';
 import { API_BASE_URL } from '@src/utils/constants';
+import { useQuery } from '@tanstack/react-query';
 
 import { AppProfileProps } from '@src/types/api';
 import { JhApp } from '@src/types/jupyterhub';
+import { UserState } from '@src/types/user';
+import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import {
@@ -75,6 +78,16 @@ export const AppCard = ({
     }
   }, [serverStatus, setNotification]);
 
+  // Fetch user data and check admin status
+  const { data: currentUserData } = useQuery<UserState>({
+    queryKey: ['current-user'],
+    queryFn: () =>
+      axios.get('/user').then((response) => {
+        return response.data;
+      }),
+    enabled: true,
+  });
+
   const getIcon = () => {
     if (!isAppCard)
       return (
@@ -110,21 +123,36 @@ export const AppCard = ({
       id: 'start',
       title: 'Start',
       onClick: () => {
+        // Allow admins to start shared apps
+        if (isShared && !currentUserData?.admin) {
+          // Show error if it's a shared app
+          setNotification(
+            "You don't have permission to start this app. Please ask the owner to start it.",
+          );
+          return;
+        }
         setIsStartOpen(true);
         setCurrentApp(app!); // Add the non-null assertion operator (!) to ensure that app is not undefined
       },
       visible: true,
-      disabled: serverStatus !== 'Ready',
+      disabled: serverStatus !== 'Ready', // Disable start if the app is already running
     },
     {
       id: 'stop',
       title: 'Stop',
       onClick: () => {
+        // Allow admins to stop shared apps
+        if (isShared && !currentUserData?.admin) {
+          setNotification(
+            "You don't have permission to stop this app. Please ask the owner to stop it.",
+          );
+          return;
+        }
         setIsStopOpen(true);
         setCurrentApp(app!);
       },
       visible: true,
-      disabled: serverStatus !== 'Running' || isShared,
+      disabled: serverStatus !== 'Running', // Disable stop if the app is not running
     },
     {
       id: 'edit',
@@ -142,7 +170,7 @@ export const AppCard = ({
         setCurrentApp(app!);
       },
       visible: true,
-      disabled: isShared || id === '' || !isAppCard,
+      disabled: isShared || id === '' || !isAppCard, // Disable delete for shared apps
       danger: true,
     },
   ];
@@ -194,7 +222,7 @@ export const AppCard = ({
               url: app?.url || '',
               ready: app?.ready || false,
               public: app?.public || false,
-              shared: false,
+              shared: app?.shared || isShared || false,
               last_activity: new Date(app?.last_activity || ''),
               status: 'Ready',
             });

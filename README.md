@@ -70,7 +70,7 @@ The Hub service is exposed via FastAPI endpoints. The documentation for the same
 http://127.0.0.1:10202/services/japps/docs
 
 To try out authenticated endpoints click on the Authorize button on the top right of
-the above url and chose `OAuth2AuthorizationCodeBearer` and click on Authorize.
+the above url and choose `OAuth2AuthorizationCodeBearer` and click on Authorize.
 
 ## Developing Locally
 
@@ -99,7 +99,7 @@ pytest jhub_apps/tests
 ### E2E Tests
 
 ```bash
-pytest jhub_apps/tests_e2e -vvv -s --headed
+pytest jhub_apps/tests/tests_e2e -vvv -s --headed
 ```
 
 ## Usage

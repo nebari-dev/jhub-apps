@@ -578,4 +578,127 @@ describe('AppCard', () => {
     );
     expect(getByTestId('LockRoundedIcon')).toBeInTheDocument();
   });
+  test('renders context menu with start, stop, edit, and delete actions', async () => {
+    const { getByTestId, getByText } = render(
+      <RecoilRoot>
+        <QueryClientProvider client={queryClient}>
+          <AppCard
+            id="1"
+            title="Test App"
+            username="Developer"
+            framework="Some Framework"
+            url="/some-url"
+            serverStatus="Ready"
+            isShared={false}
+            app={{
+              id: '1',
+              name: 'Test App',
+              framework: 'Some Framework',
+              description: 'Test App 1',
+              url: '/user/test/test-app-1/',
+              thumbnail: '',
+              username: 'test',
+              ready: true,
+              public: false,
+              shared: false,
+              last_activity: new Date(),
+              pending: false,
+              stopped: false,
+              status: 'false',
+            }}
+          />
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+
+    // Open context menu first
+    const contextMenuButton = getByTestId('context-menu-button-card-menu-1');
+    act(() => {
+      contextMenuButton.click();
+    });
+
+    const startMenuItem = await waitFor(() => getByText('Start'));
+    const stopMenuItem = getByText('Stop');
+    const editMenuItem = getByText('Edit');
+    const deleteMenuItem = getByText('Delete');
+
+    expect(startMenuItem).toBeInTheDocument();
+    expect(stopMenuItem).toBeInTheDocument();
+    expect(editMenuItem).toBeInTheDocument();
+    expect(deleteMenuItem).toBeInTheDocument();
+  });
+
+  test('disables stop action if app is not running', async () => {
+    const { getByTestId, getByText } = render(
+      <RecoilRoot>
+        <QueryClientProvider client={queryClient}>
+          <AppCard
+            id="1"
+            title="Test App"
+            username="Developer"
+            framework="Some Framework"
+            url="/some-url"
+            serverStatus="Pending" // App is not running
+            isShared={false}
+            app={{
+              id: '1',
+              name: 'Test App',
+              framework: 'Some Framework',
+              description: 'Test App 1',
+              url: '/user/test/test-app-1/',
+              thumbnail: '',
+              username: 'test',
+              ready: true,
+              public: false,
+              shared: false,
+              last_activity: new Date(),
+              pending: true,
+              stopped: false,
+              status: 'false',
+            }}
+          />
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+
+    // Open context menu first
+    const contextMenuButton = getByTestId('context-menu-button-card-menu-1');
+    act(() => {
+      contextMenuButton.click();
+    });
+
+    const stopMenuItem = await waitFor(() => getByText('Stop'));
+    expect(stopMenuItem).toBeInTheDocument();
+    expect(stopMenuItem).toHaveAttribute('aria-disabled', 'true');
+  });
+
+  test('disables edit and delete for shared apps', async () => {
+    const { getByTestId, getByText } = render(
+      <RecoilRoot>
+        <QueryClientProvider client={queryClient}>
+          <AppCard
+            id="1"
+            title="Shared App"
+            username="Other User"
+            framework="Some Framework"
+            url="/some-url"
+            serverStatus="Ready"
+            isShared={true} // App is shared
+          />
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+
+    // Open context menu first
+    const contextMenuButton = getByTestId('context-menu-button-card-menu-1');
+    act(() => {
+      contextMenuButton.click();
+    });
+
+    const editMenuItem = await waitFor(() => getByText('Edit'));
+    const deleteMenuItem = getByText('Delete');
+
+    expect(editMenuItem).toHaveAttribute('aria-disabled', 'true');
+    expect(deleteMenuItem).toHaveAttribute('aria-disabled', 'true');
+  });
 });

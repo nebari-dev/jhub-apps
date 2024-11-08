@@ -101,6 +101,11 @@ const isStartNotRunningOpen = atom<boolean>({
   default: false,
 });
 
+const isHeadless = atom<boolean>({
+  key: 'isHeadless',
+  default: false,
+});
+
 export {
   currentApp,
   currentFile,
@@ -117,6 +122,7 @@ export {
   currentSortValue,
   currentUser,
   isDeleteOpen,
+  isHeadless,
   isStartNotRunningOpen,
   isStartOpen,
   isStopOpen,
