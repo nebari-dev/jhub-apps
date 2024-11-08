@@ -166,6 +166,7 @@ COMMANDS = {
         TString("$python_exec"),
         "{-}m",
         "jupyterhub.singleuser",
+        "{--}port={port}",
         "{--}debug",
         "--ip=0.0.0.0",
         "--ready-check-path=/ready-check",
