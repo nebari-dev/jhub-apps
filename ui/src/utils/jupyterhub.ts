@@ -7,7 +7,11 @@ import {
 } from '@src/types/jupyterhub';
 import { JhData } from '@src/types/jupyterhub.ts';
 import { UserState } from '@src/types/user';
-import { DEFAULT_PINNED_SERVICES } from './constants';
+import {
+  APP_BASE_URL,
+  APP_TO_START_KEY,
+  DEFAULT_PINNED_SERVICES,
+} from './constants';
 
 export const getJhData = (): JhData => {
   return window.jhdata;
@@ -89,18 +93,13 @@ export const getApps = (
       const app = server.user_options;
       const appStatus = getAppStatus(server);
       filteredApps.push({
+        ...app,
+        ...server,
         id: app.name,
         name: app.display_name,
-        description: app.description,
+        url: server.url?.replace('/user/', '/hub/user/'),
         framework: getFriendlyFrameworkName(app.framework),
-        url: server.url,
-        thumbnail: app.thumbnail,
         username: server.username || username,
-        ready: server.ready,
-        pending: server.pending,
-        stopped: server.stopped,
-        public: app.public,
-        shared: server.shared,
         last_activity: server.last_activity,
         status: appStatus,
       });
@@ -123,6 +122,7 @@ export const getPinnedApps = (servers: any, username: string) => {
       name: 'JupyterLab',
       description: 'This is your default JupyterLab server.',
       framework: 'JupyterLab',
+      profile: defaultApp.user_options?.profile,
       url: getEncodedServerUrl(username, 'lab'),
       thumbnail: JUPYTER_LOGO,
       username: username,
@@ -191,7 +191,7 @@ export const getFriendlyEnvironmentVariables = (env: any) => {
 
   try {
     return JSON.parse(JSON.stringify(env));
-  } catch (error) {
+  } catch {
     return null;
   }
 };
@@ -204,6 +204,36 @@ export const getAppLogoUrl = () => {
 
 export const getFullAppUrl = (url: string) => {
   return `${document.location.origin}${url}`;
+};
+
+export const getSpawnUrl = (currentUser: UserState, currentApp: JhApp) => {
+  const username = currentUser.name;
+  let appName = currentApp.name;
+  if (currentApp.name === 'JupyterLab') {
+    appName = 'lab';
+  } else if (currentApp.name === 'VSCode') {
+    appName = 'vscode';
+  }
+  const next = encodeURIComponent(
+    `${APP_BASE_URL}/user/${username}/${appName}`,
+  );
+
+  return `${APP_BASE_URL}/spawn/${username}?next=${next}`;
+};
+
+export const getSpawnPendingUrl = (currentUser: UserState, appId: string) => {
+  const username = currentUser?.name;
+  const next = encodeURIComponent(`${APP_BASE_URL}/user/${username}/${appId}`);
+
+  return `${APP_BASE_URL}/spawn-pending/${username}/${appId}?next=${next}`;
+};
+
+export const isDefaultApp = (name: string) => {
+  if (name === 'JupyterLab' || name === 'VSCode') {
+    return true;
+  } else {
+    return false;
+  }
 };
 
 export const navigateToUrl = (url: string) => {
@@ -222,6 +252,18 @@ export const getAppStatus = (app: JhApp): string => {
   }
 };
 
+export const getAppToStart = () => {
+  return window.sessionStorage.getItem(APP_TO_START_KEY);
+};
+
+export const storeAppToStart = (appId: string) => {
+  window.sessionStorage.setItem(APP_TO_START_KEY, appId);
+};
+
+export const clearAppToStart = () => {
+  window.sessionStorage.removeItem(APP_TO_START_KEY);
+};
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export const filterAndSortApps = (
   data: any,
@@ -230,6 +272,7 @@ export const filterAndSortApps = (
   ownershipValue: string,
   frameworkValues: string[],
   sortByValue: string,
+  currentServerStatuses: string[],
 ) => {
   const searchToLower = searchValue.toLowerCase();
   const ownershipType =
@@ -250,6 +293,12 @@ export const filterAndSortApps = (
     .filter((app) => {
       if (frameworkValues.length > 0) {
         return frameworkValues.includes(app.framework);
+      }
+      return true;
+    })
+    .filter((app) => {
+      if (currentServerStatuses.length > 0) {
+        return currentServerStatuses.includes(app.status);
       }
       return true;
     });

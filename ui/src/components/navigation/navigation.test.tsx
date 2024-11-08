@@ -1,18 +1,29 @@
+import { ThemeProvider } from '@mui/material/styles';
 import { serverApps } from '@src/data/api';
 import { servicesFull } from '@src/data/jupyterhub';
 import { currentUser } from '@src/data/user';
 import axios from '@src/utils/axios';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import '@testing-library/jest-dom';
-import { act, fireEvent, render } from '@testing-library/react';
+import { act, fireEvent, render, waitFor } from '@testing-library/react';
 import MockAdapter from 'axios-mock-adapter';
+import { ReactNode } from 'react';
 import { BrowserRouter } from 'react-router-dom';
+import { JSX } from 'react/jsx-runtime';
 import { RecoilRoot } from 'recoil';
 import { Navigation } from '..';
-import { currentUser as defaultUser } from '../../store';
-
+import {
+  isHeadless as defaultIsHeadless,
+  currentUser as defaultUser,
+} from '../../store';
+import { theme } from '../../theme/theme';
 describe('Navigation', () => {
-  const queryClient = new QueryClient();
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+      },
+    },
+  });
   const mock = new MockAdapter(axios);
   beforeAll(() => {
     mock.reset();
@@ -23,8 +34,20 @@ describe('Navigation', () => {
     mock.reset();
   });
 
+  // Wrap your components with the ThemeProvider and provide the theme
+  const renderWithTheme = (
+    component:
+      | string
+      | number
+      | boolean
+      | JSX.Element
+      | Iterable<ReactNode>
+      | null
+      | undefined,
+  ) => render(<ThemeProvider theme={theme}>{component}</ThemeProvider>);
+
   test('renders default top navigation successfully', () => {
-    const { baseElement } = render(
+    const { baseElement } = renderWithTheme(
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
@@ -41,7 +64,7 @@ describe('Navigation', () => {
     mock.onGet(new RegExp('/services')).reply(200, servicesFull);
     queryClient.setQueryData(['service-data'], servicesFull);
 
-    const { baseElement } = render(
+    const { baseElement } = renderWithTheme(
       <RecoilRoot initializeState={({ set }) => set(defaultUser, currentUser)}>
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
@@ -63,7 +86,7 @@ describe('Navigation', () => {
     queryClient.setQueryData(['service-data'], servicesFull);
     queryClient.setQueryData(['app-state'], serverApps);
 
-    const { baseElement } = render(
+    const { baseElement } = renderWithTheme(
       <RecoilRoot initializeState={({ set }) => set(defaultUser, currentUser)}>
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
@@ -82,7 +105,7 @@ describe('Navigation', () => {
   test('renders with data error', async () => {
     mock.onGet(new RegExp('/services')).reply(500, { message: 'Some error' });
     queryClient.setQueryData(['service-data'], null);
-    const { baseElement } = render(
+    const { baseElement } = renderWithTheme(
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
           <Navigation />
@@ -94,8 +117,25 @@ describe('Navigation', () => {
     );
   });
 
+  test('does not render navigation when headless', async () => {
+    const { baseElement } = renderWithTheme(
+      <RecoilRoot initializeState={({ set }) => set(defaultIsHeadless, true)}>
+        <QueryClientProvider client={queryClient}>
+          <BrowserRouter>
+            <Navigation />
+          </BrowserRouter>
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+
+    waitFor(() => {
+      expect(baseElement.querySelector('.MuiListItem-root')).toBeFalsy();
+      expect(baseElement.querySelector('.MuiDrawer-root')).toBeFalsy();
+    });
+  });
+
   test('handles profile menu click', async () => {
-    const { baseElement } = render(
+    const { baseElement } = renderWithTheme(
       <RecoilRoot initializeState={({ set }) => set(defaultUser, currentUser)}>
         <QueryClientProvider client={queryClient}>
           <Navigation />
@@ -113,7 +153,7 @@ describe('Navigation', () => {
     );
 
     // Nav error expected, disable console.error
-    jest.spyOn(console, 'error').mockImplementation(() => {});
+    vi.spyOn(console, 'error').mockImplementation(() => {});
     const items = baseElement.querySelectorAll('#profile-menu-list li');
     await act(async () => {
       fireEvent.click(items[0]);

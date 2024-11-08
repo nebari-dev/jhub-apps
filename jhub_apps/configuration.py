@@ -28,7 +28,13 @@ def set_defaults_for_jhub_apps_config(c):
             setattr(c.JAppsConfig, trait_name, defaults.get(trait_name))
 
 
-def install_jhub_apps(c, spawner_to_subclass):
+def install_jhub_apps(c, spawner_to_subclass, *, oauth_no_confirm=False):
+    """Install jhub-apps into JupyterHub configuration object (`c`).
+
+    When `oauth_no_confirm` is set to True, the "Authorize access"
+    screen is not shown and jhub-apps is always granted access to
+    read the identity of the visiting JupyterHub user.
+    """
     c.JupyterHub.spawner_class = subclass_spawner(spawner_to_subclass)
     c.JupyterHub.allow_named_servers = True
     bind_url = c.JupyterHub.bind_url
@@ -69,6 +75,7 @@ def install_jhub_apps(c, spawner_to_subclass):
                     "HUB_SERVICE_PORT": "*",
                 },
                 "oauth_redirect_uri": oauth_redirect_uri,
+                "oauth_no_confirm": oauth_no_confirm,
                 "display": False,
             },
         ]

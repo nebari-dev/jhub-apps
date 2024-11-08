@@ -9,6 +9,10 @@
   height: 224px;
 }
 
+.card.service .card-content-content {
+  height: 93px;
+}
+
 .card > a {
   text-decoration: none;
 }

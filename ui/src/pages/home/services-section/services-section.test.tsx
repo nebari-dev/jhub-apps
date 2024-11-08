@@ -1,8 +1,7 @@
 import { serverApps, services } from '@src/data/api';
 import { currentUser } from '@src/data/user';
-import axios from '@src/utils/jupyterhub-axios';
+import axios from '@src/utils/axios';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import '@testing-library/jest-dom';
 import { fireEvent, render } from '@testing-library/react';
 import MockAdapter from 'axios-mock-adapter';
 import { RecoilRoot } from 'recoil';
@@ -10,7 +9,13 @@ import { currentUser as defaultUser } from '../../../store';
 import { ServicesSection } from './services-section';
 
 describe('ServicesSection', () => {
-  const queryClient = new QueryClient();
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+      },
+    },
+  });
   const mock = new MockAdapter(axios);
   beforeAll(() => {
     mock.reset();
@@ -32,7 +37,7 @@ describe('ServicesSection', () => {
     const header = baseElement.querySelector('h2');
 
     expect(baseElement).toBeTruthy();
-    expect(header).toHaveTextContent('Services');
+    expect(header).toHaveTextContent('Quick Access');
   });
 
   test('renders a message when no services', () => {
@@ -48,7 +53,7 @@ describe('ServicesSection', () => {
   });
 
   test('renders a loading message', () => {
-    queryClient.isFetching = jest.fn().mockReturnValue(true);
+    queryClient.isFetching = vi.fn().mockReturnValue(true);
     const { baseElement } = render(
       <RecoilRoot initializeState={({ set }) => set(defaultUser, currentUser)}>
         <QueryClientProvider client={queryClient}>
@@ -90,7 +95,7 @@ describe('ServicesSection', () => {
   });
 
   test('handles button click for external URL', () => {
-    const mockResponse = jest.fn();
+    const mockResponse = vi.fn();
     Object.defineProperty(window, 'open', {
       value: mockResponse,
       writable: true,
@@ -114,7 +119,7 @@ describe('ServicesSection', () => {
   });
 
   test('handles button click for internal URL', () => {
-    const mockResponse = jest.fn();
+    const mockResponse = vi.fn();
     Object.defineProperty(window, 'location', {
       value: {
         hash: {

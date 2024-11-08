@@ -23,13 +23,9 @@ export const NotificationBar = ({
 }: NotificationBarProps): React.ReactElement => {
   return (
     <div className="alert-wrapper">
-      {message ? (
-        <Alert id="alert-notification" severity={severity} onClose={onClose}>
-          {message}
-        </Alert>
-      ) : (
-        <></>
-      )}
+      <Alert id="alert-notification" severity={severity} onClose={onClose}>
+        {message}
+      </Alert>
     </div>
   );
 };

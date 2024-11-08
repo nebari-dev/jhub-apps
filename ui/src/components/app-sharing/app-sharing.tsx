@@ -103,7 +103,7 @@ export const AppSharing = ({
 }: AppSharingProps): React.ReactElement => {
   const [currentUser] = useRecoilState<UserState | undefined>(defaultUser);
   const [message] = useState(
-    'Warning: adding individuals or groups will allow others to access this app.',
+    'Adding individuals or groups will allow others to access this app.',
   );
   const [tooltipOpen, setTooltipOpen] = useState(false);
   const [availablePermissions, setAvailablePermissions] = useState<
@@ -114,6 +114,21 @@ export const AppSharing = ({
   const [page, setPage] = useState(0);
   const [rowsPerPage] = useState(5);
   const [selectedValue, setSelectedValue] = useState<AppSharingItem[]>([]);
+
+  const sortedPermissions = availablePermissions.sort((a, b) => {
+    const labelA = a.type === 'user' ? a.name : `${a.name} (Group)`;
+    const labelB = b.type === 'user' ? b.name : `${b.name} (Group)`;
+
+    // First, compare by type: users first, groups second
+    if (a.type === 'user' && b.type !== 'user') {
+      return -1;
+    }
+    if (a.type !== 'user' && b.type === 'user') {
+      return 1;
+    }
+
+    return labelA.localeCompare(labelB);
+  });
 
   const handleShare = () => {
     if (currentShare.length > 0) {
@@ -191,14 +206,18 @@ export const AppSharing = ({
               <Alert
                 id="sharing-notification"
                 severity="warning"
-                icon={<WarningRoundedIcon sx={{ color: '#EAB54E' }} />}
-                sx={{ mb: '16px' }}
+                icon={
+                  <WarningRoundedIcon
+                    sx={{ color: '#EAB54E', top: '-2px', position: 'relative' }}
+                  />
+                }
+                sx={{ mb: '16px', position: 'relative' }}
               >
                 {message}
               </Alert>
             </Item>
             <Item sx={{ pb: '8px' }}>
-              <Typography variant="subtitle1">
+              <Typography variant="subtitle1" sx={{ fontWeight: 400, pb: 0 }}>
                 Individuals and group access
               </Typography>
               <Box
@@ -220,7 +239,7 @@ export const AppSharing = ({
                   <Autocomplete
                     disablePortal
                     id="share-permissions-autocomplete"
-                    options={availablePermissions}
+                    options={sortedPermissions}
                     getOptionLabel={(option) =>
                       option.type === 'user'
                         ? option.name
@@ -230,7 +249,7 @@ export const AppSharing = ({
                     disableCloseOnSelect
                     clearOnBlur
                     limitTags={2}
-                    sx={{ width: 470 }}
+                    sx={{ width: 510 }}
                     renderInput={(params) => (
                       <TextField
                         {...params}
@@ -263,7 +282,7 @@ export const AppSharing = ({
                     color="primary"
                     onClick={handleShare}
                     disabled={currentShare.length === 0}
-                    sx={{ height: '42px' }}
+                    sx={{ height: '42px', px: '22px', py: '8px' }}
                   >
                     Share
                   </Button>
@@ -276,60 +295,61 @@ export const AppSharing = ({
                   <TableContainer>
                     <Table aria-label="Individuals and Groups" size="small">
                       <TableBody>
-                        {(rowsPerPage > 0
-                          ? currentItems.slice(
-                              page * rowsPerPage,
-                              page * rowsPerPage + rowsPerPage,
-                            )
-                          : currentItems
-                        ).map((item) => (
-                          <TableRow
-                            key={item.name}
-                            sx={{
-                              '&:last-child td, &:last-child th': { border: 0 },
-                            }}
-                          >
-                            <TableCell
-                              component="td"
-                              scope="row"
-                              sx={{ fontSize: '16px' }}
+                        {currentItems
+                          .slice(
+                            page * rowsPerPage,
+                            page * rowsPerPage + rowsPerPage,
+                          )
+                          .map((item) => (
+                            <TableRow
+                              key={item.name}
+                              sx={{
+                                '&:last-child td, &:last-child th': {
+                                  border: 0,
+                                },
+                              }}
                             >
-                              {item.name}{' '}
-                              {item.type === 'group' ? (
-                                <span style={{ fontWeight: 600 }}>
-                                  {' '}
-                                  (Group)
-                                </span>
-                              ) : (
-                                <></>
-                              )}
-                            </TableCell>
-                            <TableCell align="right">
-                              <Button
-                                variant="text"
-                                color="error"
-                                size="small"
-                                sx={{ fontWeight: '600', fontSize: '14px' }}
-                                onClick={() => {
-                                  setCurrentItems((prev) =>
-                                    prev.filter((i) => i.name !== item.name),
-                                  );
-                                  if (item.type === 'group') {
-                                    setCurrentGroupPermissions((prev) =>
-                                      prev.filter((i) => i !== item.name),
-                                    );
-                                  } else {
-                                    setCurrentUserPermissions((prev) =>
-                                      prev.filter((i) => i !== item.name),
-                                    );
-                                  }
-                                }}
+                              <TableCell
+                                component="td"
+                                scope="row"
+                                sx={{ fontSize: '16px' }}
                               >
-                                Remove
-                              </Button>
-                            </TableCell>
-                          </TableRow>
-                        ))}
+                                {item.name}{' '}
+                                {item.type === 'group' ? (
+                                  <span style={{ fontWeight: 600 }}>
+                                    {' '}
+                                    (Group)
+                                  </span>
+                                ) : (
+                                  <></>
+                                )}
+                              </TableCell>
+                              <TableCell align="right">
+                                <Button
+                                  variant="text"
+                                  color="error"
+                                  size="small"
+                                  sx={{ fontWeight: '600', fontSize: '14px' }}
+                                  onClick={() => {
+                                    setCurrentItems((prev) =>
+                                      prev.filter((i) => i.name !== item.name),
+                                    );
+                                    if (item.type === 'group') {
+                                      setCurrentGroupPermissions((prev) =>
+                                        prev.filter((i) => i !== item.name),
+                                      );
+                                    } else {
+                                      setCurrentUserPermissions((prev) =>
+                                        prev.filter((i) => i !== item.name),
+                                      );
+                                    }
+                                  }}
+                                >
+                                  Remove
+                                </Button>
+                              </TableCell>
+                            </TableRow>
+                          ))}
                       </TableBody>
                       <TableFooter>
                         <TableRow>

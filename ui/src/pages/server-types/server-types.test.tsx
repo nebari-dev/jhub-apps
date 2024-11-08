@@ -2,7 +2,6 @@ import { profiles } from '@src/data/api';
 import { currentUser } from '@src/data/user';
 import axios from '@src/utils/axios';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import '@testing-library/jest-dom';
 import { act, render, waitFor } from '@testing-library/react';
 import MockAdapter from 'axios-mock-adapter';
 import { BrowserRouter } from 'react-router-dom';
@@ -14,7 +13,13 @@ import {
 import { ServerTypes } from './server-types';
 
 describe('ServerTypes', () => {
-  const queryClient = new QueryClient();
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+      },
+    },
+  });
   const mock = new MockAdapter(axios);
   const originalHref = window.location.href;
 
@@ -30,7 +35,7 @@ describe('ServerTypes', () => {
 
   // Loading state test
   test('renders a loading message', () => {
-    queryClient.isFetching = jest.fn().mockReturnValue(true);
+    queryClient.isFetching = vi.fn().mockReturnValue(true);
     mock.onGet(new RegExp('/spawner-profiles/')).reply(200, null);
     const { baseElement } = render(
       <RecoilRoot initializeState={({ set }) => set(defaultUser, currentUser)}>
@@ -138,7 +143,7 @@ describe('ServerTypes', () => {
   });
 
   test('simulates editing an app', async () => {
-    const mockSearchParamsGet = jest.spyOn(URLSearchParams.prototype, 'get');
+    const mockSearchParamsGet = vi.spyOn(URLSearchParams.prototype, 'get');
     mockSearchParamsGet.mockReturnValue('app-1');
 
     queryClient.setQueryData(['server-types'], profiles);
@@ -163,7 +168,7 @@ describe('ServerTypes', () => {
   });
 
   test('simulates editing an app with current form input', async () => {
-    const mockSearchParamsGet = jest.spyOn(URLSearchParams.prototype, 'get');
+    const mockSearchParamsGet = vi.spyOn(URLSearchParams.prototype, 'get');
     mockSearchParamsGet.mockReturnValue('app-1');
 
     queryClient.setQueryData(['server-types'], profiles);
@@ -208,13 +213,18 @@ describe('ServerTypes', () => {
     mockSearchParamsGet.mockRestore();
   });
 
-  test('clicks back to create app', async () => {
-    jest.mock('react-router-dom', () => ({
-      ...jest.requireActual('react-router-dom'),
-      useLocation: () => ({
-        search: '?type=type1',
-      }),
-    }));
+  test('clicks back to deploy app', async () => {
+    vi.mock('react-router-dom', async () => {
+      // Require the actual module to spread its properties
+      const actual = await vi.importActual('react-router-dom');
+
+      return {
+        ...actual,
+        useLocation: () => ({
+          search: '?type=type1',
+        }),
+      };
+    });
     const { baseElement } = render(
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
@@ -228,17 +238,22 @@ describe('ServerTypes', () => {
     await act(async () => {
       btn.click();
     });
-    expect(window.location.pathname).toBe('/create-app');
+    expect(window.location.pathname).toBe('/');
   });
 
   test('clicks back to edit app', async () => {
-    jest.mock('react-router-dom', () => ({
-      ...jest.requireActual('react-router-dom'),
-      useLocation: () => ({
-        search: '?type=type1',
-      }),
-    }));
-    const mockSearchParamsGet = jest.spyOn(URLSearchParams.prototype, 'get');
+    vi.mock('react-router-dom', async () => {
+      // Require the actual module to spread its properties
+      const actual = await vi.importActual('react-router-dom');
+
+      return {
+        ...actual,
+        useLocation: () => ({
+          search: '?type=type1',
+        }),
+      };
+    });
+    const mockSearchParamsGet = vi.spyOn(URLSearchParams.prototype, 'get');
     mockSearchParamsGet.mockReturnValue('app-1');
     const { baseElement } = render(
       <RecoilRoot>
@@ -253,7 +268,7 @@ describe('ServerTypes', () => {
     await act(async () => {
       btn.click();
     });
-    expect(window.location.pathname).toBe('/edit-app');
+    expect(window.location.pathname).toBe('/');
     mockSearchParamsGet.mockRestore();
   });
 

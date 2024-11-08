@@ -2,7 +2,7 @@
 sidebar_position: 7
 ---
 
-# Viola apps
+# Voila apps
 
 ## Environment requirements
 
@@ -66,7 +66,7 @@ dependencies:
   - ipykernel
 ```
 :::note
-When viola (>=0.5.6) is available on Conda Forge, it can be moved outside of the pip section of the dependencies
+When voila (>=0.5.6) is available on Conda Forge, it can be moved outside of the pip section of the dependencies
 :::
 
 </details>

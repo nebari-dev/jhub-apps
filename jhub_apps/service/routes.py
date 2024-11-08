@@ -21,21 +21,27 @@ from pydantic import BaseModel, ValidationError
 from starlette.responses import RedirectResponse
 
 from jhub_apps.hub_client.hub_client import HubClient
-from jhub_apps.service.auth import create_access_token
+from jhub_apps.service.auth import _create_access_token
 from jhub_apps.service.client import get_client
 from jhub_apps.service.models import (
     AuthorizationError,
     HubApiError,
     ServerCreation,
     User,
+    Repository,
+    JHubAppConfig,
 )
-from jhub_apps.service.security import get_current_user
+from jhub_apps.service.security import get_current_user, JHUB_APPS_AUTH_COOKIE_NAME
 from jhub_apps.service.utils import (
     get_conda_envs,
     get_jupyterhub_config,
     get_spawner_profiles,
-    get_thumbnail_data_url, get_shared_servers,
+    get_thumbnail_data_url,
+    get_shared_servers,
+    _check_if_framework_allowed,
+    _get_allowed_frameworks,
 )
+from jhub_apps.service.app_from_git import _get_app_configuration_from_git
 from jhub_apps.spawner.types import FRAMEWORKS
 from jhub_apps.version import get_version
 
@@ -73,14 +79,14 @@ async def get_token(code: str):
         }
         resp = await client.post("/oauth2/token", data=data)
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    access_token = create_access_token(
+    access_token = _create_access_token(
         data={"sub": resp.json()}, expires_delta=access_token_expires
     )
     ### resp.json() is {'access_token': <token>, 'token_type': 'Bearer'}
     response = RedirectResponse(
         os.environ["PUBLIC_HOST"] + "/hub/home", status_code=302
     )
-    response.set_cookie(key="access_token", value=access_token, httponly=True)
+    response.set_cookie(key=JHUB_APPS_AUTH_COOKIE_NAME, value=access_token, httponly=True)
     return response
 
 
@@ -101,7 +107,12 @@ async def get_server(user: User = Depends(get_current_user), server_name=None):
     hub_client = HubClient(username=user.name)
     hub_user = hub_client.get_user()
     user_servers = hub_user["servers"]
-    if server_name:
+
+    # If server_name is 'lab' then it is the default user
+    if server_name == "lab" or server_name == "vscode":
+        server_name = ""
+
+    if server_name is not None:
         # Get a particular server
         for s_name, server_details in user_servers.items():
             if s_name == server_name:
@@ -138,6 +149,7 @@ async def create_server(
     user: User = Depends(get_current_user),
 ):
     # server.servername is not necessary to supply for create server
+    _check_if_framework_allowed(server.user_options)
     server_name = server.user_options.display_name
     logger.info("Creating server", server_name=server_name, user=user.name)
     server.user_options.thumbnail = await get_thumbnail_data_url(
@@ -165,6 +177,13 @@ async def start_server(
             username=user.name,
             servername=server_name,
         )
+        if response.status_code in [403, 404]:
+            raise HTTPException(
+                detail=f"User doesn't have permissions to start server: '{server_name}' "
+                       f"or the server with this name does not exist",
+                status_code=status.HTTP_403_FORBIDDEN,
+            )
+        response.raise_for_status()
     except requests.exceptions.HTTPError as e:
         raise HTTPException(
             detail=f"Probably server '{server_name}' is already running: {e}",
@@ -175,7 +194,7 @@ async def start_server(
             detail=f"server '{server_name}' not found",
             status_code=status.HTTP_404_NOT_FOUND,
         )
-    return response
+    return response.status_code
 
 
 @router.put("/server/{server_name}")
@@ -186,6 +205,7 @@ async def update_server(
     user: User = Depends(get_current_user),
     server_name=None,
 ):
+    _check_if_framework_allowed(server.user_options)
     if thumbnail_data_url:
         server.user_options.thumbnail = thumbnail_data_url
     else:
@@ -229,10 +249,10 @@ async def me(user: User = Depends(get_current_user)):
 @router.get("/frameworks/", description="Get all frameworks")
 async def get_frameworks(user: User = Depends(get_current_user)):
     logger.info("Getting all the frameworks")
-    frameworks = []
-    for framework in FRAMEWORKS:
-        frameworks.append(framework.json())
-    return frameworks
+    config = get_jupyterhub_config()
+    return [
+        framework for framework in FRAMEWORKS if framework.name in _get_allowed_frameworks(config)
+    ]
 
 
 @router.get("/conda-environments/", description="Get all conda environments")
@@ -263,6 +283,24 @@ async def hub_services(user: User = Depends(get_current_user)):
     logger.info(f"Getting hub services for user: {user}")
     hub_client = HubClient(username=user.name)
     return hub_client.get_services()
+
+
+@router.post("/app-config-from-git/",)
+async def app_from_git(
+        repo: Repository,
+        user: User = Depends(get_current_user)
+) -> JHubAppConfig:
+    """
+    ## Fetches jhub-apps application configuration from a git repository.
+
+    Note: This endpoint is kept as POST intentionally because the client is
+    requesting the server to process some data, in this case, to fetch
+    a repository, read its conda project config, and return specific values,
+    which is a processing action.
+    """
+    logger.info("Getting app configuration from git repository")
+    response = _get_app_configuration_from_git(repo)
+    return response
 
 
 @router.get("/")

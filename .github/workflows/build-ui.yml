@@ -44,7 +44,7 @@ jobs:
         working-directory: ui
 
       - name: Build and Copy
-        run: npm run buildCopy
+        run: npm run build
         working-directory: ui
 
       - name: Get Last Commit

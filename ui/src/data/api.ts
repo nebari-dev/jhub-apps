@@ -25,12 +25,12 @@ export const environments = ['env-1', 'env-2', 'env-3', 'env-4', 'env-5'];
 
 export const profiles: AppProfileProps[] = [
   {
-    display_name: 'Small',
+    display_name: 'Small Instance',
     slug: 'small0',
     description: 'Stable environment with 1 CPU / 4GB RAM',
   },
   {
-    display_name: 'Small',
+    display_name: 'Small Instance',
     slug: 'small1',
     description: 'Stable environment with 2 CPU / 8GB RAM',
   },
@@ -63,6 +63,7 @@ export const app: AppQueryGetProps = {
   last_activity: '',
   pending: null,
   ready: true,
+  started: '',
   stopped: false,
   url: 'http://',
   user_options: {
@@ -92,8 +93,11 @@ export const serverApps = {
     {
       name: '',
       url: '/user/test',
+      started: '2021-01-01T00:00:00',
       ready: true,
-      user_options: {},
+      user_options: {
+        profile: 'small1',
+      },
       last_activity: getMockDate(0),
     },
     {
@@ -219,6 +223,30 @@ export const serverApps = {
         name: 'shared-app',
         jhub_app: true,
         display_name: 'Shared App',
+        description:
+          'Lorem ipsum dolor sit amet consectetur. Sit vestibulum facilisis auctor pulvinar ac. Cras.',
+        thumbnail: DEFAULT_APP_LOGO,
+        framework: 'panel',
+        conda_env: 'env-1',
+        profile: 'small0',
+        env: null,
+        public: false,
+        keep_alive: false,
+        username: 'Test User',
+      },
+    },
+    {
+      name: 'shared-appII',
+      url: '/shared/test/shared-app/',
+      started: '2021-02-01T00:00:00.000Z',
+      pending: null,
+      ready: true,
+      last_activity: getMockDate(48),
+      stopped: true,
+      user_options: {
+        name: 'shared-appII',
+        jhub_app: true,
+        display_name: 'Shared App Stopped',
         description:
           'Lorem ipsum dolor sit amet consectetur. Sit vestibulum facilisis auctor pulvinar ac. Cras.',
         thumbnail: DEFAULT_APP_LOGO,

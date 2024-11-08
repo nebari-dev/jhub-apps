@@ -1,13 +1,21 @@
 import io
 import json
-from unittest.mock import patch
+from unittest.mock import patch, Mock
 
 import pytest
 
 from jhub_apps.hub_client.hub_client import HubClient
+from jhub_apps.service.models import UserOptions, ServerCreation, Repository
 from jhub_apps.service.utils import get_shared_servers
-from jhub_apps.spawner.types import FRAMEWORKS
+from jhub_apps.spawner.types import FRAMEWORKS, Framework
 from jhub_apps.tests.common.constants import MOCK_USER
+
+MOCK_ALLOW_ALL_FRAMEWORKS_CONFIG = Mock(
+    JAppsConfig=Mock(
+        allowed_frameworks=[f.name for f in FRAMEWORKS],
+        blocked_frameworks=[]
+    )
+)
 
 
 def mock_user_options():
@@ -38,7 +46,7 @@ def mock_user_options():
 @patch.object(HubClient, "get_user")
 def test_api_get_server(get_user, client):
     server_data = {"panel-app": {}}
-    get_users_response = {'name': 'aktech', 'servers': server_data}
+    get_users_response = {'name': 'jovyan', 'servers': server_data}
     get_user.return_value = get_users_response
     response = client.get("/server/panel-app")
     get_user.assert_called_once_with()
@@ -46,10 +54,25 @@ def test_api_get_server(get_user, client):
     assert response.json() == server_data["panel-app"]
 
 
+@patch.object(HubClient, "get_user")
+def test_api_get_server_not_found(get_user, client):
+    server_data = {"panel-app": {}}
+    get_users_response = {'name': 'jovyan', 'servers': server_data}
+    get_user.return_value = get_users_response
+    response = client.get("/server/panel-app-not-found")
+    get_user.assert_called_once_with()
+    assert response.status_code == 404
+    assert response.json() == {
+        'detail': "server 'panel-app-not-found' not found",
+    }
+
+
+@patch("jhub_apps.service.utils.get_jupyterhub_config")
 @patch.object(HubClient, "create_server")
-def test_api_create_server(create_server, client):
+def test_api_create_server(create_server, get_jupyterhub_config, client):
     from jhub_apps.service.models import UserOptions
-    create_server_response = {"user": "aktech"}
+    get_jupyterhub_config.return_value = MOCK_ALLOW_ALL_FRAMEWORKS_CONFIG
+    create_server_response = {"user": "jovyan"}
     create_server.return_value = create_server_response
     user_options = mock_user_options()
     thumbnail = b"contents of thumbnail"
@@ -72,7 +95,7 @@ def test_api_create_server(create_server, client):
 
 @patch.object(HubClient, "start_server")
 def test_api_start_server(create_server, client):
-    start_server_response = {"user": "aktech"}
+    start_server_response = Mock(status_code=200)
     create_server.return_value = start_server_response
     server_name = "server-name"
     response = client.post(
@@ -83,12 +106,11 @@ def test_api_start_server(create_server, client):
         servername=server_name,
     )
     assert response.status_code == 200
-    assert response.json() == start_server_response
 
 
 @patch.object(HubClient, "start_server")
 def test_api_start_server_404(start_server, client):
-    start_server_response = None
+    start_server_response = Mock(status_code=404)
     start_server.return_value = start_server_response
     server_name = "server-name"
     response = client.post(
@@ -98,8 +120,7 @@ def test_api_start_server_404(start_server, client):
         username=MOCK_USER.name,
         servername=server_name,
     )
-    assert response.status_code == 404
-    assert response.json() == {"detail": "server 'server-name' not found"}
+    assert response.status_code == 403
 
 
 @pytest.mark.parametrize("name,remove", [
@@ -108,7 +129,7 @@ def test_api_start_server_404(start_server, client):
 ])
 @patch.object(HubClient, "delete_server")
 def test_api_delete_server(delete_server, name, remove, client):
-    create_server_response = {"user": "aktech"}
+    create_server_response = {"user": "jovyan"}
     delete_server.return_value = create_server_response
     response = client.delete("/server/panel-app", params={"remove": remove})
     delete_server.assert_called_once_with(
@@ -120,11 +141,12 @@ def test_api_delete_server(delete_server, name, remove, client):
     assert response.json() == create_server_response
 
 
+@patch("jhub_apps.service.utils.get_jupyterhub_config")
 @patch.object(HubClient, "edit_server")
-def test_api_update_server(edit_server, client):
+def test_api_update_server(edit_server, get_jupyterhub_config, client):
     from jhub_apps.service.models import UserOptions
-
-    create_server_response = {"user": "aktech"}
+    get_jupyterhub_config.return_value = MOCK_ALLOW_ALL_FRAMEWORKS_CONFIG
+    create_server_response = {"user": "jovyan"}
     edit_server.return_value = create_server_response
     user_options = mock_user_options()
     thumbnail = b"contents of thumbnail"
@@ -170,8 +192,10 @@ def test_shared_server_filtering(hub_get_shared_servers, get_users):
         }
     ]
     hub_get_shared_servers.return_value = [
-        {"server": {"name": "panel-56"}},
-        {"server": {"name": "panel-34"}},
+        {"server": {"name": "panel-56", "user": {"name": "another-user"}}},
+        {"server": {"name": "panel-34", "user": {"name": "another-user"}}},
+        {"server": {"name": "panel-23", "user": {"name": "fakeuser"}}},
+        {"server": {"name": "panel-42", "user": {"name": "fakeuser"}}},
     ]
     shared_servers = get_shared_servers(current_hub_user)
     assert shared_servers == [
@@ -182,14 +206,27 @@ def test_shared_server_filtering(hub_get_shared_servers, get_users):
     get_users.assert_called_once_with()
 
 
-def test_api_frameworks(client):
+@pytest.mark.parametrize("allowed_frameworks, blocked_frameworks,", [
+    ([f.name for f in FRAMEWORKS if f.name != Framework.jupyterlab.name], []),
+    ([f.name for f in FRAMEWORKS], []),
+    ([], [Framework.jupyterlab.name]),
+    ([Framework.panel.name], [Framework.bokeh.name]),
+])
+@patch("jhub_apps.service.routes.get_jupyterhub_config")
+def test_api_frameworks(get_jupyterhub_config, client, allowed_frameworks, blocked_frameworks):
+    get_jupyterhub_config.return_value = Mock(
+        JAppsConfig=Mock(
+            allowed_frameworks=allowed_frameworks,
+            blocked_frameworks=blocked_frameworks
+        )
+    )
+
     response = client.get(
         "/frameworks",
     )
-    frameworks = []
-    for framework in FRAMEWORKS:
-        frameworks.append(framework.json())
-    assert response.json() == frameworks
+    response_json = response.json()
+    returned_frameworks = {f["name"] for f in response_json}
+    assert returned_frameworks == set(allowed_frameworks) - set(blocked_frameworks)
 
 
 def test_api_status(client):
@@ -209,3 +246,40 @@ def test_open_api_docs(client):
     assert response.status_code == 200
     rjson = response.json()
     assert rjson['info']['version']
+
+
+@patch("jhub_apps.service.utils.get_jupyterhub_config")
+@patch.object(HubClient, "create_server")
+def test_create_server_with_git_repository(
+        hub_create_server,
+        get_jupyterhub_config,
+        client,
+):
+    get_jupyterhub_config.return_value = Mock(
+        JAppsConfig=Mock(
+            allowed_frameworks=[f.name for f in FRAMEWORKS],
+            blocked_frameworks=[]
+        )
+    )
+    user_options = UserOptions(
+        jhub_app=True,
+        display_name="Test Application",
+        description="App description",
+        framework="panel",
+        thumbnail="data:image/png;base64,ZHVtbXkgaW1hZ2UgZGF0YQ==",
+        filepath="panel_basic.py",
+        repository=Repository(
+            url="https://github.com/nebari-dev/jhub-apps-from-git-repo-example.git",
+        )
+    )
+    server_data = ServerCreation(servername="test server", user_options=user_options)
+    files = {"thumbnail": ("test.png", b"dummy image data", "image/png")}
+    data = {"data": server_data.model_dump_json()}
+    hub_create_server.return_value = (201, 'test-server-abcdef')
+    response = client.post("/server", data=data, files=files)
+    assert response.status_code == 200
+    assert response.json() == [201, 'test-server-abcdef']
+    hub_create_server.assert_called_once_with(
+        username="jovyan", servername=server_data.servername,
+        user_options=user_options
+    )

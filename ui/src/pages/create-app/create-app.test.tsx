@@ -1,6 +1,5 @@
 import axios from '@src/utils/axios';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import '@testing-library/jest-dom';
 import { act, render } from '@testing-library/react';
 import MockAdapter from 'axios-mock-adapter';
 import { BrowserRouter } from 'react-router-dom';
@@ -8,7 +7,13 @@ import { RecoilRoot } from 'recoil';
 import { CreateApp } from './create-app';
 
 describe('CreateApp', () => {
-  const queryClient = new QueryClient();
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+      },
+    },
+  });
   const mock = new MockAdapter(axios);
   beforeAll(() => {
     mock.reset();
@@ -29,7 +34,7 @@ describe('CreateApp', () => {
     await act(async () => {
       expect(baseElement).toBeTruthy();
       expect(baseElement.querySelector('h1')?.textContent).toEqual(
-        'Create a new app',
+        'Deploy a new app',
       );
     });
   });

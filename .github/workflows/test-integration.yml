@@ -98,10 +98,11 @@ jobs:
 
     - name: Run Tests
       run: |
-        pytest jhub_apps/tests/tests_e2e/ -vvv -m "${{ matrix.test_type }}"
+        pytest jhub_apps/tests/tests_e2e/ -vvv -s -m "${{ matrix.test_type }}"
 
     - name: Create artifact name
       id: artifact-name
+      if: always()
       run: |
         if [ "${{ matrix.jupyterhub }}" = "4.1.5" ]; then
             jhub_suffix="4x"

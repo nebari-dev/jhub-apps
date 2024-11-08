@@ -21,15 +21,20 @@ import { AppFrameworkProps } from '@src/types/api';
 import { JhApp } from '@src/types/jupyterhub';
 import { UserState } from '@src/types/user';
 import axios from '@src/utils/axios';
-import { OWNERSHIP_TYPES, SORT_TYPES } from '@src/utils/constants';
+import {
+  OWNERSHIP_TYPES,
+  SERVER_STATUSES,
+  SORT_TYPES,
+} from '@src/utils/constants';
 import { filterAndSortApps } from '@src/utils/jupyterhub';
 import { useQuery } from '@tanstack/react-query';
-import React, { SyntheticEvent } from 'react';
+import React, { SyntheticEvent, useCallback, useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import {
   currentFrameworks as defaultFrameworks,
   currentOwnershipValue as defaultOwnershipValue,
   currentSearchValue as defaultSearchValue,
+  currentServerStatuses as defaultServerStatuses,
   currentSortValue as defaultSortValue,
 } from '../../../../store';
 import { StyledFilterButton } from '../../../../styles/styled-filter-button';
@@ -70,7 +75,10 @@ export const AppFilters = ({
   const [currentSortValue, setCurrentSortValue] =
     useRecoilState(defaultSortValue);
   // const [hasBulkSelections] = useState(false); // Not using now, may in the future
-
+  const [currentServerStatuses, setCurrentServerStatuses] = useRecoilState<
+    string[]
+  >(defaultServerStatuses);
+  const [filteredCount, setFilteredCount] = useState(0);
   const { data: frameworks, isLoading: frameworksLoading } = useQuery<
     AppFrameworkProps[],
     { message: string }
@@ -106,9 +114,20 @@ export const AppFilters = ({
         currentOwnershipValue,
         currentFrameworks,
         value,
+        currentServerStatuses,
       ),
     );
     setSortByAnchorEl(null);
+  };
+
+  const handleServerStatusChange = (event: SyntheticEvent) => {
+    const target = event.target as HTMLInputElement;
+    const value = target.value;
+    if (currentServerStatuses.includes(value)) {
+      setCurrentServerStatuses((prev) => prev.filter((item) => item !== value));
+    } else {
+      setCurrentServerStatuses((prev) => [...prev, value]);
+    }
   };
 
   const handleApplyFilters = () => {
@@ -121,21 +140,47 @@ export const AppFilters = ({
         currentOwnershipValue,
         currentFrameworks,
         currentSortValue,
+        currentServerStatuses,
       ),
     );
   };
   const handleClearFilters = () => {
     setCurrentFrameworks([]);
     setCurrentOwnershipValue('Any');
+    setCurrentServerStatuses([]);
   };
 
+  const calculateFilteredCount = useCallback(() => {
+    const filteredApps = filterAndSortApps(
+      data,
+      currentUser,
+      currentSearchValue,
+      currentOwnershipValue,
+      currentFrameworks,
+      currentSortValue,
+      currentServerStatuses,
+    );
+    return filteredApps.length;
+  }, [
+    data,
+    currentUser,
+    currentSearchValue,
+    currentOwnershipValue,
+    currentFrameworks,
+    currentSortValue,
+    currentServerStatuses,
+  ]);
+
+  useEffect(() => {
+    setFilteredCount(calculateFilteredCount());
+  }, [calculateFilteredCount]);
   return (
     <Grid container spacing={2} paddingBottom="32px">
       <Grid item xs={12} md={4}>
         <Item sx={{ pb: 0 }}>
           <StyledFilterButton
             id="filters-btn"
-            variant="outlined"
+            variant="text"
             color="secondary"
             onClick={(event) => setFiltersAnchorEl(event.currentTarget)}
             startIcon={<FilterAltRoundedIcon />}
@@ -175,6 +220,7 @@ export const AppFilters = ({
             <Box
               component="form"
               name="filters-form"
+              id="filters-form"
               sx={{
                 width: '450px',
                 px: '16px',
@@ -210,6 +256,28 @@ export const AppFilters = ({
               </Box>
               <Divider sx={{ mt: '24px', mb: '16px' }} />
               <FormLabel
+                id="server-statuses-label"
+                sx={{
+                  pb: '16px',
+                  fontSize: '14px',
+                  fontWeight: 600,
+                }}
+              >
+                Server Status
+              </FormLabel>
+              <Box>
+                {SERVER_STATUSES.map((status) => (
+                  <FormControlLabel
+                    key={status}
+                    control={<Checkbox value={status} />}
+                    label={status}
+                    onClick={handleServerStatusChange}
+                    checked={currentServerStatuses.includes(status)}
+                  />
+                ))}
+              </Box>
+              <Divider sx={{ mt: '24px', mb: '16px' }} />
+              <FormLabel
                 id="ownership-label"
                 sx={{
                   pb: '16px',
@@ -224,6 +292,11 @@ export const AppFilters = ({
                   aria-labelledby="ownership-label"
                   defaultValue="any"
                   name="ownership-group"
+                  sx={{
+                    '& .MuiFormControlLabel-root': {
+                      pb: '3px',
+                    },
+                  }}
                   row
                 >
                   {OWNERSHIP_TYPES.map((value) => (
@@ -250,6 +323,7 @@ export const AppFilters = ({
                 <ButtonGroup>
                   <Button
                     id="clear-filters-btn"
+                    data-testid="clear-filters-btn"
                     variant="text"
                     sx={{
                       color: '#0F1015',
@@ -268,7 +342,7 @@ export const AppFilters = ({
                     onClick={handleApplyFilters}
                     sx={{ px: 'none !important', minWidth: '20px' }}
                   >
-                    Apply
+                    Show {filteredCount} results
                   </Button>
                 </ButtonGroup>
               </Box>
@@ -326,18 +400,6 @@ export const AppFilters = ({
               flexDirection: 'row',
             }}
           >
-            <SortRounded sx={{ position: 'relative', marginRight: '4px' }} />
-            <FormLabel
-              id="sort-by-label"
-              sx={{
-                fontSize: '16px',
-                pr: '6px',
-                fontWeight: 400,
-                color: 'common.black',
-              }}
-            >
-              Sort by:
-            </FormLabel>
             <Button
               id="sort-by-btn"
               variant="text"
@@ -348,10 +410,8 @@ export const AppFilters = ({
                 bottom: '8px',
                 fontSize: '16px',
                 fontWeight: 600,
-                width: '180px',
                 color: 'common.black',
-                px: 0,
-                mr: 1.5,
+                mr: '24px',
               }}
               endIcon={
                 sortByOpen ? (
@@ -361,6 +421,7 @@ export const AppFilters = ({
                 )
               }
             >
+              <SortRounded sx={{ position: 'relative', marginRight: '8px' }} />
               {currentSortValue}
             </Button>
             <Menu

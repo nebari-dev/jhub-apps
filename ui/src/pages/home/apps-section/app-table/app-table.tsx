@@ -44,9 +44,7 @@ export const AppTable = ({ apps }: AppTableProps): React.ReactElement => {
   const [, setIsDeleteOpen] = useRecoilState<boolean>(isDeleteOpen);
   const serverStatus = apps.map((app) => app.status);
   useEffect(() => {
-    if (!serverStatus) {
-      setNotification('Server status id undefined.');
-    } else {
+    if (serverStatus) {
       setAppStatus(serverStatus.join(', ')); // Convert the array of strings to a single string
     }
   }, [serverStatus, setNotification]);

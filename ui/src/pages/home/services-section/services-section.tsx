@@ -1,4 +1,4 @@
-import { Box, Divider, Grid, Stack } from '@mui/material';
+import { Box, Divider, Grid, Stack, Typography } from '@mui/material';
 import { JhApp, JhServiceApp, JhServiceFull } from '@src/types/jupyterhub';
 import { UserState } from '@src/types/user';
 import axios from '@src/utils/axios';
@@ -47,7 +47,7 @@ export const ServicesSection = (): React.ReactElement => {
     queryKey: ['app-state'],
     queryFn: () =>
       axios
-        .get(`/server/`)
+        .get('/server/')
         .then((response) => {
           return response.data;
         })
@@ -86,7 +86,9 @@ export const ServicesSection = (): React.ReactElement => {
           <Grid container spacing={2}>
             <Grid item xs={12} md={4}>
               <Item>
-                <h2>Services</h2>
+                <Typography component="h2" variant="h6">
+                  Quick Access
+                </Typography>
               </Item>
             </Grid>
           </Grid>

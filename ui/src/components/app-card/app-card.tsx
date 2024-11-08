@@ -10,14 +10,20 @@ import Chip from '@mui/material/Chip';
 import Typography from '@mui/material/Typography';
 import { StatusChip } from '@src/components';
 import { API_BASE_URL } from '@src/utils/constants';
+import { useQuery } from '@tanstack/react-query';
 
+import { AppProfileProps } from '@src/types/api';
 import { JhApp } from '@src/types/jupyterhub';
+import { UserState } from '@src/types/user';
+import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import {
   currentApp,
   currentNotification,
+  currentProfiles as defaultProfiles,
   isDeleteOpen,
+  isStartNotRunningOpen,
   isStartOpen,
   isStopOpen,
 } from '../../store';
@@ -56,6 +62,7 @@ export const AppCard = ({
   app,
 }: AppCardProps): React.ReactElement => {
   const [appStatus, setAppStatus] = useState('');
+  const [currentProfiles] = useRecoilState<AppProfileProps[]>(defaultProfiles);
   const [, setCurrentApp] = useRecoilState<JhApp | undefined>(currentApp);
   const [, setNotification] = useRecoilState<string | undefined>(
     currentNotification,
@@ -63,14 +70,23 @@ export const AppCard = ({
   const [, setIsStartOpen] = useRecoilState<boolean>(isStartOpen);
   const [, setIsStopOpen] = useRecoilState<boolean>(isStopOpen);
   const [, setIsDeleteOpen] = useRecoilState<boolean>(isDeleteOpen);
+  const [, setIsStartNotRunningOpen] = useRecoilState(isStartNotRunningOpen);
 
   useEffect(() => {
-    if (!serverStatus) {
-      setNotification('Server status id undefined.');
-    } else {
+    if (serverStatus) {
       setAppStatus(serverStatus);
     }
   }, [serverStatus, setNotification]);
+
+  // Fetch user data and check admin status
+  const { data: currentUserData } = useQuery<UserState>({
+    queryKey: ['current-user'],
+    queryFn: () =>
+      axios.get('/user').then((response) => {
+        return response.data;
+      }),
+    enabled: true,
+  });
 
   const getIcon = () => {
     if (!isAppCard)
@@ -107,21 +123,36 @@ export const AppCard = ({
       id: 'start',
       title: 'Start',
       onClick: () => {
+        // Allow admins to start shared apps
+        if (isShared && !currentUserData?.admin) {
+          // Show error if it's a shared app
+          setNotification(
+            "You don't have permission to start this app. Please ask the owner to start it.",
+          );
+          return;
+        }
         setIsStartOpen(true);
         setCurrentApp(app!); // Add the non-null assertion operator (!) to ensure that app is not undefined
       },
       visible: true,
-      disabled: serverStatus !== 'Ready',
+      disabled: serverStatus !== 'Ready', // Disable start if the app is already running
     },
     {
       id: 'stop',
       title: 'Stop',
       onClick: () => {
+        // Allow admins to stop shared apps
+        if (isShared && !currentUserData?.admin) {
+          setNotification(
+            "You don't have permission to stop this app. Please ask the owner to stop it.",
+          );
+          return;
+        }
         setIsStopOpen(true);
         setCurrentApp(app!);
       },
       visible: true,
-      disabled: serverStatus !== 'Running' || isShared,
+      disabled: serverStatus !== 'Running', // Disable stop if the app is not running
     },
     {
       id: 'edit',
@@ -139,7 +170,7 @@ export const AppCard = ({
         setCurrentApp(app!);
       },
       visible: true,
-      disabled: isShared || id === '' || !isAppCard,
+      disabled: isShared || id === '' || !isAppCard, // Disable delete for shared apps
       danger: true,
     },
   ];
@@ -152,7 +183,7 @@ export const AppCard = ({
       return;
     }
 
-    const description = element.querySelector(`.card-description`);
+    const description = element.querySelector('.card-description');
     if (description) {
       const contentLength = description.textContent?.length || 0;
       if (contentLength > 170) {
@@ -169,13 +200,36 @@ export const AppCard = ({
     }
   };
 
+  const getProfileData = (profile: string) => {
+    return currentProfiles.find((p) => p.slug === profile)?.display_name || '';
+  };
+
   return (
     <Box
       className={`card ${isAppCard ? '' : 'service'}`}
       id={`card-${id}`}
       tabIndex={0}
     >
-      <Link href={url}>
+      <Link
+        href={url}
+        onClick={(e) => {
+          if (app && serverStatus === 'Ready') {
+            e.preventDefault();
+            setCurrentApp({
+              id,
+              name: title,
+              framework: app?.framework || '',
+              url: app?.url || '',
+              ready: app?.ready || false,
+              public: app?.public || false,
+              shared: app?.shared || isShared || false,
+              last_activity: new Date(app?.last_activity || ''),
+              status: 'Ready',
+            });
+            setIsStartNotRunningOpen(true);
+          }
+        }}
+      >
         <Card id={`card-${id}`} tabIndex={0} className="Mui-card">
           <div
             className={`card-content-header ${isAppCard ? '' : 'card-content-header-service'}`}
@@ -184,7 +238,11 @@ export const AppCard = ({
               <>
                 <div className="chip-container">
                   <div className="menu-chip">
-                    <StatusChip status={appStatus} />
+                    <StatusChip
+                      status={appStatus}
+                      additionalInfo={getProfileData(app?.profile || '')}
+                      app={app}
+                    />
                   </div>
                 </div>
                 <ContextMenu
@@ -197,15 +255,13 @@ export const AppCard = ({
               <></>
             )}
             <CardMedia>
-              {thumbnail ? (
-                <div
-                  className={isAppCard ? 'img-overlay' : 'img-overlay-service'}
-                >
-                  <img src={thumbnail} alt="App thumb" />
-                </div>
-              ) : (
-                <></>
-              )}
+              <div
+                className={
+                  isAppCard && thumbnail ? 'img-overlay' : 'img-overlay-service'
+                }
+              >
+                {thumbnail && <img src={thumbnail} alt="App thumb" />}
+              </div>
             </CardMedia>
           </div>
           <div className="card-content-content">
@@ -284,7 +340,6 @@ export const AppCard = ({
             ) : (
               <Box className="card-content-container app-service no-hover">
                 <CardContent className="card-inner-content">
-                  <span className="inline relative iconic">{getIcon()}</span>
                   <Typography
                     gutterBottom
                     variant="h5"

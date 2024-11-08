@@ -9,6 +9,7 @@ import {
   Radio,
   RadioGroup,
   Stack,
+  Typography,
 } from '@mui/material';
 import { AppProfileProps, AppQueryUpdateProps } from '@src/types/api';
 import { AppFormInput } from '@src/types/form';
@@ -23,7 +24,6 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
-import { StyledFormHeading } from 'src/styles/styled-form-heading';
 import { StyledFormParagraph } from 'src/styles/styled-form-paragraph';
 import { StyledFormSection } from 'src/styles/styled-form-section';
 import { Item } from 'src/styles/styled-item';
@@ -32,6 +32,7 @@ import {
   currentFile as defaultFile,
   currentFormInput as defaultFormInput,
   currentImage as defaultImage,
+  isHeadless as defaultIsHeadless,
   currentServerName as defaultServerName,
   currentUser as defaultUser,
 } from '../../store';
@@ -60,6 +61,7 @@ export const ServerTypes = (): React.ReactElement => {
   const [selectedServerType, setSelectedServerType] = React.useState<string>(
     currentFormInput?.profile || '',
   );
+  const [isHeadless] = useRecoilState<boolean>(defaultIsHeadless);
   const id = searchParams.get('id');
 
   // Use `useQuery` with an inline async function for the Axios call
@@ -133,7 +135,14 @@ export const ServerTypes = (): React.ReactElement => {
           const username = currentUser?.name;
           if (username && data?.length > 1) {
             const server = data[1];
-            window.location.assign(`/hub/spawn-pending/${username}/${server}`);
+            // If headless, navigate to success page, else redirect to spawn-pending page
+            if (isHeadless) {
+              navigate(`/success?id=${server}`);
+            } else {
+              window.location.assign(
+                `/hub/spawn-pending/${username}/${server}`,
+              );
+            }
           }
         },
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -206,7 +215,7 @@ export const ServerTypes = (): React.ReactElement => {
   return (
     <Box className="container">
       <Stack>
-        <Item>
+        <Item hidden={isHeadless}>
           <div className="form-breadcrumb">
             <Button
               id="back-btn"
@@ -214,16 +223,16 @@ export const ServerTypes = (): React.ReactElement => {
               variant="text"
               color="primary"
               startIcon={<ArrowBackIcon />}
-              onClick={() =>
-                navigate(id ? `/edit-app?id=${id}` : '/create-app')
-              }
+              onClick={() => navigateToUrl(APP_BASE_URL)}
             >
-              Back
+              Back To Home
             </Button>
           </div>
         </Item>
         <Item>
-          <StyledFormHeading>Server Type</StyledFormHeading>
+          <Typography component="h1" variant="h5">
+            Server Type
+          </Typography>
           <StyledFormParagraph>
             Please select the appropriate server for your app. For more
             information on server types,{' '}
@@ -283,10 +292,12 @@ export const ServerTypes = (): React.ReactElement => {
                     id="cancel-btn"
                     type="button"
                     variant="text"
-                    color="secondary"
-                    onClick={() => navigateToUrl(APP_BASE_URL)}
+                    color="primary"
+                    onClick={() =>
+                      navigate(id ? `/edit-app?id=${id}` : '/create-app')
+                    }
                   >
-                    Cancel
+                    Back
                   </Button>
                 </div>
                 <div className="next">
@@ -297,7 +308,7 @@ export const ServerTypes = (): React.ReactElement => {
                     color="primary"
                     loading={submitting}
                   >
-                    {id ? 'Save' : 'Create App'}
+                    {id ? 'Save' : 'Deploy App'}
                   </LoadingButton>
                 </div>
               </div>

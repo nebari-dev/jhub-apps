@@ -1,9 +1,9 @@
 import re
 import uuid
 
-import pytest
-import structlog
-from playwright.sync_api import Playwright, expect
+import pytest  # type: ignore
+import structlog  # type: ignore
+from playwright.sync_api import Playwright, expect  # type: ignore
 
 from jhub_apps.hub_client.utils import is_jupyterhub_5
 from jhub_apps.spawner.types import Framework
@@ -32,10 +32,11 @@ def test_jupyterhub_loading(playwright: Playwright):
 
 
 @pytest.mark.parametrize(
-    ("with_server_options", ), [
+    ("with_server_options",),
+    [
         pytest.param(True, marks=pytest.mark.with_server_options),
         pytest.param(False),
-    ]
+    ],
 )
 def test_panel_app_creation(playwright: Playwright, with_server_options) -> None:
     browser, context, page = get_page(playwright)
@@ -49,6 +50,14 @@ def test_panel_app_creation(playwright: Playwright, with_server_options) -> None
         create_users(page, users=[share_with_user])
         page.goto(BASE_URL)
         sign_in_and_authorize(page, username=f"admin-{app_suffix}", password="password")
+        # Verify that the page is loaded
+        logo = page.locator("id=app-logo")
+        expect(logo).to_be_visible()
+        profile_menu = page.locator("id=profile-menu-btn")
+        expect(profile_menu).to_be_visible()
+        page_title = page.locator("h1").filter(has_text="Home")
+        expect(page_title).to_be_visible()
+        # Create the App
         create_app(
             app_name, page, with_server_options, share_with_users=[share_with_user]
         )
@@ -80,17 +89,30 @@ def assert_working_panel_app(page):
 
 
 def create_app(
-        app_name,
-        page,
-        with_server_options=True,
-        share_with_users=None,
-        share_with_groups=None,
+    app_name,
+    page,
+    with_server_options=True,
+    share_with_users=None,
+    share_with_groups=None,
 ):
     logger.info("Creating App")
-    page.get_by_role("button", name="Create App").click()
+    # Verify that the page is loaded
+    logo = page.locator("id=app-logo")
+    expect(logo).to_be_visible()
+    profile_menu = page.locator("id=profile-menu-btn")
+    expect(profile_menu).to_be_visible()
+
+    # Deploy App
+    deploy_button = page.get_by_role("button", name="Deploy App")
+    expect(deploy_button).to_be_visible()
+    deploy_button.click()
+    page_title = page.locator("h1").filter(has_text="Deploy a new app")
+    expect(page_title).to_be_visible()
     logger.info("Fill App display Name")
-    page.get_by_label("Name *").click()
-    page.get_by_label("Name *").fill(app_name)
+    display_name_field = page.get_by_label("*Name")
+    expect(display_name_field).to_be_visible()
+    display_name_field.click()
+    display_name_field.fill(app_name)
     logger.info("Select Framework")
     page.locator("id=framework").click()
     page.get_by_role("option", name="Panel").click()
@@ -101,15 +123,15 @@ def create_app(
         logger.info("Select Next Page for Server options")
         expect(next_page_locator).to_be_visible()
         next_page_locator.click()
-        assert page.url.endswith('server-types')
+        assert page.url.endswith("server-types")
         small_instance_radio_button = page.get_by_label("Small Instance")
         logger.info("Expect Small Instance to be visible")
         expect(small_instance_radio_button).to_be_visible()
         small_instance_radio_button.check()
-    create_app_locator = page.get_by_role("button", name="Create App")
-    logger.info("Expect Create App button to be visible")
+    create_app_locator = page.get_by_role("button", name="Deploy App")
+    logger.info("Expect Deploy App button to be visible")
     expect(create_app_locator).to_be_visible()
-    logger.info("Click Create App")
+    logger.info("Click Deploy App")
     create_app_locator.click()
 
 
@@ -148,8 +170,6 @@ def sign_in_and_authorize(page, username, password):
     page.get_by_label("Password:").fill(password)
     logger.info("Pressing Sign in button")
     page.get_by_role("button", name="Sign in").click()
-    logger.info("Click Authorize button")
-    page.get_by_role("button", name="Authorize").click()
 
 
 def sign_out(page):

@@ -16,6 +16,7 @@ router = APIRouter(prefix="/services/japps")
 @router.get("/create-app", response_class=HTMLResponse)
 @router.get("/edit-app", response_class=HTMLResponse)
 @router.get("/server-types", response_class=HTMLResponse)
+@router.get("/success", response_class=HTMLResponse)
 async def handle_apps(request: Request):
     now = datetime.now(timezone.utc)
     config = get_jupyterhub_config()
@@ -23,10 +24,12 @@ async def handle_apps(request: Request):
     if not theme:
         theme = themes.DEFAULT_THEME
     return templates.TemplateResponse(
-        "japps_home.html",
+        "japps_custom.html",
         {
             "request": request,
             "version_hash": now.strftime("%Y%m%d%H%M%S"),
+            "hub_title": config.get("hub_title", "JupyterHub"),
+            "favicon": theme.get("favicon", "/service/japps/static/favicon.ico"),
             **theme,
         },
     )

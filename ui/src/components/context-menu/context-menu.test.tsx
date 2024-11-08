@@ -1,4 +1,3 @@
-import '@testing-library/jest-dom';
 import { fireEvent, render } from '@testing-library/react';
 import { act } from 'react-dom/test-utils';
 import ContextMenu from './context-menu'; // Adjust the import based on your file structure
@@ -34,7 +33,7 @@ describe('ContextMenu', () => {
   });
 
   test('calls onClick when an enabled item is clicked', () => {
-    const onClick = jest.fn();
+    const onClick = vi.fn();
     const items = [{ id: 'item-1', title: 'Item 1', visible: true, onClick }];
     const { getByTestId, getByText } = render(
       <ContextMenu id="menu-1" items={items} />,
@@ -45,7 +44,7 @@ describe('ContextMenu', () => {
   });
 
   test('does not call onClick when a disabled item is clicked', () => {
-    const onClick = jest.fn();
+    const onClick = vi.fn();
     const items = [
       { id: 'item-1', title: 'Item 1', visible: true, disabled: true, onClick },
     ];
@@ -58,7 +57,7 @@ describe('ContextMenu', () => {
   });
 
   test('closes menu after item click', () => {
-    const onClick = jest.fn();
+    const onClick = vi.fn();
     const items = [{ id: 'item-1', title: 'Item 1', visible: true, onClick }];
     const { getByText, queryByRole, getByTestId } = render(
       <ContextMenu id="menu-1" items={items} />,

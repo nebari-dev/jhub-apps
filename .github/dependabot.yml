@@ -8,10 +8,12 @@ updates:
     labels:
       - "dependencies"
     groups:
-      typescript-eslint:
+      minors:
         patterns:
-          - "@typescript-eslint/eslint-plugin"
-          - "@typescript-eslint/parser"
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
     ignore:
       - dependency-name: react
         versions:
@@ -25,3 +27,7 @@ updates:
       - dependency-name: "@types/react-dom"
         versions:
           - ">=18.2.0"
+      - dependency-name: "@mui/material"
+      - dependency-name: "@mui/icons-material"
+      - dependency-name: "@rollup/rollup-linux-x64-gnu"
+      - dependency-name: "@esbuild/linux-x64"

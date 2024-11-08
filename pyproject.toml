@@ -28,8 +28,25 @@ dependencies = [
     "cachetools",
     "structlog",
     "PyJWT",
+    "GitPython",
+    # pinning to avoid unexpected changes in spec causing
+    # unexpected breakage
+    "conda-project==0.4.2"
 ]
 dynamic = ["version"]
+
+[project.optional-dependencies]
+dev = [
+    "ruff",
+    "voila",
+    "dash",
+    "streamlit",
+    "gradio",
+    "pytest",
+    "playwright",
+    "pytest-playwright",
+    "pre-commit",
+]
 
 [project.entry-points.jhub_apps]
 jhub_apps = "jhub_apps"

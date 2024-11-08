@@ -1,11 +1,13 @@
-import { serverApps } from '@src/data/api';
+import { apps, serverApps } from '@src/data/api';
 import { servicesFull } from '@src/data/jupyterhub';
 import { currentUser } from '@src/data/user';
 import { JhServiceFull } from '@src/types/jupyterhub';
 import {
+  clearAppToStart,
   filterAndSortApps,
   getAppLogoUrl,
   getApps,
+  getAppToStart,
   getEncodedServerUrl,
   getFriendlyDateStr,
   getFriendlyDisplayName,
@@ -13,14 +15,28 @@ import {
   getFriendlyFrameworkName,
   getJhData,
   getServices,
+  getSpawnPendingUrl,
+  getSpawnUrl,
+  isDefaultApp,
   navigateToUrl,
+  storeAppToStart,
 } from './jupyterhub';
 
-jest.mock('./jupyterhub', () => ({
-  ...jest.requireActual('./jupyterhub'),
-  navigateToUrl: jest.fn(),
-}));
+vi.mock('./jupyterhub', async () => {
+  // Require the actual module to spread its properties
+  const actual = await vi.importActual('./jupyterhub');
+
+  return {
+    ...actual,
+    navigateToUrl: vi.fn(),
+  };
+});
+
 describe('JupyterHub utils', () => {
+  beforeEach(() => {
+    window.sessionStorage.clear();
+  });
+
   test('returns empty object from no jhdata', () => {
     window.jhdata = {};
     const result = getJhData();
@@ -69,7 +85,7 @@ describe('JupyterHub utils', () => {
 
   test('returns an array of JhApp for shared apps', () => {
     const result = getApps(serverApps, 'shared', 'testUser');
-    expect(result.length).toEqual(1);
+    expect(result.length).toEqual(2);
   });
 
   test('returns an array of JhApp for non-shared apps', () => {
@@ -79,7 +95,7 @@ describe('JupyterHub utils', () => {
 
   test('returns an array of JhApp for all apps', () => {
     const result = getApps(serverApps, 'all', 'testUser');
-    expect(result.length).toEqual(5);
+    expect(result.length).toEqual(6);
   });
 
   test('returns a jupyterhub friendly url for JupyterLab with no encoding needed', () => {
@@ -170,10 +186,58 @@ describe('JupyterHub utils', () => {
     expect(result).toBe('/img/logo.png');
   });
 
+  test('gets spawn url for app', () => {
+    const url = getSpawnUrl(currentUser, apps[0]);
+    expect(url).toContain('/spawn/testuser1@email.com?next=%2F');
+    expect(url).toContain('test-app-1');
+  });
+
+  test('gets spawn url for JupyterLab', () => {
+    const app = { ...apps[0], name: 'JupyterLab' };
+    const url = getSpawnUrl(currentUser, app);
+    expect(url).toContain('/spawn/testuser1@email.com?next=%2F');
+    expect(url).toContain('lab');
+  });
+
+  test('gets spawn url for VSCode', () => {
+    const app = { ...apps[0], name: 'VSCode' };
+    const url = getSpawnUrl(currentUser, app);
+    expect(url).toContain('/spawn/testuser1@email.com?next=%2F');
+    expect(url).toContain('vscode');
+  });
+
+  test('gets spawn pending url', () => {
+    const url = getSpawnPendingUrl(currentUser, 'test-app-1');
+    expect(url).toContain(
+      '/spawn-pending/testuser1@email.com/test-app-1?next=%2F',
+    );
+  });
+
+  test('verifies custom app is not default app', () => {
+    expect(isDefaultApp('app1')).toBe(false);
+  });
+
+  test('verifies JupyterLab is default app', () => {
+    expect(isDefaultApp('JupyterLab')).toBe(true);
+  });
+
+  test('verifies VSCode is default app', () => {
+    expect(isDefaultApp('VSCode')).toBe(true);
+  });
+
+  test('stores and clears startAppId storage', () => {
+    storeAppToStart('test-app-1');
+    expect(sessionStorage.getItem('startAppId')).toBe('test-app-1');
+    expect(getAppToStart()).toBe('test-app-1');
+
+    clearAppToStart();
+    expect(sessionStorage.getItem('startAppId')).toBeNull();
+  });
+
   test('navigates to the specified URL', () => {
-    const mockUrl = 'http://localhost/';
+    const mockUrl = 'http://localhost';
     navigateToUrl(mockUrl);
-    expect(document.location.href).toBe(mockUrl);
+    expect(document.location.href).toContain(mockUrl);
   });
 
   test('filters and sorts apps by recently modified', () => {
@@ -184,6 +248,7 @@ describe('JupyterHub utils', () => {
       'all',
       [],
       'Recently modified',
+      [],
     );
     expect(apps[0].name).toBe('Test App');
   });
@@ -196,6 +261,7 @@ describe('JupyterHub utils', () => {
       'all',
       [],
       'Name: A-Z',
+      [],
     );
     expect(apps[0].name).toBe('App with a long name that should be truncated');
   });
@@ -208,6 +274,7 @@ describe('JupyterHub utils', () => {
       'all',
       [],
       'Name: Z-A',
+      [],
     );
     expect(apps[0].name).toBe('TEST App 3');
   });

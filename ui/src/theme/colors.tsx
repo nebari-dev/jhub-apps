@@ -1,5 +1,5 @@
 export const blue = {
-  50: '#2491FF',
+  50: '#FAFBFC',
   100: '#2491FF',
   200: '#2491FF',
   300: '#2491FF',
@@ -12,10 +12,10 @@ export const blue = {
 };
 
 export const gray = {
-  50: '#F7F8F8',
+  50: 'rgba(0, 0, 0, .08)',
   100: '#E1E3E4',
-  200: '#C3C7CB',
-  300: '#A6ACB2',
+  200: '#EEEEEE',
+  300: '#E0E0E0',
   400: '#90969C',
   500: '#5B5F63',
   600: '#44474A',
@@ -39,3 +39,7 @@ export const orange = '#F66A0A';
 export const white = '#FFFFFF';
 
 export const black = '#0F1015';
+
+export const disabled = '#0F101561';
+
+export const grayLighter = gray[100];

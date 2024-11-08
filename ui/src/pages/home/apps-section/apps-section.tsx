@@ -2,7 +2,15 @@ import AddIcon from '@mui/icons-material/AddRounded';
 import SearchIcon from '@mui/icons-material/Search';
 import InputAdornment from '@mui/material/InputAdornment';
 
-import { Box, Button, Divider, Grid, Stack, TextField } from '@mui/material';
+import {
+  Box,
+  Button,
+  Divider,
+  Grid,
+  Stack,
+  TextField,
+  Typography,
+} from '@mui/material';
 import { JhApp } from '@src/types/jupyterhub';
 import { UserState } from '@src/types/user';
 import axios from '@src/utils/axios';
@@ -20,6 +28,7 @@ import {
   currentSearchValue,
   currentFrameworks as defaultFrameworks,
   currentOwnershipValue as defaultOwnershipValue,
+  currentServerStatuses as defaultServerStatuses,
   currentSortValue as defaultSortValue,
   currentUser as defaultUser,
 } from '../../../store';
@@ -45,17 +54,10 @@ export const AppsSection = (): React.ReactElement => {
     currentNotification,
   );
   const [currentSortValue] = useRecoilState<string>(defaultSortValue);
-
+  const [currentServerStatuses] = useRecoilState<string[]>(
+    defaultServerStatuses,
+  );
   const toggleView = () => setIsGridViewActive((prev) => !prev); // Added toggleView function
-
-  useEffect(() => {
-    const serverStatus = apps ? apps.map((app) => app.status) : [];
-    if (!serverStatus) {
-      setNotification('Server status id undefined.');
-    } else {
-      setAppStatus(serverStatus.join(', ')); // Convert the array of strings to a single string
-    }
-  }, [apps, setNotification, setAppStatus]);
 
   const {
     isLoading,
@@ -65,7 +67,7 @@ export const AppsSection = (): React.ReactElement => {
     queryKey: ['app-state'],
     queryFn: () =>
       axios
-        .get(`/server/`)
+        .get('/server/')
         .then((response) => {
           return response.data;
         })
@@ -74,17 +76,6 @@ export const AppsSection = (): React.ReactElement => {
         }),
     enabled: !!currentUser,
   });
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const serverStatus = apps ? apps.map((app) => app.status) : [];
-
-  useEffect(() => {
-    if (!serverStatus) {
-      setNotification('Server status id undefined.');
-    } else {
-      setAppStatus(serverStatus.join(', ')); // Convert the array of strings to a single string
-    }
-  }, [serverStatus, setNotification]);
 
   const handleSearch = (event: SyntheticEvent) => {
     const target = event.target as HTMLInputElement;
@@ -98,10 +89,18 @@ export const AppsSection = (): React.ReactElement => {
           currentOwnershipValue,
           currentFrameworks,
           currentSortValue,
+          currentServerStatuses,
         ),
       );
     }
   };
+
+  useEffect(() => {
+    const serverStatus = apps.map((app) => app.status);
+    if (serverStatus) {
+      setAppStatus(serverStatus.join(', ')); // Convert the array of strings to a single string
+    }
+  }, [apps, setNotification, setAppStatus]);
 
   useEffect(() => {
     if (!isLoading && serverData) {
@@ -130,13 +129,16 @@ export const AppsSection = (): React.ReactElement => {
       <Box>
         <Stack>
           <Item>
-            <Grid container spacing={2}>
-              <Grid item xs={12} md={4}>
+            <Grid container spacing={2} alignItems="center">
+              <Grid item xs={12} md={4} sx={{ padding: '0' }}>
                 <Item>
-                  <h2>Apps</h2>
+                  <Typography component="h2" variant="h6">
+                    App Library
+                  </Typography>
                 </Item>
               </Grid>
               <Grid
+                alignItems="center"
                 container
                 item
                 xs={12}
@@ -158,13 +160,31 @@ export const AppsSection = (): React.ReactElement => {
                     onFocus={() => setFocused(true)}
                     onBlur={() => setFocused(false)}
                     sx={{
+                      my: '0',
                       width: { sm: '200px', md: '300px', lg: '600px' },
-                      pr: '16px',
+                      mr: '16px',
+                      color: 'rgba(15, 16, 21, 0.56)',
+                      backgroundColor: '#fff',
+                      '& .MuiOutlinedInput-root': {
+                        '& fieldset': {
+                          borderColor: 'rgba(15, 16, 21, 0.12)',
+                        },
+                        '&:hover fieldset': {
+                          borderColor: 'rgba(15, 16, 21, 0.56)',
+                        },
+                        '&.Mui-focused fieldset': {
+                          borderColor: '#ba18da',
+                        },
+                      },
                     }}
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
-                          {!focused && <SearchIcon />}
+                          {!focused && (
+                            <SearchIcon
+                              style={{ fill: 'rgba(15, 16, 21, 0.56)' }}
+                            />
+                          )}
                         </InputAdornment>
                       ),
                     }}
@@ -175,12 +195,13 @@ export const AppsSection = (): React.ReactElement => {
                     id="create-app"
                     variant="contained"
                     color="primary"
+                    size="large"
                     startIcon={<AddIcon />}
                     onClick={() => {
                       window.location.href = `${API_BASE_URL}/create-app`;
                     }}
                   >
-                    Create App
+                    Deploy App
                   </Button>
                 </Item>
               </Grid>
@@ -209,7 +230,7 @@ export const AppsSection = (): React.ReactElement => {
                 flexDirection: 'row',
                 flexWrap: 'wrap',
                 gap: 2,
-                rowGap: 3,
+                rowGap: 2,
                 justifyContent: 'flex-start',
                 paddingBottom: '48px',
               }}

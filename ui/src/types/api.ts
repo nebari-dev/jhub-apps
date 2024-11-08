@@ -43,6 +43,7 @@ export interface AppQueryGetProps {
   last_activity: string;
   pending: null;
   ready: boolean;
+  started: string;
   stopped: boolean;
   url: string;
   user_options: UserOptions;

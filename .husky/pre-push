@@ -1,0 +1,20 @@
+## Navigate to UI directory
+
+cd ui
+
+## Install Dependencies
+
+npm install
+
+## Run Build
+
+npm run build
+
+## Check for Uncommitted Build Files
+
+if [ -n "$(git status --porcelain)" ]; then
+echo "There are uncommitted changes. Please review the project for any uncommitted files before proceeding."
+exit 1
+else
+echo "No uncommitted changes found."
+fi

@@ -1,32 +1,20 @@
 import { currentUser } from '@src/data/user';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import '@testing-library/jest-dom';
 import { act, render, waitFor } from '@testing-library/react';
 import { RecoilRoot } from 'recoil';
 import { AppSharing } from '..';
 import { currentUser as defaultUser } from '../../store';
 
 describe('AppSharing', () => {
-  const queryClient = new QueryClient();
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+      },
+    },
+  });
   beforeEach(() => {
     queryClient.clear();
-  });
-
-  test('renders default component successfully', () => {
-    const { baseElement } = render(
-      <RecoilRoot initializeState={({ set }) => set(defaultUser, currentUser)}>
-        <QueryClientProvider client={queryClient}>
-          <AppSharing
-            isPublic={false}
-            setIsPublic={jest.fn()}
-            setCurrentUserPermissions={jest.fn()}
-            setCurrentGroupPermissions={jest.fn()}
-          />
-        </QueryClientProvider>
-      </RecoilRoot>,
-    );
-
-    expect(baseElement.querySelector('.MuiAlert-message')).toBeTruthy();
   });
 
   test('renders with mock data', () => {
@@ -40,9 +28,9 @@ describe('AppSharing', () => {
               groups: ['group1', 'group2'],
             }}
             isPublic={true}
-            setIsPublic={jest.fn()}
-            setCurrentUserPermissions={jest.fn()}
-            setCurrentGroupPermissions={jest.fn()}
+            setIsPublic={vi.fn()}
+            setCurrentUserPermissions={vi.fn()}
+            setCurrentGroupPermissions={vi.fn()}
           />
         </QueryClientProvider>
       </RecoilRoot>,
@@ -62,9 +50,9 @@ describe('AppSharing', () => {
               groups: ['group1', 'group2', 'group3'],
             }}
             isPublic={true}
-            setIsPublic={jest.fn()}
-            setCurrentUserPermissions={jest.fn()}
-            setCurrentGroupPermissions={jest.fn()}
+            setIsPublic={vi.fn()}
+            setCurrentUserPermissions={vi.fn()}
+            setCurrentGroupPermissions={vi.fn()}
           />
         </QueryClientProvider>
       </RecoilRoot>,
@@ -101,9 +89,9 @@ describe('AppSharing', () => {
               groups: ['group1', 'group2'],
             }}
             isPublic={true}
-            setIsPublic={jest.fn()}
-            setCurrentUserPermissions={jest.fn()}
-            setCurrentGroupPermissions={jest.fn()}
+            setIsPublic={vi.fn()}
+            setCurrentUserPermissions={vi.fn()}
+            setCurrentGroupPermissions={vi.fn()}
           />
         </QueryClientProvider>
       </RecoilRoot>,
@@ -113,6 +101,8 @@ describe('AppSharing', () => {
   });
 
   test('Adds permissions to table', async () => {
+    const setUserPermissionMock = vi.fn();
+    const setGroupPermissionMock = vi.fn();
     const { baseElement, getByText } = render(
       <RecoilRoot initializeState={({ set }) => set(defaultUser, currentUser)}>
         <QueryClientProvider client={queryClient}>
@@ -122,9 +112,9 @@ describe('AppSharing', () => {
               groups: ['group1', 'group2'],
             }}
             isPublic={false}
-            setIsPublic={jest.fn()}
-            setCurrentUserPermissions={jest.fn()}
-            setCurrentGroupPermissions={jest.fn()}
+            setIsPublic={vi.fn()}
+            setCurrentUserPermissions={setUserPermissionMock}
+            setCurrentGroupPermissions={setGroupPermissionMock}
           />
         </QueryClientProvider>
       </RecoilRoot>,
@@ -140,13 +130,32 @@ describe('AppSharing', () => {
       });
       const listbox = baseElement.querySelector('.MuiAutocomplete-listbox');
       await act(async () => {
-        listbox?.querySelector('li')?.click();
+        const listItems = listbox?.querySelectorAll('li');
+        listItems?.forEach((item) => {
+          item.click();
+        });
       });
       const button = getByText('Share');
       await act(async () => {
         button.click();
       });
     }
+
+    expect(setUserPermissionMock).toHaveBeenCalledWith(expect.any(Function));
+    const userMockUpdater = setUserPermissionMock.mock.calls[0][0];
+    expect(userMockUpdater(['existing_user_permission'])).toEqual([
+      'user1',
+      'user2',
+      'user3',
+    ]);
+
+    expect(setGroupPermissionMock).toHaveBeenCalledWith(expect.any(Function));
+    const groupMockUpdater = setGroupPermissionMock.mock.calls[0][0];
+    expect(groupMockUpdater(['existing_user_permission'])).toEqual([
+      'group1',
+      'group2',
+      'superadmin',
+    ]);
   });
 
   test('removes existing permission', async () => {
@@ -160,9 +169,9 @@ describe('AppSharing', () => {
               groups: ['group1', 'group2'],
             }}
             isPublic={false}
-            setIsPublic={jest.fn()}
-            setCurrentUserPermissions={jest.fn()}
-            setCurrentGroupPermissions={jest.fn()}
+            setIsPublic={vi.fn()}
+            setCurrentUserPermissions={vi.fn()}
+            setCurrentGroupPermissions={vi.fn()}
           />
         </QueryClientProvider>
       </RecoilRoot>,
@@ -188,9 +197,9 @@ describe('AppSharing', () => {
         <QueryClientProvider client={queryClient}>
           <AppSharing
             isPublic={false}
-            setIsPublic={jest.fn()}
-            setCurrentUserPermissions={jest.fn()}
-            setCurrentGroupPermissions={jest.fn()}
+            setIsPublic={vi.fn()}
+            setCurrentUserPermissions={vi.fn()}
+            setCurrentGroupPermissions={vi.fn()}
           />
         </QueryClientProvider>
       </RecoilRoot>,
@@ -216,9 +225,9 @@ describe('AppSharing', () => {
           <AppSharing
             url="http://localhost:3000/"
             isPublic={true}
-            setIsPublic={jest.fn()}
-            setCurrentUserPermissions={jest.fn()}
-            setCurrentGroupPermissions={jest.fn()}
+            setIsPublic={vi.fn()}
+            setCurrentUserPermissions={vi.fn()}
+            setCurrentGroupPermissions={vi.fn()}
           />
         </QueryClientProvider>
       </RecoilRoot>,
@@ -233,5 +242,37 @@ describe('AppSharing', () => {
         button.click();
       });
     }
+  });
+  test('sorts permissions with users first and groups second', () => {
+    const availablePermissions = [
+      { name: 'group2', type: 'group' },
+      { name: 'user3', type: 'user' },
+      { name: 'group1', type: 'group' },
+      { name: 'user1', type: 'user' },
+      { name: 'user2', type: 'user' },
+    ];
+
+    const sortedPermissions = availablePermissions.sort((a, b) => {
+      const labelA = a.type === 'user' ? a.name : `${a.name} (Group)`;
+      const labelB = b.type === 'user' ? b.name : `${b.name} (Group)`;
+
+      // First, compare by type: users first, groups second
+      if (a.type === 'user' && b.type !== 'user') {
+        return -1;
+      }
+      if (a.type !== 'user' && b.type === 'user') {
+        return 1;
+      }
+
+      return labelA.localeCompare(labelB);
+    });
+
+    expect(sortedPermissions).toEqual([
+      { name: 'user1', type: 'user' },
+      { name: 'user2', type: 'user' },
+      { name: 'user3', type: 'user' },
+      { name: 'group1', type: 'group' },
+      { name: 'group2', type: 'group' },
+    ]);
   });
 });
