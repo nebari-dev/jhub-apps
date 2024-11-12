@@ -21,12 +21,9 @@ export interface AppFormInput {
   share_with: SharePermissions;
   repository?: {
     url: string;
-    config_directory?: string;
-    ref?: string;
+    config_directory?: string; //conda_project_yml
+    ref?: string; // branch
   };
-
-  branch?: string;
-  conda_project_yml?: string;
 }
 
 export interface AppSharingItem {

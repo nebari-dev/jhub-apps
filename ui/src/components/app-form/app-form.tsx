@@ -85,7 +85,10 @@ export const AppForm = ({
   const [openModal, setOpenModal] = useState(false); // State to control modal visibility
 
   const [repoData, setRepoData] = useState<RepoData | null>(null); // Store fetched repo data
-  // const [isCondaYamlEnabled, setIsCondaYamlEnabled] = useState(false);
+  const [customRef, setCustomRef] = useState('');
+  const [customConfigDirectory, setCustomConfigDirectory] =
+    useState<string>('');
+
   const [error, setError] = useState<string | null>(null); // Store validation errors
   const [shouldValidate, setShouldValidate] = useState(false); // To control validation trigger
   const repoUrlRef = useRef<HTMLInputElement>(null); // Ref for Git Repository URL field
@@ -112,6 +115,11 @@ export const AppForm = ({
       share_with: {
         users: [],
         groups: [],
+      },
+      repository: {
+        url: '',
+        config_directory: '.',
+        ref: 'main',
       },
     },
   });
@@ -196,20 +204,31 @@ export const AppForm = ({
       setIsFetching(true);
       setError(null);
 
+      // Use updated `customConfigDirectory` and `customRef` values directly
       const response = await axios.post('/app-config-from-git/', {
         url: gitUrl,
-        config_directory: '.',
-        ref: 'main',
+        config_directory: customConfigDirectory,
+        ref: customRef,
       });
 
       if (response && response.status === 200) {
         setIsUrlValid(true);
         setRepoData(response.data);
+
+        // Only update `customRef` and `customConfigDirectory` if they are empty
+        if (!customRef) {
+          setCustomRef(response.data.ref || 'main');
+        }
+        if (!customConfigDirectory) {
+          setCustomConfigDirectory(response.data.config_directory || '.');
+        }
+
+        // Update form values using `setValue`
         setValue(
           'repository.config_directory',
-          response.data.config_directory || '.',
+          customConfigDirectory || response.data.config_directory || '.',
         );
-        setValue('repository.ref', response.data.ref || 'main');
+        setValue('repository.ref', customRef || response.data.ref || 'main');
       } else {
         setIsUrlValid(false);
         setError('Repository not found or invalid.');
@@ -419,7 +438,11 @@ export const AppForm = ({
         keep_alive: keepAlive,
         repository:
           deployOption === 'git'
-            ? { url: gitUrl, config_directory: '.', ref: 'main' }
+            ? {
+                url: gitUrl,
+                config_directory: customConfigDirectory,
+                ref: customRef,
+              }
             : undefined,
       };
 
@@ -587,6 +610,17 @@ export const AppForm = ({
       setCurrentGroupPermissions(currentFormInput.share_with?.groups);
     }
   }, [currentFormInput, reset, setCurrentImage, setCurrentServerName]);
+  useEffect(() => {
+    if (isUrlValid && repoData) {
+      // Prepopulate only if the fields are still empty (i.e., user hasn’t modified them)
+      if (customRef === '') {
+        setCustomRef(repoData.repository?.ref || 'main');
+      }
+      if (customConfigDirectory === '') {
+        setCustomConfigDirectory(repoData.repository?.config_directory || '.');
+      }
+    }
+  }, [isUrlValid, repoData]);
 
   useEffect(() => {
     if (formError) {
@@ -690,7 +724,7 @@ export const AppForm = ({
               )}
               {/* Branch Input */}
               <Controller
-                name="branch"
+                name="repository.ref"
                 control={control}
                 render={({ field }) => (
                   <FormControl>
@@ -699,14 +733,15 @@ export const AppForm = ({
                       id="branch"
                       label="Branch"
                       placeholder="e.g., main"
-                      defaultValue={formData?.defaultBranch || 'main'} // Prepopulate if data is fetched
+                      value={customRef} // Controlled by customRef state
+                      onChange={(e) => setCustomRef(e.target.value)}
                     />
                   </FormControl>
                 )}
               />
               {/* Conda YAML Directory Input */}
               <Controller
-                name="conda_project_yml"
+                name="repository.config_directory"
                 control={control}
                 render={({ field }) => (
                   <FormControl fullWidth>
@@ -724,8 +759,8 @@ export const AppForm = ({
                       {...field}
                       id="conda_project_yml"
                       placeholder="Enter path to conda-project.yml"
-                      value={repoData?.conda_project_yml || field.value}
-                      onChange={(e) => field.onChange(e.target.value)}
+                      value={customConfigDirectory}
+                      onChange={(e) => setCustomConfigDirectory(e.target.value)}
                       helperText="Optional: if conda-project.yml is not present in root directory"
                     />
                   </FormControl>
