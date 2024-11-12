@@ -473,9 +473,17 @@ export const AppForm = ({
             groups: currentGroupPermissions,
           },
           keep_alive: keepAlive,
-          repository: { url: gitUrl },
+          repository:
+            deployOption === 'git'
+              ? {
+                  url: gitUrl,
+                  config_directory: customConfigDirectory,
+                  ref: customRef,
+                }
+              : undefined,
         },
       };
+
       setSubmitting(true);
       if (id) {
         updateQuery(payload, {
