@@ -86,6 +86,7 @@ export const AppForm = ({
 
   const [repoData, setRepoData] = useState<RepoData | null>(null); // Store fetched repo data
   const [customRef, setCustomRef] = useState('');
+
   const [customConfigDirectory, setCustomConfigDirectory] =
     useState<string>('');
 
@@ -204,11 +205,12 @@ export const AppForm = ({
       setIsFetching(true);
       setError(null);
 
+      const branch = customRef || 'main';
       // Use updated `customConfigDirectory` and `customRef` values directly
       const response = await axios.post('/app-config-from-git/', {
         url: gitUrl,
         config_directory: customConfigDirectory,
-        ref: customRef,
+        ref: branch,
       });
 
       if (response && response.status === 200) {
@@ -255,6 +257,12 @@ export const AppForm = ({
   };
 
   useEffect(() => {
+    if (deployOption === 'git' && customRef === '') {
+      setCustomRef('');
+    }
+  }, [deployOption, customRef]);
+
+  useEffect(() => {
     // When the deployOption changes to "git", focus the Git Repository input
     if (deployOption === 'git' && repoUrlRef.current) {
       repoUrlRef.current.focus();
@@ -275,10 +283,10 @@ export const AppForm = ({
         keep_alive: repoData.keep_alive || false, // Keep alive
       });
 
-      // Set environment variables
-      setVariables(getFriendlyEnvironmentVariables(repoData.env));
       setDescription(repoData.description || '');
-      // Set thumbnail image if available
+      setKeepAlive(repoData.keep_alive || false);
+      setVariables(getFriendlyEnvironmentVariables(repoData.env));
+      setIsPublic(repoData.public || false);
       setCurrentImage(repoData.thumbnail || '');
     }
   }, [isUrlValid, repoData, reset]);
@@ -450,6 +458,7 @@ export const AppForm = ({
       if (deployOption === 'git') {
         payload.repository = { url: gitUrl };
       }
+
       setCurrentFormInput(payload);
       navigate(`/server-types${id ? `?id=${id}` : ''}`);
     } else {
