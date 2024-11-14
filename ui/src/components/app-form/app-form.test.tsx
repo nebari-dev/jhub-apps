@@ -862,4 +862,42 @@ describe('AppForm', () => {
     fireEvent.change(branchField, { target: { value: '' } });
     expect(branchField).toHaveValue('');
   });
+  test('displays "Invalid GitHub URL format" error when URL is in the wrong format', async () => {
+    render(
+      <RecoilRoot>
+        <QueryClientProvider client={queryClient}>
+          <BrowserRouter>
+            <AppForm isEditMode={false} deployOption="git" />
+          </BrowserRouter>
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+
+    // Adjust the label text to match the exact rendering, if needed
+    const gitUrlInput = screen.getByLabelText(/Git Repository URL/i);
+    fireEvent.change(gitUrlInput, { target: { value: 'invalid-url' } });
+
+    const fetchButton = screen.getByText(/Fetch App Configuration/i);
+    await act(async () => {
+      fireEvent.click(fetchButton);
+    });
+
+    // Verify if the modal contains the error message
+    expect(screen.getByRole('dialog')).toHaveTextContent(
+      'Invalid GitHub URL format.',
+    );
+  });
+
+  test('renders git-url-input', () => {
+    render(
+      <RecoilRoot>
+        <QueryClientProvider client={queryClient}>
+          <BrowserRouter>
+            <AppForm deployOption="git" isEditMode={false} />
+          </BrowserRouter>
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+    expect(screen.getByTestId('git-url-input')).toBeInTheDocument();
+  });
 });

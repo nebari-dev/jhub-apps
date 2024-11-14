@@ -35,7 +35,7 @@ import {
   navigateToUrl,
 } from '@src/utils/jupyterhub';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { AxiosError } from 'axios';
+import { isAxiosError } from 'axios';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { useNavigate, useSearchParams } from 'react-router-dom';
@@ -195,7 +195,7 @@ export const AppForm = ({
       /^(https?:\/\/)?[\w.-]+\/[\w-]+\/[\w-]+(\.git)?$/i;
 
     if (!gitRepoUrlPattern.test(gitUrl)) {
-      setError('Invalid Git repository URL');
+      setError('Invalid GitHub URL format.');
       setIsUrlValid(false);
       setOpenModal(true);
       return;
@@ -206,13 +206,17 @@ export const AppForm = ({
       setError(null);
 
       const branch = customRef || 'main';
-      // Use updated `customConfigDirectory` and `customRef` values directly
-      const response = await axios.post('/app-config-from-git/', {
-        url: gitUrl,
-        config_directory: customConfigDirectory,
-        ref: branch,
-      });
-
+      const response = await axios.post(
+        '/app-config-from-git/',
+        {
+          url: gitUrl,
+          config_directory: customConfigDirectory,
+          ref: branch,
+        },
+        {
+          validateStatus: (status) => status < 500,
+        },
+      );
       if (response && response.status === 200) {
         setIsUrlValid(true);
         setRepoData(response.data);
@@ -232,25 +236,37 @@ export const AppForm = ({
         );
         setValue('repository.ref', customRef || response.data.ref || 'main');
       } else {
+        // Manually treat any non-200 response as an error
+        const errorMessage =
+          response.data?.detail || 'Repository not found or invalid.';
         setIsUrlValid(false);
-        setError('Repository not found or invalid.');
+        setError(`Error: ${errorMessage}`);
         setOpenModal(true);
       }
     } catch (err) {
       setIsUrlValid(false);
       setOpenModal(true);
+      let errorMessage = 'Unknown error occurred.';
 
-      if (err instanceof AxiosError && err.response) {
-        setError(
-          `Error: ${err.response.status} - ${err.response.data.message || 'Unknown error'}`,
-        );
-      } else if (err instanceof AxiosError && err.request) {
-        setError('Error: No response from the server.');
+      // Check if the error is an AxiosError and has a response
+      if (isAxiosError(err) && err.response) {
+        // Prioritize specific error detail in the response
+        if (err.response.data?.detail) {
+          errorMessage = err.response.data.detail;
+        } else if (err.response.data?.message) {
+          errorMessage = `Error: ${err.response.status} - ${err.response.data.message}`;
+        } else {
+          errorMessage = `Error: ${err.response.status} - Unknown error`;
+        }
+      } else if (isAxiosError(err) && err.request) {
+        // Handle the case where the request was made but no response was received
+        errorMessage = 'Error: No response from the server.';
       } else if (err instanceof Error) {
-        setError(`Error: ${err.message}`);
-      } else {
-        setError('Unknown error occurred');
+        // Handle general errors that are not Axios-specific
+        errorMessage = `Error: ${err.message}`;
       }
+
+      setError(errorMessage);
     } finally {
       setIsFetching(false);
     }
@@ -716,6 +732,7 @@ export const AppForm = ({
                       label="Git Repository URL"
                       placeholder="https://github.com/nebari-dev/jhub-apps-from-git-repo-example.git"
                       required
+                      data-testid="git-url-input"
                       value={gitUrl}
                       onChange={(e) => setGitUrl(e.target.value)} // Don't validate here, just set the value
                       error={!!error && shouldValidate} // Only show error if shouldValidate is true
@@ -1426,8 +1443,8 @@ export const AppForm = ({
           <DialogTitle>Invalid URL</DialogTitle>
           <DialogContent>
             <Typography>
-              It looks like the URL provided isn&apos;t linked to a Git
-              repository. Please double-check the URL and try again.
+              {error ||
+                "It looks like the URL provided isn't linked to a Git repository. Please double-check the URL and try again."}
             </Typography>
           </DialogContent>
           <DialogActions>
