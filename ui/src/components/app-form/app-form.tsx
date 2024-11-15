@@ -240,7 +240,7 @@ export const AppForm = ({
         const errorMessage =
           response.data?.detail || 'Repository not found or invalid.';
         setIsUrlValid(false);
-        setError(`Error: ${errorMessage}`);
+        setError(`${errorMessage}`);
         setOpenModal(true);
       }
     } catch (err) {
@@ -254,16 +254,16 @@ export const AppForm = ({
         if (err.response.data?.detail) {
           errorMessage = err.response.data.detail;
         } else if (err.response.data?.message) {
-          errorMessage = `Error: ${err.response.status} - ${err.response.data.message}`;
+          errorMessage = `${err.response.status} - ${err.response.data.message}`;
         } else {
-          errorMessage = `Error: ${err.response.status} - Unknown error`;
+          errorMessage = `${err.response.status} - Unknown error`;
         }
       } else if (isAxiosError(err) && err.request) {
         // Handle the case where the request was made but no response was received
-        errorMessage = 'Error: No response from the server.';
+        errorMessage = 'No response from the server.';
       } else if (err instanceof Error) {
         // Handle general errors that are not Axios-specific
-        errorMessage = `Error: ${err.message}`;
+        errorMessage = `${err.message}`;
       }
 
       setError(errorMessage);
@@ -1440,7 +1440,7 @@ export const AppForm = ({
           </div>
         </div>
         <Dialog open={openModal} onClose={() => setOpenModal(false)}>
-          <DialogTitle>Invalid URL</DialogTitle>
+          <DialogTitle>Error</DialogTitle>
           <DialogContent>
             <Typography>
               {error ||
