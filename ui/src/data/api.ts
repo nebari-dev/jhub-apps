@@ -350,4 +350,5 @@ export const userState: UserState = {
     users: ['admin'],
     groups: ['developer', 'superadmin'],
   },
+  username: 'ldickenson',
 };
