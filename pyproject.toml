@@ -27,7 +27,7 @@ dependencies = [
     "python-slugify",
     "cachetools",
     "structlog",
-    "PyJWT",
+    "PyJWT<2.10.0",
     "GitPython",
     # pinning to avoid unexpected changes in spec causing
     # unexpected breakage
