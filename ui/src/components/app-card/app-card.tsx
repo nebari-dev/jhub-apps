@@ -18,6 +18,7 @@ import { UserState } from '@src/types/user';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
+
 import {
   currentApp,
   currentNotification,
@@ -122,7 +123,7 @@ export const AppCard = ({
     {
       id: 'start',
       title: 'Start',
-      onClick: () => {
+      onClick: async () => {
         // Allow admins to start shared apps
         if (isShared && !currentUserData?.admin) {
           // Show error if it's a shared app
@@ -140,7 +141,7 @@ export const AppCard = ({
     {
       id: 'stop',
       title: 'Stop',
-      onClick: () => {
+      onClick: async () => {
         // Allow admins to stop shared apps
         if (isShared && !currentUserData?.admin) {
           setNotification(
@@ -157,8 +158,9 @@ export const AppCard = ({
     {
       id: 'edit',
       title: 'Edit',
-      onClick: () =>
-        (window.location.href = `${API_BASE_URL}/edit-app?id=${id}`),
+      onClick: () => {
+        window.location.href = `${API_BASE_URL}/edit-app?id=${id}`;
+      },
       visible: true,
       disabled: isShared || id === '' || !isAppCard,
     },

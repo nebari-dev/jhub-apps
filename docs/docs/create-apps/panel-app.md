@@ -108,6 +108,7 @@ dependencies:
   - jhsingle-native-proxy>=0.8.2
   - bokeh-root-cmd
   - nbconvert
+  - bokeh_sampledata
 ```
 
 </details>
