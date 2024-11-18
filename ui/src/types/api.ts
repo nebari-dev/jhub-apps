@@ -34,6 +34,7 @@ export interface AppQueryUpdateProps {
 
 export interface AppQueryPostProps {
   id: string;
+  full_name?: string;
 }
 
 export interface AppQueryDeleteProps {

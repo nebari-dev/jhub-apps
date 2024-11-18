@@ -605,6 +605,7 @@ describe('AppCard', () => {
               pending: false,
               stopped: false,
               status: 'false',
+              full_name: 'test/test-app-1',
             }}
           />
         </QueryClientProvider>

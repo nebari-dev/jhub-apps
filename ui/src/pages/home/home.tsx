@@ -81,8 +81,17 @@ export const Home = (): React.ReactElement => {
     'success',
   ); // Set severity
 
-  const handleStartRequest = async ({ id }: AppQueryPostProps) => {
-    const response = await axios.post(`/server/${id}`);
+  const handleStartRequest = async ({ id, full_name }: AppQueryPostProps) => {
+    // Extract the creator's name from the full_name
+    const creatorName = full_name?.split('/')[0]; // Extract 'userx' from 'userx/my-panel-app-git-86d9635'
+    const requestConfig = {
+      method: 'post',
+      url: `/server/${id}`,
+      params: { owner: creatorName || '' },
+    };
+
+    const response = await axios(requestConfig);
+
     return response;
   };
 
@@ -156,9 +165,9 @@ export const Home = (): React.ReactElement => {
   ): error is { response: { status: number } } => {
     return typeof error === 'object' && error !== null && 'response' in error;
   };
-
   const handleStart = async () => {
     const appId = currentApp?.id || '';
+    const fullName = currentApp?.full_name || '';
     setSubmitting(true);
 
     // Close the modal immediately when the Start button is clicked
@@ -178,7 +187,7 @@ export const Home = (): React.ReactElement => {
     }
 
     startQuery(
-      { id: appId },
+      { id: appId, full_name: fullName },
       {
         onSuccess: async () => {
           setSubmitting(false);
