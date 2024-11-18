@@ -22,6 +22,9 @@ export interface UserOptions {
   share_with: SharePermissions;
   keep_alive: boolean;
   env: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+  repository?: {
+    url: string;
+  };
 }
 
 export interface AppQueryUpdateProps {
@@ -49,6 +52,8 @@ export interface AppQueryGetProps {
   user_options: UserOptions;
   progress_url: string;
   state: Record<string, unknown>;
+  defaultBranch?: string;
+  condaPath?: string;
 }
 
 export interface AppFrameworkProps {
