@@ -103,10 +103,14 @@ def stop_server(user_session: requests.Session, server_name: str) -> requests.Re
     return response
 
 
-def start_server(user_session: requests.Session, server_name: str) -> requests.Response:
+def start_server(
+        user_session: requests.Session,
+        server_name: str,
+        server_owner: str,
+) -> requests.Response:
     """Start the given server via given user's session."""
     response = user_session.post(
-        f"{JHUB_APPS_API_BASE_URL}/server/{server_name}",
+        f"{JHUB_APPS_API_BASE_URL}/server/{server_name}?owner={server_owner}",
         verify=False,
     )
     return response

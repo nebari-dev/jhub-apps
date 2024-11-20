@@ -99,7 +99,7 @@ class HubClient:
         self.tokens.pop()
         return r
 
-    def get_users(self):
+    def get_users(self) -> typing.List[dict]:
         r = requests.get(
             API_URL + "/users",
             params={"include_stopped_servers": True},
@@ -123,8 +123,17 @@ class HubClient:
 
     @requires_user_token
     def get_server(self, username, servername):
-        user = self.get_user(username)
-        for name, server in user["servers"].items():
+        users = self.get_users()
+        filter_given_user = [user for user in users if user["name"] == username]
+        if not filter_given_user:
+            logger.info(f"No user with username: {username} found.")
+            return
+        elif len(filter_given_user) > 1:
+            logger.info(f"Multiple user with username: {username} found.")
+            raise ValueError(f"Multiple user with username: {username} found.")
+        else:
+            given_user = filter_given_user[0]
+        for name, server in given_user["servers"].items():
             if name == servername:
                 return server
 
@@ -138,18 +147,6 @@ class HubClient:
         # Max limit for servername is 255 chars
         return text[:240]
 
-    def _find_user_server(
-            self, servername
-    ) -> typing.Tuple[typing.Optional[str], typing.Optional[dict]]:
-        """Given a server name, return the user and the server object from
-        the user who owns the server.
-        """
-        users = self.get_users()
-        for user in users:
-            if servername in user["servers"]:
-                return user["name"], user["servers"][servername]
-        return None, None
-
     @requires_user_token
     def start_server(self, username, servername):
         server_owner = username
@@ -161,9 +158,6 @@ class HubClient:
         else:
             # Get named server
             server = self.get_server(username, servername)
-            if not server:
-                # Shared server (not owned by the given user)
-                server_owner, server = self._find_user_server(servername)
             if not server:
                 return None
             user_options = server["user_options"]

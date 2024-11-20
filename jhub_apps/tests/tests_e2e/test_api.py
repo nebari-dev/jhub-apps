@@ -183,5 +183,7 @@ def test_starting_stopped_server(shared_username, response_status_code):
     assert stop_server_response.status_code == 200
 
     # Start server from shared user's session
-    start_server_response = start_server(share_with_user_session, server_name)
+    start_server_response = start_server(
+        share_with_user_session, server_name, server_owner=app_author_user
+    )
     assert start_server_response.status_code == response_status_code
