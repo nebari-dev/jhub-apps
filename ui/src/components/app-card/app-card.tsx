@@ -215,8 +215,13 @@ export const AppCard = ({
       <Link
         href={url}
         onClick={(e) => {
-          if (app && serverStatus === 'Ready') {
-            e.preventDefault();
+          e.preventDefault();
+
+          if (serverStatus === 'Running') {
+            // Redirect to the app's URL if it is already running
+            window.location.href = url;
+          } else if (serverStatus === 'Ready') {
+            // Set the current app and open the Start modal
             setCurrentApp({
               id,
               name: title,
@@ -227,8 +232,9 @@ export const AppCard = ({
               shared: app?.shared || isShared || false,
               last_activity: new Date(app?.last_activity || ''),
               status: 'Ready',
+              full_name: app?.full_name || '', // Ensure full_name is set
             });
-            setIsStartNotRunningOpen(true);
+            setIsStartNotRunningOpen(true); // Open the Start modal
           }
         }}
       >
