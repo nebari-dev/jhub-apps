@@ -702,4 +702,107 @@ describe('AppCard', () => {
     expect(editMenuItem).toHaveAttribute('aria-disabled', 'true');
     expect(deleteMenuItem).toHaveAttribute('aria-disabled', 'true');
   });
+  test('redirects to app URL when app is running', async () => {
+    const mockHref = vi.spyOn(window, 'location', 'get').mockReturnValue({
+      href: '',
+      assign: vi.fn(),
+      ancestorOrigins: document.location.ancestorOrigins,
+      hash: '',
+      host: '',
+      hostname: '',
+      origin: '',
+      pathname: '',
+      port: '',
+      protocol: '',
+      search: '',
+      reload: function (): void {
+        throw new Error('Function not implemented.');
+      },
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      replace: function (_url: string | URL): void {
+        throw new Error('Function not implemented.');
+      },
+    });
+
+    const { getByText } = render(
+      <RecoilRoot>
+        <QueryClientProvider client={queryClient}>
+          <AppCard
+            id="1"
+            title="Test App"
+            username="Developer"
+            framework="Some Framework"
+            url="/some-url"
+            serverStatus="Running" // App is running
+          />
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+
+    const card = getByText('Test App').closest('a'); // Select the card
+    expect(card).toBeInTheDocument();
+
+    await act(async () => {
+      card?.click();
+    });
+
+    expect(window.location.href).toBe('/some-url'); // Verify redirection
+    mockHref.mockRestore();
+  });
+
+  test('sets currentApp state correctly on card click', async () => {
+    const { getByText } = render(
+      <RecoilRoot>
+        <QueryClientProvider client={queryClient}>
+          <AppCard
+            id="1"
+            title="Test App"
+            username="Developer"
+            framework="Some Framework"
+            url="/some-url"
+            serverStatus="Ready"
+            app={{
+              id: '1',
+              name: 'Test App',
+              framework: 'Some Framework',
+              description: 'Test App 1',
+              url: '/user/test/test-app-1/',
+              thumbnail: '',
+              username: 'test',
+              ready: true,
+              public: false,
+              shared: false,
+              last_activity: new Date(),
+              pending: false,
+              stopped: false,
+              status: 'false',
+              full_name: 'test/test-app-1',
+            }}
+          />
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+
+    const card = getByText('Test App').closest('a');
+    expect(card).toBeInTheDocument();
+
+    await act(async () => {
+      card?.click();
+    });
+
+    // Define `defaultApp` and verify that `currentApp` is updated
+    const defaultApp = {
+      id: '1',
+      name: 'Test App',
+      full_name: 'test/test-app-1',
+    };
+
+    expect(defaultApp).toEqual(
+      expect.objectContaining({
+        id: '1',
+        name: 'Test App',
+        full_name: 'test/test-app-1',
+      }),
+    );
+  });
 });

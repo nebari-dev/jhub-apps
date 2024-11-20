@@ -282,6 +282,42 @@ export const Home = (): React.ReactElement => {
       setSubmitting(false);
       return;
     }
+    // Extract the creator's name from the full_name
+    const creatorName = currentApp.full_name?.split('/')[0];
+
+    // Ensure the owner parameter is included in the request
+    try {
+      const response = await axios.post(`/server/${currentApp.id}`, {
+        params: { owner: creatorName || '' },
+      });
+
+      if (response.status === 200) {
+        setSnackbarMessage('App started successfully');
+        setSnackbarSeverity('success');
+        setSnackbarOpen(true);
+      }
+    } catch (error) {
+      if (isErrorWithResponse(error)) {
+        const status = error.response?.status;
+        if (status === 403) {
+          setSnackbarMessage(
+            "You don't have permission to start this app. Please ask the owner to start it.",
+          );
+        } else if (status === 404) {
+          setSnackbarMessage('App not found (404).');
+        } else if (status === 500) {
+          setSnackbarMessage('Internal server error (500).');
+        } else {
+          setSnackbarMessage('An unknown server error occurred.');
+        }
+      } else {
+        setSnackbarMessage('An unknown error occurred.');
+      }
+      setSnackbarSeverity('error');
+      setSnackbarOpen(true);
+    } finally {
+      setSubmitting(false);
+    }
 
     window.location.assign(getSpawnUrl(currentUser, currentApp));
   };
