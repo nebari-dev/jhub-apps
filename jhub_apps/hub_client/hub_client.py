@@ -167,7 +167,7 @@ class HubClient:
         logger.info("Start server response", status_code=response.status_code, servername=servername)
         return response
 
-    def _get_user_servers(self, username):
+    def _get_user_servers(self, username: str) -> typing.Dict:
         users = self.get_users()
         user_data = [user for user in users if user["name"] == username]
         assert len(user_data) == 1
@@ -180,6 +180,7 @@ class HubClient:
         user_servers = self._get_user_servers(username)
         normalized_servername = self.normalize_server_name(servername)
         logger.info("User servers", user_servers=user_servers.keys())
+        # If server with the given name already exists
         if normalized_servername in user_servers:
             unique_servername = f"{normalized_servername}-{uuid.uuid4().hex[:7]}"
         else:
