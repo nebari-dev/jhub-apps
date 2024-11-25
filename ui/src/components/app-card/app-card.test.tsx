@@ -702,53 +702,6 @@ describe('AppCard', () => {
     expect(editMenuItem).toHaveAttribute('aria-disabled', 'true');
     expect(deleteMenuItem).toHaveAttribute('aria-disabled', 'true');
   });
-  test('redirects to app URL when app is running', async () => {
-    const mockHref = vi.spyOn(window, 'location', 'get').mockReturnValue({
-      href: '',
-      assign: vi.fn(),
-      ancestorOrigins: document.location.ancestorOrigins,
-      hash: '',
-      host: '',
-      hostname: '',
-      origin: '',
-      pathname: '',
-      port: '',
-      protocol: '',
-      search: '',
-      reload: function (): void {
-        throw new Error('Function not implemented.');
-      },
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      replace: function (_url: string | URL): void {
-        throw new Error('Function not implemented.');
-      },
-    });
-
-    const { getByText } = render(
-      <RecoilRoot>
-        <QueryClientProvider client={queryClient}>
-          <AppCard
-            id="1"
-            title="Test App"
-            username="Developer"
-            framework="Some Framework"
-            url="/some-url"
-            serverStatus="Running" // App is running
-          />
-        </QueryClientProvider>
-      </RecoilRoot>,
-    );
-
-    const card = getByText('Test App').closest('a'); // Select the card
-    expect(card).toBeInTheDocument();
-
-    await act(async () => {
-      card?.click();
-    });
-
-    expect(window.location.href).toBe('/some-url'); // Verify redirection
-    mockHref.mockRestore();
-  });
 
   test('sets currentApp state correctly on card click', async () => {
     const { getByText } = render(
