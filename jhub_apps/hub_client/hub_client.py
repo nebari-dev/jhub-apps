@@ -181,6 +181,9 @@ class HubClient:
         normalized_servername = self.normalize_server_name(servername)
         logger.info("User servers", user_servers=user_servers.keys())
         # If server with the given name already exists
+        # This is to allow users to create apps with a reasonably deterministic url
+        # instead of a random url everytime. This is more of a temporary solution, until
+        # we have an explicit way to control the url in the UI itself.
         if normalized_servername in user_servers:
             unique_servername = f"{normalized_servername}-{uuid.uuid4().hex[:7]}"
         else:
