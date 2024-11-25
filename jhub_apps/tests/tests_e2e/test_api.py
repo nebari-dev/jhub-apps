@@ -102,6 +102,7 @@ def test_create_server_deterministic_app_url():
     # url (ending with new_servername) will not be the server name initially provided
     # by the user
     assert new_servername != deterministic_server_name
+    assert new_servername.startswith(deterministic_server_name)
 
 
 def test_create_server_with_git_repository():
