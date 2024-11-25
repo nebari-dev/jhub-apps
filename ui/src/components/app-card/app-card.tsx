@@ -215,9 +215,8 @@ export const AppCard = ({
       <Link
         href={url}
         onClick={(e) => {
-          e.preventDefault();
-
-          if (serverStatus === 'Running') {
+          if (app && serverStatus === 'Running') {
+            e.preventDefault();
             // Redirect to the app's URL if it is already running
             window.location.href = url;
           } else if (serverStatus === 'Ready') {
