@@ -128,9 +128,6 @@ class HubClient:
         if not filter_given_user:
             logger.info(f"No user with username: {username} found.")
             return
-        elif len(filter_given_user) > 1:
-            logger.info(f"Multiple user with username: {username} found.")
-            raise ValueError(f"Multiple user with username: {username} found.")
         else:
             given_user = filter_given_user[0]
         for name, server in given_user["servers"].items():
