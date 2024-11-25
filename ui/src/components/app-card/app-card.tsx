@@ -215,13 +215,12 @@ export const AppCard = ({
       <Link
         href={url}
         onClick={(e) => {
-          e.preventDefault();
-
           if (serverStatus === 'Running') {
             // Redirect to the app's URL if it is already running
             window.location.href = url;
-          } else if (serverStatus === 'Ready') {
+          } else if (app && serverStatus === 'Ready') {
             // Set the current app and open the Start modal
+            e.preventDefault();
             setCurrentApp({
               id,
               name: title,

@@ -672,36 +672,6 @@ describe('AppCard', () => {
     expect(stopMenuItem).toBeInTheDocument();
     expect(stopMenuItem).toHaveAttribute('aria-disabled', 'true');
   });
-
-  test('disables edit and delete for shared apps', async () => {
-    const { getByTestId, getByText } = render(
-      <RecoilRoot>
-        <QueryClientProvider client={queryClient}>
-          <AppCard
-            id="1"
-            title="Shared App"
-            username="Other User"
-            framework="Some Framework"
-            url="/some-url"
-            serverStatus="Ready"
-            isShared={true} // App is shared
-          />
-        </QueryClientProvider>
-      </RecoilRoot>,
-    );
-
-    // Open context menu first
-    const contextMenuButton = getByTestId('context-menu-button-card-menu-1');
-    act(() => {
-      contextMenuButton.click();
-    });
-
-    const editMenuItem = await waitFor(() => getByText('Edit'));
-    const deleteMenuItem = getByText('Delete');
-
-    expect(editMenuItem).toHaveAttribute('aria-disabled', 'true');
-    expect(deleteMenuItem).toHaveAttribute('aria-disabled', 'true');
-  });
   test('redirects to app URL when app is running', async () => {
     const mockHref = vi.spyOn(window, 'location', 'get').mockReturnValue({
       href: '',
@@ -748,6 +718,35 @@ describe('AppCard', () => {
 
     expect(window.location.href).toBe('/some-url'); // Verify redirection
     mockHref.mockRestore();
+  });
+  test('disables edit and delete for shared apps', async () => {
+    const { getByTestId, getByText } = render(
+      <RecoilRoot>
+        <QueryClientProvider client={queryClient}>
+          <AppCard
+            id="1"
+            title="Shared App"
+            username="Other User"
+            framework="Some Framework"
+            url="/some-url"
+            serverStatus="Ready"
+            isShared={true} // App is shared
+          />
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+
+    // Open context menu first
+    const contextMenuButton = getByTestId('context-menu-button-card-menu-1');
+    act(() => {
+      contextMenuButton.click();
+    });
+
+    const editMenuItem = await waitFor(() => getByText('Edit'));
+    const deleteMenuItem = getByText('Delete');
+
+    expect(editMenuItem).toHaveAttribute('aria-disabled', 'true');
+    expect(deleteMenuItem).toHaveAttribute('aria-disabled', 'true');
   });
 
   test('sets currentApp state correctly on card click', async () => {
