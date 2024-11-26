@@ -470,11 +470,6 @@ export const AppForm = ({
             : undefined,
       };
 
-      // Add repository details only if it's a Git-based app
-      if (deployOption === 'git') {
-        payload.repository = { url: gitUrl };
-      }
-
       setCurrentFormInput(payload);
       navigate(`/server-types${id ? `?id=${id}` : ''}`);
     } else {
