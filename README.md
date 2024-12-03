@@ -131,3 +131,7 @@ c.JAppsConfig.jupyterhub_config_path = "jupyterhub_config.py"
 c.JAppsConfig.conda_envs = []
 c = install_jhub_apps(c, UserCreatingSpawner)
 ```
+
+## Acknowledgments
+
+This project is heavily inspired from @danlester's [cdsdashboards](https://github.com/ideonate/cdsdashboards), without it, this project might not have existed.
