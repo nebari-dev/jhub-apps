@@ -31,7 +31,8 @@ dependencies = [
     "GitPython",
     # pinning to avoid unexpected changes in spec causing
     # unexpected breakage
-    "conda-project==0.4.2"
+    "conda-project==0.4.2",
+    "git+https://github.com/jwindgassen/jupyter-server-proxy.git@native-proxy"
 ]
 dynamic = ["version"]
 
