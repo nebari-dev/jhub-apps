@@ -51,10 +51,12 @@ class Command:
 
 DEFAULT_CMD = Command(
     args=[
-        TString("$python_exec"),
-        "-m",
-        "jhsingle_native_proxy.main",
-        TString("--authtype=$authtype"),
+        # TString("$python_exec"),
+        # "-m",
+        "jupyter",
+        "standaloneproxy",
+        TString("$authtype"),
+        "--",
     ]
 )
 
@@ -144,20 +146,20 @@ COMMANDS = {
     ),
     Framework.panel.value: Command(
         args=[
-            "--destport=0",
-            TString("--conda-env=$conda_env"),
+            # "--destport=0",
+            # TString("--conda-env=$conda_env"),
             TString("$python_exec"),
-            "{-}m",
+            "-m",
             "bokeh_root_cmd.main",
             TString("$filepath"),
-            "{--}port={port}",
-            "{--}debug",
-            TString("{--}allow-websocket-origin=$origin_host"),
-            "{--}server=panel",
-            TString("{--}prefix=$base_url"),
-            "--ip=0.0.0.0",
-            "--ready-check-path=/ready-check",
-            f"--ready-timeout={READY_TIMEOUT}",
+            "--port={port}",
+            "--debug",
+            TString("--allow-websocket-origin=$origin_host"),
+            "--server=panel",
+            TString("--prefix=$base_url"),
+            # "--ip=0.0.0.0",
+            # "--ready-check-path=/ready-check",
+            # f"--ready-timeout={READY_TIMEOUT}",
         ]
     ),
     Framework.jupyterlab.value: Command(args=[]),
