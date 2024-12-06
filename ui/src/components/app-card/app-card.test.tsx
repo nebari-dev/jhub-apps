@@ -804,4 +804,64 @@ describe('AppCard', () => {
       }),
     );
   });
+  test('shows error snackbar when trying to stop a shared app without admin rights', async () => {
+    const { getByTestId, getByText, queryByText } = render(
+      <RecoilRoot>
+        <QueryClientProvider client={queryClient}>
+          <AppCard
+            id="1"
+            title="Shared App"
+            username="Non-Admin"
+            framework="Some Framework"
+            url="/some-url"
+            serverStatus="Running"
+            isShared={true} // Shared app
+            app={{
+              id: '1',
+              name: 'Shared App',
+              framework: 'Some Framework',
+              description: 'Test App 1',
+              url: '/user/test/shared-app/',
+              thumbnail: '',
+              username: 'test',
+              ready: true,
+              public: false,
+              shared: true,
+              last_activity: new Date(),
+              pending: false,
+              stopped: false,
+              status: 'false',
+              full_name: 'test/shared-app',
+            }}
+          />
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+
+    // Open context menu first
+    const contextMenuButton = getByTestId('context-menu-button-card-menu-1');
+    act(() => {
+      contextMenuButton.click();
+    });
+
+    const stopMenuItem = await waitFor(() => getByText('Stop'));
+    expect(stopMenuItem).toBeInTheDocument();
+
+    // Simulate clicking the "Stop" button
+    await act(async () => {
+      stopMenuItem.click();
+    });
+
+    // Verify that the Snackbar appears with the correct message
+    const snackbar = await waitFor(() =>
+      queryByText(
+        "You don't have permission to stop this app. Please ask the owner to stop it.",
+      ),
+    );
+    expect(snackbar).toBeInTheDocument();
+
+    // Verify that the Snackbar has the correct severity styling
+    const snackbarAlert = snackbar?.closest('.MuiAlert-root');
+    expect(snackbarAlert).toHaveClass('MuiAlert-standardError'); // Check for the correct class
+  });
 });

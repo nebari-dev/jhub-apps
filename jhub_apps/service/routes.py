@@ -162,7 +162,6 @@ async def create_server(
         user_options=server.user_options,
     )
 
-
 @router.post("/server/")
 @router.post("/server/{server_name}")
 async def start_server(
@@ -173,9 +172,20 @@ async def start_server(
     """Start an already existing server."""
     logger.info("Starting server", server_name=server_name, user=user.name)
     hub_client = HubClient(username=user.name)
-    # User could be starting a shared server, in which case the
-    # user starting the server will not be the owner of the server
+
+    # Determine server owner (default to current user if not provided)
     server_owner = request.query_params.get("owner", user.name)
+
+    # Check if the server is shared and the user has access
+    shared_servers = get_shared_servers(current_hub_user=hub_client.get_user())
+    if server_name not in [s['name'] for s in shared_servers] and server_owner != user.name:
+        logger.error(f"User '{user.name}' does not have access to shared server '{server_name}'")
+        raise HTTPException(
+            detail=f"User '{user.name}' doesn't have access to shared server: '{server_name}'",
+            status_code=status.HTTP_403_FORBIDDEN,
+        )
+
+    # Attempt to start the server
     try:
         response = hub_client.start_server(
             username=server_owner,
@@ -183,8 +193,7 @@ async def start_server(
         )
         if response.status_code in [403, 404]:
             raise HTTPException(
-                detail=f"User doesn't have permissions to start server: '{server_name}' "
-                       f"or the server with this name does not exist",
+                detail=f"Failed to start server: {response.text}",
                 status_code=status.HTTP_403_FORBIDDEN,
             )
         response.raise_for_status()
@@ -193,13 +202,14 @@ async def start_server(
             detail=f"Probably server '{server_name}' is already running: {e}",
             status_code=status.HTTP_400_BAD_REQUEST,
         )
+
     if response is None:
         raise HTTPException(
-            detail=f"server '{server_name}' not found",
+            detail=f"Server '{server_name}' not found",
             status_code=status.HTTP_404_NOT_FOUND,
         )
-    return response.status_code
 
+    return response.status_code
 
 @router.put("/server/{server_name}")
 async def update_server(

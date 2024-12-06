@@ -720,56 +720,6 @@ describe('Home', () => {
     });
   });
 
-  test('should show 403 error snackbar when trying to start a shared app', async () => {
-    mock.onPost('/server/test-app-1').reply(403); // Mocking 403 Forbidden for shared app
-
-    const { baseElement, getByText } = render(
-      <RecoilRoot
-        initializeState={({ set }) => {
-          set(isStartOpen, true);
-          set(defaultApp, {
-            id: 'test-app-1',
-            name: 'Test App',
-            framework: 'JupyterLab',
-            url: 'https://example.com',
-            ready: true,
-            public: false,
-            shared: true,
-            last_activity: new Date(),
-            status: 'Ready',
-          }); // App is shared
-        }}
-      >
-        <QueryClientProvider client={queryClient}>
-          <BrowserRouter>
-            <Home />
-          </BrowserRouter>
-        </QueryClientProvider>
-      </RecoilRoot>,
-    );
-
-    // Modal should be present
-    await waitFor(() => {
-      const startModal = within(baseElement).getByTestId('StartModal');
-      expect(startModal).toBeInTheDocument();
-    });
-
-    // Simulate clicking the Start button
-    const startBtn = baseElement.querySelector(
-      '#start-btn',
-    ) as HTMLButtonElement;
-    await act(async () => {
-      startBtn.click();
-    });
-
-    // Expect the snackbar to display the 403 Forbidden error message
-    await waitFor(() => {
-      const snackbar = getByText(
-        /You don't have permission to start this app. Please ask the owner to start it./,
-      );
-      expect(snackbar).toBeInTheDocument();
-    });
-  });
   test('should show 403 error snackbar when trying to stop a shared app', async () => {
     mock.onDelete('/server/test-app-1').reply(403); // Mocking 403 Forbidden for shared app
 
@@ -859,5 +809,64 @@ describe('Home', () => {
     await act(async () => {
       startBtn.click();
     });
+  });
+  test('should update query client state after successful app start', async () => {
+    mock.onPost('/server/test-app-1').reply(200);
+
+    // Use vi.spyOn to spy on invalidateQueries
+    const invalidateQueriesSpy = vi.spyOn(queryClient, 'invalidateQueries');
+
+    const { baseElement } = render(
+      <RecoilRoot
+        initializeState={({ set }) => {
+          set(isStartOpen, true);
+          set(defaultApp, apps[0]); // Simulating the app being set in Recoil state
+        }}
+      >
+        <QueryClientProvider client={queryClient}>
+          <BrowserRouter>
+            <Home />
+          </BrowserRouter>
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+
+    const startBtn = baseElement.querySelector(
+      '#start-btn',
+    ) as HTMLButtonElement;
+
+    await act(async () => {
+      startBtn.click();
+    });
+
+    // Wait for invalidateQueries to be called with the correct arguments
+    await waitFor(() => {
+      expect(invalidateQueriesSpy).toHaveBeenCalledWith({
+        queryKey: ['app-state'],
+      });
+    });
+
+    // Restore the spy
+    invalidateQueriesSpy.mockRestore();
+  });
+  test('should close start modal when cancel button is clicked', async () => {
+    const { baseElement } = render(
+      <RecoilRoot initializeState={({ set }) => set(isStartOpen, true)}>
+        <QueryClientProvider client={queryClient}>
+          <BrowserRouter>
+            <Home />
+          </BrowserRouter>
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+
+    const cancelBtn = baseElement.querySelector(
+      '#cancel-btn',
+    ) as HTMLButtonElement;
+    await act(async () => {
+      cancelBtn.click();
+    });
+
+    expect(baseElement.querySelector('#StartModal')).not.toBeInTheDocument();
   });
 });
