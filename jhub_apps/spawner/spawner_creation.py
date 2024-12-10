@@ -104,11 +104,7 @@ def subclass_spawner(base_spawner):
         async def start(self):
             logger.info("Starting spawner process")
             await self._get_user_auth_state()
-            framework = self.user_options.get("framework")
-            if (
-                self.user_options.get("jhub_app")
-                and framework != Framework.jupyterlab.value
-            ):
+            if self.user_options.get("jhub_app"):
                 auth_type = "oauth"
                 if self.user_options.get("public", False):
                     auth_type = "none"
@@ -127,13 +123,6 @@ def subclass_spawner(base_spawner):
                     self.cmd.append("--force-alive")
                 else:
                     self.cmd.append("--no-force-alive")
-
-            if framework == Framework.jupyterlab.value:
-                self.cmd = [
-                    self.config.JAppsConfig.python_exec,
-                    "-m",
-                    "jupyterhub.singleuser",
-                ]
             logger.info(f"Final Spawner Command: {self.cmd}")
             return await super().start()
 

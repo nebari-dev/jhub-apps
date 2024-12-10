@@ -160,5 +160,15 @@ COMMANDS = {
             f"--ready-timeout={READY_TIMEOUT}",
         ]
     ),
-    Framework.jupyterlab.value: Command(args=[]),
+    Framework.jupyterlab.value: Command(args=[
+        "--destport=0",
+        TString("--conda-env=$conda_env"),
+        TString("$python_exec"),
+        "{-}m",
+        "jupyterhub.singleuser",
+        "{--}debug",
+        "--ip=0.0.0.0",
+        "--ready-check-path=/ready-check",
+        f"--ready-timeout={READY_TIMEOUT}",
+    ]),
 }
