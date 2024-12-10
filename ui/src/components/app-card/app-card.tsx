@@ -2,7 +2,7 @@ import GroupRoundedIcon from '@mui/icons-material/GroupRounded';
 import LockRoundedIcon from '@mui/icons-material/LockRounded';
 import PublicRoundedIcon from '@mui/icons-material/PublicRounded';
 import PushPinRoundedIcon from '@mui/icons-material/PushPinRounded';
-import { Box, Link, Tooltip } from '@mui/material';
+import { Alert, Box, Link, Snackbar, Tooltip } from '@mui/material';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
@@ -18,7 +18,6 @@ import { UserState } from '@src/types/user';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
-
 import {
   currentApp,
   currentNotification,
@@ -65,6 +64,12 @@ export const AppCard = ({
   const [appStatus, setAppStatus] = useState('');
   const [currentProfiles] = useRecoilState<AppProfileProps[]>(defaultProfiles);
   const [, setCurrentApp] = useRecoilState<JhApp | undefined>(currentApp);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>(
+    'success',
+  );
+
   const [, setNotification] = useRecoilState<string | undefined>(
     currentNotification,
   );
@@ -124,29 +129,24 @@ export const AppCard = ({
       id: 'start',
       title: 'Start',
       onClick: async () => {
-        // Allow admins to start shared apps
-        if (isShared && !currentUserData?.admin) {
-          // Show error if it's a shared app
-          setNotification(
-            "You don't have permission to start this app. Please ask the owner to start it.",
-          );
-          return;
-        }
         setIsStartOpen(true);
-        setCurrentApp(app!); // Add the non-null assertion operator (!) to ensure that app is not undefined
+        setCurrentApp(app!); // Ensure app is defined
       },
       visible: true,
       disabled: serverStatus !== 'Ready', // Disable start if the app is already running
     },
+
     {
       id: 'stop',
       title: 'Stop',
       onClick: async () => {
         // Allow admins to stop shared apps
         if (isShared && !currentUserData?.admin) {
-          setNotification(
+          setSnackbarMessage(
             "You don't have permission to stop this app. Please ask the owner to stop it.",
           );
+          setSnackbarSeverity('error');
+          setSnackbarOpen(true);
           return;
         }
         setIsStopOpen(true);
@@ -370,6 +370,30 @@ export const AppCard = ({
           </div>
         </Card>
       </Link>
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={() => setSnackbarOpen(false)}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        sx={{
+          top: '90px !important',
+        }}
+      >
+        <Alert
+          onClose={() => setSnackbarOpen(false)}
+          severity={snackbarSeverity}
+          sx={{
+            width: '100%',
+            fontFamily: 'Inter, sans-serif',
+            fontWeight: 600,
+            backgroundColor:
+              snackbarSeverity === 'success' ? '#D1FAE5' : '#FEE2E2',
+            color: snackbarSeverity === 'success' ? '#065F46' : '#B91C1C',
+          }}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };
