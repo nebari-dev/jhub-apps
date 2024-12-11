@@ -348,7 +348,14 @@ export const Home = (): React.ReactElement => {
           data-testid="start-btn"
           variant="contained"
           color="primary"
-          onClick={handleStart}
+          onClick={() => {
+            clearAppToStart();
+            if (isDefaultApp(currentApp?.name || '')) {
+              handleStartNotRunning();
+            } else {
+              handleStart();
+            }
+          }}
           disabled={submitting}
         >
           Start
