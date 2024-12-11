@@ -45,6 +45,8 @@ export const NotRunning = (): React.ReactElement => {
 
     if (formData?.started) {
       window.location.assign(window.location.href.replace('/hub', ''));
+    } else if (formData?.stopped && currentUser && id && formData.name === '') {
+      window.location.assign(getSpawnPendingUrl(currentUser, id));
     } else if (formData?.pending && currentUser && id) {
       window.location.assign(getSpawnPendingUrl(currentUser, id));
     } else if (formData?.stopped && id) {
