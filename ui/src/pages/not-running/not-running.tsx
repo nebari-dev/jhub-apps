@@ -3,7 +3,11 @@ import { AppQueryGetProps } from '@src/types/api';
 import { UserState } from '@src/types/user';
 import axios from '@src/utils/axios';
 import { APP_BASE_URL } from '@src/utils/constants';
-import { getSpawnPendingUrl, storeAppToStart } from '@src/utils/jupyterhub';
+import {
+  getSpawnPendingUrl,
+  isDefaultServer,
+  storeAppToStart,
+} from '@src/utils/jupyterhub';
 import { useQuery } from '@tanstack/react-query';
 import React, { useEffect } from 'react';
 import { useRecoilState } from 'recoil';
@@ -43,16 +47,30 @@ export const NotRunning = (): React.ReactElement => {
       return;
     }
 
+    // If app is started, redirect to the app
     if (formData?.started) {
       window.location.assign(window.location.href.replace('/hub', ''));
-    } else if (formData?.stopped && currentUser && id && formData.name === '') {
+    }
+    // If pending, redirect to spawn pending page
+    else if (formData?.pending && currentUser && id) {
       window.location.assign(getSpawnPendingUrl(currentUser, id));
-    } else if (formData?.pending && currentUser && id) {
+    }
+    // If stopped and default server, redirect to spawn pending page
+    else if (
+      formData?.stopped &&
+      currentUser &&
+      id &&
+      isDefaultServer(formData.name)
+    ) {
       window.location.assign(getSpawnPendingUrl(currentUser, id));
-    } else if (formData?.stopped && id) {
+    }
+    // If stopped and not default server, redirect home store app id for automated start
+    else if (formData?.stopped && id && !isDefaultServer(formData.name)) {
       storeAppToStart(id); // TODO: Update this to store in global state when everything is running in single react app
       window.location.assign(APP_BASE_URL);
-    } else {
+    }
+    // If error, redirect to home page
+    else {
       window.location.assign(APP_BASE_URL);
     }
   }, [formData, id, currentUser]);

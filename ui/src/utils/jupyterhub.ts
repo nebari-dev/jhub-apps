@@ -236,6 +236,14 @@ export const isDefaultApp = (name: string) => {
   }
 };
 
+export const isDefaultServer = (name: string) => {
+  if (name === '') {
+    return true;
+  } else {
+    return false;
+  }
+};
+
 export const navigateToUrl = (url: string) => {
   document.location.href = url;
 };
