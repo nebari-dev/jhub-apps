@@ -89,7 +89,6 @@ export const Home = (): React.ReactElement => {
       url: `/server/${id}`,
       params: { owner: creatorName || '' },
     };
-
     const response = await axios(requestConfig);
 
     return response;
@@ -165,6 +164,7 @@ export const Home = (): React.ReactElement => {
   ): error is { response: { status: number } } => {
     return typeof error === 'object' && error !== null && 'response' in error;
   };
+
   const handleStart = async () => {
     const appId = currentApp?.id || '';
     const fullName = currentApp?.full_name || '';
@@ -173,18 +173,6 @@ export const Home = (): React.ReactElement => {
     // Close the modal immediately when the Start button is clicked
     setIsStartOpen(false);
     setIsStartNotRunningOpen(false);
-
-    // Check if the app is shared and if the user has permissions
-    const sharedApp = currentApp?.shared;
-    if (sharedApp && !currentUserData?.admin) {
-      setSubmitting(false);
-      setSnackbarMessage(
-        "You don't have permission to start this app. Please ask the owner to start it.",
-      );
-      setSnackbarSeverity('error');
-      setSnackbarOpen(true);
-      return;
-    }
 
     startQuery(
       { id: appId, full_name: fullName },
@@ -201,11 +189,7 @@ export const Home = (): React.ReactElement => {
 
           if (isErrorWithResponse(error)) {
             const status = error.response?.status;
-            if (status === 403) {
-              setSnackbarMessage(
-                "You don't have permission to start this app. Please ask the owner to start it.",
-              );
-            } else if (status === 404) {
+            if (status === 404) {
               setSnackbarMessage('App not found (404).');
             } else if (status === 500) {
               setSnackbarMessage('Internal server error (500).');
