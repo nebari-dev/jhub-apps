@@ -124,7 +124,4 @@ def install_jhub_apps(c, spawner_to_subclass, *, oauth_no_confirm=False):
         c.JupyterHub.load_roles = c.JupyterHub.load_roles + services_roles
     else:
         c.JupyterHub.load_roles = services_roles
-    
     return c
-
-    
