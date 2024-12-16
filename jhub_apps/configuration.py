@@ -5,9 +5,7 @@ from secrets import token_bytes
 from traitlets.config import LazyConfigValue
 
 from jhub_apps import JAppsConfig
-from jhub_apps.hub_client.hub_client import HubClient
 from jhub_apps.hub_client.utils import is_jupyterhub_5
-from jhub_apps.service.models import UserOptions
 from jhub_apps.spawner.spawner_creation import subclass_spawner
 
 
@@ -127,7 +125,6 @@ def install_jhub_apps(c, spawner_to_subclass, *, oauth_no_confirm=False):
     else:
         c.JupyterHub.load_roles = services_roles
     
-    # I considered instantiating startup_apps here b/c I have access to c.JAppsConfig.startup_apps, but JUPYTERHUB_API_URL wasn't set yet which was needed by the HubClient so I moved it to jhub_apps/service/app.py.
     return c
 
     

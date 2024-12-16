@@ -35,6 +35,7 @@ async def lifespan(app: FastAPI):
 def instantiate_startup_apps(user_options_list: list[dict[str, Any]], username: str):
         # instantiate custom apps
         for user_options_dict in user_options_list:
+            print(f"Instantiating app with user_options: {pprint.pformat(user_options_dict)}")  # TODO: Remove
             user_options = UserOptions(**user_options_dict)
             hub_client = HubClient(username=username)
             hub_client.create_server(

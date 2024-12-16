@@ -63,6 +63,23 @@ class JAppsConfig(SingletonConfigurable):
 
     startup_apps = List(
         trait=Any,  # TODO: Change this, use Instance() maybe or define a new type - https://traitlets.readthedocs.io/en/stable/defining_traits.html
-        default_value=[{'display_name': 'My Startup App', 'description': 'description', 'thumbnail': 'data:image/jpeg;base64,Y29udGVudHMgb2YgdGh1bWJuYWls', 'filepath': '', 'framework': 'panel', 'custom_command': '', 'public': False, 'keep_alive': False, 'env': {'ENV_VAR_KEY_1': 'ENV_VAR_KEY_1', 'ENV_VAR_KEY_2': 'ENV_VAR_KEY_2'}, 'repository': None, 'jhub_app': True, 'conda_env': '', 'profile': '', 'share_with': {'users': ['alice', 'john'], 'groups': ['alpha', 'beta']}}],
+        default_value=[{
+            'display_name': 'Adam\'s App', 
+            'description': 'description', 
+            'thumbnail': 'data:image/jpeg;base64,Y29udGVudHMgb2YgdGh1bWJuYWls', 
+            'filepath': '', 
+            'framework': 'panel', 
+            'custom_command': '',
+            'public': False, 
+            'keep_alive': False, 
+            'env': {'ENV_VAR_KEY_1': 'ENV_VAR_KEY_1', 
+                'ENV_VAR_KEY_2': 'ENV_VAR_KEY_2'}, 
+            'repository': None, 
+            'jhub_app': True, 
+            'conda_env': '', 
+            'profile': '', 
+            'share_with': 
+                {'users': ['alice', 'john'],      'groups': ['alpha', 'beta']}
+            }],
         help="List of apps to start on JHub Apps Launcher startup",
     ).tag(config=True)
