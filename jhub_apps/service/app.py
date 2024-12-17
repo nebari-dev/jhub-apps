@@ -28,19 +28,20 @@ STATIC_DIR = Path(__file__).parent.parent / "static"
 async def lifespan(app: FastAPI):
     config = get_jupyterhub_config()
     user_options_list = config['JAppsConfig']['startup_apps']
-    instantiate_startup_apps(user_options_list, 'admin')
+    instantiate_startup_apps(user_options_list, username='alice')
     
     yield
 
-def instantiate_startup_apps(user_options_list: list[dict[str, Any]], username: str):
+def instantiate_startup_apps(server_creation_list: list[dict[str, Any]], username: str):
         # instantiate custom apps
-        for user_options_dict in user_options_list:
-            print(f"Instantiating app with user_options: {pprint.pformat(user_options_dict)}")  # TODO: Remove
-            user_options = UserOptions(**user_options_dict)
+        for server_creation_dict in server_creation_list:
+            print(f"Instantiating app with user_options: {pprint.pformat(server_creation_dict)}")  # TODO: Remove
+            user_options = UserOptions(**server_creation_dict)
             hub_client = HubClient(username=username)
             hub_client.create_server(
                 username=username,
-                servername='my-startup-server',  # TODO: Use some passed in value
+                servername=server_creation_dict['servername'],
+                # servername=None,  # throws an error
                 user_options=user_options,
             )
 

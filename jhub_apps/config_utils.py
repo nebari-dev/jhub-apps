@@ -63,11 +63,13 @@ class JAppsConfig(SingletonConfigurable):
 
     startup_apps = List(
         trait=Any,  # TODO: Change this, use Instance() maybe or define a new type - https://traitlets.readthedocs.io/en/stable/defining_traits.html
+
+        # This class should be a ServerCreation class + user + thumbnail
         default_value=[{
             'display_name': 'Adam\'s App', 
             'description': 'description', 
-            'thumbnail': 'data:image/jpeg;base64,Y29udGVudHMgb2YgdGh1bWJuYWls', 
-            'filepath': '', 
+            'thumbnail': 'data:image/jpeg;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAFUlEQVR42mNkYPhfz0AEYBxVSF+FAP5FDvcfRYWgAAAAAElFTkSuQmCC', 
+            'filepath': '/home/balast/CodingProjects/jhub-apps/jhub_apps/examples/panel_basic2.py', 
             'framework': 'panel', 
             'custom_command': '',
             'public': False, 
@@ -79,7 +81,9 @@ class JAppsConfig(SingletonConfigurable):
             'conda_env': '', 
             'profile': '', 
             'share_with': 
-                {'users': ['alice', 'john'],      'groups': ['alpha', 'beta']}
+                {'users': ['alice', 'john', 'admin'],      
+                'groups': ['alpha', 'beta']},
+            'servername': 'my-server', 
             }],
         help="List of apps to start on JHub Apps Launcher startup",
     ).tag(config=True)

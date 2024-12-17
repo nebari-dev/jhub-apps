@@ -111,7 +111,7 @@ def test_create_server_with_git_repository():
         display_name="Test Application",
         description="App description",
         framework=Framework.panel.value,
-        thumbnail="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAIAQMAAAD+wSzIAAAABlBMVEX///+/v7+jQ3Y5AAAADklEQVQI12P4AIX8EAgALgAD/aNpbtEAAAAASUVORK5CYII",
+        thumbnail="data:image/png;base64,ZHVtbXkgaW1hZ2UgZGF0YQ==",
         filepath="panel_basic.py",
         repository=Repository(
             url="https://github.com/nebari-dev/jhub-apps-from-git-repo-example.git",

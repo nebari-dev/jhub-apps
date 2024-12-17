@@ -102,7 +102,7 @@ async def get_spawner_profiles(config, auth_state=None):
         )
 
 
-def encode_file_to_data_url(filename, file_contents):
+def encode_file_to_data_url(filename, file_contents) -> str:
     """Converts image file to data url to display in browser."""
     base64_encoded = base64.b64encode(file_contents)
     filename_ = filename.lower()
@@ -117,7 +117,7 @@ def encode_file_to_data_url(filename, file_contents):
     return data_url
 
 
-def get_default_thumbnail(framework_name):
+def get_default_thumbnail(framework_name) -> str:
     framework: FrameworkConf = FRAMEWORKS_MAPPING.get(framework_name)
     thumbnail_path = framework.logo_path
     return encode_file_to_data_url(
