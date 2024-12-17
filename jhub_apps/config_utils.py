@@ -64,6 +64,8 @@ class JAppsConfig(SingletonConfigurable):
     startup_apps = List(
         trait=Any,  # TODO: Change this, use Instance() maybe or define a new type - https://traitlets.readthedocs.io/en/stable/defining_traits.html
 
+        description="only add a server if it is not already created or edit an existing one to match the config, won't delete any servers",
+
         # This class should be a ServerCreation class + user + thumbnail
         default_value=[{
             'display_name': 'Adam\'s App', 
@@ -84,6 +86,7 @@ class JAppsConfig(SingletonConfigurable):
                 {'users': ['alice', 'john', 'admin'],      
                 'groups': ['alpha', 'beta']},
             'servername': 'my-server', 
+            'username': 'alice',
             }],
         help="List of apps to start on JHub Apps Launcher startup",
     ).tag(config=True)

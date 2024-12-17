@@ -3,6 +3,8 @@ import json
 import os
 from pathlib import Path
 import pprint
+from itertools import groupby
+from operator import itemgetter
 
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
@@ -16,6 +18,9 @@ from jhub_apps.service.models import UserOptions
 from jhub_apps.service.routes import router
 from jhub_apps.service.utils import get_jupyterhub_config
 from jhub_apps.version import get_version
+import structlog
+
+logger = structlog.get_logger(__name__)
 
 ### When managed by Jupyterhub, the actual endpoints
 ### will be served out prefixed by /services/:name.
@@ -28,22 +33,37 @@ STATIC_DIR = Path(__file__).parent.parent / "static"
 async def lifespan(app: FastAPI):
     config = get_jupyterhub_config()
     user_options_list = config['JAppsConfig']['startup_apps']
-    instantiate_startup_apps(user_options_list, username='alice')
+    # group user options by username
+    
+    grouped_user_options_list = groupby(user_options_list, itemgetter('username'))
+    for username, user_options_list in grouped_user_options_list:
+        instantiate_startup_apps(user_options_list, username=username)
     
     yield
 
 def instantiate_startup_apps(server_creation_list: list[dict[str, Any]], username: str):
-        # instantiate custom apps
+        hub_client = HubClient(username=username)
+        
+        existing_servers = hub_client.get_server(username=username)
+        
         for server_creation_dict in server_creation_list:
-            print(f"Instantiating app with user_options: {pprint.pformat(server_creation_dict)}")  # TODO: Remove
             user_options = UserOptions(**server_creation_dict)
-            hub_client = HubClient(username=username)
-            hub_client.create_server(
-                username=username,
-                servername=server_creation_dict['servername'],
-                # servername=None,  # throws an error
-                user_options=user_options,
-            )
+            servername = server_creation_dict['servername']
+            if server_creation_dict['servername'] in existing_servers:
+                # update the server
+                logger.info(f"{'='*50}Updating server: {server_creation_dict['servername']}")
+                hub_client.edit_server(username, servername, user_options)
+            else:
+                # create the server
+                logger.info(f"{'='*50}Instantiating app with user_options: {pprint.pformat(server_creation_dict)}")  # TODO: Remove
+                # user_options = UserOptions(**server_creation_dict)
+                
+                hub_client.create_server(
+                    username=username,
+                    servername=servername,
+                    user_options=user_options,
+                )        
+        logger.info('Done instantiating apps')
 
 app = FastAPI(
     title="JApps Service",
