@@ -11,6 +11,7 @@ from fastapi import HTTPException, status
 from jupyterhub.app import JupyterHub
 from traitlets.config import LazyConfigValue
 
+from jhub_apps.config_utils import JAppsConfig
 from jhub_apps.hub_client.hub_client import HubClient
 from jhub_apps.service.models import UserOptions
 from jhub_apps.spawner.types import FrameworkConf, FRAMEWORKS_MAPPING, FRAMEWORKS
@@ -25,9 +26,12 @@ logger = structlog.get_logger(__name__)
 @cached(cache=TTLCache(maxsize=1024, ttl=CACHE_JUPYTERHUB_CONFIG_TIMEOUT))
 def get_jupyterhub_config():
     hub = JupyterHub()
+    hub.classes.append(JAppsConfig)
     jhub_config_file_path = os.environ["JHUB_JUPYTERHUB_CONFIG"]
     logger.info(f"Getting JHub config from file: {jhub_config_file_path}")
     hub.load_config_file(jhub_config_file_path)
+    # hacky, but I couldn't figure out how to get validation of the config otherwise (In this case, validation converts the dict in the config to a Pydantic model)
+    hub.config.JAppsConfig.startup_apps = JAppsConfig(config=hub.config).startup_apps
     config = hub.config
     logger.info(f"JHub Apps config: {config.JAppsConfig}")
     return config

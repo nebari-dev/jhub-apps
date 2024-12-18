@@ -89,3 +89,6 @@ class UserOptions(JHubAppConfig):
 class ServerCreation(BaseModel):
     servername: str
     user_options: UserOptions
+
+class StartupApp(ServerCreation):
+    username: str

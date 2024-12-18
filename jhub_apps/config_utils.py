@@ -1,8 +1,66 @@
-from traitlets import Any, Instance, Unicode, Union, List, Callable, Integer, Bool
+from traitlets import Any, Instance, Int, Unicode, Union, List, Callable, Integer, Bool
 from traitlets.config import SingletonConfigurable, Enum
 
-from jhub_apps.service.models import JHubAppConfig
+from jhub_apps.service.models import JHubAppConfig, ServerCreation, StartupApp
 
+import textwrap
+import typing as t
+from pydantic import BaseModel, ValidationError
+from traitlets import TraitType, TraitError, HasTraits
+import traitlets
+
+class PydanticModelTrait(TraitType):
+    """A trait type for validating Pydantic models.
+    
+    This trait ensures that the input is an instance of a specific Pydantic model type.
+    """
+    
+    def __init__(self, model_class: t.Type[BaseModel], *args, **kwargs):
+        """
+        Initialize the trait with a specific Pydantic model class.
+        
+        Args:
+            model_class: The Pydantic model class to validate against
+            *args: Additional arguments for TraitType
+            **kwargs: Additional keyword arguments for TraitType
+        """
+        super().__init__(*args, **kwargs)
+        self.model_class = model_class
+        self.info_text = f"an instance of {model_class.__name__}"
+    
+    def validate(self, obj: t.Any, value: t.Any) -> BaseModel:
+        """
+        Validate that the input is an instance of the specified Pydantic model.
+        
+        Args:
+            obj: The object the trait is attached to
+            value: The value to validate
+        
+        Returns:
+            Validated Pydantic model instance
+        
+        Raises:
+            TraitError: If the value is not a valid instance of the model
+        """
+        # If None is allowed and value is None, return None
+        if self.allow_none and value is None:
+            return None
+        
+        # Check if value is an instance of the specified model class
+        if isinstance(value, self.model_class):
+            return value
+        
+        # If not an instance, try to create an instance from a dict
+        if isinstance(value, dict):
+            try:
+                return self.model_class(**value)
+            except ValidationError as e:
+                # Convert Pydantic validation error to TraitError
+                raise traitlets.TraitError(f'Could not parse input as a valid {self.model_class.__name__} Pydantic model:\n'
+                f'{textwrap.indent(str(e), prefix="  ")}')
+        
+        raise traitlets.TraitError(f'Input must be a valid {self.model_class.__name__} Pydantic model or dict object, but got {value}.')
+    
 
 class JAppsConfig(SingletonConfigurable):
     apps_auth_type = Enum(
@@ -51,42 +109,25 @@ class JAppsConfig(SingletonConfigurable):
         help="The number of workers to create for the JHub Apps FastAPI service",
     ).tag(config=True)
 
-    allowed_frameworks = Bool(
+    allowed_frameworks = List(
         None,
         help="Allow only a specific set of frameworks to spun up apps.",
+        allow_none=True,
     ).tag(config=True)
 
-    blocked_frameworks = Bool(
+    blocked_frameworks = List(
         None,
         help="Disallow a set of frameworks to avoid spinning up apps using those frameworks",
+        allow_none=True,
+    ).tag(config=True)
+
+    my_int_list = List(
+        trait=Int,
     ).tag(config=True)
 
     startup_apps = List(
-        trait=Any,  # TODO: Change this, use Instance() maybe or define a new type - https://traitlets.readthedocs.io/en/stable/defining_traits.html
-
+        trait=PydanticModelTrait(StartupApp),
         description="only add a server if it is not already created or edit an existing one to match the config, won't delete any servers",
-
-        # This class should be a ServerCreation class + user + thumbnail
-        default_value=[{
-            'display_name': 'Adam\'s App', 
-            'description': 'description', 
-            'thumbnail': 'data:image/jpeg;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAFUlEQVR42mNkYPhfz0AEYBxVSF+FAP5FDvcfRYWgAAAAAElFTkSuQmCC', 
-            'filepath': '/home/balast/CodingProjects/jhub-apps/jhub_apps/examples/panel_basic2.py', 
-            'framework': 'panel', 
-            'custom_command': '',
-            'public': False, 
-            'keep_alive': False, 
-            'env': {'ENV_VAR_KEY_1': 'ENV_VAR_KEY_1', 
-                'ENV_VAR_KEY_2': 'ENV_VAR_KEY_2'}, 
-            'repository': None, 
-            'jhub_app': True, 
-            'conda_env': '', 
-            'profile': '', 
-            'share_with': 
-                {'users': ['alice', 'john', 'admin'],      
-                'groups': ['alpha', 'beta']},
-            'servername': 'my-server', 
-            'username': 'alice',
-            }],
+        default_value=[],
         help="List of apps to start on JHub Apps Launcher startup",
     ).tag(config=True)

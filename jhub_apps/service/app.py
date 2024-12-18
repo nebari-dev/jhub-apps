@@ -32,37 +32,38 @@ STATIC_DIR = Path(__file__).parent.parent / "static"
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     config = get_jupyterhub_config()
-    user_options_list = config['JAppsConfig']['startup_apps']
+    startup_apps_list = config['JAppsConfig']['startup_apps']
     # group user options by username
-    
-    grouped_user_options_list = groupby(user_options_list, itemgetter('username'))
-    for username, user_options_list in grouped_user_options_list:
-        instantiate_startup_apps(user_options_list, username=username)
-    
+    grouped_user_options_list = groupby(startup_apps_list, lambda x: x.username)
+    for username, startup_apps_list in grouped_user_options_list:
+        instantiate_startup_apps(startup_apps_list, username=username)
+            
     yield
 
-def instantiate_startup_apps(server_creation_list: list[dict[str, Any]], username: str):
+def instantiate_startup_apps(startup_apps_list: list[dict[str, Any]], username: str):
+        # TODO: Support defining app from git repo
         hub_client = HubClient(username=username)
         
         existing_servers = hub_client.get_server(username=username)
         
-        for server_creation_dict in server_creation_list:
-            user_options = UserOptions(**server_creation_dict)
-            servername = server_creation_dict['servername']
-            if server_creation_dict['servername'] in existing_servers:
+        for startup_app in startup_apps_list:
+            user_options = startup_app.user_options
+            servername = startup_app.servername
+            if servername in existing_servers:
                 # update the server
-                logger.info(f"{'='*50}Updating server: {server_creation_dict['servername']}")
+                logger.info(f"Updating server: {servername}")
                 hub_client.edit_server(username, servername, user_options)
             else:
                 # create the server
-                logger.info(f"{'='*50}Instantiating app with user_options: {pprint.pformat(server_creation_dict)}")  # TODO: Remove
-                # user_options = UserOptions(**server_creation_dict)
-                
+                logger.info(f"Creating server {servername}")                
                 hub_client.create_server(
                     username=username,
                     servername=servername,
                     user_options=user_options,
                 )        
+                
+        # stop server
+        hub_client.delete_server(username, servername, remove=False)
         logger.info('Done instantiating apps')
 
 app = FastAPI(

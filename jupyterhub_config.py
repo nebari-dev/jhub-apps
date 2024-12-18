@@ -17,6 +17,29 @@ c.JupyterHub.bind_url = hub_url
 c.JAppsConfig.jupyterhub_config_path = "jupyterhub_config.py"
 c.JAppsConfig.conda_envs = []
 c.JAppsConfig.service_workers = 1
+c.JAppsConfig.my_int_list = [1]
+c.JAppsConfig.startup_apps = [
+    {
+        "username": "alice",
+        "servername": "alice's-startup-server",
+        "user_options": {
+            "display_name": "Alice's Panel App",
+            "description": "description",
+            "thumbnail": "data:image/jpeg;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAFUlEQVR42mNkYPhfz0AEYBxVSF+FAP5FDvcfRYWgAAAAAElFTkSuQmCC",
+            "filepath": "",
+            "framework": "panel",
+            "custom_command": "",
+            "public": False,
+            "keep_alive": False,
+            "env": {"ENV_VAR_KEY_1": "ENV_VAR_KEY_1"},
+            "repository": None,
+            "jhub_app": True,
+            "conda_env": "",
+            "profile": "",
+            "share_with": {"users": ["admin"], "groups": ["class-A"]},
+        },
+    }
+]
 c.JupyterHub.default_url = "/hub/home"
 
 c = install_jhub_apps(
