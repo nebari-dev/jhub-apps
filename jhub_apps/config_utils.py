@@ -1,13 +1,11 @@
-from traitlets import Int, Unicode, Union, List, Callable, Integer
+import textwrap
+import typing as t
+from pydantic import BaseModel, ValidationError
+from traitlets import Int, Unicode, Union, List, Callable, Integer, TraitType, TraitError
 from traitlets.config import SingletonConfigurable, Enum
 
 from jhub_apps.service.models import StartupApp
 
-import textwrap
-import typing as t
-from pydantic import BaseModel, ValidationError
-from traitlets import TraitType
-import traitlets
 
 class PydanticModelTrait(TraitType):
     """A trait type for validating Pydantic models.
@@ -56,10 +54,10 @@ class PydanticModelTrait(TraitType):
                 return self.model_class(**value)
             except ValidationError as e:
                 # Convert Pydantic validation error to TraitError
-                raise traitlets.TraitError(f'Could not parse input as a valid {self.model_class.__name__} Pydantic model:\n'
+                raise TraitError(f'Could not parse input as a valid {self.model_class.__name__} Pydantic model:\n'
                 f'{textwrap.indent(str(e), prefix="  ")}')
         
-        raise traitlets.TraitError(f'Input must be a valid {self.model_class.__name__} Pydantic model or dict object, but got {value}.')
+        raise TraitError(f'Input must be a valid {self.model_class.__name__} Pydantic model or dict object, but got {value}.')
     
 
 class JAppsConfig(SingletonConfigurable):
