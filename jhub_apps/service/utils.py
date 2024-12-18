@@ -26,7 +26,6 @@ logger = structlog.get_logger(__name__)
 @cached(cache=TTLCache(maxsize=1024, ttl=CACHE_JUPYTERHUB_CONFIG_TIMEOUT))
 def get_jupyterhub_config():
     hub = JupyterHub()
-    hub.classes.append(JAppsConfig)
     jhub_config_file_path = os.environ["JHUB_JUPYTERHUB_CONFIG"]
     logger.info(f"Getting JHub config from file: {jhub_config_file_path}")
     hub.load_config_file(jhub_config_file_path)
