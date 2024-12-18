@@ -11,6 +11,7 @@ from fastapi import HTTPException, status
 from jupyterhub.app import JupyterHub
 from traitlets.config import LazyConfigValue
 
+from jhub_apps.config_utils import JAppsConfig
 from jhub_apps.hub_client.hub_client import HubClient
 from jhub_apps.service.models import UserOptions
 from jhub_apps.spawner.types import FrameworkConf, FRAMEWORKS_MAPPING, FRAMEWORKS
@@ -28,6 +29,8 @@ def get_jupyterhub_config():
     jhub_config_file_path = os.environ["JHUB_JUPYTERHUB_CONFIG"]
     logger.info(f"Getting JHub config from file: {jhub_config_file_path}")
     hub.load_config_file(jhub_config_file_path)
+    # hacky, but I couldn't figure out how to get validation of the config otherwise (In this case, validation converts the dict in the config to a Pydantic model)
+    hub.config.JAppsConfig.startup_apps = JAppsConfig(config=hub.config).startup_apps
     config = hub.config
     logger.info(f"JHub Apps config: {config.JAppsConfig}")
     return config
@@ -102,7 +105,7 @@ async def get_spawner_profiles(config, auth_state=None):
         )
 
 
-def encode_file_to_data_url(filename, file_contents):
+def encode_file_to_data_url(filename, file_contents) -> str:
     """Converts image file to data url to display in browser."""
     base64_encoded = base64.b64encode(file_contents)
     filename_ = filename.lower()
@@ -117,7 +120,7 @@ def encode_file_to_data_url(filename, file_contents):
     return data_url
 
 
-def get_default_thumbnail(framework_name):
+def get_default_thumbnail(framework_name) -> str:
     framework: FrameworkConf = FRAMEWORKS_MAPPING.get(framework_name)
     thumbnail_path = framework.logo_path
     return encode_file_to_data_url(
