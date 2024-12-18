@@ -119,6 +119,7 @@ class JAppsConfig(SingletonConfigurable):
         allow_none=True,
     ).tag(config=True)
 
+    # TODO: Remove this attribute
     my_int_list = List(
         trait=Int,
     ).tag(config=True)
