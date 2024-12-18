@@ -1,12 +1,12 @@
-from traitlets import Any, Instance, Int, Unicode, Union, List, Callable, Integer, Bool
+from traitlets import Int, Unicode, Union, List, Callable, Integer
 from traitlets.config import SingletonConfigurable, Enum
 
-from jhub_apps.service.models import JHubAppConfig, ServerCreation, StartupApp
+from jhub_apps.service.models import StartupApp
 
 import textwrap
 import typing as t
 from pydantic import BaseModel, ValidationError
-from traitlets import TraitType, TraitError, HasTraits
+from traitlets import TraitType
 import traitlets
 
 class PydanticModelTrait(TraitType):
