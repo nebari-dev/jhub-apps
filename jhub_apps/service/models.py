@@ -5,7 +5,6 @@ from typing import Any, Dict, List, Optional
 
 from pydantic import BaseModel
 
-
 # https://jupyterhub.readthedocs.io/en/stable/_static/rest-api/index.html
 class Server(BaseModel):
     name: str
@@ -89,6 +88,11 @@ class UserOptions(JHubAppConfig):
 class ServerCreation(BaseModel):
     servername: str
     user_options: UserOptions
+
+    @property
+    def normalized_servername(self):
+        from jhub_apps.hub_client.hub_client import HubClient
+        return HubClient.normalize_server_name(self.servername)
 
 class StartupApp(ServerCreation):
     username: str

@@ -139,7 +139,8 @@ class HubClient:
             # return all user servers
             return given_user["servers"]
 
-    def normalize_server_name(self, servername):
+    @staticmethod
+    def normalize_server_name(servername):
         # Convert text to lowercase
         text = servername.lower()
         # Remove all special characters except spaces and hyphen

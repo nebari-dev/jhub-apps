@@ -33,7 +33,7 @@ async def lifespan(app: FastAPI):
     grouped_user_options_list = groupby(startup_apps_list, lambda x: x.username)
     for username, startup_apps_list in grouped_user_options_list:
         instantiate_startup_apps(startup_apps_list, username=username)
-            
+
     yield
 
 def instantiate_startup_apps(startup_apps_list: list[dict[str, Any]], username: str):
@@ -44,22 +44,22 @@ def instantiate_startup_apps(startup_apps_list: list[dict[str, Any]], username: 
         
         for startup_app in startup_apps_list:
             user_options = startup_app.user_options
-            servername = startup_app.servername
-            if servername in existing_servers:
+            normalized_servername = startup_app.normalized_servername
+            if normalized_servername in existing_servers:
                 # update the server
-                logger.info(f"Updating server: {servername}")
-                hub_client.edit_server(username, servername, user_options)
+                logger.info(f"Updating server: {normalized_servername}")
+                hub_client.edit_server(username, normalized_servername, user_options)
             else:
                 # create the server
-                logger.info(f"Creating server {servername}")                
+                logger.info(f"Creating server {normalized_servername}")                
                 hub_client.create_server(
                     username=username,
-                    servername=servername,
+                    servername=normalized_servername,
                     user_options=user_options,
                 )        
                 
-        # stop server
-        hub_client.delete_server(username, servername, remove=False)
+        # stop server after creation
+        hub_client.delete_server(username, normalized_servername, remove=False)
         logger.info('Done instantiating apps')
 
 app = FastAPI(

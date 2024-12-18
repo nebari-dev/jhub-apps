@@ -21,6 +21,7 @@ c.JAppsConfig.my_int_list = [1]
 c.JAppsConfig.startup_apps = [
     {
         "username": "alice",
+        # TODO: Add a test case when servername is different from noralized_servername
         "servername": "alice's-startup-server",
         "user_options": {
             "display_name": "Alice's Panel App",
