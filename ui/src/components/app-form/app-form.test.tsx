@@ -2,11 +2,12 @@ import { app, environments, frameworks, profiles } from '@src/data/api';
 import { currentUser } from '@src/data/user';
 import axios from '@src/utils/axios';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { act, fireEvent, render } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import MockAdapter from 'axios-mock-adapter';
 import { BrowserRouter } from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
+import { vi } from 'vitest';
 import { currentUser as defaultUser } from '../../store';
 import { AppForm } from './app-form';
 
@@ -42,7 +43,7 @@ describe('AppForm', () => {
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
-            <AppForm />
+            <AppForm isEditMode={false} />
           </BrowserRouter>
         </QueryClientProvider>
       </RecoilRoot>,
@@ -60,7 +61,7 @@ describe('AppForm', () => {
         <RecoilRoot>
           <QueryClientProvider client={queryClient}>
             <BrowserRouter>
-              <AppForm />
+              <AppForm isEditMode={false} />
             </BrowserRouter>
           </QueryClientProvider>
         </RecoilRoot>,
@@ -82,7 +83,7 @@ describe('AppForm', () => {
         <RecoilRoot>
           <QueryClientProvider client={queryClient}>
             <BrowserRouter>
-              <AppForm />
+              <AppForm isEditMode={false} />
             </BrowserRouter>
           </QueryClientProvider>
         </RecoilRoot>,
@@ -102,7 +103,7 @@ describe('AppForm', () => {
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
-            <AppForm />
+            <AppForm isEditMode={false} />
           </BrowserRouter>
         </QueryClientProvider>
       </RecoilRoot>,
@@ -128,7 +129,7 @@ describe('AppForm', () => {
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
-            <AppForm />
+            <AppForm isEditMode={false} />
           </BrowserRouter>
         </QueryClientProvider>
       </RecoilRoot>,
@@ -152,7 +153,7 @@ describe('AppForm', () => {
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
-            <AppForm />
+            <AppForm isEditMode={false} />
           </BrowserRouter>
         </QueryClientProvider>
       </RecoilRoot>,
@@ -174,7 +175,7 @@ describe('AppForm', () => {
       <RecoilRoot initializeState={({ set }) => set(defaultUser, currentUser)}>
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
-            <AppForm />
+            <AppForm isEditMode={false} />
           </BrowserRouter>
         </QueryClientProvider>
       </RecoilRoot>,
@@ -220,7 +221,7 @@ describe('AppForm', () => {
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
-            <AppForm />
+            <AppForm isEditMode={false} />
           </BrowserRouter>
         </QueryClientProvider>
       </RecoilRoot>,
@@ -272,7 +273,7 @@ describe('AppForm', () => {
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
-            <AppForm />
+            <AppForm isEditMode={false} />
           </BrowserRouter>
         </QueryClientProvider>
       </RecoilRoot>,
@@ -310,7 +311,7 @@ describe('AppForm', () => {
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
-            <AppForm />
+            <AppForm isEditMode={false} />
           </BrowserRouter>
         </QueryClientProvider>
       </RecoilRoot>,
@@ -364,7 +365,7 @@ describe('AppForm', () => {
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
-            <AppForm />
+            <AppForm isEditMode={false} />
           </BrowserRouter>
         </QueryClientProvider>
       </RecoilRoot>,
@@ -434,7 +435,7 @@ describe('AppForm', () => {
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
-            <AppForm />
+            <AppForm isEditMode={false} />
           </BrowserRouter>
         </QueryClientProvider>
       </RecoilRoot>,
@@ -478,7 +479,7 @@ describe('AppForm', () => {
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
-            <AppForm id="app-1" />
+            <AppForm isEditMode={true} id="app-1" />
           </BrowserRouter>
         </QueryClientProvider>
       </RecoilRoot>,
@@ -520,7 +521,7 @@ describe('AppForm', () => {
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
-            <AppForm id="app-1" />
+            <AppForm isEditMode={true} id="app-1" />
           </BrowserRouter>
         </QueryClientProvider>
       </RecoilRoot>,
@@ -559,7 +560,7 @@ describe('AppForm', () => {
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
-            <AppForm />
+            <AppForm isEditMode={false} />
           </BrowserRouter>
         </QueryClientProvider>
       </RecoilRoot>,
@@ -584,7 +585,7 @@ describe('AppForm', () => {
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
-            <AppForm />
+            <AppForm isEditMode={false} />
           </BrowserRouter>
         </QueryClientProvider>
       </RecoilRoot>,
@@ -624,7 +625,7 @@ describe('AppForm', () => {
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
-            <AppForm id="app-1" />
+            <AppForm isEditMode={true} id="app-1" />
           </BrowserRouter>
         </QueryClientProvider>
       </RecoilRoot>,
@@ -659,7 +660,7 @@ describe('AppForm', () => {
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
-            <AppForm />
+            <AppForm isEditMode={false} />
           </BrowserRouter>
         </QueryClientProvider>
       </RecoilRoot>,
@@ -691,7 +692,7 @@ describe('AppForm', () => {
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
-            <AppForm />
+            <AppForm isEditMode={false} />
           </BrowserRouter>
         </QueryClientProvider>
       </RecoilRoot>,
@@ -725,7 +726,7 @@ describe('AppForm', () => {
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
-            <AppForm />
+            <AppForm isEditMode={false} />
           </BrowserRouter>
         </QueryClientProvider>
       </RecoilRoot>,
@@ -747,7 +748,7 @@ describe('AppForm', () => {
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
-            <AppForm />
+            <AppForm isEditMode={false} />
           </BrowserRouter>
         </QueryClientProvider>
       </RecoilRoot>,
@@ -793,7 +794,7 @@ describe('AppForm', () => {
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
-            <AppForm id="app-1" />
+            <AppForm isEditMode={true} id="app-1" />
           </BrowserRouter>
         </QueryClientProvider>
       </RecoilRoot>,
@@ -820,5 +821,83 @@ describe('AppForm', () => {
       // TODO: Update this assertion when everything is running in single react app
       expect(window.location.pathname).not.toBe('/edit-app');
     }
+  });
+
+  test('sets the branch to customRef or defaults to "main"', async () => {
+    render(
+      <RecoilRoot>
+        <QueryClientProvider client={queryClient}>
+          <BrowserRouter>
+            <AppForm isEditMode={false} deployOption="git" />
+          </BrowserRouter>
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+
+    const branchField = screen.getByLabelText(/Branch/i);
+
+    // Simulate input to test default to 'main'
+    fireEvent.change(branchField, { target: { value: 'main' } });
+    expect(branchField).toHaveValue('main');
+
+    // Test updating customRef
+    fireEvent.change(branchField, { target: { value: 'new-branch' } });
+    expect(branchField).toHaveValue('new-branch');
+  });
+
+  test('sets customRef to an empty string when deployOption is "git" and customRef is empty', async () => {
+    render(
+      <RecoilRoot>
+        <QueryClientProvider client={queryClient}>
+          <BrowserRouter>
+            <AppForm isEditMode={false} deployOption="git" />
+          </BrowserRouter>
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+
+    const branchField = screen.getByLabelText(/Branch/i);
+
+    // Simulate empty customRef for git deployOption
+    fireEvent.change(branchField, { target: { value: '' } });
+    expect(branchField).toHaveValue('');
+  });
+  test('displays "Invalid GitHub URL format" error when URL is in the wrong format', async () => {
+    render(
+      <RecoilRoot>
+        <QueryClientProvider client={queryClient}>
+          <BrowserRouter>
+            <AppForm isEditMode={false} deployOption="git" />
+          </BrowserRouter>
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+
+    // Adjust the label text to match the exact rendering, if needed
+    const gitUrlInput = screen.getByLabelText(/Git Repository URL/i);
+    fireEvent.change(gitUrlInput, { target: { value: 'invalid-url' } });
+
+    const fetchButton = screen.getByText(/Fetch App Configuration/i);
+    await act(async () => {
+      fireEvent.click(fetchButton);
+    });
+
+    // Verify if the modal contains the error message
+    expect(screen.getByRole('dialog')).toHaveTextContent(
+      'Invalid GitHub URL format.',
+    );
+  });
+
+  test('renders git-url-input', () => {
+    render(
+      <RecoilRoot>
+        <QueryClientProvider client={queryClient}>
+          <BrowserRouter>
+            <AppForm deployOption="git" isEditMode={false} />
+          </BrowserRouter>
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+    expect(screen.getByTestId('git-url-input')).toBeInTheDocument();
   });
 });

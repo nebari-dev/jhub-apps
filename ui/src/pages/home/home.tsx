@@ -81,8 +81,17 @@ export const Home = (): React.ReactElement => {
     'success',
   ); // Set severity
 
-  const handleStartRequest = async ({ id }: AppQueryPostProps) => {
-    const response = await axios.post(`/server/${id}`);
+  const handleStartRequest = async ({ id, full_name }: AppQueryPostProps) => {
+    // Extract the creator's name from the full_name
+    const creatorName = full_name?.split('/')[0]; // Extract 'userx' from 'userx/my-panel-app-git-86d9635'
+    const requestConfig = {
+      method: 'post',
+      url: `/server/${id}`,
+      params: { owner: creatorName || '' },
+    };
+
+    const response = await axios(requestConfig);
+
     return response;
   };
 
@@ -156,9 +165,9 @@ export const Home = (): React.ReactElement => {
   ): error is { response: { status: number } } => {
     return typeof error === 'object' && error !== null && 'response' in error;
   };
-
   const handleStart = async () => {
     const appId = currentApp?.id || '';
+    const fullName = currentApp?.full_name || '';
     setSubmitting(true);
 
     // Close the modal immediately when the Start button is clicked
@@ -178,7 +187,7 @@ export const Home = (): React.ReactElement => {
     }
 
     startQuery(
-      { id: appId },
+      { id: appId, full_name: fullName },
       {
         onSuccess: async () => {
           setSubmitting(false);
@@ -274,7 +283,48 @@ export const Home = (): React.ReactElement => {
       return;
     }
 
-    window.location.assign(getSpawnUrl(currentUser, currentApp));
+    // If default app, redirect to spawn URL
+    if (isDefaultApp(currentApp.name)) {
+      window.location.assign(getSpawnUrl(currentUser, currentApp));
+      return;
+    }
+
+    // Extract the creator's name from the full_name
+    const creatorName = currentApp.full_name?.split('/')[0];
+
+    // Ensure the owner parameter is included in the request
+    try {
+      const response = await axios.post(`/server/${currentApp.id}`, {
+        params: { owner: creatorName || '' },
+      });
+
+      if (response.status === 200) {
+        setSnackbarMessage('App started successfully');
+        setSnackbarSeverity('success');
+        setSnackbarOpen(true);
+      }
+    } catch (error) {
+      if (isErrorWithResponse(error)) {
+        const status = error.response?.status;
+        if (status === 403) {
+          setSnackbarMessage(
+            "You don't have permission to start this app. Please ask the owner to start it.",
+          );
+        } else if (status === 404) {
+          setSnackbarMessage('App not found (404).');
+        } else if (status === 500) {
+          setSnackbarMessage('Internal server error (500).');
+        } else {
+          setSnackbarMessage('An unknown server error occurred.');
+        }
+      } else {
+        setSnackbarMessage('An unknown error occurred.');
+      }
+      setSnackbarSeverity('error');
+      setSnackbarOpen(true);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const startModalBody = (

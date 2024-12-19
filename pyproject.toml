@@ -20,14 +20,14 @@ dependencies = [
     "jupyter",
     "plotlydash-tornado-cmd",
     "bokeh-root-cmd",
-    "jhsingle-native-proxy==0.8.2",
+    "jhsingle-native-proxy==0.8.3",
     "panel",
     "bokeh",
     "traitlets",
     "python-slugify",
     "cachetools",
     "structlog",
-    "PyJWT",
+    "PyJWT<2.10.0",
     "GitPython",
     # pinning to avoid unexpected changes in spec causing
     # unexpected breakage

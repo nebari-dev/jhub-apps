@@ -99,7 +99,7 @@ class HubClient:
         self.tokens.pop()
         return r
 
-    def get_users(self):
+    def get_users(self) -> typing.List[dict]:
         r = requests.get(
             API_URL + "/users",
             params={"include_stopped_servers": True},
@@ -123,8 +123,14 @@ class HubClient:
 
     @requires_user_token
     def get_server(self, username, servername):
-        user = self.get_user(username)
-        for name, server in user["servers"].items():
+        users = self.get_users()
+        filter_given_user = [user for user in users if user["name"] == username]
+        if not filter_given_user:
+            logger.info(f"No user with username: {username} found.")
+            return
+        else:
+            given_user = filter_given_user[0]
+        for name, server in given_user["servers"].items():
             if name == servername:
                 return server
 
@@ -138,18 +144,6 @@ class HubClient:
         # Max limit for servername is 255 chars
         return text[:240]
 
-    def _find_user_server(
-            self, servername
-    ) -> typing.Tuple[typing.Optional[str], typing.Optional[dict]]:
-        """Given a server name, return the user and the server object from
-        the user who owns the server.
-        """
-        users = self.get_users()
-        for user in users:
-            if servername in user["servers"]:
-                return user["name"], user["servers"][servername]
-        return None, None
-
     @requires_user_token
     def start_server(self, username, servername):
         server_owner = username
@@ -162,9 +156,6 @@ class HubClient:
             # Get named server
             server = self.get_server(username, servername)
             if not server:
-                # Shared server (not owned by the given user)
-                server_owner, server = self._find_user_server(servername)
-            if not server:
                 return None
             user_options = server["user_options"]
         url = f"/users/{server_owner}/servers/{servername}"
@@ -173,11 +164,27 @@ class HubClient:
         logger.info("Start server response", status_code=response.status_code, servername=servername)
         return response
 
+    def _get_user_servers(self, username: str) -> typing.Dict:
+        users = self.get_users()
+        user_data = [user for user in users if user["name"] == username]
+        assert len(user_data) == 1
+        user_servers = user_data[0]["servers"]
+        return user_servers
+
     @requires_user_token
     def create_server(self, username: str, servername: str, user_options: UserOptions = None):
         logger.info("Creating new server", user=username)
+        user_servers = self._get_user_servers(username)
         normalized_servername = self.normalize_server_name(servername)
-        unique_servername = f"{normalized_servername}-{uuid.uuid4().hex[:7]}"
+        logger.info("User servers", user_servers=user_servers.keys())
+        # If server with the given name already exists
+        # This is to allow users to create apps with a reasonably deterministic url
+        # instead of a random url everytime. This is more of a temporary solution, until
+        # we have an explicit way to control the url in the UI itself.
+        if normalized_servername in user_servers:
+            unique_servername = f"{normalized_servername}-{uuid.uuid4().hex[:7]}"
+        else:
+            unique_servername = normalized_servername
         logger.info("Normalized servername", servername=servername)
         return self._create_server(username, unique_servername, user_options)
 

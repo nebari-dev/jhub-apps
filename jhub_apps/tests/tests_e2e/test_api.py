@@ -6,8 +6,10 @@ import pytest
 from jhub_apps.service.models import Repository, UserOptions, ServerCreation, SharePermissions
 from jhub_apps.spawner.types import Framework
 from jhub_apps.tests.common.constants import JHUB_APPS_API_BASE_URL, JUPYTERHUB_HOSTNAME
-from jhub_apps.tests.tests_e2e.utils import get_jhub_apps_session, fetch_url_until_title_found, \
-    skip_if_jupyterhub_less_than_5, create_server, stop_server, start_server
+from jhub_apps.tests.tests_e2e.utils import (
+    get_jhub_apps_session, fetch_url_until_title_found, skip_if_jupyterhub_less_than_5,
+    _create_server, stop_server, start_server
+)
 
 EXAMPLE_TEST_REPO = "https://github.com/nebari-dev/jhub-apps-from-git-repo-example.git"
 
@@ -78,6 +80,29 @@ def test_app_config_from_git_api_invalid(
     response_json = response.json()
     assert "detail" in response_json
     assert response_json["detail"] == detail
+
+
+def test_create_server_deterministic_app_url():
+    user_session = get_jhub_apps_session(
+        username=f"deterministic-app-creator-user-{uuid.uuid4().hex[:6]}"
+    )
+    deterministic_server_name = f"fixed-url-{uuid.uuid4().hex[:6]}"
+    servername = _create_server(
+        user_session=user_session,
+        servername=deterministic_server_name
+    )
+    # When a server is created if the server name doesn't exist the
+    # resulting url will have the server name itself, without any added uuid suffix
+    assert servername == deterministic_server_name
+    new_servername = _create_server(
+        user_session=user_session,
+        servername=deterministic_server_name
+    )
+    # Now since a server with name deterministic_server_name already exist, the resulting
+    # url (ending with new_servername) will not be the server name initially provided
+    # by the user
+    assert new_servername != deterministic_server_name
+    assert new_servername.startswith(deterministic_server_name)
 
 
 def test_create_server_with_git_repository():
@@ -176,12 +201,14 @@ def test_starting_stopped_server(shared_username, response_status_code):
         )
     )
     # create server
-    server_name = create_server(app_author_user_session, user_options)
+    server_name = _create_server(app_author_user_session, user_options)
 
     # stop server
     stop_server_response = stop_server(app_author_user_session, server_name)
     assert stop_server_response.status_code == 200
 
     # Start server from shared user's session
-    start_server_response = start_server(share_with_user_session, server_name)
+    start_server_response = start_server(
+        share_with_user_session, server_name, server_owner=app_author_user
+    )
     assert start_server_response.status_code == response_status_code
