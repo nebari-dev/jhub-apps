@@ -134,4 +134,4 @@ c = install_jhub_apps(c, UserCreatingSpawner)
 
 ## Acknowledgments
 
-This project is heavily inspired from @danlester's [cdsdashboards](https://github.com/ideonate/cdsdashboards), without it, this project might not have existed.
+This project is heavily inspired by and uses code from @danlester's [cdsdashboards](https://github.com/ideonate/cdsdashboards), without his work building this would have been a whole lot harder.
