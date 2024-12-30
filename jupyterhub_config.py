@@ -65,28 +65,36 @@ c.JupyterHub.load_groups = {
 # This should be handled by the users of jhub-apps,
 # jhub-apps won't make this decision for the users, so that
 # they can define permissions as per their preferences
+
 for role in c.JupyterHub.load_roles:
     if role["name"] == "user":
         role["scopes"].extend(
             [
-                # Need scope 'read:users:name' to share with users by name
+                # Scopes required for shared servers
+                "access:servers",
+                "servers",
+                # Allow reading user and group names for sharing
                 "read:users:name",
-                # Need scope 'read:groups:name' to share with groups by name
                 "read:groups:name",
+                # Allow sharing functionality (if on JupyterHub 5.x+)
+                "shares!user",
             ]
-            + ["shares!user"]
-            if is_jupyterhub_5()
-            else []
+            if is_jupyterhub_5() else []
         )
         break
 
+# Add permission to start shared servers
 c.JupyterHub.load_roles = c.JupyterHub.load_roles + [
     {
         "name": "allow-access-to-start-shared-server",
-        "description": "Allows users to start shared server",
+        "description": "Allows users to start shared servers",
         "scopes": [
-            "servers",
+            # This scope allows access to servers owned by other users (shared servers)
+            "access:servers!server={server_owner}/{server_name}",
+            # This scope enables starting those servers
+            "servers!server={server_owner}/{server_name}",
         ],
+        # Specify users or groups allowed to start shared servers
         "users": ["user-with-permission-to-start-shared"],
     }
 ]
