@@ -122,7 +122,7 @@ class HubClient:
         return user
 
     @requires_user_token
-    def get_server(self, username, servername):
+    def get_server(self, username, servername=None):
         users = self.get_users()
         filter_given_user = [user for user in users if user["name"] == username]
         if not filter_given_user:
@@ -130,11 +130,17 @@ class HubClient:
             return
         else:
             given_user = filter_given_user[0]
-        for name, server in given_user["servers"].items():
-            if name == servername:
-                return server
+                
+        if servername: 
+            for name, server in given_user["servers"].items():
+                if name == servername:
+                    return server
+        else:
+            # return all user servers
+            return given_user["servers"]
 
-    def normalize_server_name(self, servername):
+    @staticmethod
+    def normalize_server_name(servername):
         # Convert text to lowercase
         text = servername.lower()
         # Remove all special characters except spaces and hyphen
