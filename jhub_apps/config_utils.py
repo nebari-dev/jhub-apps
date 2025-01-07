@@ -124,7 +124,7 @@ class JAppsConfig(SingletonConfigurable):
 
     startup_apps = List(
         trait=PydanticModelTrait(StartupApp),
-        description="only add a server if it is not already created or edit an existing one to match the config, won't delete any servers",
+        description="Add a server if not already created or edit an existing one to match the config. Removing items from this list won't delete any servers.",
         default_value=[],
         help="List of apps to start on JHub Apps Launcher startup",
     ).tag(config=True)
