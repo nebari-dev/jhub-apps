@@ -2,6 +2,7 @@ import os
 from base64 import b64encode
 from secrets import token_bytes
 
+from jhub_apps.service.models import StartupApp
 from traitlets.config import LazyConfigValue
 
 from jhub_apps import JAppsConfig
@@ -22,11 +23,15 @@ def set_defaults_for_jhub_apps_config(c):
     trait_names.remove('parent')
     trait_names.remove('log')
     trait_names.remove('config')
+    # trait_names.remove('_loaded_config_files')
     defaults = JAppsConfig().trait_defaults()
     for trait_name in trait_names:
         if isinstance(getattr(c.JAppsConfig, trait_name), LazyConfigValue):
             setattr(c.JAppsConfig, trait_name, defaults.get(trait_name))
 
+# def validate_input(c):
+#     c.JAppsConfig.startup_apps = JAppsConfig(config=c.JAppsConfig).startup_apps
+    # StartupApp(**c.JAppsConfig.startup_apps)
 
 def install_jhub_apps(c, spawner_to_subclass, *, oauth_no_confirm=False):
     """Install jhub-apps into JupyterHub configuration object (`c`).
@@ -39,6 +44,8 @@ def install_jhub_apps(c, spawner_to_subclass, *, oauth_no_confirm=False):
     c.JupyterHub.allow_named_servers = True
     bind_url = c.JupyterHub.bind_url
 
+    # next line provides validation
+    japps_config = JAppsConfig(config=c.JAppsConfig)
     set_defaults_for_jhub_apps_config(c)
     if not isinstance(bind_url, str):
         raise ValueError(f"c.JupyterHub.bind_url is not set: {c.JupyterHub.bind_url}")
@@ -53,21 +60,21 @@ def install_jhub_apps(c, spawner_to_subclass, *, oauth_no_confirm=False):
         [
             {
                 "name": fast_api_service_name,
-                "url": f"http://{c.JAppsConfig.hub_host}:10202",
+                "url": f"http://{japps_config.hub_host}:10202",
                 "command": [
-                    c.JAppsConfig.python_exec,
+                    japps_config.python_exec,
                     "-m",
                     "uvicorn",
                     "jhub_apps.service.app:app",
                     "--port=10202",
                     "--host=0.0.0.0",
-                    f"--workers={c.JAppsConfig.service_workers}",
+                    f"--workers={japps_config.service_workers}",
                 ],
                 "environment": {
                     "PUBLIC_HOST": c.JupyterHub.bind_url,
-                    "JHUB_APP_TITLE": c.JAppsConfig.app_title,
-                    "JHUB_APP_ICON": c.JAppsConfig.app_icon,
-                    "JHUB_JUPYTERHUB_CONFIG": c.JAppsConfig.jupyterhub_config_path,
+                    "JHUB_APP_TITLE": japps_config.app_title,
+                    "JHUB_APP_ICON": japps_config.app_icon,
+                    "JHUB_JUPYTERHUB_CONFIG": japps_config.jupyterhub_config_path,
                     "JHUB_APP_JWT_SECRET_KEY": _create_token_for_service(),
 
                     # Temp environment variables for Nebari Deployment

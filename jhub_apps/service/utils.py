@@ -30,7 +30,7 @@ def get_jupyterhub_config():
     logger.info(f"Getting JHub config from file: {jhub_config_file_path}")
     hub.load_config_file(jhub_config_file_path)
     # hacky, but I couldn't figure out how to get validation of the config otherwise (In this case, validation converts the dict in the config to a Pydantic model)
-    hub.config.JAppsConfig.startup_apps = JAppsConfig(config=hub.config).startup_apps
+    # hub.config.JAppsConfig.startup_apps = JAppsConfig.instance().startup_apps
     config = hub.config
     logger.info(f"JHub Apps config: {config.JAppsConfig}")
     return config

@@ -6,7 +6,9 @@ from itertools import groupby
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from typing import Any
+from jupyterhub.app import JupyterHub
 
+from jhub_apps.config_utils import JAppsConfig
 from jhub_apps.hub_client.hub_client import HubClient
 from jhub_apps.service.japps_routes import router as japps_router
 from jhub_apps.service.logging_utils import setup_logging
@@ -27,8 +29,16 @@ STATIC_DIR = Path(__file__).parent.parent / "static"
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    config = get_jupyterhub_config()
-    startup_apps_list = config['JAppsConfig']['startup_apps']
+    hub = JupyterHub()
+    jhub_config_file_path = os.environ["JHUB_JUPYTERHUB_CONFIG"]
+    hub.load_config_file(jhub_config_file_path)
+    
+    japps_config = JAppsConfig.instance(config=hub.config)
+    assert len(japps_config.startup_apps) > 0, "No startup apps defined in JHubAppsConfig"
+    # japps_config.load_config_file(config_file_path)
+
+    startup_apps_list = japps_config.startup_apps
+    # print(startup_apps_list)
     # group user options by username
     grouped_user_options_list = groupby(startup_apps_list, lambda x: x.username)
     for username, startup_apps_list in grouped_user_options_list:
