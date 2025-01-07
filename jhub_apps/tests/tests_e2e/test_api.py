@@ -211,4 +211,4 @@ def test_starting_stopped_server(shared_username, response_status_code):
     start_server_response = start_server(
         share_with_user_session, server_name, server_owner=app_author_user
     )
-    assert start_server_response.status_code == response_status_code
+    assert start_server_response.status_code == response_status_code, start_server_response.json()

@@ -45,7 +45,7 @@ def install_jhub_apps(c, spawner_to_subclass, *, oauth_no_confirm=False):
     bind_url = c.JupyterHub.bind_url
 
     # next line provides validation
-    japps_config = JAppsConfig(config=c.JAppsConfig)
+    japps_config = JAppsConfig(config=c)
     set_defaults_for_jhub_apps_config(c)
     if not isinstance(bind_url, str):
         raise ValueError(f"c.JupyterHub.bind_url is not set: {c.JupyterHub.bind_url}")

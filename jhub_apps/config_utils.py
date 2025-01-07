@@ -111,12 +111,14 @@ class JAppsConfig(SingletonConfigurable):
     allowed_frameworks = List(
         None,
         help="Allow only a specific set of frameworks to spun up apps.",
+        default_value=None,
         allow_none=True,
     ).tag(config=True)
 
     blocked_frameworks = List(
         None,
         help="Disallow a set of frameworks to avoid spinning up apps using those frameworks",
+        default_value=None,
         allow_none=True,
     ).tag(config=True)
 

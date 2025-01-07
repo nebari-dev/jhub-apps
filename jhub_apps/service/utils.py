@@ -181,7 +181,7 @@ def _check_if_framework_allowed(user_options: UserOptions):
     allowed_frameworks = _get_allowed_frameworks(config)
     if user_options.framework not in allowed_frameworks:
         raise HTTPException(
-            detail=f"Given framework {user_options.framework} is not allowed on this deployment, "
+            detail=f"Given framework \"{user_options.framework}\" is not allowed on this deployment, "
                    f"please contact admin.",
             status_code=status.HTTP_403_FORBIDDEN,
         )
