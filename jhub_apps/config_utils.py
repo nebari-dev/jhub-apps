@@ -128,8 +128,3 @@ class JAppsConfig(SingletonConfigurable):
         default_value=[],
         help="List of apps to start on JHub Apps Launcher startup",
     ).tag(config=True)
-
-    def load_config_file(self, config_file_path: str):
-        loader = traitlets.config.loader.PyFileConfigLoader(filename=config_file_path)
-        config = loader.load_config()
-        self.update_config(config)
