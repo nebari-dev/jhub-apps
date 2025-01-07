@@ -122,11 +122,6 @@ class JAppsConfig(SingletonConfigurable):
         allow_none=True,
     ).tag(config=True)
 
-    # TODO: Remove this attribute
-    my_int_list = List(
-        trait=Int,
-    ).tag(config=True)
-
     startup_apps = List(
         trait=PydanticModelTrait(StartupApp),
         description="only add a server if it is not already created or edit an existing one to match the config, won't delete any servers",

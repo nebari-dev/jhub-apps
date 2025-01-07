@@ -17,7 +17,6 @@ c.JupyterHub.bind_url = hub_url
 c.JAppsConfig.jupyterhub_config_path = "jupyterhub_config.py"
 c.JAppsConfig.conda_envs = []
 c.JAppsConfig.service_workers = 1
-c.JAppsConfig.my_int_list = [1]
 c.JAppsConfig.startup_apps = [
     {
         "username": "admin",
