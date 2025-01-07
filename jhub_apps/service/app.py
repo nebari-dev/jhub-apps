@@ -3,16 +3,13 @@ from contextlib import asynccontextmanager
 import os
 from pathlib import Path
 from itertools import groupby
-import time
 import tempfile
 
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from typing import Any
-from jupyterhub.app import JupyterHub
 from filelock import FileLock
 
-from jhub_apps.config_utils import JAppsConfig
 from jhub_apps.hub_client.hub_client import HubClient
 from jhub_apps.service.japps_routes import router as japps_router
 from jhub_apps.service.logging_utils import setup_logging
