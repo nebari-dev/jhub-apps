@@ -20,11 +20,11 @@ c.JAppsConfig.service_workers = 1
 c.JAppsConfig.my_int_list = [1]
 c.JAppsConfig.startup_apps = [
     {
-        "username": "alice",
+        "username": "admin",
         # TODO: Add a test case when servername is different from noralized_servername
-        "servername": "alice's-startup-server",
+        "servername": "admin's-startup-server",
         "user_options": {
-            "display_name": "Alice's Panel App",
+            "display_name": "Admin's Panel App",
             "description": "description",
             "thumbnail": "data:image/jpeg;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAFUlEQVR42mNkYPhfz0AEYBxVSF+FAP5FDvcfRYWgAAAAAElFTkSuQmCC",
             "filepath": "",

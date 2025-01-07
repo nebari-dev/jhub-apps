@@ -21,7 +21,6 @@ from slugify import slugify
 CACHE_JUPYTERHUB_CONFIG_TIMEOUT = 180
 logger = structlog.get_logger(__name__)
 
-
 # Cache JupyterHub config as it might be an expensive operation
 @cached(cache=TTLCache(maxsize=1024, ttl=CACHE_JUPYTERHUB_CONFIG_TIMEOUT))
 def get_jupyterhub_config():
@@ -38,20 +37,20 @@ def get_jupyterhub_config():
 
 def get_conda_envs(config, user):
     """This will extract conda environment from the JupyterHub config"""
-    if isinstance(config.JAppsConfig.conda_envs, list):
-        return config.JAppsConfig.conda_envs
-    elif isinstance(config.JAppsConfig.conda_envs, LazyConfigValue):
+    if isinstance(JAppsConfig.instance().conda_envs, list):
+        return JAppsConfig.instance().conda_envs
+    elif isinstance(JAppsConfig.instance().conda_envs, LazyConfigValue):
         return []
-    elif callable(config.JAppsConfig.conda_envs):
+    elif callable(JAppsConfig.instance().conda_envs):
         try:
             logger.info("JAppsConfig.conda_envs is a callable, calling now..")
-            return config.JAppsConfig.conda_envs(user)
+            return JAppsConfig.instance().conda_envs(user)
         except Exception as e:
             logger.exception(e)
             return []
     else:
         raise ValueError(
-            f"Invalid value for config.JAppsConfig.conda_envs: {config.JAppsConfig.conda_envs}"
+            f"Invalid value for JAppsConfig.instance().conda_envs: {JAppsConfig.instance().conda_envs}"
         )
 
 
@@ -192,10 +191,10 @@ def _get_allowed_frameworks(config):
     """Given the JupyterHub config, find out allowed frameworks."""
     all_frameworks = {framework.name for framework in FRAMEWORKS}
     allowed_frameworks = all_frameworks
-    if config.JAppsConfig.allowed_frameworks is not None:
-        allowed_frameworks_by_admin = set(config.JAppsConfig.allowed_frameworks)
+    if JAppsConfig.instance().allowed_frameworks is not None:
+        allowed_frameworks_by_admin = set(JAppsConfig.instance().allowed_frameworks)
         allowed_frameworks = all_frameworks.intersection(allowed_frameworks_by_admin)
-    if config.JAppsConfig.blocked_frameworks is not None:
-        blocked_frameworks_by_admin = set(config.JAppsConfig.blocked_frameworks)
+    if JAppsConfig.instance().blocked_frameworks is not None:
+        blocked_frameworks_by_admin = set(JAppsConfig.instance().blocked_frameworks)
         allowed_frameworks -= blocked_frameworks_by_admin
     return allowed_frameworks
