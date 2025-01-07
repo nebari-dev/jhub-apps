@@ -804,4 +804,51 @@ describe('AppCard', () => {
       }),
     );
   });
+
+  test('renders app card with correct author name', () => {
+    const queryClient = new QueryClient({
+      defaultOptions: {
+        queries: {
+          retry: false,
+        },
+      },
+    });
+
+    const { baseElement } = render(
+      <RecoilRoot>
+        <QueryClientProvider client={queryClient}>
+          <AppCard
+            id="1"
+            title="Test App"
+            description="Some app description"
+            framework="Some Framework"
+            url="/some-url"
+            thumbnail="/some-thumbnail.png"
+            serverStatus="Ready"
+            app={{
+              id: '1',
+              name: 'Test App',
+              framework: 'Some Framework',
+              description: 'Test App 1',
+              url: '/user/test/test-app-1/',
+              thumbnail: '',
+              username: 'test',
+              ready: true,
+              public: false,
+              shared: false,
+              last_activity: new Date(),
+              pending: false,
+              stopped: false,
+              status: 'false',
+              full_name: 'test/test-app-1',
+            }}
+          />
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+
+    const author = baseElement.querySelector('.card-author');
+    expect(author).toBeInTheDocument();
+    expect(author).toHaveTextContent('test');
+  });
 });
