@@ -123,7 +123,7 @@ def create_app(
         logger.info("Select Next Page for Server options")
         expect(next_page_locator).to_be_visible()
         next_page_locator.click()
-        assert page.url.endswith("server-types")
+        assert page.url.endswith("server-types"), "page doesn't end with server-types"
         small_instance_radio_button = page.get_by_label("Small Instance")
         logger.info("Expect Small Instance to be visible")
         expect(small_instance_radio_button).to_be_visible()
