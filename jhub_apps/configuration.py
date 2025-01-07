@@ -23,15 +23,11 @@ def set_defaults_for_jhub_apps_config(c):
     trait_names.remove('parent')
     trait_names.remove('log')
     trait_names.remove('config')
-    # trait_names.remove('_loaded_config_files')
     defaults = JAppsConfig().trait_defaults()
     for trait_name in trait_names:
         if isinstance(getattr(c.JAppsConfig, trait_name), LazyConfigValue):
             setattr(c.JAppsConfig, trait_name, defaults.get(trait_name))
 
-# def validate_input(c):
-#     c.JAppsConfig.startup_apps = JAppsConfig(config=c.JAppsConfig).startup_apps
-    # StartupApp(**c.JAppsConfig.startup_apps)
 
 def install_jhub_apps(c, spawner_to_subclass, *, oauth_no_confirm=False):
     """Install jhub-apps into JupyterHub configuration object (`c`).
@@ -44,8 +40,7 @@ def install_jhub_apps(c, spawner_to_subclass, *, oauth_no_confirm=False):
     c.JupyterHub.allow_named_servers = True
     bind_url = c.JupyterHub.bind_url
 
-    # next line provides validation
-    japps_config = JAppsConfig(config=c)
+    japps_config = JAppsConfig(config=c)  # validate inputs
     set_defaults_for_jhub_apps_config(c)
     if not isinstance(bind_url, str):
         raise ValueError(f"c.JupyterHub.bind_url is not set: {c.JupyterHub.bind_url}")

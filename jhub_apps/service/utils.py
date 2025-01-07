@@ -21,6 +21,16 @@ from slugify import slugify
 CACHE_JUPYTERHUB_CONFIG_TIMEOUT = 180
 logger = structlog.get_logger(__name__)
 
+def _replace_JAppsConfig_config_with_validated_config(config, validated_config):
+    """Replace the config attirbutes with the instantiated object attributes which are validated.
+    
+    This is a hack. Instead we should be able to use JHubAppsConfig.instance() directly in all places except for the code which runs in the same process as Jupyterhub (e.g. spawner_creation.py, install_jhub_apps fn).
+    """
+    trait_names = validated_config.trait_names()
+    for trait_name in trait_names:
+        setattr(config, trait_name, getattr(validated_config, trait_name))
+
+
 # Cache JupyterHub config as it might be an expensive operation
 @cached(cache=TTLCache(maxsize=1024, ttl=CACHE_JUPYTERHUB_CONFIG_TIMEOUT))
 def get_jupyterhub_config():
@@ -28,8 +38,8 @@ def get_jupyterhub_config():
     jhub_config_file_path = os.environ["JHUB_JUPYTERHUB_CONFIG"]
     logger.info(f"Getting JHub config from file: {jhub_config_file_path}")
     hub.load_config_file(jhub_config_file_path)
-    # hacky, but I couldn't figure out how to get validation of the config otherwise (In this case, validation converts the dict in the config to a Pydantic model)
-    # hub.config.JAppsConfig.startup_apps = JAppsConfig.instance().startup_apps
+    japps_config = JAppsConfig.instance(config=hub.config)
+    _replace_JAppsConfig_config_with_validated_config(hub.config.JAppsConfig, japps_config)
     config = hub.config
     logger.info(f"JHub Apps config: {config.JAppsConfig}")
     return config
