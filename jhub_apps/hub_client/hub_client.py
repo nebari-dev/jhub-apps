@@ -122,7 +122,7 @@ class HubClient:
         return user
 
     @requires_user_token
-    def get_server(self, username, servername=None):
+    def get_server(self, username, servername=None) -> dict | typing.Iterable[dict]:
         users = self.get_users()
         filter_given_user = [user for user in users if user["name"] == username]
         if not filter_given_user:
@@ -178,7 +178,7 @@ class HubClient:
         return user_servers
 
     @requires_user_token
-    def create_server(self, username: str, servername: str, user_options: UserOptions = None):
+    def create_server(self, username: str, servername: str, user_options: UserOptions = None) -> tuple[int, str]:
         logger.info("Creating new server", user=username)
         user_servers = self._get_user_servers(username)
         normalized_servername = self.normalize_server_name(servername)
@@ -195,7 +195,7 @@ class HubClient:
         return self._create_server(username, unique_servername, user_options)
 
     @requires_user_token
-    def edit_server(self, username: str, servername: str, user_options: UserOptions = None):
+    def edit_server(self, username: str, servername: str, user_options: UserOptions = None) -> tuple[int, str]:
         logger.info("Editing server", server_name=servername)
         server = self.get_server(username, servername)
         if server:
@@ -207,7 +207,7 @@ class HubClient:
         logger.info("Now creating the server with new params", server_name=servername)
         return self._create_server(username, servername, user_options)
 
-    def _create_server(self, username: str, servername: str, user_options: UserOptions = None):
+    def _create_server(self, username: str, servername: str, user_options: UserOptions = None) -> tuple[int, str]:
         url = f"/users/{username}/servers/{servername}"
         params = user_options.model_dump()
         data = {"name": servername, **params}
@@ -313,7 +313,7 @@ class HubClient:
         return shared_servers
 
     @requires_user_token
-    def delete_server(self, username, server_name, remove=False):
+    def delete_server(self, username, server_name, remove=False) -> int:
         if server_name is None:
             # Default server and not named server
             server_name = ""
