@@ -29,6 +29,7 @@ dependencies = [
     "structlog",
     "PyJWT<2.10.0",
     "GitPython",
+    "filelock>=3",
     # pinning to avoid unexpected changes in spec causing
     # unexpected breakage
     "conda-project==0.4.2"

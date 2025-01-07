@@ -31,3 +31,4 @@ dependencies:
   - pytest-playwright
   - pre-commit
   - conda-project=0.4.2
+  - filelock>=3
