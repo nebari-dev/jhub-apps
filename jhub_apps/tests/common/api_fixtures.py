@@ -55,7 +55,7 @@ class JupyterHubManager:
                     break
             time.sleep(1)
         
-        # Capture the environment variables of the jhub_apps subprocess
+        # Capture the environment variables of the jhub_apps subprocess so that HubClient will work correctly
         env_vars = jhub_apps_process.environ()
         return env_vars
     
