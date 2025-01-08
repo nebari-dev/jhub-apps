@@ -21,6 +21,25 @@ c.JAppsConfig.startup_apps = [
     {
         "username": "admin",
         # TODO: Add a test case when servername is different from normalized_servername
+        "servername": "admin's-2nd-startup-server",
+        "user_options": {
+            "display_name": "Admin's 2nd App",
+            "description": "description",
+            "thumbnail": "data:image/jpeg;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAFUlEQVR42mNkYPhfz0AEYBxVSF+FAP5FDvcfRYWgAAAAAElFTkSuQmCC",
+            "filepath": "panel_basic.py",
+            "framework": "panel",
+            "public": False,
+            "keep_alive": False,
+            "repository": {"url": "https://github.com/nebari-dev/jhub-apps-from-git-repo-example.git"},
+            "jhub_app": True,  # This should always be true, so maybe don't let users specify this
+            "conda_env": "",
+            "profile": "",
+            "share_with": {"users": ["admin"], "groups": ["class-A"]},
+        },
+    },
+    {
+        "username": "admin",
+        # TODO: Add a test case when servername is different from normalized_servername
         "servername": "admin's-startup-server",
         "user_options": {
             "display_name": "Admin's Panel App",
