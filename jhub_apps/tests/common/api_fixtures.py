@@ -27,10 +27,7 @@ class JupyterHubManager:
                 stdout=self.log_file,
                 stderr=subprocess.STDOUT
             )
-            # wait a bit and check if the process is still running
-            time.sleep(3)
-            if self.process.poll() is not None:
-                raise Exception("JupyterHub process failed to start")
+
             self.env_vars = self.get_jhub_apps_env_vars()
 
     def stop(self):
@@ -40,6 +37,7 @@ class JupyterHubManager:
             self.log_file.close()
             self.process = None
             self.log_file = None
+
 
     def restart(self):
         self.stop()
@@ -54,22 +52,21 @@ class JupyterHubManager:
                     jhub_apps_process = psutil.Process(conn.pid)
                     break
             time.sleep(1)
-        
+    
         # Capture the environment variables of the jhub_apps subprocess so that HubClient will work correctly
         env_vars = jhub_apps_process.environ()
+        env_vars.pop("JUPYTERHUB_SERVICE_PREFIX", None)  # client needs this unset as currently used in tests
         return env_vars
     
 @pytest.fixture(scope="session")
 def jupyterhub_manager():
-    manager = JupyterHubManager()
-    manager.start()
-    os.environ.update(manager.env_vars)
-    yield manager
-    manager.stop()
-
-# @pytest.fixture(autouse=True)
-# def set_env_vars(jupyterhub_manager):
-#     os.environ.update(jupyterhub_manager.env_vars)
+    try:
+        manager = JupyterHubManager()
+        manager.start()
+        os.environ.update(manager.env_vars)
+        yield manager
+    finally:
+        manager.stop()
 
 
 @pytest.fixture
@@ -93,3 +90,4 @@ def client():
 
     app.dependency_overrides[get_current_user] = mock_get_user_name
     return TestClient(app=app)
+
