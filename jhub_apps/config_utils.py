@@ -1,9 +1,9 @@
 import textwrap
 import typing as t
 from pydantic import BaseModel, ValidationError
-from traitlets import Int, Unicode, Union, List, Callable, Integer, TraitType, TraitError
-import traitlets
-from traitlets.config import SingletonConfigurable, Enum, Application, LoggingConfigurable
+from traitlets import Unicode, Union, List, Callable, Integer, TraitType, TraitError
+
+from traitlets.config import SingletonConfigurable, Enum
 
 from jhub_apps.service.models import StartupApp
 

@@ -2,7 +2,6 @@ import os
 from base64 import b64encode
 from secrets import token_bytes
 
-from jhub_apps.service.models import StartupApp
 from traitlets.config import LazyConfigValue
 
 from jhub_apps import JAppsConfig

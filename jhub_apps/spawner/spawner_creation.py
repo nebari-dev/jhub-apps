@@ -2,7 +2,6 @@ import uuid
 
 import structlog
 
-from jhub_apps.config_utils import JAppsConfig
 from jhub_apps.spawner.utils import get_origin_host
 from jhub_apps.spawner.command import (
     EXAMPLES_DIR,
