@@ -63,6 +63,7 @@ def jupyterhub_manager():
     try:
         manager = JupyterHubManager()
         manager.start()
+        time.sleep(10)  # give some time to start properly
         os.environ.update(manager.env_vars)
         yield manager
     finally:
