@@ -54,7 +54,7 @@ export const AppCard = ({
   framework,
   thumbnail,
   url,
-  username,
+  // username,
   isPublic = false,
   isShared,
   serverStatus,
@@ -339,7 +339,7 @@ export const AppCard = ({
                         fontSize: '12px',
                       }}
                     >
-                      {username}
+                      {app?.full_name?.split('/')[0] || ''}
                     </span>
                   </Typography>
                 </CardContent>

@@ -282,6 +282,13 @@ export const Home = (): React.ReactElement => {
       setSubmitting(false);
       return;
     }
+
+    // If default app, redirect to spawn URL
+    if (isDefaultApp(currentApp.name)) {
+      window.location.assign(getSpawnUrl(currentUser, currentApp));
+      return;
+    }
+
     // Extract the creator's name from the full_name
     const creatorName = currentApp.full_name?.split('/')[0];
 
@@ -318,8 +325,6 @@ export const Home = (): React.ReactElement => {
     } finally {
       setSubmitting(false);
     }
-
-    window.location.assign(getSpawnUrl(currentUser, currentApp));
   };
 
   const startModalBody = (
