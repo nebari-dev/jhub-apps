@@ -24,7 +24,7 @@ logger = structlog.get_logger(__name__)
 def _replace_JAppsConfig_config_with_validated_config(config, validated_config):
     """Replace the config attirbutes with the instantiated object attributes which are validated.
     
-    This is a hack. Instead we should be able to use JHubAppsConfig.instance() directly in all places except for the code which runs in the same process as Jupyterhub (e.g. spawner_creation.py, install_jhub_apps fn).
+    This is a hack. Instead we could use JHubAppsConfig.instance() whenever JHubAppsConfig is needed except for the code which runs in the same process as Jupyterhub (e.g. spawner_creation.py, install_jhub_apps fn).
     """
     trait_names = validated_config.trait_names()
     for trait_name in trait_names:
