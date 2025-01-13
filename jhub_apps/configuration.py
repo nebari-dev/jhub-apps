@@ -1,6 +1,7 @@
 import os
 from base64 import b64encode
 from secrets import token_bytes
+import tempfile
 
 from traitlets.config import LazyConfigValue
 
@@ -70,6 +71,7 @@ def install_jhub_apps(c, spawner_to_subclass, *, oauth_no_confirm=False):
                     "JHUB_APP_ICON": japps_config.app_icon,
                     "JHUB_JUPYTERHUB_CONFIG": japps_config.jupyterhub_config_path,
                     "JHUB_APP_JWT_SECRET_KEY": _create_token_for_service(),
+                    "JHUB_APP_LOCK_FILE": tempfile.NamedTemporaryFile(delete=False).name,
 
                     # Temp environment variables for Nebari Deployment
                     "PROXY_API_SERVICE_PORT": "*",

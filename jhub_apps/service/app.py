@@ -3,12 +3,11 @@ from contextlib import asynccontextmanager
 import os
 from pathlib import Path
 from itertools import groupby
-import tempfile
 
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from typing import Any
-from filelock import FileLock
+from filelock import FileLock, Timeout
 
 from jhub_apps.hub_client.hub_client import HubClient
 from jhub_apps.service.japps_routes import router as japps_router
@@ -28,62 +27,82 @@ logger = structlog.get_logger(__name__)
 
 STATIC_DIR = Path(__file__).parent.parent / "static"
 
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     config = get_jupyterhub_config()
 
-    # Run the Startup Apps with 1 uvicorn worker
-    lock = Path(tempfile.gettempdir()) / "jhub_apps" / "startup"
-    with FileLock(lock):
+    # Have 1 uvicorn worker start the Startup Apps
+    lock_path = os.environ["JHUB_APP_LOCK_FILE"]
+
+    lock = FileLock(lock_path)
+    try:
+        # raises Timeout if lock is not acquired
+        lock.acquire(blocking=False)
+
         startup_apps_list = config.JAppsConfig.startup_apps
-        
+
         # group user options by username
         grouped_user_options_list = groupby(startup_apps_list, lambda x: x.username)
         for username, user_apps_list in grouped_user_options_list:
-            asyncio.create_task(instantiate_startup_apps(user_apps_list=list(user_apps_list), username=username))
-
-    yield
-
-async def instantiate_startup_apps(user_apps_list: list[dict[str, Any]], username: str):
-        # Let FastAPI continue to set up
-        await asyncio.sleep(1)        
-        
-        hub_client = HubClient(username=username)        
-        existing_servers = hub_client.get_server(username=username)                
-        for startup_app in user_apps_list:
-            user_options = startup_app.user_options
-            normalized_servername = startup_app.normalized_servername
-
-            # delete server if it exists
-            while normalized_servername in existing_servers:  
-                logger.info(f"Deleting server {normalized_servername}")          
-                status_code = hub_client.delete_server(username, normalized_servername, remove=True)
-                await asyncio.sleep(1)
-                existing_servers = hub_client.get_server(username=username)                
-            
-
-            # create the server
-            logger.info(f"Creating server {normalized_servername}")
-            while normalized_servername not in existing_servers:
-                status_code, servername = hub_client.create_server(
-                    username=username,
-                    servername=normalized_servername,
-                    user_options=user_options,
+            asyncio.create_task(
+                instantiate_startup_apps(
+                    user_apps_list=list(user_apps_list), username=username,
                 )
-                await asyncio.sleep(1)
-                existing_servers = hub_client.get_server(username=username)                
+            )
+    except Timeout:
+        pass
+    
+    yield    
+    # release the lock on shutdown
+    FileLock(lock_path).release()
 
-            # turn off the server
-            logger.info(f"Stopping server {normalized_servername}")
-            while not existing_servers[normalized_servername]['stopped']:
-                status_code = hub_client.delete_server(username, normalized_servername, remove=False)
-                if status_code == 204:
-                    # server stopped successfully
-                    break
-                await asyncio.sleep(1)
-                existing_servers = hub_client.get_server(username=username)            
-        
-        logger.info('Done instantiating apps')
+
+async def instantiate_startup_apps(
+    user_apps_list: list[dict[str, Any]], username: str,
+):
+    # Let FastAPI continue to set up
+    await asyncio.sleep(1)
+
+    hub_client = HubClient(username=username)
+    existing_servers = hub_client.get_server(username=username)
+    for startup_app in user_apps_list:
+        user_options = startup_app.user_options
+        normalized_servername = startup_app.normalized_servername
+
+        # delete server if it exists
+        while normalized_servername in existing_servers:
+            logger.info(f"Deleting server {normalized_servername}")
+            status_code = hub_client.delete_server(
+                username, normalized_servername, remove=True
+            )
+            await asyncio.sleep(1)
+            existing_servers = hub_client.get_server(username=username)
+
+        # create the server
+        logger.info(f"Creating server {normalized_servername}")
+        while normalized_servername not in existing_servers:
+            status_code, servername = hub_client.create_server(
+                username=username,
+                servername=normalized_servername,
+                user_options=user_options,
+            )
+            await asyncio.sleep(1)
+            existing_servers = hub_client.get_server(username=username)
+
+        # turn off the server
+        logger.info(f"Stopping server {normalized_servername}")
+        while not existing_servers[normalized_servername]["stopped"]:
+            status_code = hub_client.delete_server(
+                username, normalized_servername, remove=False
+            )
+            if status_code == 204:
+                # server stopped successfully
+                break
+            await asyncio.sleep(1)
+            existing_servers = hub_client.get_server(username=username)
+    logger.info("Done instantiating apps")
+
 
 app = FastAPI(
     title="JApps Service",
