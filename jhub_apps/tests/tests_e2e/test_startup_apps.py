@@ -23,17 +23,21 @@ def retry_test(max_attempts=5, delay=1):
         return wrapper
     return decorator
 
-# retry is a hack since we don't have a way to tell when the startup servers are ready at the moment
-@retry_test()
+
 def test_startup_apps(jupyterhub_manager):
     from jhub_apps.hub_client.hub_client import HubClient
 
     # get admin servers
     hc = HubClient(username="admin")
-    admin_servers = hc.get_server("admin")
 
     expected_servernames = [hc.normalize_server_name(name) for name in["admin's-startup-server", "admin's-2nd-startup-server"]]
 
-    for servername in expected_servernames:
-        assert servername in admin_servers
+    # retry is a hack since we don't have a way to tell when the startup servers are ready at the moment
+    @retry_test()
+    def check_for_servernames(hc, expected_servernames):        
+        admin_servers = hc.get_server("admin")
 
+        for servername in expected_servernames:
+            assert servername in admin_servers
+    
+    check_for_servernames(hc, expected_servernames)
