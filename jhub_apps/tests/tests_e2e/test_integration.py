@@ -50,6 +50,7 @@ def test_panel_app_creation(playwright: Playwright, with_server_options) -> None
         create_users(page, users=[share_with_user])
         page.goto(BASE_URL)
         sign_in_and_authorize(page, username=f"admin-{app_suffix}", password="password")
+        page.goto(BASE_URL, wait_until="networkidle")
         # Verify that the page is loaded
         logo = page.locator("id=app-logo")
         expect(logo).to_be_visible()
@@ -106,6 +107,10 @@ def create_app(
     deploy_button = page.get_by_role("button", name="Deploy App")
     expect(deploy_button).to_be_visible()
     deploy_button.click()
+
+    # Wait for new page URL
+    page.wait_for_url("**/create-app")
+
     page_title = page.locator("h1").filter(has_text="Deploy a new app")
     expect(page_title).to_be_visible()
     logger.info("Fill App display Name")
