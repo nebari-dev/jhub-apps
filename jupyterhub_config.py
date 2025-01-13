@@ -20,7 +20,6 @@ c.JAppsConfig.service_workers = 1
 c.JAppsConfig.startup_apps = [
     {
         "username": "admin",
-        # TODO: Add a test case when servername is different from normalized_servername
         "servername": "admin's-2nd-startup-server",
         "user_options": {
             "display_name": "Admin's 2nd App",
@@ -39,7 +38,6 @@ c.JAppsConfig.startup_apps = [
     },
     {
         "username": "admin",
-        # TODO: Add a test case when servername is different from normalized_servername
         "servername": "admin's-startup-server",
         "user_options": {
             "display_name": "Admin's Panel App",
