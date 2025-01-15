@@ -122,13 +122,15 @@ class HubClient:
         return user
 
     @requires_user_token
-    def get_server(self, username, servername=None) -> dict | typing.Iterable[dict]:
+    def get_server(self, username, servername=None) -> typing.Optional[typing.Union[dict, typing.Iterable[dict]]]:
+        """Returns the given server for the given user or all servers if servername is None"""
         users = self.get_users()
         filter_given_user = [user for user in users if user["name"] == username]
         if not filter_given_user:
             logger.info(f"No user with username: {username} found.")
             return
         else:
+            assert len(filter_given_user) == 1
             given_user = filter_given_user[0]
                 
         if servername: 
@@ -170,17 +172,10 @@ class HubClient:
         logger.info("Start server response", status_code=response.status_code, servername=servername)
         return response
 
-    def _get_user_servers(self, username: str) -> typing.Dict:
-        users = self.get_users()
-        user_data = [user for user in users if user["name"] == username]
-        assert len(user_data) == 1
-        user_servers = user_data[0]["servers"]
-        return user_servers
-
     @requires_user_token
     def create_server(self, username: str, servername: str, user_options: UserOptions = None) -> tuple[int, str]:
         logger.info("Creating new server", user=username)
-        user_servers = self._get_user_servers(username)
+        user_servers = self.get_server(username)
         normalized_servername = self.normalize_server_name(servername)
         logger.info("User servers", user_servers=user_servers.keys())
         # If server with the given name already exists
