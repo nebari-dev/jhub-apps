@@ -1,13 +1,15 @@
 import os
 from base64 import b64encode
 from secrets import token_bytes
-import tempfile
 
 from traitlets.config import LazyConfigValue
 
 from jhub_apps import JAppsConfig
 from jhub_apps.hub_client.utils import is_jupyterhub_5
 from jhub_apps.spawner.spawner_creation import subclass_spawner
+
+FASTAPI_SERVICE_NAME = "japps"
+STARTUP_APPS_SERVICE_NAME = f"{FASTAPI_SERVICE_NAME}-initialize-startup-apps"
 
 
 def _create_token_for_service():
@@ -47,14 +49,13 @@ def install_jhub_apps(c, spawner_to_subclass, *, oauth_no_confirm=False):
     if not c.JupyterHub.services:
         c.JupyterHub.services = []
     public_host = c.JupyterHub.bind_url
-    fast_api_service_name = "japps"
     oauth_redirect_uri = (
-        f"{public_host}/services/{fast_api_service_name}/oauth_callback"
+        f"{public_host}/services/{FASTAPI_SERVICE_NAME}/oauth_callback"
     )
     c.JupyterHub.services.extend(
         [
             {
-                "name": fast_api_service_name,
+                "name": FASTAPI_SERVICE_NAME,
                 "url": f"http://{japps_config.hub_host}:10202",
                 "command": [
                     japps_config.python_exec,
@@ -71,7 +72,6 @@ def install_jhub_apps(c, spawner_to_subclass, *, oauth_no_confirm=False):
                     "JHUB_APP_ICON": japps_config.app_icon,
                     "JHUB_JUPYTERHUB_CONFIG": japps_config.jupyterhub_config_path,
                     "JHUB_APP_JWT_SECRET_KEY": _create_token_for_service(),
-                    "JHUB_APP_LOCK_FILE": tempfile.NamedTemporaryFile(delete=False).name,
 
                     # Temp environment variables for Nebari Deployment
                     "PROXY_API_SERVICE_PORT": "*",
@@ -81,6 +81,22 @@ def install_jhub_apps(c, spawner_to_subclass, *, oauth_no_confirm=False):
                 "oauth_no_confirm": oauth_no_confirm,
                 "display": False,
             },
+            {
+                "name": STARTUP_APPS_SERVICE_NAME,
+                "command": [
+                    japps_config.python_exec,
+                    "-m",
+                    "jhub_apps.service.initialize_startup_apps",
+                ],
+                "environment": {
+                    "PUBLIC_HOST": c.JupyterHub.bind_url,
+                    "JHUB_JUPYTERHUB_CONFIG": japps_config.jupyterhub_config_path,
+
+                    # Temp environment variables for Nebari Deployment
+                    "PROXY_API_SERVICE_PORT": "*",
+                    "HUB_SERVICE_PORT": "*",
+                },
+            },
         ]
     )
 
@@ -88,7 +104,9 @@ def install_jhub_apps(c, spawner_to_subclass, *, oauth_no_confirm=False):
         {
             "name": "japps-service-role",  # name the role
             "services": [
-                "japps",  # assign the service to this role
+                # assign the services to this role,
+                FASTAPI_SERVICE_NAME,  
+                STARTUP_APPS_SERVICE_NAME,
             ],
             "scopes": [
                 # declare what permissions the service should have
