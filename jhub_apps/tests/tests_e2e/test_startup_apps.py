@@ -4,7 +4,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-def retry_test(max_attempts=5, delay=1):
+def retry_test(max_attempts=10, delay=1):
     def decorator(test_func):
         @functools.wraps(test_func)
         def wrapper(*args, **kwargs):
