@@ -21,7 +21,7 @@ class JupyterHubManager:
         if exceptions:
             if sys.version_info >= (3, 11):
                 # ExceptionGroup added in 3.11
-                raise ExceptionGroup("Needed ports in use:", exceptions)
+                raise ExceptionGroup("Needed ports in use:", exceptions)  # noqa: F821
             else:
                 raise Exception(
                     exceptions
