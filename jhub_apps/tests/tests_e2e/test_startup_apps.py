@@ -34,10 +34,10 @@ def test_startup_apps(jupyterhub_manager):
 
     # retry is a hack since we don't have a way to tell when the startup servers are ready at the moment
     @retry_test()
-    def check_for_servernames(hc, expected_servernames):        
+    def check_for_servernames(hc, expected_servernames):
         admin_servers = hc.get_server("admin")
 
         for servername in expected_servernames:
             assert servername in admin_servers
-    
+
     check_for_servernames(hc, expected_servernames)
