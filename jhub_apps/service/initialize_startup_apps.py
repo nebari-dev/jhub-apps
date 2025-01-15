@@ -1,7 +1,6 @@
 import asyncio
 from itertools import groupby
 import signal
-import sys
 import time
 
 import httpx
