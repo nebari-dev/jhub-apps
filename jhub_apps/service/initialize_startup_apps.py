@@ -1,6 +1,8 @@
 import asyncio
 from itertools import groupby
 import signal
+import sys
+import time
 
 import httpx
 import structlog
@@ -29,17 +31,17 @@ async def async_main():
         grouped_user_options_list = groupby(startup_apps_list, lambda x: x.username)
 
         # wait til jhub app is ready with timeout
-        jhub_apps_ready = False
-        try:
-            async with asyncio.timeout(15), httpx.AsyncClient() as client:
-                while not jhub_apps_ready:
-                    r = await client.get(f"http://{config.JAppsConfig.hub_host}:10202/services/{FASTAPI_SERVICE_NAME}/status")
-                    if r.status_code == 200 and r.json()['status'] == 'ok':
-                        jhub_apps_ready = True
-                    await asyncio.sleep(0.5)
-        except TimeoutError:
-            logger.error("Timeout waiting for JHub Apps service to be ready")
-        
+        async with httpx.AsyncClient() as client:
+            start_time = time.time()
+            timeout = 15
+            while time.time() - start_time < timeout:
+                r = await client.get(f"http://{config.JAppsConfig.hub_host}:10202/services/{FASTAPI_SERVICE_NAME}/status")
+                if r.status_code == 200 and r.json()['status'] == 'ok':
+                    break
+                await asyncio.sleep(0.5)
+            else:
+                raise TimeoutError("Timeout waiting for JHub Apps service to be ready")
+                    
         tasks = {}
         for username, user_apps_list in grouped_user_options_list:
             tasks[username] = asyncio.create_task(
