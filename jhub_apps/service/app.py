@@ -13,6 +13,7 @@ from jhub_apps.hub_client.hub_client import HubClient
 from jhub_apps.service.japps_routes import router as japps_router
 from jhub_apps.service.logging_utils import setup_logging
 from jhub_apps.service.middlewares import create_middlewares
+from jhub_apps.service.models import StartupApp
 from jhub_apps.service.routes import router
 from jhub_apps.service.utils import get_jupyterhub_config
 from jhub_apps.version import get_version
@@ -59,7 +60,7 @@ async def lifespan(app: FastAPI):
 
 
 async def instantiate_startup_apps(
-    user_apps_list: list[dict[str, Any]], username: str,
+    user_apps_list: list[StartupApp], username: str,
 ):
     # Let FastAPI continue to set up
     await asyncio.sleep(1)
