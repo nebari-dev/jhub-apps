@@ -86,7 +86,7 @@ def install_jhub_apps(c, spawner_to_subclass, *, oauth_no_confirm=False):
                 "command": [
                     japps_config.python_exec,
                     "-m",
-                    "jhub_apps.service.initialize_startup_apps",
+                    "jhub_apps.tasks.command.initialize_startup_apps",
                 ],
                 "environment": {
                     "PUBLIC_HOST": c.JupyterHub.bind_url,
