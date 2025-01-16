@@ -99,7 +99,7 @@ class HubClient:
         self.tokens.pop()
         return r
 
-    def get_users(self):
+    def get_users(self) -> typing.List[dict]:
         r = requests.get(
             API_URL + "/users",
             params={"include_stopped_servers": True},
@@ -122,13 +122,27 @@ class HubClient:
         return user
 
     @requires_user_token
-    def get_server(self, username, servername):
-        user = self.get_user(username)
-        for name, server in user["servers"].items():
-            if name == servername:
-                return server
+    def get_server(self, username, servername=None) -> typing.Optional[typing.Union[dict, typing.Iterable[dict]]]:
+        """Returns the given server for the given user or all servers if servername is None"""
+        users = self.get_users()
+        filter_given_user = [user for user in users if user["name"] == username]
+        if not filter_given_user:
+            logger.info(f"No user with username: {username} found.")
+            return
+        else:
+            assert len(filter_given_user) == 1
+            given_user = filter_given_user[0]
+                
+        if servername: 
+            for name, server in given_user["servers"].items():
+                if name == servername:
+                    return server
+        else:
+            # return all user servers
+            return given_user["servers"]
 
-    def normalize_server_name(self, servername):
+    @staticmethod
+    def normalize_server_name(servername):
         # Convert text to lowercase
         text = servername.lower()
         # Remove all special characters except spaces and hyphen
@@ -137,18 +151,6 @@ class HubClient:
         text = text.replace(" ", "-")
         # Max limit for servername is 255 chars
         return text[:240]
-
-    def _find_user_server(
-            self, servername
-    ) -> typing.Tuple[typing.Optional[str], typing.Optional[dict]]:
-        """Given a server name, return the user and the server object from
-        the user who owns the server.
-        """
-        users = self.get_users()
-        for user in users:
-            if servername in user["servers"]:
-                return user["name"], user["servers"][servername]
-        return None, None
 
     @requires_user_token
     def start_server(self, username, servername):
@@ -162,9 +164,6 @@ class HubClient:
             # Get named server
             server = self.get_server(username, servername)
             if not server:
-                # Shared server (not owned by the given user)
-                server_owner, server = self._find_user_server(servername)
-            if not server:
                 return None
             user_options = server["user_options"]
         url = f"/users/{server_owner}/servers/{servername}"
@@ -174,15 +173,24 @@ class HubClient:
         return response
 
     @requires_user_token
-    def create_server(self, username: str, servername: str, user_options: UserOptions = None):
+    def create_server(self, username: str, servername: str, user_options: UserOptions = None) -> tuple[int, str]:
         logger.info("Creating new server", user=username)
+        user_servers = self.get_server(username)
         normalized_servername = self.normalize_server_name(servername)
-        unique_servername = f"{normalized_servername}-{uuid.uuid4().hex[:7]}"
+        logger.info("User servers", user_servers=user_servers.keys())
+        # If server with the given name already exists
+        # This is to allow users to create apps with a reasonably deterministic url
+        # instead of a random url everytime. This is more of a temporary solution, until
+        # we have an explicit way to control the url in the UI itself.
+        if normalized_servername in user_servers:
+            unique_servername = f"{normalized_servername}-{uuid.uuid4().hex[:7]}"
+        else:
+            unique_servername = normalized_servername
         logger.info("Normalized servername", servername=servername)
         return self._create_server(username, unique_servername, user_options)
 
     @requires_user_token
-    def edit_server(self, username: str, servername: str, user_options: UserOptions = None):
+    def edit_server(self, username: str, servername: str, user_options: UserOptions = None) -> tuple[int, str]:
         logger.info("Editing server", server_name=servername)
         server = self.get_server(username, servername)
         if server:
@@ -194,7 +202,7 @@ class HubClient:
         logger.info("Now creating the server with new params", server_name=servername)
         return self._create_server(username, servername, user_options)
 
-    def _create_server(self, username: str, servername: str, user_options: UserOptions = None):
+    def _create_server(self, username: str, servername: str, user_options: UserOptions = None) -> tuple[int, str]:
         url = f"/users/{username}/servers/{servername}"
         params = user_options.model_dump()
         data = {"name": servername, **params}
@@ -300,7 +308,7 @@ class HubClient:
         return shared_servers
 
     @requires_user_token
-    def delete_server(self, username, server_name, remove=False):
+    def delete_server(self, username, server_name, remove=False) -> int:
         if server_name is None:
             # Default server and not named server
             server_name = ""

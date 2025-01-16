@@ -24,7 +24,7 @@ dependencies:
   - python-slugify
   - cachetools
   - structlog
-  - pyjwt
+  - pyjwt<2.10.0
   - gradio
   - gitpython
   - playwright

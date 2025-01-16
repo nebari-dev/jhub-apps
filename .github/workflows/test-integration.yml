@@ -69,15 +69,6 @@ jobs:
         cat jupyter_config_profile_list >> jupyterhub_config.py
         cat jupyterhub_config.py
 
-    - name: Start JupyterHub on Ubuntu
-      run: |
-        nohup jupyterhub -f jupyterhub_config.py > jupyterhub-logs.txt 2>&1 &
-        # Give it some to time to start properly
-        sleep 10
-        cat jupyterhub-logs.txt
-        curl http://127.0.0.1:8000/services/japps/
-        cat jupyterhub-logs.txt
-
     - name: Install Playwright
       run: |
         pip install pytest-playwright
@@ -88,7 +79,7 @@ jobs:
 
     - name: Run Tests
       run: |
-        pytest jhub_apps/tests/tests_e2e/ -vvv -s -m "${{ matrix.test_type }}"
+        pytest jhub_apps/tests/tests_e2e/ -vvv -s -m "${{ matrix.test_type }}" --log-cli-level=INFO
 
     - name: Create artifact name
       id: artifact-name

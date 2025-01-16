@@ -18,6 +18,7 @@ import { UserState } from '@src/types/user';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
+
 import {
   currentApp,
   currentNotification,
@@ -53,7 +54,7 @@ export const AppCard = ({
   framework,
   thumbnail,
   url,
-  username,
+  // username,
   isPublic = false,
   isShared,
   serverStatus,
@@ -122,7 +123,7 @@ export const AppCard = ({
     {
       id: 'start',
       title: 'Start',
-      onClick: () => {
+      onClick: async () => {
         // Allow admins to start shared apps
         if (isShared && !currentUserData?.admin) {
           // Show error if it's a shared app
@@ -140,7 +141,7 @@ export const AppCard = ({
     {
       id: 'stop',
       title: 'Stop',
-      onClick: () => {
+      onClick: async () => {
         // Allow admins to stop shared apps
         if (isShared && !currentUserData?.admin) {
           setNotification(
@@ -157,8 +158,9 @@ export const AppCard = ({
     {
       id: 'edit',
       title: 'Edit',
-      onClick: () =>
-        (window.location.href = `${API_BASE_URL}/edit-app?id=${id}`),
+      onClick: () => {
+        window.location.href = `${API_BASE_URL}/edit-app?id=${id}`;
+      },
       visible: true,
       disabled: isShared || id === '' || !isAppCard,
     },
@@ -213,7 +215,11 @@ export const AppCard = ({
       <Link
         href={url}
         onClick={(e) => {
-          if (app && serverStatus === 'Ready') {
+          if (serverStatus === 'Running') {
+            // Redirect to the app's URL if it is already running
+            window.location.href = url;
+          } else if (app && serverStatus === 'Ready') {
+            // Set the current app and open the Start modal
             e.preventDefault();
             setCurrentApp({
               id,
@@ -225,8 +231,9 @@ export const AppCard = ({
               shared: app?.shared || isShared || false,
               last_activity: new Date(app?.last_activity || ''),
               status: 'Ready',
+              full_name: app?.full_name || '', // Ensure full_name is set
             });
-            setIsStartNotRunningOpen(true);
+            setIsStartNotRunningOpen(true); // Open the Start modal
           }
         }}
       >
@@ -332,7 +339,7 @@ export const AppCard = ({
                         fontSize: '12px',
                       }}
                     >
-                      {username}
+                      {app?.full_name?.split('/')[0] || ''}
                     </span>
                   </Typography>
                 </CardContent>

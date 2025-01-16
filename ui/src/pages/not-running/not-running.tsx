@@ -15,9 +15,14 @@ export const NotRunning = (): React.ReactElement => {
   const { data: formData } = useQuery<AppQueryGetProps, { message: string }>({
     queryKey: ['app-form', id],
     queryFn: () =>
-      axios.get(`/server/${id}`).then((response) => {
-        return response.data;
-      }),
+      axios
+        .get(`/server/${id}`)
+        .then((response) => {
+          return response.data;
+        })
+        .catch((error) => {
+          return { message: error.message };
+        }),
     enabled: !!id,
   });
 

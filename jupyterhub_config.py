@@ -17,6 +17,44 @@ c.JupyterHub.bind_url = hub_url
 c.JAppsConfig.jupyterhub_config_path = "jupyterhub_config.py"
 c.JAppsConfig.conda_envs = []
 c.JAppsConfig.service_workers = 1
+c.JAppsConfig.startup_apps = [
+        {
+        "username": "admin",
+        "servername": "admin's-startup-server",
+        "user_options": {
+            "display_name": "Admin's Panel App",
+            "description": "description",
+            "thumbnail": "data:image/jpeg;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAFUlEQVR42mNkYPhfz0AEYBxVSF+FAP5FDvcfRYWgAAAAAElFTkSuQmCC",
+            "filepath": "",
+            "framework": "panel",
+            "custom_command": "",
+            "public": False,
+            "keep_alive": False,
+            "env": {"ENV_VAR_KEY_1": "ENV_VAR_KEY_1"},
+            "repository": None,
+            "conda_env": "",
+            "profile": "",
+            "share_with": {"users": ["admin"], "groups": ["class-A"]},
+        },
+    },
+    {
+        "username": "admin",
+        "servername": "admin's-2nd-startup-server",
+        "user_options": {
+            "display_name": "Admin's 2nd App",
+            "description": "description",
+            "thumbnail": "data:image/jpeg;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAFUlEQVR42mNkYPhfz0AEYBxVSF+FAP5FDvcfRYWgAAAAAElFTkSuQmCC",
+            "filepath": "panel_basic.py",
+            "framework": "panel",
+            "public": False,
+            "keep_alive": False,
+            "repository": {"url": "https://github.com/nebari-dev/jhub-apps-from-git-repo-example.git"},
+            "conda_env": "",
+            "profile": "",
+            "share_with": {"users": ["admin"], "groups": ["class-A"]},
+        },
+    },
+]
 c.JupyterHub.default_url = "/hub/home"
 
 c = install_jhub_apps(

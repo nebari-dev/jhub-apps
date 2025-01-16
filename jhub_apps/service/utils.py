@@ -11,6 +11,7 @@ from fastapi import HTTPException, status
 from jupyterhub.app import JupyterHub
 from traitlets.config import LazyConfigValue
 
+from jhub_apps.config_utils import JAppsConfig
 from jhub_apps.hub_client.hub_client import HubClient
 from jhub_apps.service.models import UserOptions
 from jhub_apps.spawner.types import FrameworkConf, FRAMEWORKS_MAPPING, FRAMEWORKS
@@ -20,6 +21,21 @@ from slugify import slugify
 CACHE_JUPYTERHUB_CONFIG_TIMEOUT = 180
 logger = structlog.get_logger(__name__)
 
+def _replace_JAppsConfig_config_with_validated_config(config, validated_config):
+    """Replace config attributes with instantiated/validated attributes.
+    
+    This is a hack. Instead we could use JHubAppsConfig.instance() whenever 
+    JHubAppsConfig is needed except for code which runs in the same process 
+    as JupyterHub (e.g. spawner_creation.py, install_jhub_apps fn).
+    
+    Args:
+        config: Original config object
+        validated_config: Config object with validated attributes
+    """
+    trait_names = validated_config.trait_names()
+    for trait_name in trait_names:
+        setattr(config, trait_name, getattr(validated_config, trait_name))
+
 
 # Cache JupyterHub config as it might be an expensive operation
 @cached(cache=TTLCache(maxsize=1024, ttl=CACHE_JUPYTERHUB_CONFIG_TIMEOUT))
@@ -28,6 +44,8 @@ def get_jupyterhub_config():
     jhub_config_file_path = os.environ["JHUB_JUPYTERHUB_CONFIG"]
     logger.info(f"Getting JHub config from file: {jhub_config_file_path}")
     hub.load_config_file(jhub_config_file_path)
+    japps_config = JAppsConfig.instance(config=hub.config)
+    _replace_JAppsConfig_config_with_validated_config(hub.config.JAppsConfig, japps_config)
     config = hub.config
     logger.info(f"JHub Apps config: {config.JAppsConfig}")
     return config
@@ -50,7 +68,6 @@ def get_conda_envs(config, user):
         raise ValueError(
             f"Invalid value for config.JAppsConfig.conda_envs: {config.JAppsConfig.conda_envs}"
         )
-
 
 def get_fake_spawner_object(auth_state):
     fake_spawner = Mock()
@@ -102,7 +119,7 @@ async def get_spawner_profiles(config, auth_state=None):
         )
 
 
-def encode_file_to_data_url(filename, file_contents):
+def encode_file_to_data_url(filename, file_contents) -> str:
     """Converts image file to data url to display in browser."""
     base64_encoded = base64.b64encode(file_contents)
     filename_ = filename.lower()
@@ -117,7 +134,7 @@ def encode_file_to_data_url(filename, file_contents):
     return data_url
 
 
-def get_default_thumbnail(framework_name):
+def get_default_thumbnail(framework_name) -> str:
     framework: FrameworkConf = FRAMEWORKS_MAPPING.get(framework_name)
     thumbnail_path = framework.logo_path
     return encode_file_to_data_url(
@@ -179,7 +196,7 @@ def _check_if_framework_allowed(user_options: UserOptions):
     allowed_frameworks = _get_allowed_frameworks(config)
     if user_options.framework not in allowed_frameworks:
         raise HTTPException(
-            detail=f"Given framework {user_options.framework} is not allowed on this deployment, "
+            detail=f'Given framework "{user_options.framework}" is not allowed on this deployment, '
                    f"please contact admin.",
             status_code=status.HTTP_403_FORBIDDEN,
         )

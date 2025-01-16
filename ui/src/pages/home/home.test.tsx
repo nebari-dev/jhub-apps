@@ -818,4 +818,46 @@ describe('Home', () => {
       expect(snackbar).toBeInTheDocument();
     });
   });
+  test('should include creator name as query parameter when starting app', async () => {
+    const creatorName = 'userx';
+    const appId = 'test-app-1';
+
+    mock.onPost(`/server/${appId}`).reply((config) => {
+      expect(config.params.owner).toBe(creatorName);
+      return [200];
+    });
+
+    const { baseElement } = render(
+      <RecoilRoot
+        initializeState={({ set }) => {
+          set(isStartOpen, true);
+          set(defaultApp, {
+            id: appId,
+            full_name: `${creatorName}/my-panel-app-git-86d9635`,
+            name: 'Test App',
+            framework: 'JupyterLab',
+            url: 'https://example.com',
+            ready: true,
+            public: false,
+            shared: false,
+            last_activity: new Date(),
+            status: 'Ready',
+          });
+        }}
+      >
+        <QueryClientProvider client={queryClient}>
+          <BrowserRouter>
+            <Home />
+          </BrowserRouter>
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+
+    const startBtn = baseElement.querySelector(
+      '#start-btn',
+    ) as HTMLButtonElement;
+    await act(async () => {
+      startBtn.click();
+    });
+  });
 });

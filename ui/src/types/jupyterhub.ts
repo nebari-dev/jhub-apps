@@ -25,6 +25,7 @@ export interface JhApp {
   pending?: boolean;
   stopped?: boolean;
   status: string;
+  full_name?: string;
 }
 
 export interface JhServiceApp {

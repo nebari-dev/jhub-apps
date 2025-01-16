@@ -168,13 +168,17 @@ async def create_server(
 async def start_server(
     server_name=None,
     user: User = Depends(get_current_user),
+    request: Request = None,
 ):
     """Start an already existing server."""
     logger.info("Starting server", server_name=server_name, user=user.name)
     hub_client = HubClient(username=user.name)
+    # User could be starting a shared server, in which case the
+    # user starting the server will not be the owner of the server
+    server_owner = request.query_params.get("owner", user.name)
     try:
         response = hub_client.start_server(
-            username=user.name,
+            username=server_owner,
             servername=server_name,
         )
         if response.status_code in [403, 404]:
