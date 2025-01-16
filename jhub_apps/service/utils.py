@@ -22,9 +22,15 @@ CACHE_JUPYTERHUB_CONFIG_TIMEOUT = 180
 logger = structlog.get_logger(__name__)
 
 def _replace_JAppsConfig_config_with_validated_config(config, validated_config):
-    """Replace the config attirbutes with the instantiated object attributes which are validated.
+    """Replace config attributes with instantiated object attributes.
     
-    This is a hack. Instead we could use JHubAppsConfig.instance() whenever JHubAppsConfig is needed except for the code which runs in the same process as Jupyterhub (e.g. spawner_creation.py, install_jhub_apps fn).
+    This is a hack. Instead we could use JHubAppsConfig.instance() whenever 
+    JHubAppsConfig is needed except for code which runs in the same process 
+    as JupyterHub (e.g. spawner_creation.py, install_jhub_apps fn).
+    
+    Args:
+        config: Original config object
+        validated_config: Config object with validated attributes
     """
     trait_names = validated_config.trait_names()
     for trait_name in trait_names:
