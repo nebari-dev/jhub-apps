@@ -50,9 +50,6 @@ async def async_main():
         
         logger.info("Finished instantiating startup apps")
 
-        # run eternal sleep so jupyterhub doesn't restart the service
-        while True: 
-            await asyncio.sleep(60*60*24)
     except asyncio.CancelledError:
         logger.info("Shutdown requested")
 
