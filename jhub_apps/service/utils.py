@@ -22,7 +22,7 @@ CACHE_JUPYTERHUB_CONFIG_TIMEOUT = 180
 logger = structlog.get_logger(__name__)
 
 def _replace_JAppsConfig_config_with_validated_config(config, validated_config):
-    """Replace config attributes with instantiated object attributes.
+    """Replace config attributes with instantiated/validated attributes.
     
     This is a hack. Instead we could use JHubAppsConfig.instance() whenever 
     JHubAppsConfig is needed except for code which runs in the same process 
