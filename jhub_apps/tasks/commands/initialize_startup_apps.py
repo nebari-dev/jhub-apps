@@ -1,12 +1,8 @@
 import asyncio
 from itertools import groupby
 import signal
-import time
-
-import httpx
 import structlog
 
-from jhub_apps.configuration import FASTAPI_SERVICE_NAME
 from jhub_apps.hub_client.hub_client import HubClient
 from jhub_apps.service.logging_utils import setup_logging
 from jhub_apps.service.models import StartupApp
