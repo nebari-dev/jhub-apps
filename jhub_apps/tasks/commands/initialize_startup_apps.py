@@ -8,9 +8,11 @@ import structlog
 
 from jhub_apps.configuration import FASTAPI_SERVICE_NAME
 from jhub_apps.hub_client.hub_client import HubClient
+from jhub_apps.service.logging_utils import setup_logging
 from jhub_apps.service.models import StartupApp
 from jhub_apps.service.utils import get_jupyterhub_config
 
+setup_logging()
 logger = structlog.get_logger(__name__)
 
 
@@ -28,18 +30,6 @@ async def async_main():
 
         # Group user options by username
         grouped_user_options_list = groupby(startup_apps_list, lambda x: x.username)
-
-        # wait til jhub app is ready with timeout
-        async with httpx.AsyncClient() as client:
-            start_time = time.time()
-            timeout = 15
-            while time.time() - start_time < timeout:
-                r = await client.get(f"http://{config.JAppsConfig.hub_host}:10202/services/{FASTAPI_SERVICE_NAME}/status")
-                if r.status_code == 200 and r.json()['status'] == 'ok':
-                    break
-                await asyncio.sleep(0.5)
-            else:
-                raise TimeoutError("Timeout waiting for JHub Apps service to be ready")
                     
         tasks = {}
         for username, user_apps_list in grouped_user_options_list:
@@ -86,7 +76,7 @@ async def instantiate_startup_apps(
         # delete server if it exists
         while normalized_servername in existing_servers:
             logger.info(f"Deleting server {normalized_servername}")
-            status_code = hub_client.delete_server(
+            hub_client.delete_server(
                 username, normalized_servername, remove=True
             )
             await asyncio.sleep(1)
@@ -95,7 +85,7 @@ async def instantiate_startup_apps(
         # create the server
         logger.info(f"Creating server {normalized_servername}")
         while normalized_servername not in existing_servers:
-            status_code, servername = hub_client.create_server(
+            hub_client.create_server(
                 username=username,
                 servername=normalized_servername,
                 user_options=user_options,
