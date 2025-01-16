@@ -95,7 +95,7 @@ class ServerCreation(BaseModel):
         return HubClient.normalize_server_name(self.servername)
 
 class JHubAppUserOptions(UserOptions):
-    jhub_app: typing.Literal[True] = True    
+    jhub_app: typing.Literal[True] = True
 
 class StartupApp(ServerCreation):
     username: str
