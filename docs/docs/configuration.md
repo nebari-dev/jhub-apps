@@ -90,3 +90,43 @@ Specifies frameworks that users are restricted from launching.
   ```python
   c.JupyterHub.blocked_frameworks = ["voila"]
   ```
+
+### `startup_apps`
+
+A list of apps to automatically create or update when JHub Apps service starts.  Apps can be created from a local file or from a git repo.
+
+Servers will be created or modified if already existing to match the config. Removing items from this list won't delete any servers.
+
+- **Example**:
+  ```python
+  c.JAppsConfig.startup_apps = [
+      # define app from git repo
+      {
+        "username": "my-user",  # app will be created by this user
+        "servername": "my-startup-server",  # specify a unique server name
+        "user_options": {
+            "display_name": "My Startup Server",
+            "description": "description",
+            "thumbnail": "data:image/jpeg;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAFUlEQVR42mNkYPhfz0AEYBxVSF+FAP5FDvcfRYWgAAAAAElFTkSuQmCC",  # base64 encoded image data to use for thumbnail
+            "filepath": "panel_basic.py",  # local file or path within git repo
+            "framework": "panel",
+            "public": False,  # Whether or not app is publicly accessible without authentication
+            "keep_alive": False,  # Whether or not to shut down app after a period of idleness
+            "env": {"MY_ENV_VAR": "MY_VALUE"},
+            "repository": {"url": "https://github.com/nebari-dev/jhub-apps-from-git-repo-example.git"},  # specify if pulling app from git repo
+            "conda_env": "my-conda-env",
+            "profile": "my-compute-profile",
+            "share_with": {"users": ["my-other-user"], "groups": ["group1", "group2"]},
+        },
+    },
+    # Define a startup app from local files
+    {
+        "username": "my-other-user",
+        "servername": "another-startup-server",
+        "user_options": {
+            "filepath": "panel_basic.py",
+            "repository": None
+            ...  # other fields as above
+        },
+    }
+  ]
