@@ -103,7 +103,7 @@ def _create_server(
         verify=False,
         data=data,
     )
-    assert response.status_code == 200
+    assert response.status_code == 200, response.json()
     server_name = response.json()[-1]
     return server_name
 

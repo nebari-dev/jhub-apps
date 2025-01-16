@@ -5,7 +5,6 @@ from typing import Any, Dict, List, Optional
 
 from pydantic import BaseModel
 
-
 # https://jupyterhub.readthedocs.io/en/stable/_static/rest-api/index.html
 class Server(BaseModel):
     name: str
@@ -80,12 +79,24 @@ class JHubAppConfig(BaseModel):
 
 
 class UserOptions(JHubAppConfig):
-    jhub_app: bool
     conda_env: typing.Optional[str] = str()
     profile: typing.Optional[str] = str()
     share_with: typing.Optional[SharePermissions] = None
+    jhub_app: bool
 
 
 class ServerCreation(BaseModel):
     servername: str
     user_options: UserOptions
+
+    @property
+    def normalized_servername(self):
+        from jhub_apps.hub_client.hub_client import HubClient
+        return HubClient.normalize_server_name(self.servername)
+
+class JHubAppUserOptions(UserOptions):
+    jhub_app: typing.Literal[True] = True
+
+class StartupApp(ServerCreation):
+    username: str
+    user_options: JHubAppUserOptions

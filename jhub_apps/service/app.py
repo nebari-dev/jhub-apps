@@ -9,6 +9,9 @@ from jhub_apps.service.logging_utils import setup_logging
 from jhub_apps.service.middlewares import create_middlewares
 from jhub_apps.service.routes import router
 from jhub_apps.version import get_version
+import structlog
+
+logger = structlog.get_logger(__name__)
 
 ### When managed by Jupyterhub, the actual endpoints
 ### will be served out prefixed by /services/:name.
@@ -16,6 +19,7 @@ from jhub_apps.version import get_version
 ### All routes are defined in routes.py
 
 STATIC_DIR = Path(__file__).parent.parent / "static"
+
 
 app = FastAPI(
     title="JApps Service",
