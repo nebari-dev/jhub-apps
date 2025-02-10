@@ -8,6 +8,9 @@ updates:
     labels:
       - "dependencies"
     groups:
+      mui:
+        patterns:
+          - "@mui/**"
       minors:
         patterns:
           - "*"
