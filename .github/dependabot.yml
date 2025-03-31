@@ -8,9 +8,6 @@ updates:
     labels:
       - "dependencies"
     groups:
-      mui:
-        patterns:
-          - "@mui/**"
       minors:
         patterns:
           - "*"
@@ -30,5 +27,6 @@ updates:
       - dependency-name: "@types/react-dom"
         versions:
           - ">=18.2.0"
+      - dependency-name: "@mui/lab"
       - dependency-name: "@rollup/rollup-linux-x64-gnu"
       - dependency-name: "@esbuild/linux-x64"
