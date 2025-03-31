@@ -19,9 +19,9 @@
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
-    "@mui/icons-material": "^6.4.7",
-    "@mui/lab": "^6.0.0-beta.30",
-    "@mui/material": "6.4.7",
+    "@mui/icons-material": "^6.4.9",
+    "@mui/lab": "^6.0.0-beta.32",
+    "@mui/material": "6.4.9",
     "@tanstack/react-query": "5.71.1",
     "axios": "1.8.4",
     "axios-mock-adapter": "2.1.0",
