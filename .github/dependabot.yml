@@ -27,6 +27,12 @@ updates:
       - dependency-name: "@types/react-dom"
         versions:
           - ">=18.2.0"
+      - dependency-name: "@mui/material"
+        versions:
+          - ">=7.0.0"
+      - dependency-name: "@mui/icons-material"
+        versions:
+          - ">=7.0.0"
       - dependency-name: "@mui/lab"
       - dependency-name: "@rollup/rollup-linux-x64-gnu"
       - dependency-name: "@esbuild/linux-x64"
