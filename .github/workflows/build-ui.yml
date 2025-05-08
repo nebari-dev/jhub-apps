@@ -3,6 +3,9 @@ name: Build UI
 on:
   pull_request:
     branches: [main]
+    paths:
+      - ui/*
+      - .github/workflows/build-ui.yml
 
 permissions:
   contents: write
@@ -48,7 +51,7 @@ jobs:
         id: last_commit
         run: |
           echo "message=$(git log -1 --pretty=%s)" >> $GITHUB_OUTPUT
-          echo "author=$(git log -1 --pretty=\"%an <%ae>\")" >> $GITHUB_OUTPUT
+          echo "author=$(git log -1 --pretty='%an <%ae>')" >> $GITHUB_OUTPUT
 
       - name: Commit and push changes
         if: steps.check_label.outputs.label_check == 'success'
