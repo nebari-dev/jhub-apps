@@ -20,7 +20,7 @@ dependencies = [
     "jupyter",
     "plotlydash-tornado-cmd",
     "bokeh-root-cmd",
-    "jhsingle-native-proxy==0.8.3",
+    "oauth2-proxy",
     "panel",
     "bokeh",
     "traitlets",
