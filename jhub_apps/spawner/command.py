@@ -53,7 +53,7 @@ DEFAULT_CMD = Command(
     args=[
         TString("$python_exec"),
         "-m",
-        "jhsingle_native_proxy.main",
+        "jhub_apps.spawner.proxy",
         TString("--authtype=$authtype"),
     ]
 )
