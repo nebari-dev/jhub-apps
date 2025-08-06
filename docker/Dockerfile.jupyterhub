@@ -16,7 +16,7 @@ RUN python3 -m pip install --no-cache-dir \
     jupyter \
     plotlydash-tornado-cmd \
     bokeh-root-cmd \
-    jhsingle-native-proxy \
+    oauth2-proxy \
     pytest \
     black \
     panel \
