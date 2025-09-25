@@ -11,7 +11,7 @@ dependencies:
   - jupyter
   - plotlydash-tornado-cmd
   - bokeh-root-cmd
-  - jhsingle-native-proxy=0.8.2
+  - oauth2-proxy
   - pytest
   - ruff
   - panel
