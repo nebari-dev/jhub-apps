@@ -27,24 +27,16 @@ brew install kubectl
 
 ```bash
 cd k3s-dev
-
-# Start everything (creates cluster, deploys JupyterHub, watches for changes)
 tilt up
-
-# Tilt will:
-# 1. Create k3d cluster (jhub-apps-dev)
-# 2. Deploy JupyterHub via Helm chart
-# 3. Mount jhub-apps source code into hub pod
-# 4. Create ConfigMap from config/ files
-# 5. Watch for file changes and auto-reload
-# 6. Open web UI at http://localhost:10350
 ```
 
+Tilt will create the cluster, deploy JupyterHub, and open the UI at http://localhost:10350.
+
 **Access:**
-- **Tilt UI**: http://localhost:10350 (logs, status, controls)
-- **JupyterHub**: http://localhost:8000
-  - Username: `admin`
-  - Password: `test` (any password works)
+- **JupyterHub**: http://localhost:8000 (username: `admin`, password: `test`)
+- **Tilt UI**: http://localhost:10350 (logs, controls)
+
+**That's it!** Edit config files or jhub-apps source - Tilt auto-reloads.
 
 ## Development Workflow
 
