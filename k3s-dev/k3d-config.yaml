@@ -1,0 +1,27 @@
+# k3d cluster configuration for jhub-apps development
+# Used by Tilt's k3d extension
+apiVersion: k3d.io/v1alpha5
+kind: Simple
+metadata:
+  name: jhub-apps-dev
+
+servers: 1
+agents: 0
+
+ports:
+  - port: 8000:80
+    nodeFilters:
+      - loadbalancer
+
+options:
+  k3s:
+    extraArgs:
+      - arg: --disable=traefik
+        nodeFilters:
+          - server:0
+      - arg: --disable=servicelb
+        nodeFilters:
+          - server:0
+  kubeconfig:
+    updateDefaultKubeconfig: true
+    switchCurrentContext: true

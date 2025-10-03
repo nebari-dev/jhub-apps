@@ -1,0 +1,148 @@
+# JupyterHub Helm Chart Configuration for k3s Development
+# Based on Nebari's configuration pattern with separate config files
+
+hub:
+  # Use official JupyterHub k8s image
+  image:
+    name: quay.io/jupyterhub/k8s-hub
+    tag: "4.1.0"
+
+  # Mount jhub-apps source code into hub pod
+  extraVolumes:
+    - name: jhub-apps-source
+      hostPath:
+        path: /opt/jhub-apps  # Mounted by k3d
+        type: Directory
+    - name: config-files
+      configMap:
+        name: jupyterhub-config
+    - name: pip-cache
+      emptyDir: {}
+
+  # Install jhub-apps dependencies in initContainer
+  initContainers:
+    - name: install-jhub-apps
+      image: quay.io/jupyterhub/k8s-hub:4.1.0
+      command:
+        - /bin/bash
+        - -c
+        - |
+          echo "Installing jhub-apps dependencies..."
+          pip install --target=/srv/jupyterhub/jhub-apps-deps /opt/jhub-apps
+          echo "Dependencies installed successfully"
+      volumeMounts:
+        - name: jhub-apps-source
+          mountPath: /opt/jhub-apps
+          readOnly: true
+        - name: pip-cache
+          mountPath: /srv/jupyterhub/jhub-apps-deps
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 100
+        allowPrivilegeEscalation: false
+
+  extraVolumeMounts:
+    - name: jhub-apps-source
+      mountPath: /opt/jhub-apps
+      readOnly: true
+    - name: config-files
+      mountPath: /etc/jupyterhub/config
+      readOnly: true
+    - name: pip-cache
+      mountPath: /srv/jupyterhub/jhub-apps-deps
+
+  # Install jhub-apps dependencies in hub pod
+  extraEnv:
+    PYTHONPATH: "/opt/jhub-apps:/srv/jupyterhub/jhub-apps-deps"
+
+  # Load configuration files (following Nebari's pattern)
+  extraConfig:
+    00-jhub-apps: |
+      exec(open('/etc/jupyterhub/config/00-jhub-apps.py').read())
+    01-spawner: |
+      exec(open('/etc/jupyterhub/config/01-spawner.py').read())
+    02-profiles: |
+      exec(open('/etc/jupyterhub/config/02-profiles.py').read())
+
+  # Resources for hub pod
+  resources:
+    requests:
+      cpu: "200m"
+      memory: "512Mi"
+    limits:
+      cpu: "2"
+      memory: "2Gi"
+
+  # Authentication and admin configuration (JupyterHub 4.x style)
+  config:
+    JupyterHub:
+      authenticator_class: dummy
+      admin_access: true
+    Authenticator:
+      admin_users:
+        - admin
+      allowed_users:
+        - admin
+    DummyAuthenticator:
+      password: "test"
+
+# Proxy configuration
+proxy:
+  service:
+    type: LoadBalancer
+
+  chp:
+    resources:
+      requests:
+        cpu: "100m"
+        memory: "128Mi"
+      limits:
+        cpu: "500m"
+        memory: "512Mi"
+
+# Single-user server defaults
+singleuser:
+  image:
+    name: quay.io/jupyterhub/singleuser
+    tag: "4.1.0"
+
+  # Don't mount service account token (security best practice)
+  serviceAccountName: null
+
+  # Storage - use emptyDir for dev (ephemeral)
+  storage:
+    type: none
+    extraVolumes: []
+    extraVolumeMounts: []
+
+  # Default resources (overridden by profiles)
+  cpu:
+    limit: 1
+    guarantee: 0.1
+  memory:
+    limit: 1G
+    guarantee: 128M
+
+# RBAC - let Helm create ServiceAccount and Role automatically
+rbac:
+  create: true
+
+# Scheduling - disable user scheduler for simplicity in dev
+scheduling:
+  userScheduler:
+    enabled: false
+  podPriority:
+    enabled: false
+
+# No ingress - access via port-forward or LoadBalancer
+ingress:
+  enabled: false
+
+# Enable debug logging
+debug:
+  enabled: true
+
+# Custom values (accessible via z2jh.get_config('custom.key'))
+custom:
+  jhub-apps-enabled: true
+  environment: "development"

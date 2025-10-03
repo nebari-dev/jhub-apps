@@ -1,0 +1,120 @@
+name: Test K3s Integration
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'k3s-dev/**'
+      - 'jhub_apps/**'
+      - '.github/workflows/test-k3s-integration.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'k3s-dev/**'
+      - 'jhub_apps/**'
+      - '.github/workflows/test-k3s-integration.yml'
+  workflow_dispatch:
+
+jobs:
+  test-k3s:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.11", "3.12"]
+        jupyterhub-version: ["4.1.5", "5.3.0"]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install Python dependencies
+        run: |
+          pip install -e ".[dev]"
+          pip install playwright pytest-playwright
+          playwright install chromium
+
+      - name: Install k3d
+        run: |
+          curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash
+
+      - name: Install Tilt
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/tilt-dev/tilt/master/scripts/install.sh | bash
+          tilt version
+
+      - name: Install Helm
+        run: |
+          curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+
+      - name: Deploy JupyterHub with k3s using Tilt
+        working-directory: k3s-dev
+        run: |
+          echo "Starting Tilt in CI mode..."
+          tilt ci
+        timeout-minutes: 15
+
+      - name: Wait for JupyterHub to be ready
+        run: |
+          echo "Waiting for JupyterHub to be ready..."
+          kubectl wait --for=condition=ready pod -l component=hub -n jhub-apps-dev --timeout=300s
+
+          echo "Checking hub pod status..."
+          kubectl get pods -n jhub-apps-dev
+
+          echo "Checking services..."
+          kubectl get svc -n jhub-apps-dev
+
+      - name: Port forward JupyterHub
+        run: |
+          kubectl port-forward service/proxy-public 8000:80 -n jhub-apps-dev &
+          sleep 5
+
+          echo "Testing JupyterHub endpoint..."
+          curl -f http://localhost:8000/hub/api || (kubectl logs deployment/hub -n jhub-apps-dev && exit 1)
+
+      - name: Run integration tests
+        env:
+          BASE_URL: "http://localhost:8000"
+        run: |
+          pytest jhub_apps/tests/tests_e2e/ -v -s --log-cli-level=INFO
+        timeout-minutes: 10
+
+      - name: Upload test artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-artifacts-py${{ matrix.python-version }}-jhub${{ matrix.jupyterhub-version }}
+          path: |
+            videos/
+            screenshots/
+            jupyterhub-logs.txt
+
+      - name: Get JupyterHub logs
+        if: failure()
+        run: |
+          echo "=== Hub Logs ==="
+          kubectl logs deployment/hub -n jhub-apps-dev --tail=500
+
+          echo "=== Proxy Logs ==="
+          kubectl logs deployment/proxy -n jhub-apps-dev --tail=200
+
+          echo "=== Events ==="
+          kubectl get events -n jhub-apps-dev --sort-by='.lastTimestamp'
+
+          echo "=== Pods ==="
+          kubectl get pods -n jhub-apps-dev -o wide
+
+      - name: Cleanup
+        if: always()
+        run: |
+          cd k3s-dev
+          tilt down --delete-cluster || true
+          k3d cluster delete jhub-apps-dev || true

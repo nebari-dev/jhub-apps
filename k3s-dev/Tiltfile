@@ -1,0 +1,133 @@
+# Tilt configuration for jhub-apps local development with k3s
+# Supports both interactive development (tilt up) and CI (tilt ci)
+
+# Allow current context temporarily for cluster creation
+allow_k8s_contexts(k8s_context())
+
+# Get absolute path to jhub-apps source (before cluster creation)
+jhub_apps_source = str(local('cd .. && pwd')).strip()
+
+# Create k3d cluster with volume mount for jhub-apps source
+# Only recreate if cluster doesn't exist or if it needs the volume mount
+local_resource(
+    'create-k3d-cluster',
+    cmd='''
+        if k3d cluster list | grep -q jhub-apps-dev; then
+            # Check if volume mount exists by checking if path is accessible in the cluster
+            if ! docker exec k3d-jhub-apps-dev-server-0 ls /opt/jhub-apps >/dev/null 2>&1; then
+                echo "Cluster exists but volume mount missing, recreating..."
+                k3d cluster delete jhub-apps-dev
+                k3d cluster create jhub-apps-dev --api-port 6550 --port "8000:80@loadbalancer" --k3s-arg "--disable=traefik@server:0" --k3s-arg "--disable=servicelb@server:0" --volume "%s:/opt/jhub-apps@server:0" --wait
+            else
+                echo "Cluster exists with volume mount"
+            fi
+        else
+            echo "Creating k3d cluster..."
+            k3d cluster create jhub-apps-dev --api-port 6550 --port "8000:80@loadbalancer" --k3s-arg "--disable=traefik@server:0" --k3s-arg "--disable=servicelb@server:0" --volume "%s:/opt/jhub-apps@server:0" --wait
+        fi
+        kubectl config use-context k3d-jhub-apps-dev
+    ''' % (jhub_apps_source, jhub_apps_source),
+    deps=[],
+    labels=['setup'],
+)
+
+# Detect CI environment
+is_ci = config.tilt_subcommand == "ci"
+
+# Set default namespace
+k8s_namespace('jhub-apps-dev')
+
+# Create namespace if it doesn't exist
+local_resource(
+    'create-namespace',
+    cmd='kubectl create namespace jhub-apps-dev --dry-run=client -o yaml | kubectl apply -f -',
+    deps=[],
+    labels=['setup'],
+    resource_deps=['create-k3d-cluster'],
+)
+
+# Create ConfigMap from config files
+# Tilt will watch these files and auto-update the ConfigMap
+k8s_yaml(local([
+    'kubectl', 'create', 'configmap', 'jupyterhub-config',
+    '--from-file=config/',
+    '--namespace=jhub-apps-dev',
+    '--dry-run=client',
+    '-o', 'yaml',
+]))
+
+# Download JupyterHub Helm chart during Tiltfile loading
+local('helm repo add jupyterhub https://jupyterhub.github.io/helm-chart/ 2>/dev/null || helm repo update jupyterhub')
+local('rm -rf ./charts && helm pull jupyterhub/jupyterhub --version 4.1.0 --untar --untardir ./charts')
+
+# Deploy JupyterHub with custom values
+# Note: kube_version parameter ensures helm uses k3d cluster version (1.31) instead of whatever kubectl context was active during load
+k8s_yaml(helm(
+    './charts/jupyterhub',
+    name='jupyterhub',
+    namespace='jhub-apps-dev',
+    values=['jupyterhub-values.yaml'],
+    kube_version='1.31',
+))
+
+# Watch config files and trigger ConfigMap update + hub restart
+watch_file('./config/')
+
+# Update config resource - rebuilds ConfigMap and restarts hub
+local_resource(
+    'update-config',
+    cmd='''
+        kubectl create configmap jupyterhub-config \
+          --from-file=config/ \
+          --namespace=jhub-apps-dev \
+          --dry-run=client -o yaml | kubectl apply -f - && \
+        kubectl rollout restart deployment/hub -n jhub-apps-dev 2>/dev/null || true
+    ''',
+    deps=['./config/'],
+    labels=['config'],
+    resource_deps=['jupyterhub-hub'],
+    auto_init=False,
+    trigger_mode=TRIGGER_MODE_AUTO,
+)
+
+# Configure hub resource
+k8s_resource(
+    'hub',
+    labels=['jupyterhub'],
+    resource_deps=['create-namespace', 'create-k3d-cluster'],
+)
+
+# Configure proxy resource
+k8s_resource(
+    'proxy',
+    port_forwards='8000:8000' if not is_ci else [],
+    labels=['jupyterhub'],
+)
+
+# In CI mode, wait for hub to be ready then exit
+if is_ci:
+    print("Running in CI mode - will exit after deployment is ready")
+    # CI will check the deployment status via 'tilt ci'
+else:
+    # Interactive mode - show helpful links and info
+    print("""
+╔══════════════════════════════════════════════════════════════╗
+║                  JHub Apps Dev Environment                    ║
+╚══════════════════════════════════════════════════════════════╝
+
+🚀 Starting up...
+
+Once ready:
+  • JupyterHub: http://localhost:8000
+  • Tilt UI:    http://localhost:10350
+  • Username:   admin
+  • Password:   test (any password works)
+
+💡 Tips:
+  • Edit config/*.py → Tilt auto-reloads
+  • Edit ../jhub_apps/*.py → Restart 'hub' from Tilt UI
+  • Press 'space' to open Tilt UI in browser
+  • Press 'Ctrl+C' to stop
+
+📚 Docs: See k3s-dev/README.md
+""")
