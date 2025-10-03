@@ -64,6 +64,28 @@ hub:
     02-profiles: |
       exec(open('/etc/jupyterhub/config/02-profiles.py').read())
 
+  # Expose port 10202 for jhub-apps service (so proxy can reach it)
+  service:
+    extraPorts:
+      - port: 10202
+        targetPort: 10202
+        name: jhub-apps
+
+  # Allow proxy to connect to port 10202 (following Nebari's network policy pattern)
+  networkPolicy:
+    ingress:
+      - ports:
+          - port: 10202
+        from:
+          - podSelector:
+              matchLabels:
+                hub.jupyter.org/network-access-hub: "true"
+
+  containerSecurityContext:
+    runAsUser: 1000
+    runAsGroup: 100
+    allowPrivilegeEscalation: false
+
   # Resources for hub pod
   resources:
     requests:

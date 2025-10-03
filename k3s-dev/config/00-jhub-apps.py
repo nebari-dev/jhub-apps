@@ -14,17 +14,25 @@ from jhub_apps.configuration import install_jhub_apps
 
 # Basic JupyterHub settings
 c.JupyterHub.log_level = 10  # DEBUG for development
-c.JupyterHub.bind_url = "http://0.0.0.0:8000"
+# NOTE: We temporarily set bind_url to the public URL for install_jhub_apps to use it
+# for OAuth redirects, then override it after
+_public_url = "http://localhost:8000"
+c.JupyterHub.bind_url = _public_url
+c.JupyterHub.hub_connect_url = "http://hub:8081"  # Internal URL for services to connect to hub
 c.JupyterHub.default_url = "/hub/home"
 
 # jhub-apps configuration
 c.JAppsConfig.jupyterhub_config_path = "/usr/local/etc/jupyterhub/jupyterhub_config.py"
-c.JAppsConfig.hub_host = "hub"  # Kubernetes service name for hub
+c.JAppsConfig.hub_host = "hub"  # Kubernetes service name (for proxy to reach japps)
 c.JAppsConfig.service_workers = 1  # Single worker for dev
 c.JAppsConfig.conda_envs = []  # No conda-store in dev environment
+c.Spawner.debug = True
 
 # Install jhub-apps - wraps KubeSpawner with jhub-apps functionality
 c = install_jhub_apps(c, spawner_to_subclass=KubeSpawner, oauth_no_confirm=True)
+
+# Now set bind_url to the correct internal value for the hub to bind
+c.JupyterHub.bind_url = "http://:8081"
 
 # Add template paths for jhub-apps UI
 from jhub_apps import theme_template_paths
