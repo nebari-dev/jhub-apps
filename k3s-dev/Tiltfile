@@ -26,6 +26,9 @@ local_resource(
             k3d cluster create jhub-apps-dev --api-port 6550 --port "8000:80@loadbalancer" --k3s-arg "--disable=traefik@server:0" --k3s-arg "--disable=servicelb@server:0" --volume "%s:/opt/jhub-apps@server:0" --wait
         fi
         kubectl config use-context k3d-jhub-apps-dev
+        # Wait for API server to be ready
+        echo "Waiting for Kubernetes API server..."
+        kubectl wait --for=condition=ready node --all --timeout=60s
     ''' % (jhub_apps_source, jhub_apps_source),
     deps=[],
     labels=['setup'],
