@@ -35,13 +35,13 @@ jobs:
           python=${{ matrix.python-version }}
           -c conda-forge
 
-    - name: Install JHub Apps
-      run: |
-        pip install .
+    - name: Install uv
+      uses: astral-sh/setup-uv@v5
 
-    - name: Install JupyterHub
+    - name: Install dependencies
       run: |
-        pip install jupyterhub${{ matrix.jupyterhub }}
+        uv sync --extra dev
+        uv pip install jupyterhub${{ matrix.jupyterhub }}
 
     - name: conda list
       run: conda list

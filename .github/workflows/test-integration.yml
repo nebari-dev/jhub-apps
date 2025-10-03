@@ -38,13 +38,13 @@ jobs:
           python=${{ matrix.python-version }}
           -c conda-forge
 
-    - name: Install JHub Apps
-      run: |
-        pip install .
+    - name: Install uv
+      uses: astral-sh/setup-uv@v5
 
-    - name: Install JupyterHub
+    - name: Install dependencies
       run: |
-        pip install "jupyterhub==${{ matrix.jupyterhub }}"
+        uv sync --extra dev
+        uv pip install "jupyterhub==${{ matrix.jupyterhub }}"
 
     - name: Install chp
       run: npm install -g configurable-http-proxy
@@ -68,10 +68,6 @@ jobs:
       run: |
         cat jupyter_config_profile_list >> jupyterhub_config.py
         cat jupyterhub_config.py
-
-    - name: Install Playwright
-      run: |
-        pip install pytest-playwright
 
     - name: Install Playwright Browser
       run: |
