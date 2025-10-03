@@ -168,3 +168,4 @@ debug:
 custom:
   jhub-apps-enabled: true
   environment: "development"
+  external-url: "http://localhost:8000"  # Public URL for OAuth and redirects

@@ -11,12 +11,15 @@ sys.path.insert(0, '/opt/jhub-apps')
 
 from kubespawner import KubeSpawner
 from jhub_apps.configuration import install_jhub_apps
+from z2jh import get_config
+
+# Get public URL from Helm values (Nebari pattern)
+_public_url = get_config("custom.external-url")
 
 # Basic JupyterHub settings
 c.JupyterHub.log_level = 10  # DEBUG for development
 # NOTE: We temporarily set bind_url to the public URL for install_jhub_apps to use it
 # for OAuth redirects, then override it after
-_public_url = "http://localhost:8000"
 c.JupyterHub.bind_url = _public_url
 c.JupyterHub.hub_connect_url = "http://hub:8081"  # Internal URL for services to connect to hub
 c.JupyterHub.default_url = "/hub/home"
