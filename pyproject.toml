@@ -77,3 +77,6 @@ include = ["jhub_apps"]
 
 [project.scripts]
 japps = "jhub_apps.main:app"
+
+[tool.ruff]
+exclude = ["k3s-dev"]
