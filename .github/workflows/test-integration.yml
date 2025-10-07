@@ -28,10 +28,12 @@ jobs:
           - "4.1.5"
           - "5.3.0"
     steps:
-    - uses: actions/checkout@v4.1.1
+    # https://github.com/actions/checkout/releases/tag/v5.0.0
+    - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
 
     - name: Setup Python
-      uses: mamba-org/setup-micromamba@v1.8.1
+      # https://github.com/mamba-org/setup-micromamba/releases/tag/v2.0.6
+      uses: mamba-org/setup-micromamba@7f29b8b80078b1b601dfa018b0f7425c587c63bb
       with:
         environment-file: environment-dev.yml
         create-args: >-
@@ -39,7 +41,8 @@ jobs:
           -c conda-forge
 
     - name: Install uv
-      uses: astral-sh/setup-uv@v5
+      # https://github.com/astral-sh/setup-uv/releases/tag/v6.8.0
+      uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e
 
     - name: Install dependencies
       run: |
@@ -112,14 +115,16 @@ jobs:
 
     - name: Upload Playwright Videos
       if: always()
-      uses: actions/upload-artifact@v4.3.0
+      # https://github.com/actions/upload-artifact/releases/tag/v4.6.2
+      uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
       with:
         name: ${{ steps.artifact-name.outputs.playwright-artifact-name }}
         path: videos
 
     - name: Upload JupyterHub logs
       if: always()
-      uses: actions/upload-artifact@v4.3.0
+      # https://github.com/actions/upload-artifact/releases/tag/v4.6.2
+      uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
       with:
         name: ${{ steps.artifact-name.outputs.jhub-logs-artifact-name }}
         path: jupyterhub-logs.txt
