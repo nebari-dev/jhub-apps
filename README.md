@@ -35,8 +35,6 @@ conda install -c conda-forge jhub-apps
 ### Install Dependencies
 
 ```bash
-conda env create -f environment-dev.yml
-conda activate jhub-apps-dev
 uv sync --extra dev
 ```
 
