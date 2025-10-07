@@ -9,9 +9,6 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        shell: bash -el {0}
     strategy:
       fail-fast: false
       matrix:
@@ -25,30 +22,36 @@ jobs:
           - "==4.1.5"
           - ">=5.0.0"
     steps:
-    - uses: actions/checkout@v4.1.1
+    # https://github.com/actions/checkout/releases/tag/v5.0.0
+    - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
 
     - name: Setup Python
-      uses: mamba-org/setup-micromamba@v1.8.1
+      # https://github.com/actions/setup-python/releases/tag/v6.0.0
+      uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c
       with:
-        environment-file: environment-dev.yml
-        create-args: >-
-          python=${{ matrix.python-version }}
-          -c conda-forge
+        python-version: ${{ matrix.python-version }}
 
-    - name: Install JHub Apps
+    - name: Install uv
+      # https://github.com/astral-sh/setup-uv/releases/tag/v6.8.0
+      uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e
+
+    - name: Install dependencies
       run: |
-        pip install .
+        if [ "${{ matrix.jupyterhub }}" = "==4.1.5" ]; then
+          uv sync --group test-jupyterhub-4 --extra dev
+        else
+          uv sync --group test-jupyterhub-5 --extra dev
+        fi
 
-    - name: Install JupyterHub
-      run: |
-        pip install jupyterhub${{ matrix.jupyterhub }}
-
-    - name: conda list
-      run: conda list
-
-    - name: pip freeze
-      run: pip freeze
+    - name: uv pip list
+      run: uv pip list
 
     - name: Run Tests
       run: |
-        pytest jhub_apps/tests/${{ matrix.test_type }} -vvv -s --log-cli-level=INFO
+        GROUP_FLAG=""
+        if [ "${{ matrix.jupyterhub }}" = "==4.1.5" ]; then
+          GROUP_FLAG="--group test-jupyterhub-4"
+        else
+          GROUP_FLAG="--group test-jupyterhub-5"
+        fi
+        uv run $GROUP_FLAG --extra dev pytest jhub_apps/tests/${{ matrix.test_type }} -vvv -s --log-cli-level=INFO

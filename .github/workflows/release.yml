@@ -10,23 +10,23 @@ jobs:
   release:
     name: Release jhub-apps
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        shell: bash -el {0}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.1.1
+        # https://github.com/actions/checkout/releases/tag/v5.0.0
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
 
       - name: Setup Python
-        uses: mamba-org/setup-micromamba@v1.8.0
+        # https://github.com/actions/setup-python/releases/tag/v6.0.0
+        uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c
         with:
-          environment-file: environment-dev.yml
-          create-args: >-
-            python=${{ matrix.python-version }}
-            -c conda-forge
+          python-version: '3.12'
 
-      - name: Install Hatch
-        run: pip install hatch
+      - name: Install uv
+        # https://github.com/astral-sh/setup-uv/releases/tag/v6.8.0
+        uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e
+
+      - name: Install dependencies
+        run: uv sync
 
       - name: Hatch Build
         run: hatch build

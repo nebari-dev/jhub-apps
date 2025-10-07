@@ -21,7 +21,7 @@ command. Currently, the following frameworks are supported:
 ## Installation
 
 ```
-pip install jhub-apps
+uv pip install jhub-apps
 ```
 
 or via conda
@@ -35,9 +35,7 @@ conda install -c conda-forge jhub-apps
 ### Install Dependencies
 
 ```bash
-conda env create -f environment-dev.yml
-conda activate jhub-apps-dev
-pip install -e .
+uv sync --extra dev
 ```
 
 To develop the React UI frontend, also run:
@@ -110,7 +108,7 @@ The Littlest JupyterHub using `SystemdSpawner`.
 - Install JHub Apps
 
 ```python
-pip install git+https://github.com/nebari-dev/jhub-apps.git
+uv pip install git+https://github.com/nebari-dev/jhub-apps.git
 ```
 
 - Add the following in The Littlest JupyterHub's `jupyterhub_config.py`
