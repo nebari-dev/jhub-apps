@@ -9,9 +9,6 @@ on:
 jobs:
   test:
     runs-on: ${{ matrix.os }}
-    defaults:
-      run:
-        shell: bash -el {0}
     strategy:
       fail-fast: false
       matrix:
@@ -32,13 +29,10 @@ jobs:
     - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
 
     - name: Setup Python
-      # https://github.com/mamba-org/setup-micromamba/releases/tag/v2.0.6
-      uses: mamba-org/setup-micromamba@7f29b8b80078b1b601dfa018b0f7425c587c63bb
+      # https://github.com/actions/setup-python/releases/tag/v6.0.0
+      uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c
       with:
-        environment-file: environment-dev.yml
-        create-args: >-
-          python=${{ matrix.python-version }}
-          -c conda-forge
+        python-version: ${{ matrix.python-version }}
 
     - name: Install uv
       # https://github.com/astral-sh/setup-uv/releases/tag/v6.8.0
@@ -55,11 +49,8 @@ jobs:
     - name: Install chp
       run: npm install -g configurable-http-proxy
 
-    - name: conda list
-      run: conda list
-
-    - name: pip freeze
-      run: pip freeze
+    - name: uv pip list
+      run: uv pip list
 
     - name: Verify JupyterHub Version
       run: |

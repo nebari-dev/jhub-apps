@@ -10,22 +10,16 @@ jobs:
   release:
     name: Release jhub-apps
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        shell: bash -el {0}
     steps:
       - name: Checkout
         # https://github.com/actions/checkout/releases/tag/v5.0.0
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
 
       - name: Setup Python
-        # https://github.com/mamba-org/setup-micromamba/releases/tag/v2.0.6
-        uses: mamba-org/setup-micromamba@7f29b8b80078b1b601dfa018b0f7425c587c63bb
+        # https://github.com/actions/setup-python/releases/tag/v6.0.0
+        uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c
         with:
-          environment-file: environment-dev.yml
-          create-args: >-
-            python=${{ matrix.python-version }}
-            -c conda-forge
+          python-version: '3.12'
 
       - name: Install uv
         # https://github.com/astral-sh/setup-uv/releases/tag/v6.8.0
