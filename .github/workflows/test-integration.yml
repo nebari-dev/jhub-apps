@@ -43,9 +43,11 @@ jobs:
 
     - name: Install dependencies
       run: |
-        uv sync --extra dev --no-install-project
-        uv pip install "jupyterhub==${{ matrix.jupyterhub }}"
-        uv pip install -e .
+        if [ "${{ matrix.jupyterhub }}" = "4.1.5" ]; then
+          uv sync --group test-jupyterhub-4 --extra dev
+        else
+          uv sync --group test-jupyterhub-5 --extra dev
+        fi
 
     - name: Install chp
       run: npm install -g configurable-http-proxy
@@ -59,8 +61,14 @@ jobs:
     - name: Verify JupyterHub Version
       run: |
         # Check if the installed version matches the expected version
-        if [ "$(uv run jupyterhub -V)" != "${{ matrix.jupyterhub }}" ]; then
-            echo "JupyterHub version $(uv run jupyterhub -V) != ${{ matrix.jupyterhub }}"
+        GROUP_FLAG=""
+        if [ "${{ matrix.jupyterhub }}" = "4.1.5" ]; then
+          GROUP_FLAG="--group test-jupyterhub-4"
+        else
+          GROUP_FLAG="--group test-jupyterhub-5"
+        fi
+        if [ "$(uv run $GROUP_FLAG --extra dev jupyterhub -V)" != "${{ matrix.jupyterhub }}" ]; then
+            echo "JupyterHub version $(uv run $GROUP_FLAG --extra dev jupyterhub -V) != ${{ matrix.jupyterhub }}"
             exit 1
         fi
 
@@ -72,11 +80,23 @@ jobs:
 
     - name: Install Playwright Browser
       run: |
-        uv run playwright install
+        GROUP_FLAG=""
+        if [ "${{ matrix.jupyterhub }}" = "4.1.5" ]; then
+          GROUP_FLAG="--group test-jupyterhub-4"
+        else
+          GROUP_FLAG="--group test-jupyterhub-5"
+        fi
+        uv run $GROUP_FLAG --extra dev playwright install
 
     - name: Run Tests
       run: |
-        uv run pytest jhub_apps/tests/tests_e2e/ -vvv -s -m "${{ matrix.test_type }}" --log-cli-level=INFO
+        GROUP_FLAG=""
+        if [ "${{ matrix.jupyterhub }}" = "4.1.5" ]; then
+          GROUP_FLAG="--group test-jupyterhub-4"
+        else
+          GROUP_FLAG="--group test-jupyterhub-5"
+        fi
+        uv run $GROUP_FLAG --extra dev pytest jhub_apps/tests/tests_e2e/ -vvv -s -m "${{ matrix.test_type }}" --log-cli-level=INFO
 
     - name: Create artifact name
       id: artifact-name

@@ -40,8 +40,11 @@ jobs:
 
     - name: Install dependencies
       run: |
-        uv sync --extra dev
-        uv pip install jupyterhub${{ matrix.jupyterhub }}
+        if [ "${{ matrix.jupyterhub }}" = "==4.1.5" ]; then
+          uv sync --group test-jupyterhub-4 --extra dev
+        else
+          uv sync --group test-jupyterhub-5 --extra dev
+        fi
 
     - name: conda list
       run: conda list
@@ -51,4 +54,10 @@ jobs:
 
     - name: Run Tests
       run: |
-        uv run pytest jhub_apps/tests/${{ matrix.test_type }} -vvv -s --log-cli-level=INFO
+        GROUP_FLAG=""
+        if [ "${{ matrix.jupyterhub }}" = "==4.1.5" ]; then
+          GROUP_FLAG="--group test-jupyterhub-4"
+        else
+          GROUP_FLAG="--group test-jupyterhub-5"
+        fi
+        uv run $GROUP_FLAG --extra dev pytest jhub_apps/tests/${{ matrix.test_type }} -vvv -s --log-cli-level=INFO
