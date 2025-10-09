@@ -27,8 +27,11 @@ hub:
         - /bin/bash
         - -c
         - |
+          echo "Installing uv..."
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+          export PATH="$HOME/.local/bin:$PATH"
           echo "Installing jhub-apps dependencies..."
-          pip install --target=/srv/jupyterhub/jhub-apps-deps /opt/jhub-apps
+          uv pip install --target=/srv/jupyterhub/jhub-apps-deps /opt/jhub-apps
           echo "Dependencies installed successfully"
       volumeMounts:
         - name: jhub-apps-source
