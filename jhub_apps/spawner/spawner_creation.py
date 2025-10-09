@@ -89,17 +89,6 @@ def subclass_spawner(base_spawner):
             else:
                 command: Command = COMMANDS.get(framework)
 
-            repository = self.user_options.get("repository")
-            if repository:
-                logger.info(f"repository specified: {repository}")
-                # The repository will be cloned during spawn time to
-                # deploy the app from the repository.
-                command.args.extend([
-                    f"--repo={repository.get('url')}",
-                    f"--repofolder=/tmp/{self.name}-{uuid.uuid4().hex[:6]}",
-                    f"--repobranch={repository.get('ref')}"
-                ])
-
             command_args = command.get_substituted_args(
                 python_exec=self.config.JAppsConfig.python_exec,
                 filepath=app_filepath,
@@ -175,6 +164,18 @@ def subclass_spawner(base_spawner):
                     base_cmd.append("--force-alive")
                 else:
                     base_cmd.append("--no-force-alive")
+
+                # Add git repository arguments to base_cmd (before -- separator)
+                repository = self.user_options.get("repository")
+                if repository:
+                    logger.info(f"repository specified: {repository}")
+                    # The repository will be cloned during spawn time to
+                    # deploy the app from the repository.
+                    base_cmd.extend([
+                        f"--repo={repository.get('url')}",
+                        f"--repofolder=/tmp/{self.name}-{uuid.uuid4().hex[:6]}",
+                        f"--repobranch={repository.get('ref')}"
+                    ])
 
                 # Get app-specific command arguments
                 app_args = self._get_app_command_args()
