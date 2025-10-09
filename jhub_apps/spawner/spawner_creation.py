@@ -171,10 +171,12 @@ def subclass_spawner(base_spawner):
                     logger.info(f"repository specified: {repository}")
                     # The repository will be cloned during spawn time to
                     # deploy the app from the repository.
+                    repo_folder = f"/tmp/{self.name}-{uuid.uuid4().hex[:6]}"
                     base_cmd.extend([
                         f"--repo={repository.get('url')}",
-                        f"--repofolder=/tmp/{self.name}-{uuid.uuid4().hex[:6]}",
-                        f"--repobranch={repository.get('ref')}"
+                        f"--repofolder={repo_folder}",
+                        f"--repobranch={repository.get('ref')}",
+                        f"--workdir={repo_folder}"
                     ])
 
                 # Get app-specific command arguments
