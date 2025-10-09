@@ -18,7 +18,7 @@ from jhub_apps.spawner.types import Framework
 logger = structlog.get_logger(__name__)
 
 # jhub-app-proxy version to install
-JHUB_APP_PROXY_VERSION = "v0.1"
+JHUB_APP_PROXY_VERSION = "v0.3"
 JHUB_APP_PROXY_INSTALL_URL = "https://raw.githubusercontent.com/nebari-dev/jhub-app-proxy/main/install.sh"
 
 
@@ -36,14 +36,14 @@ def wrap_command_with_proxy_installer(cmd_list):
     cmd_str = ' '.join(shlex.quote(str(arg)) for arg in cmd_list)
 
     install_script = f'''
+# Ensure ~/.local/bin is in PATH first
+export PATH="$HOME/.local/bin:$PATH"
+
 # Install jhub-app-proxy if not present
 if ! command -v jhub-app-proxy &> /dev/null; then
     echo "jhub-app-proxy not found, installing..."
     curl -fsSL {JHUB_APP_PROXY_INSTALL_URL} | bash -s -- -v {JHUB_APP_PROXY_VERSION}
 fi
-
-# Ensure ~/.local/bin is in PATH
-export PATH="$HOME/.local/bin:$PATH"
 
 # Execute the original command
 exec {cmd_str}
