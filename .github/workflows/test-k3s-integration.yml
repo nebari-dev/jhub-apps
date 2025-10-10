@@ -24,7 +24,6 @@ jobs:
       fail-fast: false
       matrix:
         python-version: ["3.11"]
-        jupyterhub-version: ["5.3.0"]
 
     steps:
       - name: Checkout code
@@ -35,11 +34,14 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
       - name: Install Python dependencies
-        run: |
-          pip install -e ".[dev]"
-          pip install playwright pytest-playwright
-          playwright install chromium
+        run: uv sync --group test-jupyterhub-5 --extra dev
+
+      - name: Install Playwright Browser
+        run: uv run --group test-jupyterhub-5 --extra dev playwright install chromium
 
       - name: Install k3d
         run: |
@@ -54,8 +56,15 @@ jobs:
         run: |
           curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
 
+      - name: Ensure kubeconfig directory exists
+        run: |
+          mkdir -p ~/.kube
+          touch ~/.kube/config
+
       - name: Deploy JupyterHub with k3s using Tilt
         working-directory: k3s-dev
+        env:
+          KUBECONFIG: /home/runner/.kube/config
         run: |
           echo "Starting Tilt in CI mode..."
           tilt ci
@@ -84,14 +93,14 @@ jobs:
         env:
           BASE_URL: "http://localhost:8000"
         run: |
-          pytest jhub_apps/tests/tests_e2e/ -v -s --log-cli-level=INFO
+          uv run --group test-jupyterhub-5 --extra dev pytest jhub_apps/tests/tests_e2e/ -v -s --log-cli-level=INFO
         timeout-minutes: 10
 
       - name: Upload test artifacts
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: test-artifacts-py${{ matrix.python-version }}-jhub${{ matrix.jupyterhub-version }}
+          name: test-artifacts-k3s-py${{ matrix.python-version }}
           path: |
             videos/
             screenshots/
