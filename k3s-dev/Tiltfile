@@ -82,7 +82,7 @@ local_resource(
     ''',
     deps=['./config/'],
     labels=['config'],
-    resource_deps=['jupyterhub-hub'],
+    resource_deps=['hub'],
     auto_init=False,
     trigger_mode=TRIGGER_MODE_AUTO,
 )
