@@ -70,7 +70,9 @@ for role in c.JupyterHub.load_roles:
                 # Need scope 'read:groups:name' to share with groups by name
                 "read:groups:name",
             ]
-            + ["shares!user"] if is_jupyterhub_5() else []
+            + ["shares!user"]
+            if is_jupyterhub_5()
+            else []
         )
         break
 

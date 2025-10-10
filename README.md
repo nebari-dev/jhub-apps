@@ -57,7 +57,7 @@ cd k3s-dev
 make up
 ```
 
-Once started, access JupyterHub at http://localhost:8000
+Once started, access JupyterHub at http://localhost:8000 (login with any username and password `password`)
 
 To tear down the environment:
 
