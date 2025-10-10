@@ -1,38 +1,33 @@
 # Tilt configuration for jhub-apps local development with k3s
 # Supports both interactive development (tilt up) and CI (tilt ci)
 
-# Allow current context temporarily for cluster creation
-allow_k8s_contexts(k8s_context())
-
 # Get absolute path to jhub-apps source (before cluster creation)
 jhub_apps_source = str(local('cd .. && pwd')).strip()
 
-# Create k3d cluster with volume mount for jhub-apps source
-# Only recreate if cluster doesn't exist or if it needs the volume mount
-local_resource(
-    'create-k3d-cluster',
-    cmd='''
-        if k3d cluster list | grep -q jhub-apps-dev; then
-            # Check if volume mount exists by checking if path is accessible in the cluster
-            if ! docker exec k3d-jhub-apps-dev-server-0 ls /opt/jhub-apps >/dev/null 2>&1; then
-                echo "Cluster exists but volume mount missing, recreating..."
-                k3d cluster delete jhub-apps-dev
-                k3d cluster create jhub-apps-dev --api-port 6550 --port "8000:80@loadbalancer" --k3s-arg "--disable=traefik@server:0" --k3s-arg "--kubelet-arg=eviction-hard=@server:0" --k3s-arg "--kubelet-arg=eviction-soft=@server:0" --volume "%s:/opt/jhub-apps@server:0" --wait
-            else
-                echo "Cluster exists with volume mount"
-            fi
-        else
-            echo "Creating k3d cluster..."
+# Ensure k3d cluster exists and switch to it BEFORE allow_k8s_contexts
+# This runs synchronously during Tiltfile load (required before k8s_yaml)
+local('''
+    if k3d cluster list | grep -q jhub-apps-dev; then
+        # Check if volume mount exists by checking if path is accessible in the cluster
+        if ! docker exec k3d-jhub-apps-dev-server-0 ls /opt/jhub-apps >/dev/null 2>&1; then
+            echo "Cluster exists but volume mount missing, recreating..."
+            k3d cluster delete jhub-apps-dev
             k3d cluster create jhub-apps-dev --api-port 6550 --port "8000:80@loadbalancer" --k3s-arg "--disable=traefik@server:0" --k3s-arg "--kubelet-arg=eviction-hard=@server:0" --k3s-arg "--kubelet-arg=eviction-soft=@server:0" --volume "%s:/opt/jhub-apps@server:0" --wait
+        else
+            echo "Cluster exists with volume mount"
         fi
-        kubectl config use-context k3d-jhub-apps-dev
-        # Wait for API server to be ready
-        echo "Waiting for Kubernetes API server..."
-        kubectl wait --for=condition=ready node --all --timeout=60s
-    ''' % (jhub_apps_source, jhub_apps_source),
-    deps=[],
-    labels=['setup'],
-)
+    else
+        echo "Creating k3d cluster..."
+        k3d cluster create jhub-apps-dev --api-port 6550 --port "8000:80@loadbalancer" --k3s-arg "--disable=traefik@server:0" --k3s-arg "--kubelet-arg=eviction-hard=@server:0" --k3s-arg "--kubelet-arg=eviction-soft=@server:0" --volume "%s:/opt/jhub-apps@server:0" --wait
+    fi
+    kubectl config use-context k3d-jhub-apps-dev
+    # Wait for API server to be ready
+    echo "Waiting for Kubernetes API server..."
+    kubectl wait --for=condition=ready node --all --timeout=60s
+''' % (jhub_apps_source, jhub_apps_source))
+
+# Now allow only the k3d context
+allow_k8s_contexts('k3d-jhub-apps-dev')
 
 # Detect CI environment
 is_ci = config.tilt_subcommand == "ci"
@@ -40,8 +35,13 @@ is_ci = config.tilt_subcommand == "ci"
 # Set default namespace
 k8s_namespace('jhub-apps-dev')
 
-# Create namespace synchronously during Tiltfile load (required before k8s_yaml)
-local('kubectl create namespace jhub-apps-dev --dry-run=client -o yaml | kubectl apply -f -')
+# Create namespace as a Kubernetes resource (Tilt best practice)
+k8s_yaml(blob("""
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: jhub-apps-dev
+"""))
 
 # Create ConfigMap from config files
 # Tilt will watch these files and auto-update the ConfigMap
@@ -87,11 +87,38 @@ local_resource(
     trigger_mode=TRIGGER_MODE_AUTO,
 )
 
+# Create a setup resource for namespace and other non-workload objects
+# These objects don't create pods, so group them together as setup resources
+k8s_resource(
+    objects=[
+        'jhub-apps-dev:namespace',
+        'hub:serviceaccount',
+        'continuous-image-puller:serviceaccount',
+        'hook-image-puller:serviceaccount',
+        'hook-image-awaiter:serviceaccount',
+        'hub:role',
+        'hook-image-awaiter:role',
+        'hub:rolebinding',
+        'hook-image-awaiter:rolebinding',
+        'hub-db-dir:persistentvolumeclaim',
+        'jupyterhub-config:configmap',
+        'hub:configmap',
+        'hub:secret',
+        'user-placeholder:poddisruptionbudget',
+        'hub:networkpolicy',
+        'proxy:networkpolicy',
+        'singleuser:networkpolicy',
+    ],
+    new_name='namespace',
+    labels=['setup'],
+    pod_readiness='ignore',  # These objects don't create pods
+)
+
 # Configure hub resource
 k8s_resource(
     'hub',
     labels=['jupyterhub'],
-    resource_deps=['create-k3d-cluster'],
+    resource_deps=['namespace'],
 )
 
 # Configure proxy resource
@@ -99,6 +126,28 @@ k8s_resource(
 k8s_resource(
     'proxy',
     labels=['jupyterhub'],
+    resource_deps=['namespace'],
+)
+
+# Configure other JupyterHub resources to depend on namespace
+k8s_resource(
+    'continuous-image-puller',
+    resource_deps=['namespace'],
+)
+
+k8s_resource(
+    'hook-image-awaiter',
+    resource_deps=['namespace'],
+)
+
+k8s_resource(
+    'hook-image-puller',
+    resource_deps=['namespace'],
+)
+
+k8s_resource(
+    'user-placeholder',
+    resource_deps=['namespace'],
 )
 
 # In CI mode, wait for hub to be ready then exit
