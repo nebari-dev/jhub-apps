@@ -19,6 +19,8 @@ jobs:
   test-k3s:
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    env:
+      KUBECONFIG: /home/runner/.kube/config
 
     strategy:
       fail-fast: false
@@ -56,10 +58,16 @@ jobs:
         run: |
           curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
 
+      - name: Create k3d cluster
+        working-directory: k3s-dev
+        run: |
+          export JHUB_APPS_SOURCE=${{ github.workspace }}
+          k3d cluster create -c k3d-config.yaml --wait
+          kubectl wait --for=condition=ready node --all --timeout=60s
+          kubectl get nodes
+
       - name: Deploy JupyterHub with k3s using Tilt
         working-directory: k3s-dev
-        env:
-          KUBECONFIG: /home/runner/.kube/config
         run: |
           echo "Starting Tilt in CI mode..."
           tilt ci

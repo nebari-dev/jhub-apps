@@ -1,32 +1,13 @@
 # Tilt configuration for jhub-apps local development with k3s
 # Supports both interactive development (tilt up) and CI (tilt ci)
+#
+# Prerequisites:
+# - Create the k3d cluster first:
+#   cd k3s-dev
+#   export JHUB_APPS_SOURCE=$(cd .. && pwd)
+#   k3d cluster create -c k3d-config.yaml
 
-# Get absolute path to jhub-apps source (before cluster creation)
-jhub_apps_source = str(local('cd .. && pwd')).strip()
-
-# Ensure k3d cluster exists and switch to it BEFORE allow_k8s_contexts
-# This runs synchronously during Tiltfile load (required before k8s_yaml)
-local('''
-    if k3d cluster list | grep -q jhub-apps-dev; then
-        # Check if volume mount exists by checking if path is accessible in the cluster
-        if ! docker exec k3d-jhub-apps-dev-server-0 ls /opt/jhub-apps >/dev/null 2>&1; then
-            echo "Cluster exists but volume mount missing, recreating..."
-            k3d cluster delete jhub-apps-dev
-            k3d cluster create jhub-apps-dev --api-port 6550 --port "8000:80@loadbalancer" --k3s-arg "--disable=traefik@server:0" --k3s-arg "--kubelet-arg=eviction-hard=@server:0" --k3s-arg "--kubelet-arg=eviction-soft=@server:0" --volume "%s:/opt/jhub-apps@server:0" --wait
-        else
-            echo "Cluster exists with volume mount"
-        fi
-    else
-        echo "Creating k3d cluster..."
-        k3d cluster create jhub-apps-dev --api-port 6550 --port "8000:80@loadbalancer" --k3s-arg "--disable=traefik@server:0" --k3s-arg "--kubelet-arg=eviction-hard=@server:0" --k3s-arg "--kubelet-arg=eviction-soft=@server:0" --volume "%s:/opt/jhub-apps@server:0" --wait
-    fi
-    kubectl config use-context k3d-jhub-apps-dev
-    # Wait for API server to be ready
-    echo "Waiting for Kubernetes API server..."
-    kubectl wait --for=condition=ready node --all --timeout=60s
-''' % (jhub_apps_source, jhub_apps_source))
-
-# Now allow only the k3d context
+# Validate that the cluster exists and is the current context
 allow_k8s_contexts('k3d-jhub-apps-dev')
 
 # Detect CI environment
