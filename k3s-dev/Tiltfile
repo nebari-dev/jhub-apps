@@ -51,6 +51,9 @@ k8s_yaml(helm(
 # Watch config files and trigger ConfigMap update + hub restart
 watch_file('./config/')
 
+# Watch jhub-apps source code for changes
+watch_file('../jhub_apps/')
+
 # Update config resource - rebuilds ConfigMap and restarts hub
 local_resource(
     'update-config',
@@ -63,6 +66,19 @@ local_resource(
     ''',
     deps=['./config/'],
     labels=['config'],
+    resource_deps=['hub'],
+    auto_init=False,
+    trigger_mode=TRIGGER_MODE_AUTO,
+)
+
+# Auto-reload hub when jhub-apps source code changes
+local_resource(
+    'reload-jhub-apps',
+    cmd='''
+        kubectl rollout restart deployment/hub -n jhub-apps-dev
+    ''',
+    deps=['../jhub_apps/'],
+    labels=['jhub-apps'],
     resource_deps=['hub'],
     auto_init=False,
     trigger_mode=TRIGGER_MODE_AUTO,
@@ -153,7 +169,7 @@ Once ready:
 
 💡 Tips:
   • Edit config/*.py → Tilt auto-reloads
-  • Edit ../jhub_apps/*.py → Restart 'hub' from Tilt UI
+  • Edit ../jhub_apps/*.py → Tilt auto-reloads
   • Press 'space' to open Tilt UI in browser
   • Press 'Ctrl+C' to stop
 
