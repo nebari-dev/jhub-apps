@@ -70,6 +70,11 @@ jobs:
           tilt ci
         timeout-minutes: 15
 
+      - name: Setup tmate session for debugging
+        if: failure()
+        uses: mxschmitt/action-tmate@v3
+        timeout-minutes: 30
+
       - name: Wait for JupyterHub to be ready
         run: |
           echo "Waiting for JupyterHub to be ready..."
