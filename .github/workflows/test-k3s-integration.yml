@@ -92,7 +92,7 @@ jobs:
           BASE_URL: "http://localhost:8000"
           USE_EXTERNAL_JUPYTERHUB: "true"
         run: |
-          uv run --group test-jupyterhub-5 --extra dev pytest jhub_apps/tests/tests_e2e/ -v -s --log-cli-level=INFO
+          uv run --group test-jupyterhub-5 --extra dev pytest jhub_apps/tests/tests_e2e/ -m k3s -v -s --log-cli-level=INFO
         timeout-minutes: 10
 
       - name: Upload test artifacts

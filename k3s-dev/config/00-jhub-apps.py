@@ -44,7 +44,7 @@ c.JupyterHub.template_paths = theme_template_paths
 # Theme configuration (mimics Nebari's look and feel)
 from jhub_apps import themes
 c.JupyterHub.template_vars = {
-    "hub_title": "JHub Apps Dev",
+    "hub_title": "Welcome to Nebari",
     "hub_subtitle": "Local KubeSpawner Testing Environment",
     "welcome": "🚀 Development Mode",
     "display_version": True,

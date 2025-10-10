@@ -46,6 +46,7 @@ dev = [
     "playwright",
     "pytest-playwright",
     "pre-commit",
+    "ipdb",
 ]
 
 [project.entry-points.jhub_apps]
@@ -80,6 +81,11 @@ japps = "jhub_apps.main:app"
 
 [tool.ruff]
 exclude = ["k3s-dev"]
+
+[tool.pytest.ini_options]
+markers = [
+    "k3s: marks tests that can run on k3s deployment (deselect with '-m \"not k3s\"')",
+]
 
 [dependency-groups]
 test-jupyterhub-4 = ["jupyterhub==4.1.5", "jupyter-telemetry==0.1.0", "async-generator==1.10"]

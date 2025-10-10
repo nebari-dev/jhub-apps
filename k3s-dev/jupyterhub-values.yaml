@@ -99,6 +99,7 @@ hub:
       memory: "2Gi"
 
   # Authentication and admin configuration (JupyterHub 4.x style)
+  # Using DummyAuthenticator for testing - allows any username with "password"
   config:
     JupyterHub:
       authenticator_class: dummy
@@ -106,10 +107,9 @@ hub:
     Authenticator:
       admin_users:
         - admin
-      allowed_users:
-        - admin
+      # Don't set allowed_users - allow any username to log in (DummyAuthenticator default)
     DummyAuthenticator:
-      password: "test"
+      password: "password"
 
 # Proxy configuration
 proxy:
