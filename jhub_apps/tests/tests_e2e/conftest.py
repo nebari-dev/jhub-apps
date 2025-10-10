@@ -125,10 +125,18 @@ class JupyterHubManager:
 
 @pytest.fixture(scope="session", autouse=True)
 def jupyterhub_manager():
-    try:
-        manager = JupyterHubManager()
-        manager.start()
-        os.environ.update(manager.env_vars)
-        yield manager
-    finally:
-        manager.stop()
+    # Check if we should use an external JupyterHub (e.g., in k3s tests)
+    use_external_hub = os.environ.get("USE_EXTERNAL_JUPYTERHUB", "false").lower() == "true"
+
+    if use_external_hub:
+        logger.info("Using external JupyterHub instance")
+        # Just yield None - tests will use the external instance via BASE_URL
+        yield None
+    else:
+        try:
+            manager = JupyterHubManager()
+            manager.start()
+            os.environ.update(manager.env_vars)
+            yield manager
+        finally:
+            manager.stop()

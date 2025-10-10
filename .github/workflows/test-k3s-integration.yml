@@ -89,17 +89,13 @@ jobs:
           echo "Checking services..."
           kubectl get svc -n jhub-apps-dev
 
-      - name: Port forward JupyterHub
-        run: |
-          kubectl port-forward service/proxy-public 8000:80 -n jhub-apps-dev &
-          sleep 5
-
-          echo "Testing JupyterHub endpoint..."
+          echo "Testing JupyterHub endpoint (via k3d port mapping)..."
           curl -f http://localhost:8000/hub/api || (kubectl logs deployment/hub -n jhub-apps-dev && exit 1)
 
       - name: Run integration tests
         env:
           BASE_URL: "http://localhost:8000"
+          USE_EXTERNAL_JUPYTERHUB: "true"
         run: |
           uv run --group test-jupyterhub-5 --extra dev pytest jhub_apps/tests/tests_e2e/ -v -s --log-cli-level=INFO
         timeout-minutes: 10

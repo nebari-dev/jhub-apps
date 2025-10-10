@@ -6,7 +6,7 @@ Simplified from Nebari's production config for local testing.
 """
 
 # Basic spawner settings
-c.KubeSpawner.image = "quay.io/jupyterhub/singleuser:4.1.0"
+c.KubeSpawner.image = "quay.io/nebari/nebari-jupyterlab:main"
 c.KubeSpawner.start_timeout = 300  # 5 minutes
 c.KubeSpawner.http_timeout = 120   # 2 minutes
 
