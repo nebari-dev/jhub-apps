@@ -18,7 +18,7 @@ from jhub_apps.spawner.types import Framework
 logger = structlog.get_logger(__name__)
 
 # jhub-app-proxy version to install
-JHUB_APP_PROXY_VERSION = "v0.4"
+JHUB_APP_PROXY_VERSION = "v0.5"
 JHUB_APP_PROXY_INSTALL_URL = "https://raw.githubusercontent.com/nebari-dev/jhub-app-proxy/main/install.sh"
 
 
