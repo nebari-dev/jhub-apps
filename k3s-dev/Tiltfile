@@ -148,6 +148,7 @@ k8s_resource(
 k8s_resource(
     'user-placeholder',
     resource_deps=['namespace'],
+    pod_readiness='ignore',  # StatefulSet with 0 replicas (placeholder only)
 )
 
 # In CI mode, wait for hub to be ready then exit
