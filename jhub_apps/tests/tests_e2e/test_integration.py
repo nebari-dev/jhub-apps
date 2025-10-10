@@ -35,7 +35,7 @@ def test_jupyterhub_loading(playwright: Playwright):
 @pytest.mark.parametrize(
     ("with_server_options",),
     [
-        pytest.param(True, marks=[pytest.mark.with_server_options, pytest.mark.k3s]),
+        pytest.param(True, marks=[pytest.mark.with_server_options]),
         pytest.param(False),
     ],
 )
