@@ -42,10 +42,12 @@ export PATH="$HOME/.local/bin:$PATH"
 # Install jhub-app-proxy if not present
 if ! command -v jhub-app-proxy &> /dev/null; then
     echo "jhub-app-proxy not found, installing..."
+    echo "Running: curl -fsSL {JHUB_APP_PROXY_INSTALL_URL} | bash -s -- -v {JHUB_APP_PROXY_VERSION}"
     curl -fsSL {JHUB_APP_PROXY_INSTALL_URL} | bash -s -- -v {JHUB_APP_PROXY_VERSION}
 fi
 
 # Execute the original command
+echo "Running command: {cmd_str}"
 exec {cmd_str}
 '''.strip()
 
