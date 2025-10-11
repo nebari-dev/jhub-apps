@@ -10,7 +10,6 @@ from jhub_apps.spawner.command import (
     Command,
     EXAMPLES_FILE,
     DEFAULT_CMD,
-    GENERIC_ARGS,
     TString,
 )
 from jhub_apps.spawner.types import Framework
