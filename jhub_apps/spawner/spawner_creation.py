@@ -1,3 +1,4 @@
+import os
 import shlex
 import uuid
 
@@ -17,17 +18,36 @@ from jhub_apps.spawner.types import Framework
 
 logger = structlog.get_logger(__name__)
 
-# jhub-app-proxy version to install
-JHUB_APP_PROXY_VERSION = "v0.5"
+# jhub-app-proxy configuration
 JHUB_APP_PROXY_INSTALL_URL = "https://raw.githubusercontent.com/nebari-dev/jhub-app-proxy/main/install.sh"
 
 
-def wrap_command_with_proxy_installer(cmd_list):
+def get_proxy_version(config, app_env=None):
+    """Get jhub-app-proxy version from app environment or config.
+
+    Args:
+        config: JupyterHub config object
+        app_env: Environment variables dict for the specific app deployment
+
+    Returns:
+        Version string (e.g., 'v0.5')
+
+    Priority order:
+        1. App-specific environment variable JHUB_APP_PROXY_VERSION
+        2. Config value c.JAppsConfig.jhub_app_proxy_version
+    """
+    if app_env and "JHUB_APP_PROXY_VERSION" in app_env:
+        return app_env["JHUB_APP_PROXY_VERSION"]
+    return config.JAppsConfig.jhub_app_proxy_version
+
+
+def wrap_command_with_proxy_installer(cmd_list, proxy_version):
     """
     Wraps a command list in a bash script that installs jhub-app-proxy if needed.
 
     Args:
         cmd_list: List of command arguments (e.g., ['jhub-app-proxy', '--authtype=oauth', ...])
+        proxy_version: Version of jhub-app-proxy to install (e.g., 'v0.5')
 
     Returns:
         List with bash wrapper: ['/bin/bash', '-c', '<script>']
@@ -42,8 +62,8 @@ export PATH="$HOME/.local/bin:$PATH"
 # Install jhub-app-proxy if not present
 if ! command -v jhub-app-proxy &> /dev/null; then
     echo "jhub-app-proxy not found, installing..."
-    echo "Running: curl -fsSL {JHUB_APP_PROXY_INSTALL_URL} | bash -s -- -v {JHUB_APP_PROXY_VERSION}"
-    curl -fsSL {JHUB_APP_PROXY_INSTALL_URL} | bash -s -- -v {JHUB_APP_PROXY_VERSION}
+    echo "Running: curl -fsSL {JHUB_APP_PROXY_INSTALL_URL} | bash -s -- -v {proxy_version}"
+    curl -fsSL {JHUB_APP_PROXY_INSTALL_URL} | bash -s -- -v {proxy_version}
 fi
 
 # Execute the original command
@@ -187,8 +207,11 @@ def subclass_spawner(base_spawner):
                 # Combine base command with app arguments
                 complete_cmd = base_cmd + app_args
 
+                # Get proxy version from app-specific environment or config
+                proxy_version = get_proxy_version(self.config, self.user_options.get("env"))
+
                 # Wrap the complete command with jhub-app-proxy installer
-                self.cmd = wrap_command_with_proxy_installer(complete_cmd)
+                self.cmd = wrap_command_with_proxy_installer(complete_cmd, proxy_version)
 
             if framework == Framework.jupyterlab.value:
                 self.cmd = [
