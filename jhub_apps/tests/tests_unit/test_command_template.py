@@ -20,7 +20,8 @@ def test_cmd_templating():
 def test_wrap_command_with_proxy_installer():
     """Test that the wrapper correctly wraps commands with installation script"""
     cmd_list = ["jhub-app-proxy", "--authtype=oauth", "--destport=0"]
-    wrapped = wrap_command_with_proxy_installer(cmd_list)
+    proxy_version = "v0.5"
+    wrapped = wrap_command_with_proxy_installer(cmd_list, proxy_version)
 
     assert len(wrapped) == 3
     assert wrapped[0] == "/bin/bash"
@@ -32,3 +33,4 @@ def test_wrap_command_with_proxy_installer():
     assert "export PATH=" in wrapped[2]
     assert "$HOME/.local/bin" in wrapped[2]
     assert "exec jhub-app-proxy" in wrapped[2]
+    assert proxy_version in wrapped[2]
