@@ -11,6 +11,7 @@ from jhub_apps.spawner.command import (
     EXAMPLES_FILE,
     DEFAULT_CMD,
     GENERIC_ARGS,
+    TString,
 )
 from jhub_apps.spawner.types import Framework
 
@@ -106,7 +107,11 @@ def subclass_spawner(base_spawner):
             custom_cmd = self.user_options.get("custom_command")
             if framework == Framework.custom.value:
                 assert custom_cmd
-                command = Command(args=GENERIC_ARGS + custom_cmd.split())
+                # Custom commands can be any executable - use the command as-is
+                command = Command(args=[
+                    TString("--conda-env=$conda_env"),
+                    "--",
+                ] + custom_cmd.split())
             else:
                 command: Command = COMMANDS.get(framework)
 
