@@ -130,6 +130,6 @@ class JAppsConfig(SingletonConfigurable):
     ).tag(config=True)
 
     jhub_app_proxy_version = Unicode(
-        "v0.5",
+        "v0.1",
         help="Version of jhub-app-proxy to install (e.g., 'v0.5'). Can be overridden by JHUB_APP_PROXY_VERSION environment variable.",
     ).tag(config=True)

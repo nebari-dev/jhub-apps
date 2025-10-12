@@ -120,6 +120,7 @@ def subclass_spawner(base_spawner):
                 origin_host=get_origin_host(self.config.JupyterHub.bind_url),
                 base_url=self.config.JupyterHub.bind_url,
                 jh_service_prefix=jh_service_prefix,
+                jh_service_prefixlab=f"{jh_service_prefix}lab",
                 voila_base_url=f"{jh_service_prefix}",
                 conda_env=self.user_options.get("conda_env", ""),
             )
@@ -131,12 +132,8 @@ def subclass_spawner(base_spawner):
             if self.user_options.get("argv"):
                 argv.extend(self.user_options["argv"])
 
-            # For non-JupyterLab jhub apps, command is built in start()
+            # All jhub apps (including JupyterLab) are now built in start()
             # to allow proper wrapping with installer script
-            framework = self.user_options.get("framework")
-            if self.user_options.get("jhub_app") and framework == Framework.jupyterlab.value:
-                command_args = self._get_app_command_args()
-                argv.extend(command_args)
             return argv
 
         def get_env(self):
@@ -164,10 +161,7 @@ def subclass_spawner(base_spawner):
             logger.info("Starting spawner process")
             await self._get_user_auth_state()
             framework = self.user_options.get("framework")
-            if (
-                self.user_options.get("jhub_app")
-                and framework != Framework.jupyterlab.value
-            ):
+            if self.user_options.get("jhub_app"):
                 auth_type = "oauth"
                 if self.user_options.get("public", False):
                     auth_type = "none"
@@ -179,7 +173,6 @@ def subclass_spawner(base_spawner):
                 )
 
                 env = self.user_options.get("env", {})
-                # Only for non-JupyterLab apps
                 if self.user_options.get("keep_alive") or (env and env.get("JH_APPS_KEEP_ALIVE")):
                     logger.info(
                         "Flag set to force keep alive, will not be deleted by idle culler",
@@ -204,7 +197,7 @@ def subclass_spawner(base_spawner):
                         f"--workdir={repo_folder}"
                     ])
 
-                # Get app-specific command arguments
+                # Get app-specific command arguments (works for all frameworks including JupyterLab)
                 app_args = self._get_app_command_args()
 
                 # Combine base command with app arguments
@@ -216,12 +209,6 @@ def subclass_spawner(base_spawner):
                 # Wrap the complete command with jhub-app-proxy installer
                 self.cmd = wrap_command_with_proxy_installer(complete_cmd, proxy_version)
 
-            if framework == Framework.jupyterlab.value:
-                self.cmd = [
-                    self.config.JAppsConfig.python_exec,
-                    "-m",
-                    "jupyterhub.singleuser",
-                ]
             logger.info(f"Final Spawner Command: {self.cmd}")
             return await super().start()
 

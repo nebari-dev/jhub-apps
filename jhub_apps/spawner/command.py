@@ -172,5 +172,17 @@ COMMANDS = {
             "--ip=0.0.0.0",
         ]
     ),
-    Framework.jupyterlab.value: Command(args=[]),
+    Framework.jupyterlab.value: Command(
+        args=[
+            TString("--conda-env=$conda_env"),
+            TString("--ready-check-path=$jh_service_prefix" + "lab"),
+            f"--ready-timeout={READY_TIMEOUT}",
+            "--",
+            TString("$python_exec"),
+            "{-}m",
+            "jupyterhub.singleuser",
+            "{--}port={port}",
+            TString("{--}ServerApp.base_url=$jh_service_prefix"),
+        ]
+    ),
 }

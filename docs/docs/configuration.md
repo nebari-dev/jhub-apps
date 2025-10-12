@@ -139,9 +139,9 @@ Specifies the version of `jhub-app-proxy` to install when deploying apps.
 - **Default**: `"v0.5"`
 - **Example**:
   ```python
-  c.JAppsConfig.jhub_app_proxy_version = "v0.6"
+  c.JAppsConfig.jhub_app_proxy_version = "v0.1"
   ```
 - **Notes**:
   - This sets the default version globally for all apps
   - Can be overridden per-app by setting the `JHUB_APP_PROXY_VERSION` environment variable in the app's configuration
-  - Priority: App-specific `JHUB_APP_PROXY_VERSION` env var > Global config > Default (v0.5)
+  - Priority: App-specific `JHUB_APP_PROXY_VERSION` env var > Global config > Default (v0.1)
