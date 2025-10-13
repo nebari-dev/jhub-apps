@@ -13,6 +13,7 @@ from jhub_apps.spawner.command import (
     TString,
 )
 from jhub_apps.spawner.types import Framework
+from jhub_apps.spawner.env import parse_proxy_args_from_env, merge_proxy_args
 
 
 logger = structlog.get_logger(__name__)
@@ -201,6 +202,19 @@ def subclass_spawner(base_spawner):
                         f"--repobranch={repository.get('ref')}",
                         f"--workdir={repo_folder}"
                     ])
+
+                # Parse and merge any jhub-app-proxy arguments from environment variables
+                # This needs to happen BEFORE combining with app_args, since proxy args
+                # must come before the "--" separator
+                env = self.user_options.get("env", {})
+                env_proxy_args = parse_proxy_args_from_env(env)
+                if env_proxy_args:
+                    logger.info(
+                        "Merging jhub-app-proxy arguments from JHUB_APP_PROXY_ARGS",
+                        env_args=env_proxy_args,
+                        app=self.user_options.get("display_name"),
+                    )
+                    base_cmd = merge_proxy_args(base_cmd, env_proxy_args)
 
                 # Get app-specific command arguments (works for all frameworks including JupyterLab)
                 app_args = self._get_app_command_args()

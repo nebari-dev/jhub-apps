@@ -105,9 +105,63 @@ c.JAppsConfig.startup_apps = [
 ]
 ```
 
+### Custom proxy arguments
+
+:::info
+This feature works for **all app frameworks** (Panel, Bokeh, Streamlit, Gradio, Voila, JupyterLab, Custom), not just custom apps.
+:::
+
+You can override or add additional arguments for the [jhub-app-proxy](https://github.com/nebari-dev/jhub-app-proxy) CLI using the `JHUB_APP_PROXY_ARGS` environment variable. This allows you to customize health checks, timeouts, logging, and other proxy behavior on a per-app basis.
+
+**Via the UI:**
+
+Add an environment variable in the app creation form's Environment Variables section:
+
+![Proxy argument overrides](/img/proxy-arg-overrides.png)
+
+**Via configuration:**
+
+```python
+c.JAppsConfig.startup_apps = [
+    {
+        "username": "my-user",
+        "servername": "my-app",
+        "user_options": {
+            "display_name": "My App",
+            "framework": "streamlit",
+            "filepath": "app.py",
+            "env": {
+                "JHUB_APP_PROXY_ARGS": "--ready-check-path=/health --ready-timeout=600"
+            }
+        }
+    }
+]
+```
+
+**Common arguments:**
+
+- `--strip-prefix`: Controls whether the JupyterHub service prefix is stripped before forwarding requests to your app (default: `true`)
+  - **When to use `true` (default):** Most apps (Streamlit, Panel, Gradio, etc.) expect requests without the JupyterHub prefix
+    - Example: `/user/admin/my-app/index.html` → forwards as `/index.html`
+  - **When to use `false`:** Apps that handle their own base URL configuration (like JupyterLab with `ServerApp.base_url`)
+    - Example: To override for a custom app that manages its own base URL:
+      ```
+      JHUB_APP_PROXY_ARGS="--strip-prefix=false"
+      ```
+- `--ready-check-path`: Health check endpoint path (default: `/`)
+- `--ready-timeout`: Health check timeout in seconds (default: `300`)
+- `--log-level`: Log level - `debug`, `info`, `warn`, `error` (default: `info`)
+- `--log-format`: Log format - `json`, `pretty` (default: `json`)
+
+For a complete list of available arguments, see the [jhub-app-proxy](https://github.com/nebari-dev/jhub-app-proxy) documentation.
+
+**Duplicate argument handling:**
+
+If an argument is already set by the framework configuration (e.g., `--ready-check-path=/` for Gradio), providing it via `JHUB_APP_PROXY_ARGS` will override the default value. The environment variable takes precedence.
+
 ### Custom proxy version
 
-You can specify a custom version of `jhub-app-proxy` to use:
+You can specify a custom version of [jhub-app-proxy](https://github.com/nebari-dev/jhub-app-proxy) to use:
 
 **Per-app (via environment variable):**
 ```python
