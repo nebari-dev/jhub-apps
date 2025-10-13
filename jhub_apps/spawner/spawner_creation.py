@@ -162,9 +162,14 @@ def subclass_spawner(base_spawner):
             await self._get_user_auth_state()
             framework = self.user_options.get("framework")
             if self.user_options.get("jhub_app"):
-                auth_type = "oauth"
-                if self.user_options.get("public", False):
+                # JupyterLab has built-in JupyterHub auth, so use authtype=none
+                # Other apps need OAuth authentication via the proxy
+                if framework == Framework.jupyterlab.value:
                     auth_type = "none"
+                elif self.user_options.get("public", False):
+                    auth_type = "none"
+                else:
+                    auth_type = "oauth"
 
                 # Build base jhub-app-proxy command
                 base_cmd = DEFAULT_CMD.get_substituted_args(
