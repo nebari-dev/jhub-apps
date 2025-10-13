@@ -175,4 +175,4 @@ You can specify a custom version of [jhub-app-proxy](https://github.com/nebari-d
 c.JAppsConfig.jhub_app_proxy_version = "v0.6"
 ```
 
-Priority: App-specific environment variable > Global config > Default (v0.5)
+Priority: App-specific environment variable > Global config > Default

@@ -30,7 +30,7 @@ def get_proxy_version(config, app_env=None):
         app_env: Environment variables dict for the specific app deployment
 
     Returns:
-        Version string (e.g., 'v0.5')
+        Version string
 
     Priority order:
         1. App-specific environment variable JHUB_APP_PROXY_VERSION
@@ -47,7 +47,7 @@ def wrap_command_with_proxy_installer(cmd_list, proxy_version):
 
     Args:
         cmd_list: List of command arguments (e.g., ['jhub-app-proxy', '--authtype=oauth', ...])
-        proxy_version: Version of jhub-app-proxy to install (e.g., 'v0.5')
+        proxy_version: Version of jhub-app-proxy to install
 
     Returns:
         List with bash wrapper: ['/bin/bash', '-c', '<script>']

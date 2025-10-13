@@ -20,7 +20,7 @@ def test_cmd_templating():
 def test_wrap_command_with_proxy_installer():
     """Test that the wrapper correctly wraps commands with installation script"""
     cmd_list = ["jhub-app-proxy", "--authtype=oauth", "--destport=0"]
-    proxy_version = "v0.5"
+    proxy_version = "v0.1"
     wrapped = wrap_command_with_proxy_installer(cmd_list, proxy_version)
 
     assert len(wrapped) == 3

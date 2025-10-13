@@ -11,7 +11,7 @@ def parse_proxy_args_from_env(env):
     """Parse jhub-app-proxy arguments from environment variables.
 
     Args:
-        env: Environment variables dict
+        env: Environment variables dict (can be None)
 
     Returns:
         List of argument strings to be added to jhub-app-proxy command
@@ -22,6 +22,8 @@ def parse_proxy_args_from_env(env):
     Example:
         JHUB_APP_PROXY_ARGS="--ready-check-path=/health --ready-timeout=600"
     """
+    if env is None:
+        return []
     proxy_args_str = env.get("JHUB_APP_PROXY_ARGS", "")
     if not proxy_args_str:
         return []
