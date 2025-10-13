@@ -55,6 +55,7 @@ DEFAULT_CMD = Command(
         TString("--authtype=$authtype"),
         # Port is passed via JHUB_APPS_SPAWNER_PORT environment variable
         "--destport=0",
+        "--interim-page-auth",  # Always protect interim pages with authentication
         "--log-format=pretty",
         "--log-level=info",
         "--log-buffer-size=1000",
