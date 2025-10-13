@@ -175,6 +175,7 @@ COMMANDS = {
     Framework.jupyterlab.value: Command(
         args=[
             TString("--conda-env=$conda_env"),
+            "--strip-prefix=false",  # JupyterLab handles base_url itself
             TString("--ready-check-path=$jh_service_prefix" + "lab"),
             f"--ready-timeout={READY_TIMEOUT}",
             "--",
