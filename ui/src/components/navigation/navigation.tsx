@@ -22,19 +22,13 @@ import {
 } from '@mui/material';
 import { styled, useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import {
-  JhApp,
-  JhService,
-  JhServiceApp,
-  JhServiceFull,
-} from '@src/types/jupyterhub';
+import { JhApp, JhService, JhServiceFull } from '@src/types/jupyterhub';
 import { UserState } from '@src/types/user';
 import axios from '@src/utils/axios';
-import { APP_BASE_URL, DEFAULT_PINNED_SERVICES } from '@src/utils/constants';
+import { APP_BASE_URL } from '@src/utils/constants';
 import {
   getAppLogoUrl,
   getPinnedApps,
-  getPinnedServices,
   getServices,
   navigateToUrl,
 } from '@src/utils/jupyterhub';
@@ -85,7 +79,6 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
 
   const [services, setServices] = useState<JhService[]>([]);
   const [pinnedApps, setPinnedApps] = useState<JhApp[]>([]);
-  const [pinnedServices, setPinnedServices] = useState<JhServiceApp[]>([]);
   const [isHeadless] = useRecoilState<boolean>(defaultIsHeadless);
 
   const {
@@ -136,15 +129,14 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
 
   useEffect(() => {
     if (!servicesLoading && servicesData && currentUser) {
-      setServices(() =>
-        getServices(servicesData, currentUser.name).filter(
-          (service: JhService) =>
-            !DEFAULT_PINNED_SERVICES.includes(service.name),
-        ),
-      );
-      setPinnedServices(() =>
-        getPinnedServices(servicesData, currentUser.name),
-      );
+      setServices(() => {
+        const allServices = getServices(servicesData, currentUser.name);
+        return allServices.sort((a, b) => {
+          const aIsPinned = a.pinned ? 1 : 0;
+          const bIsPinned = b.pinned ? 1 : 0;
+          return bIsPinned - aIsPinned;
+        });
+      });
     }
   }, [servicesLoading, servicesData, currentUser]);
 
@@ -250,37 +242,6 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
           />
         </ListItem>
         {pinnedApps.map((item, index) => (
-          <ListItem key={index} disablePadding>
-            <Link
-              href={item.url}
-              sx={{
-                borderRadius: '4px',
-                textDecoration: 'none',
-                display: 'block',
-                width: '100%',
-                px: '24px',
-                py: '4px',
-                color: 'rgb(15 16 21 / 87%)',
-                '&:hover': {
-                  backgroundColor: 'rgba(0, 0, 0, 0.04)',
-                  textDecoration: 'none',
-                },
-              }}
-            >
-              <ListItemText
-                primary={
-                  <Typography
-                    variant="body2"
-                    sx={{ fontSize: '1rem', color: 'rgb(15 16 21 / 87%)' }}
-                  >
-                    {item.name}
-                  </Typography>
-                }
-              />
-            </Link>
-          </ListItem>
-        ))}
-        {pinnedServices.map((item, index) => (
           <ListItem key={index} disablePadding>
             <Link
               href={item.url}
