@@ -268,7 +268,7 @@ export const AppCard = ({
                 }
               >
                 {thumbnail ? (
-                  <img src={thumbnail} alt="App thumb" />
+                  <img src={thumbnail} alt={`${title} logo`} />
                 ) : (
                   <span style={{ fontWeight: 'bold' }}>{title}</span>
                 )}
