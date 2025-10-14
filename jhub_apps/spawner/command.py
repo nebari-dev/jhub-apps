@@ -51,15 +51,20 @@ class Command:
 
 DEFAULT_CMD = Command(
     args=[
-        TString("$python_exec"),
-        "-m",
-        "jhsingle_native_proxy.main",
+        "jhub-app-proxy",
         TString("--authtype=$authtype"),
+        # Port is passed via JHUB_APPS_SPAWNER_PORT environment variable
+        "--destport=0",
+        "--interim-page-auth",  # Always protect interim pages with authentication
+        "--log-format=pretty",
+        "--log-level=info",
+        "--log-buffer-size=1000",
     ]
 )
 
 GENERIC_ARGS = [
     TString("--conda-env=$conda_env"),
+    "--",
     TString("$python_exec"),
     "{-}m",
 ]
@@ -67,20 +72,24 @@ GENERIC_ARGS = [
 COMMANDS = {
     Framework.gradio.value: Command(
         args=[
-            "--destport=0",
             TString("--conda-env=$conda_env"),
+            "--ready-check-path=/",
+            f"--ready-timeout={READY_TIMEOUT}",
+            "--",
             TString("$python_exec"),
             TString("$filepath"),
             "{--}server-port={port}",
             TString("{--}root-path=$jh_service_prefix"),
-            "--ready-check-path=/",
-            f"--ready-timeout={READY_TIMEOUT}",
         ],
     ),
     Framework.voila.value: Command(
         args=[
             "--destport=0",
             TString("--conda-env=$conda_env"),
+            "--progressive",
+            "--ready-check-path=/",
+            f"--ready-timeout={READY_TIMEOUT}",
+            "--",
             TString("$python_exec"),
             "{-}m",
             "voila",
@@ -90,18 +99,19 @@ COMMANDS = {
             "{--}Voila.server_url=/",
             "{--}Voila.ip=0.0.0.0",
             "{--}Voila.tornado_settings",
-            "--debug",
             TString("allow_origin=$origin_host"),
+            "{--}Voila.tornado_settings",
+            "debug=True",
             TString("{--}Voila.base_url=$voila_base_url"),
-            "--progressive",
-            "--ready-check-path=/voila/static/",
-            f"--ready-timeout={READY_TIMEOUT}",
         ],
     ),
     Framework.streamlit.value: Command(
         args=[
             "--destport=0",
             TString("--conda-env=$conda_env"),
+            "--ready-check-path=/",
+            f"--ready-timeout={READY_TIMEOUT}",
+            "--",
             TString("$python_exec"),
             "{-}m",
             "streamlit",
@@ -111,25 +121,29 @@ COMMANDS = {
             "{--}server.headless=True",
             TString("{--}browser.serverAddress=$origin_host"),
             "{--}browser.gatherUsageStats=false",
-            f"--ready-timeout={READY_TIMEOUT}",
         ],
     ),
     Framework.plotlydash.value: Command(
         args=[
             "--destport=0",
             TString("--conda-env=$conda_env"),
+            "--ready-check-path=/",
+            f"--ready-timeout={READY_TIMEOUT}",
+            "--",
             TString("$python_exec"),
             "{-}m",
             "plotlydash_tornado_cmd.main",
             TString("$filepath"),
             "{--}port={port}",
-            f"--ready-timeout={READY_TIMEOUT}",
         ],
     ),
     Framework.bokeh.value: Command(
         args=[
             "--destport=0",
             TString("--conda-env=$conda_env"),
+            "--ready-check-path=/ready-check",
+            f"--ready-timeout={READY_TIMEOUT}",
+            "--",
             TString("$python_exec"),
             "{-}m",
             "bokeh_root_cmd.main",
@@ -138,14 +152,15 @@ COMMANDS = {
             TString("{--}allow-websocket-origin=$origin_host"),
             TString("{--}prefix=$base_url"),
             "--ip=0.0.0.0",
-            "--ready-check-path=/ready-check",
-            f"--ready-timeout={READY_TIMEOUT}",
         ]
     ),
     Framework.panel.value: Command(
         args=[
             "--destport=0",
             TString("--conda-env=$conda_env"),
+            "--ready-check-path=/ready-check",
+            f"--ready-timeout={READY_TIMEOUT}",
+            "--",
             TString("$python_exec"),
             "{-}m",
             "bokeh_root_cmd.main",
@@ -156,9 +171,20 @@ COMMANDS = {
             "{--}server=panel",
             TString("{--}prefix=$base_url"),
             "--ip=0.0.0.0",
-            "--ready-check-path=/ready-check",
-            f"--ready-timeout={READY_TIMEOUT}",
         ]
     ),
-    Framework.jupyterlab.value: Command(args=[]),
+    Framework.jupyterlab.value: Command(
+        args=[
+            TString("--conda-env=$conda_env"),
+            "--strip-prefix=false",  # JupyterLab handles base_url itself
+            TString("--ready-check-path=$jh_service_prefix" + "lab"),
+            f"--ready-timeout={READY_TIMEOUT}",
+            "--",
+            TString("$python_exec"),
+            "{-}m",
+            "jupyterhub.singleuser",
+            "{--}port={port}",
+            TString("{--}ServerApp.base_url=$jh_service_prefix"),
+        ]
+    ),
 }

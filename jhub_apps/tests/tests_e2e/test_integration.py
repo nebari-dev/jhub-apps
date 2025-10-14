@@ -1,3 +1,4 @@
+import os
 import re
 import uuid
 
@@ -13,7 +14,11 @@ logger = structlog.get_logger(__name__)
 
 
 def get_page(playwright: Playwright):
-    browser = playwright.chromium.launch(headless=True)
+    # Allow controlling browser behavior via environment variables
+    headless = os.environ.get("PLAYWRIGHT_HEADLESS", "true").lower() == "true"
+    slow_mo = int(os.environ.get("PLAYWRIGHT_SLOW_MO", "0"))
+
+    browser = playwright.chromium.launch(headless=headless, slow_mo=slow_mo)
     context = browser.new_context(
         record_video_dir="videos/",
         record_video_size={"width": 1920, "height": 1080},
