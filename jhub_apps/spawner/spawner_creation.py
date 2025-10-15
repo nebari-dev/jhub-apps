@@ -158,15 +158,21 @@ def subclass_spawner(base_spawner):
                     env["BOKEH_RESOURCES"] = "cdn"
             return env
 
-        async def start(self):
-            logger.info("Starting spawner process")
-            await self._get_user_auth_state()
+        async def load_user_options(self):
+            """Load user options and apply profile_image override"""
+            await super().load_user_options()
 
-            # Allow user to override the profile's docker image
+            # Apply profile_image as a kubespawner override
+            # This needs to happen after the profile is loaded
+            # but before the pod is created
             profile_image = self.user_options.get("profile_image")
             if profile_image:
                 logger.info(f"Overriding profile image with: {profile_image}")
                 self.image = profile_image
+
+        async def start(self):
+            logger.info("Starting spawner process")
+            await self._get_user_auth_state()
 
             framework = self.user_options.get("framework")
             if self.user_options.get("jhub_app"):

@@ -81,6 +81,7 @@ class JHubAppConfig(BaseModel):
 class UserOptions(JHubAppConfig):
     conda_env: typing.Optional[str] = str()
     profile: typing.Optional[str] = str()
+    profile_image: typing.Optional[str] = str()
     share_with: typing.Optional[SharePermissions] = None
     jhub_app: bool
 
