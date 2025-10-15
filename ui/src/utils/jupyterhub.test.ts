@@ -70,9 +70,11 @@ describe('JupyterHub utils', () => {
     expect(result.length).toEqual(2);
     expect(result[0]).toEqual({
       name: 'Environments',
+      description: 'Manage your environments',
       url: 'http://service1.com/service1',
       external: true,
       pinned: true,
+      thumbnail: 'https://example.com/thumbnail.png',
     });
   });
 
