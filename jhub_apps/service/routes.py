@@ -48,6 +48,9 @@ from jhub_apps.version import get_version
 app = FastAPI()
 
 logger = structlog.get_logger(__name__)
+
+logger.info("Initializing routes module", service_prefix=os.getenv("JUPYTERHUB_SERVICE_PREFIX", ""))
+
 templates = Jinja2Templates(directory="jhub_apps/templates")
 
 # Expires in 7 days
@@ -56,6 +59,8 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7
 # APIRouter prefix cannot end in /
 service_prefix = os.getenv("JUPYTERHUB_SERVICE_PREFIX", "").rstrip("/")
 router = APIRouter(prefix=service_prefix)
+
+logger.info("Routes module initialized successfully", router_prefix=service_prefix)
 
 # TODO: Add response models for all endpoints
 
