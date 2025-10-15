@@ -12,6 +12,7 @@ c.KubeSpawner.profile_list = [
         "slug": "small",
         "default": True,
         "kubespawner_override": {
+            "image": "quay.io/nebari/nebari-jupyterlab:main",
             "cpu_limit": 1,
             "mem_limit": "1G",
             "cpu_guarantee": 0.1,
@@ -23,6 +24,7 @@ c.KubeSpawner.profile_list = [
         "description": "2 CPU / 2 GB RAM - Good for Panel/Streamlit apps",
         "slug": "medium",
         "kubespawner_override": {
+            "image": "quay.io/nebari/nebari-jupyterlab:main",
             "cpu_limit": 2,
             "mem_limit": "2G",
             "cpu_guarantee": 0.5,
@@ -34,6 +36,7 @@ c.KubeSpawner.profile_list = [
         "description": "4 CPU / 4 GB RAM - For resource-intensive apps",
         "slug": "large",
         "kubespawner_override": {
+            "image": "quay.io/nebari/nebari-jupyterlab:main",
             "cpu_limit": 4,
             "mem_limit": "4G",
             "cpu_guarantee": 1,
@@ -45,4 +48,5 @@ c.KubeSpawner.profile_list = [
 print("✅ KubeSpawner profiles loaded")
 print(f"   - {len(c.KubeSpawner.profile_list)} profiles available")
 for profile in c.KubeSpawner.profile_list:
-    print(f"     • {profile['display_name']} ({profile['slug']})")
+    image = profile.get('kubespawner_override', {}).get('image', 'default')
+    print(f"     • {profile['display_name']} ({profile['slug']}) - Image: {image}")

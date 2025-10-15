@@ -17,6 +17,7 @@ export interface AppFormInput {
   keep_alive: boolean;
   jhub_app: boolean;
   profile?: string;
+  profile_image?: string;
   thumbnail?: string;
   share_with: SharePermissions;
   repository?: {

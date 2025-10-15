@@ -161,6 +161,13 @@ def subclass_spawner(base_spawner):
         async def start(self):
             logger.info("Starting spawner process")
             await self._get_user_auth_state()
+
+            # Allow user to override the profile's docker image
+            profile_image = self.user_options.get("profile_image")
+            if profile_image:
+                logger.info(f"Overriding profile image with: {profile_image}")
+                self.image = profile_image
+
             framework = self.user_options.get("framework")
             if self.user_options.get("jhub_app"):
                 # JupyterLab has built-in JupyterHub auth, so use authtype=none

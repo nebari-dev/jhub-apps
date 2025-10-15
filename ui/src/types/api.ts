@@ -18,6 +18,7 @@ export interface UserOptions {
   custom_command: string;
   conda_env: string;
   profile: string;
+  profile_image?: string;
   public: boolean;
   share_with: SharePermissions;
   keep_alive: boolean;
@@ -67,4 +68,12 @@ export interface AppProfileProps {
   display_name: string;
   slug: string;
   description: string;
+  default?: boolean;
+  kubespawner_override?: {
+    image?: string;
+    cpu_limit?: number;
+    cpu_guarantee?: number;
+    mem_limit?: string;
+    mem_guarantee?: string;
+  };
 }
