@@ -56,14 +56,14 @@ def wrap_command_with_proxy_installer(cmd_list, proxy_version):
     cmd_str = ' '.join(shlex.quote(str(arg)) for arg in cmd_list)
 
     install_script = f'''
-# Ensure ~/.local/bin is in PATH first
-export PATH="$HOME/.local/bin:$PATH"
+# Ensure ~/.local/bin and /tmp/.local/bin are in PATH
+export PATH="$HOME/.local/bin:/tmp/.local/bin:$PATH"
 
 # Install jhub-app-proxy if not present
 if ! command -v jhub-app-proxy &> /dev/null; then
     echo "jhub-app-proxy not found, installing..."
-    echo "Running: curl -fsSL {JHUB_APP_PROXY_INSTALL_URL} | bash -s -- -v {proxy_version}"
-    curl -fsSL {JHUB_APP_PROXY_INSTALL_URL} | bash -s -- -v {proxy_version}
+    echo "Running: curl -fsSL {JHUB_APP_PROXY_INSTALL_URL} | bash -s -- -v {proxy_version} -d /tmp/.local/bin"
+    curl -fsSL {JHUB_APP_PROXY_INSTALL_URL} | bash -s -- -v {proxy_version} -d /tmp/.local/bin
 fi
 
 # Execute the original command
