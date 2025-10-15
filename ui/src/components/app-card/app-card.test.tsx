@@ -694,7 +694,7 @@ describe('AppCard', () => {
       },
     });
 
-    const { getByText } = render(
+    const { getAllByText } = render(
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
           <AppCard
@@ -709,7 +709,7 @@ describe('AppCard', () => {
       </RecoilRoot>,
     );
 
-    const card = getByText('Test App').closest('a'); // Select the card
+    const card = getAllByText('Test App')[0].closest('a'); // Select the card
     expect(card).toBeInTheDocument();
 
     await act(async () => {
@@ -750,7 +750,7 @@ describe('AppCard', () => {
   });
 
   test('sets currentApp state correctly on card click', async () => {
-    const { getByText } = render(
+    const { getAllByText } = render(
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
           <AppCard
@@ -782,7 +782,7 @@ describe('AppCard', () => {
       </RecoilRoot>,
     );
 
-    const card = getByText('Test App').closest('a');
+    const card = getAllByText('Test App')[0].closest('a');
     expect(card).toBeInTheDocument();
 
     await act(async () => {

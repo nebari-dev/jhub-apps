@@ -1,4 +1,4 @@
-import { CONDA_STORE_LOGO, JUPYTER_LOGO, VSCODE_LOGO } from '@src/data/logos';
+import { JUPYTER_LOGO, VSCODE_LOGO } from '@src/data/logos';
 import {
   JhApp,
   JhService,
@@ -7,11 +7,7 @@ import {
 } from '@src/types/jupyterhub';
 import { JhData } from '@src/types/jupyterhub.ts';
 import { UserState } from '@src/types/user';
-import {
-  APP_BASE_URL,
-  APP_TO_START_KEY,
-  DEFAULT_PINNED_SERVICES,
-} from './constants';
+import { APP_BASE_URL, APP_TO_START_KEY } from './constants';
 
 export const getJhData = (): JhData => {
   return window.jhdata;
@@ -34,7 +30,11 @@ export const getServices = (services: JhServiceFull[], user: string) => {
             name: name,
             url: url,
             external: serviceInfo.external,
-            pinned: DEFAULT_PINNED_SERVICES.includes(name),
+            pinned: serviceInfo.pinned,
+            description: serviceInfo.description,
+            thumbnail: serviceInfo.thumbnail
+              ? serviceInfo.thumbnail
+              : undefined,
           });
         }
       }
@@ -50,15 +50,15 @@ export const getPinnedServices = (
   const jhServices = getServices(services, username);
   const pinnedServices: JhServiceApp[] = [];
   jhServices
-    .filter((service) => DEFAULT_PINNED_SERVICES.includes(service.name))
+    .filter((service) => service.pinned === true)
     .forEach((service, index) => {
       pinnedServices.push({
         id: `service-${index}`,
         name: service.name,
-        description: 'This is conda-store, your environments manager.',
+        description: service.description,
         framework: '',
         url: service.url,
-        thumbnail: CONDA_STORE_LOGO,
+        thumbnail: service.thumbnail,
         username: username,
         status: 'Ready',
       });

@@ -41,6 +41,27 @@ c.JupyterHub.bind_url = "http://:8081"
 from jhub_apps import theme_template_paths
 c.JupyterHub.template_paths = theme_template_paths
 
+def service_for_jhub_apps(name, url, description=None, pinned=False, thumbnail=None):
+    return {
+        "name": name,
+        "display": True,
+        "info": {
+            "name": name,
+            "description": description,
+            "url": url,
+            "external": True,
+            "pinned": pinned,
+            "thumbnail": thumbnail,
+        },
+    }
+
+
+c.JupyterHub.services.extend(
+    [
+        service_for_jhub_apps(name="MyAwesomeService", url="/services/japps"),
+    ]
+)
+
 # Theme configuration (mimics Nebari's look and feel)
 from jhub_apps import themes
 c.JupyterHub.template_vars = {

@@ -65,8 +65,11 @@ export const servicesFull: JhServiceFull[] = [
     display: true,
     info: {
       name: 'Environments',
+      description: 'Manage your environments',
       url: 'http://service1.com/service1',
       external: true,
+      pinned: true,
+      thumbnail: 'https://example.com/thumbnail.png',
     },
     prefix: '/services',
     kind: '',

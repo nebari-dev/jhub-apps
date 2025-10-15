@@ -45,6 +45,7 @@ export interface JhService {
   url: string;
   external: boolean;
   pinned: boolean;
+  thumbnail?: string;
 }
 
 export interface JhServiceFull {

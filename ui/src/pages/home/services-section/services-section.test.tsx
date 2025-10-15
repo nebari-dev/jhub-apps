@@ -76,7 +76,7 @@ describe('ServicesSection', () => {
         </QueryClientProvider>
       </RecoilRoot>,
     );
-    expect(baseElement.querySelectorAll('.card')).toHaveLength(3);
+    expect(baseElement.querySelectorAll('.card')).toHaveLength(2);
   });
 
   test('renders with data error', async () => {
