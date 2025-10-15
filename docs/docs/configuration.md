@@ -130,3 +130,17 @@ Servers will be created or modified if already existing to match the config. Rem
         },
     }
   ]
+  ```
+
+### `jhub_app_proxy_version`
+
+Specifies the version of `jhub-app-proxy` to install when deploying apps.
+
+- **Example**:
+  ```python
+  c.JAppsConfig.jhub_app_proxy_version = "v0.6"
+  ```
+- **Notes**:
+  - This sets the default version globally for all apps
+  - Can be overridden per-app by setting the `JHUB_APP_PROXY_VERSION` environment variable in the app's configuration
+  - Priority: App-specific `JHUB_APP_PROXY_VERSION` env var > Global config > Default

@@ -47,7 +47,7 @@ def get_jupyterhub_config():
     japps_config = JAppsConfig.instance(config=hub.config)
     _replace_JAppsConfig_config_with_validated_config(hub.config.JAppsConfig, japps_config)
     config = hub.config
-    logger.info(f"JHub Apps config: {config.JAppsConfig}")
+    logger.debug(f"JHub Apps config: {config.JAppsConfig}")
     return config
 
 

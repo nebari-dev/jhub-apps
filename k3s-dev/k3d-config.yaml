@@ -1,0 +1,41 @@
+# k3d cluster configuration for jhub-apps development
+# Usage: k3d cluster create -c k3d-config.yaml
+apiVersion: k3d.io/v1alpha5
+kind: Simple
+metadata:
+  name: jhub-apps-dev
+
+servers: 1
+agents: 0
+
+ports:
+  - port: 6550:6443  # API server port
+    nodeFilters:
+      - server:0
+  - port: 8000:80
+    nodeFilters:
+      - loadbalancer
+
+# Mount jhub-apps source code into the cluster
+# Note: You must set JHUB_APPS_SOURCE environment variable before creating the cluster
+# Example: export JHUB_APPS_SOURCE=$(pwd) && k3d cluster create -c k3d-config.yaml
+volumes:
+  - volume: ${JHUB_APPS_SOURCE}:/opt/jhub-apps
+    nodeFilters:
+      - server:0
+
+options:
+  k3s:
+    extraArgs:
+      - arg: --disable=traefik
+        nodeFilters:
+          - server:0
+      - arg: --kubelet-arg=eviction-hard=
+        nodeFilters:
+          - server:0
+      - arg: --kubelet-arg=eviction-soft=
+        nodeFilters:
+          - server:0
+  kubeconfig:
+    updateDefaultKubeconfig: true
+    switchCurrentContext: true

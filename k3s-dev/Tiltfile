@@ -1,0 +1,177 @@
+# Tilt configuration for jhub-apps local development with k3s
+# Supports both interactive development (tilt up) and CI (tilt ci)
+#
+# Prerequisites:
+# - Create the k3d cluster first:
+#   cd k3s-dev
+#   export JHUB_APPS_SOURCE=$(cd .. && pwd)
+#   k3d cluster create -c k3d-config.yaml
+
+# Validate that the cluster exists and is the current context
+allow_k8s_contexts('k3d-jhub-apps-dev')
+
+# Detect CI environment
+is_ci = config.tilt_subcommand == "ci"
+
+# Set default namespace
+k8s_namespace('jhub-apps-dev')
+
+# Create namespace as a Kubernetes resource (Tilt best practice)
+k8s_yaml(blob("""
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: jhub-apps-dev
+"""))
+
+# Create ConfigMap from config files
+# Tilt will watch these files and auto-update the ConfigMap
+k8s_yaml(local([
+    'kubectl', 'create', 'configmap', 'jupyterhub-config',
+    '--from-file=config/',
+    '--namespace=jhub-apps-dev',
+    '--dry-run=client',
+    '-o', 'yaml',
+]))
+
+# Download JupyterHub Helm chart during Tiltfile loading
+local('(helm repo add jupyterhub https://jupyterhub.github.io/helm-chart/ 2>/dev/null || true) && helm repo update jupyterhub')
+local('rm -rf ./charts && helm pull jupyterhub/jupyterhub --version 4.1.0 --untar --untardir ./charts')
+
+# Deploy JupyterHub with custom values
+# Note: kube_version parameter ensures helm uses k3d cluster version (1.31) instead of whatever kubectl context was active during load
+k8s_yaml(helm(
+    './charts/jupyterhub',
+    name='jupyterhub',
+    namespace='jhub-apps-dev',
+    values=['jupyterhub-values.yaml'],
+    kube_version='1.31',
+))
+
+# Watch config files and trigger ConfigMap update + hub restart
+watch_file('./config/')
+
+# Watch jhub-apps source code for changes
+watch_file('../jhub_apps/')
+
+# Update config resource - rebuilds ConfigMap and restarts hub
+local_resource(
+    'update-config',
+    cmd='''
+        kubectl create configmap jupyterhub-config \
+          --from-file=config/ \
+          --namespace=jhub-apps-dev \
+          --dry-run=client -o yaml | kubectl apply -f - && \
+        kubectl rollout restart deployment/hub -n jhub-apps-dev 2>/dev/null || true
+    ''',
+    deps=['./config/'],
+    labels=['config'],
+    resource_deps=['hub'],
+    auto_init=False,
+    trigger_mode=TRIGGER_MODE_AUTO,
+)
+
+# Auto-reload hub when jhub-apps source code changes
+local_resource(
+    'reload-jhub-apps',
+    cmd='''
+        kubectl rollout restart deployment/hub -n jhub-apps-dev
+    ''',
+    deps=['../jhub_apps/'],
+    labels=['jhub-apps'],
+    resource_deps=['hub'],
+    auto_init=False,
+    trigger_mode=TRIGGER_MODE_AUTO,
+)
+
+# Create a setup resource for namespace and other non-workload objects
+# These objects don't create pods, so group them together as setup resources
+k8s_resource(
+    objects=[
+        'jhub-apps-dev:namespace',
+        'hub:serviceaccount',
+        'continuous-image-puller:serviceaccount',
+        'hook-image-puller:serviceaccount',
+        'hook-image-awaiter:serviceaccount',
+        'hub:role',
+        'hook-image-awaiter:role',
+        'hub:rolebinding',
+        'hook-image-awaiter:rolebinding',
+        'hub-db-dir:persistentvolumeclaim',
+        'jupyterhub-config:configmap',
+        'hub:configmap',
+        'hub:secret',
+        'user-placeholder:poddisruptionbudget',
+        'hub:networkpolicy',
+        'proxy:networkpolicy',
+        'singleuser:networkpolicy',
+    ],
+    new_name='namespace',
+    labels=['setup'],
+    pod_readiness='ignore',  # These objects don't create pods
+)
+
+# Configure hub resource
+k8s_resource(
+    'hub',
+    labels=['jupyterhub'],
+    resource_deps=['namespace'],
+)
+
+# Configure proxy resource
+# Note: Port forwarding handled by k3d --port "8000:80@loadbalancer"
+k8s_resource(
+    'proxy',
+    labels=['jupyterhub'],
+    resource_deps=['namespace'],
+)
+
+# Configure other JupyterHub resources to depend on namespace
+k8s_resource(
+    'continuous-image-puller',
+    resource_deps=['namespace'],
+)
+
+k8s_resource(
+    'hook-image-awaiter',
+    resource_deps=['namespace'],
+)
+
+k8s_resource(
+    'hook-image-puller',
+    resource_deps=['namespace'],
+)
+
+k8s_resource(
+    'user-placeholder',
+    resource_deps=['namespace'],
+    pod_readiness='ignore',  # StatefulSet with 0 replicas (placeholder only)
+)
+
+# In CI mode, wait for hub to be ready then exit
+if is_ci:
+    print("Running in CI mode - will exit after deployment is ready")
+    # CI will check the deployment status via 'tilt ci'
+else:
+    # Interactive mode - show helpful links and info
+    print("""
+╔══════════════════════════════════════════════════════════════╗
+║                  JHub Apps Dev Environment                    ║
+╚══════════════════════════════════════════════════════════════╝
+
+🚀 Starting up...
+
+Once ready:
+  • JupyterHub: http://localhost:8000
+  • Tilt UI:    http://localhost:10350
+  • Username:   admin
+  • Password:   test (any password works)
+
+💡 Tips:
+  • Edit config/*.py → Tilt auto-reloads
+  • Edit ../jhub_apps/*.py → Tilt auto-reloads
+  • Press 'space' to open Tilt UI in browser
+  • Press 'Ctrl+C' to stop
+
+📚 Docs: See k3s-dev/README.md
+""")

@@ -144,6 +144,8 @@ def test_create_server_with_git_repository():
     (Framework.jupyterlab.value, 403),
 ])
 def test_server_sharing(framework, response_status_code):
+    import time
+
     share_with_user = f"share-username-{uuid.uuid4().hex[:6]}"
     shared_user_session = get_jhub_apps_session(username=share_with_user)
     user_options = UserOptions(
@@ -172,8 +174,26 @@ def test_server_sharing(framework, response_status_code):
     assert response.status_code == 200
     server_name = response.json()[-1]
     created_app_url = f"http://{JUPYTERHUB_HOSTNAME}/user/admin/{server_name}/"
+
+    # First check - expect interim page with 200
     response = shared_user_session.get(created_app_url)
-    assert response.status_code == response_status_code
+    assert response.status_code == 200, "Initial response should be 200 (interim page)"
+
+    # Poll for up to 10 seconds to get the expected final status
+    start_time = time.time()
+    timeout = 10
+    interval = 1
+    final_status = response.status_code
+
+    while time.time() - start_time < timeout:
+        response = shared_user_session.get(created_app_url)
+        final_status = response.status_code
+        if final_status == response_status_code:
+            break
+        time.sleep(interval)
+
+    assert final_status == response_status_code, \
+        f"Expected status {response_status_code} within {timeout}s, got {final_status}"
 
 
 @skip_if_jupyterhub_less_than_5()

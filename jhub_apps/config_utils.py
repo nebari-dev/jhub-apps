@@ -8,6 +8,10 @@ from traitlets.config import SingletonConfigurable, Enum
 from jhub_apps.service.models import StartupApp
 
 
+# jhub-app-proxy configuration constants
+DEFAULT_JHUB_APP_PROXY_VERSION = "v0.2.1"
+
+
 class PydanticModelTrait(TraitType):
     """A trait type for validating Pydantic models.
     
@@ -127,4 +131,9 @@ class JAppsConfig(SingletonConfigurable):
         description="Add a server if not already created or edit an existing one to match the config. Removing items from this list won't delete any servers.",
         default_value=[],
         help="List of apps to start on JHub Apps Launcher startup",
+    ).tag(config=True)
+
+    jhub_app_proxy_version = Unicode(
+        DEFAULT_JHUB_APP_PROXY_VERSION,
+        help="Version of jhub-app-proxy to install. Can be overridden by JHUB_APP_PROXY_VERSION environment variable.",
     ).tag(config=True)

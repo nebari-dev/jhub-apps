@@ -46,6 +46,25 @@ npm install
 cd -
 ```
 
+## K3d Development Environment
+
+For testing JupyterHub Apps with Kubernetes spawners (e.g., KubeSpawner), you can use the k3d development environment which provides a local Kubernetes cluster with Tilt for rapid development.
+
+**Prerequisites**: Install [k3d](https://k3d.io/#installation) and [Tilt](https://docs.tilt.dev/install.html)
+
+```bash
+cd k3s-dev
+make up
+```
+
+Once started, access JupyterHub at http://localhost:8000 (login with any username and password `password`)
+
+To tear down the environment:
+
+```bash
+make down
+```
+
 ## Starting JupyterHub
 
 Set the following environment variable:
