@@ -18,7 +18,7 @@ c.JAppsConfig.jupyterhub_config_path = "jupyterhub_config.py"
 c.JAppsConfig.conda_envs = []
 c.JAppsConfig.service_workers = 1
 c.JAppsConfig.startup_apps = [
-        {
+    {
         "username": "admin",
         "servername": "admin's-startup-server",
         "user_options": {
@@ -48,7 +48,9 @@ c.JAppsConfig.startup_apps = [
             "framework": "panel",
             "public": False,
             "keep_alive": False,
-            "repository": {"url": "https://github.com/nebari-dev/jhub-apps-from-git-repo-example.git"},
+            "repository": {
+                "url": "https://github.com/nebari-dev/jhub-apps-from-git-repo-example.git"
+            },
             "conda_env": "",
             "profile": "",
             "share_with": {"users": ["admin"], "groups": ["class-A"]},
@@ -64,14 +66,17 @@ c = install_jhub_apps(
 c.JupyterHub.template_paths = theme_template_paths
 
 
-def service_for_jhub_apps(name, url):
+def service_for_jhub_apps(name, url, description=None, pinned=False, thumbnail=None):
     return {
         "name": name,
         "display": True,
         "info": {
             "name": name,
+            "description": description,
             "url": url,
             "external": True,
+            "pinned": pinned,
+            "thumbnail": thumbnail,
         },
     }
 
@@ -80,7 +85,13 @@ c.JupyterHub.services.extend(
     [
         service_for_jhub_apps(name="Argo", url="/argo"),
         service_for_jhub_apps(name="Users", url="/auth/admin/nebari/console/"),
-        service_for_jhub_apps(name="Environments", url="/conda-store"),
+        service_for_jhub_apps(
+            name="Environments",
+            description="This is conda-store, your environments manager.",
+            url="/conda-store",
+            pinned=True,
+            thumbnail="https://raw.githubusercontent.com/conda-incubator/conda-store/main/docusaurus-docs/community/assets/logos/conda-store-logo-vertical-lockup.svg",
+        ),
         service_for_jhub_apps(name="Monitoring", url="/monitoring"),
     ]
 )

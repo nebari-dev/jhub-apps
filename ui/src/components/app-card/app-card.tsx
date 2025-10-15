@@ -267,7 +267,11 @@ export const AppCard = ({
                   isAppCard && thumbnail ? 'img-overlay' : 'img-overlay-service'
                 }
               >
-                {thumbnail && <img src={thumbnail} alt="App thumb" />}
+                {thumbnail ? (
+                  <img src={thumbnail} alt={`${title} logo`} />
+                ) : (
+                  <span style={{ fontWeight: 'bold' }}>{title}</span>
+                )}
               </div>
             </CardMedia>
           </div>
