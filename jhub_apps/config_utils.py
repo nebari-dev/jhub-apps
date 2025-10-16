@@ -9,7 +9,7 @@ from jhub_apps.service.models import StartupApp
 
 
 # jhub-app-proxy configuration constants
-DEFAULT_JHUB_APP_PROXY_VERSION = "v0.2.2-rc2"
+DEFAULT_JHUB_APP_PROXY_VERSION = "v0.2.2-rc3"
 
 
 class PydanticModelTrait(TraitType):
