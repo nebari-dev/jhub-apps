@@ -43,7 +43,7 @@ def get_proxy_version(config, app_env=None):
 
 def wrap_command_with_proxy_installer(cmd_list, proxy_version):
     """
-    Wraps a command list in a bash script that installs jhub-app-proxy if needed.
+    Wraps a command list in a bash script that installs jhub-app-proxy.
 
     Args:
         cmd_list: List of command arguments (e.g., ['jhub-app-proxy', '--authtype=oauth', ...])
@@ -59,12 +59,10 @@ def wrap_command_with_proxy_installer(cmd_list, proxy_version):
 # Ensure ~/.local/bin and /tmp/.local/bin are in PATH
 export PATH="$HOME/.local/bin:/tmp/.local/bin:$PATH"
 
-# Install jhub-app-proxy if not present
-if ! command -v jhub-app-proxy &> /dev/null; then
-    echo "jhub-app-proxy not found, installing..."
-    echo "Running: curl -fsSL {JHUB_APP_PROXY_INSTALL_URL} | bash -s -- -v {proxy_version} -d /tmp/.local/bin"
-    curl -fsSL {JHUB_APP_PROXY_INSTALL_URL} | bash -s -- -v {proxy_version} -d /tmp/.local/bin
-fi
+# Install jhub-app-proxy (overrides if already present)
+echo "Installing jhub-app-proxy version {proxy_version}..."
+echo "Running: curl -fsSL {JHUB_APP_PROXY_INSTALL_URL} | bash -s -- -v {proxy_version} -d /tmp/.local/bin"
+curl -fsSL {JHUB_APP_PROXY_INSTALL_URL} | bash -s -- -v {proxy_version} -d /tmp/.local/bin
 
 # Execute the original command
 echo "Running command: {cmd_str}"
