@@ -147,7 +147,7 @@ class JAppsConfig(SingletonConfigurable):
         Services with pinned=True will also appear in the quick access section.
         Each service should be a PinnedService model instance or dict with keys:
         name (str), url (str), description (str, optional), pinned (bool, optional),
-        thumbnail (str, optional).
+        thumbnail (str, optional) - can be a URL or base64-encoded data URL.
 
         Example:
             c.JAppsConfig.additional_services = [
@@ -156,6 +156,13 @@ class JAppsConfig(SingletonConfigurable):
                     "url": "/grafana",
                     "pinned": True,
                     "description": "System monitoring",
+                    "thumbnail": "https://example.com/logo.svg",
+                },
+                {
+                    "name": "Environments",
+                    "url": "/conda-store",
+                    "pinned": True,
+                    "thumbnail": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUA...",
                 },
             ]
         """,

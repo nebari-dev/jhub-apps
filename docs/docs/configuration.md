@@ -169,6 +169,7 @@ will also appear in the quick access section for easy access.
           "url": "/conda-store",
           "description": "Conda environment manager",
           "pinned": True,
+          "thumbnail": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAFUlEQVR42mNkYPhfz0AEYBxVSF+FAP5FDvcfRYWgAAAAAElFTkSuQmCC",
       },
   ]
   ```
@@ -177,7 +178,7 @@ will also appear in the quick access section for easy access.
   - `url` (required): URL path for the service
   - `description` (optional): Description of the service shown in the UI
   - `pinned` (optional): Whether the service should appear in the quick access section (default: `False`)
-  - `thumbnail` (optional): URL or data URL for the service icon
+  - `thumbnail` (optional): URL or base64-encoded data URL for the service icon (e.g., `"https://..."` or `"data:image/png;base64,..."`)
 - **Notes**:
   - This replaces the older approach of manually extending `c.JupyterHub.services` with custom service dictionaries
   - For advanced use cases, you can still use the programmatic approach with the `service_for_jhub_apps` helper:
