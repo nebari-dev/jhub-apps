@@ -138,18 +138,19 @@ class JAppsConfig(SingletonConfigurable):
         help="Version of jhub-app-proxy to install. Can be overridden by JHUB_APP_PROXY_VERSION environment variable.",
     ).tag(config=True)
 
-    pinned_services = List(
+    additional_services = List(
         trait=PydanticModelTrait(PinnedService),
-        description="List of external services to pin in JupyterHub UI services menu.",
+        description="List of additional external services to display in JupyterHub UI.",
         default_value=[],
         help="""
-        List of external services to display in JupyterHub's services menu.
+        List of additional external services to display in JupyterHub's services menu.
+        Services with pinned=True will also appear in the quick access section.
         Each service should be a PinnedService model instance or dict with keys:
         name (str), url (str), description (str, optional), pinned (bool, optional),
         thumbnail (str, optional).
 
         Example:
-            c.JAppsConfig.pinned_services = [
+            c.JAppsConfig.additional_services = [
                 {
                     "name": "Monitoring",
                     "url": "/grafana",

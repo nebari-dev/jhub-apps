@@ -100,14 +100,14 @@ def install_jhub_apps(c, spawner_to_subclass, *, oauth_no_confirm=False):
         ]
     )
 
-    # Add pinned services from JAppsConfig
-    if japps_config.pinned_services:
+    # Add additional services from JAppsConfig
+    if japps_config.additional_services:
         from jhub_apps.service_utils import pinned_service_to_service_dict
-        pinned_service_dicts = [
+        additional_service_dicts = [
             pinned_service_to_service_dict(service)
-            for service in japps_config.pinned_services
+            for service in japps_config.additional_services
         ]
-        c.JupyterHub.services.extend(pinned_service_dicts)
+        c.JupyterHub.services.extend(additional_service_dicts)
 
     services_roles = [
         {

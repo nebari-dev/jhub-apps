@@ -18,8 +18,8 @@ c.JAppsConfig.jupyterhub_config_path = "jupyterhub_config.py"
 c.JAppsConfig.conda_envs = []
 c.JAppsConfig.service_workers = 1
 
-# Configure pinned services via JAppsConfig
-c.JAppsConfig.pinned_services = [
+# Configure additional services via JAppsConfig
+c.JAppsConfig.additional_services = [
     {
         "name": "Argo",
         "url": "/argo",
@@ -89,7 +89,7 @@ c = install_jhub_apps(
 
 c.JupyterHub.template_paths = theme_template_paths
 
-# NOTE: Pinned services are now configured via c.JAppsConfig.pinned_services above.
+# NOTE: Additional services are now configured via c.JAppsConfig.additional_services above.
 # The old approach was to use c.JupyterHub.services.extend() with service_for_jhub_apps() helper.
 # You can still use that approach if needed:
 #
