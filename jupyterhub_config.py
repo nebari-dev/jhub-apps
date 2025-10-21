@@ -23,8 +23,6 @@ c.JAppsConfig.pinned_services = [
     {
         "name": "Argo",
         "url": "/argo",
-        "pinned": True,
-        "thumbnail": "data:image/jpeg;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAFUlEQVR42mNkYPhfz0AEYBxVSF+FAP5FDvcfRYWgAAAAAElFTkSuQmCC",
     },
     {
         "name": "Users",
