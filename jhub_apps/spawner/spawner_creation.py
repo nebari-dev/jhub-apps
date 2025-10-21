@@ -192,13 +192,14 @@ def subclass_spawner(base_spawner):
                 env = self.user_options.get("env", {})
                 if self.user_options.get("keep_alive") or (env and env.get("JH_APPS_KEEP_ALIVE")):
                     logger.info(
-                        "Flag set to force keep alive, will not be deleted by idle culler",
+                        "Flag set to keep alive, will not be deleted by idle culler",
                         app=self.user_options.get("display_name"),
                         framework=self.user_options.get("framework")
                     )
-                    base_cmd.append("--force-alive")
+                    base_cmd.append("--keep-alive=true")
                 else:
-                    base_cmd.append("--no-force-alive")
+                    # Default behavior: report actual activity (allow idle culling)
+                    base_cmd.append("--keep-alive=false")
 
                 # Add git repository arguments to base_cmd (before -- separator)
                 repository = self.user_options.get("repository")
