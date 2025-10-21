@@ -31,6 +31,14 @@ c.JAppsConfig.service_workers = 1  # Single worker for dev
 c.JAppsConfig.conda_envs = []  # No conda-store in dev environment
 c.Spawner.debug = True
 
+# Configure additional services via JAppsConfig
+c.JAppsConfig.additional_services = [
+    {
+        "name": "MyAwesomeService",
+        "url": "/services/japps",
+    },
+]
+
 # Install jhub-apps - wraps KubeSpawner with jhub-apps functionality
 c = install_jhub_apps(c, spawner_to_subclass=KubeSpawner, oauth_no_confirm=True)
 
@@ -40,27 +48,6 @@ c.JupyterHub.bind_url = "http://:8081"
 # Add template paths for jhub-apps UI
 from jhub_apps import theme_template_paths
 c.JupyterHub.template_paths = theme_template_paths
-
-def service_for_jhub_apps(name, url, description=None, pinned=False, thumbnail=None):
-    return {
-        "name": name,
-        "display": True,
-        "info": {
-            "name": name,
-            "description": description,
-            "url": url,
-            "external": True,
-            "pinned": pinned,
-            "thumbnail": thumbnail,
-        },
-    }
-
-
-c.JupyterHub.services.extend(
-    [
-        service_for_jhub_apps(name="MyAwesomeService", url="/services/japps"),
-    ]
-)
 
 # Theme configuration (mimics Nebari's look and feel)
 from jhub_apps import themes
