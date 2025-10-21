@@ -27,7 +27,7 @@ def test_wrap_command_with_proxy_installer():
     assert wrapped[0] == "/bin/bash"
     assert wrapped[1] == "-c"
     assert "jhub-app-proxy" in wrapped[2]
-    assert "command -v jhub-app-proxy" in wrapped[2]
+    assert "Installing jhub-app-proxy" in wrapped[2]
     assert "curl -fsSL" in wrapped[2]
     assert "install.sh" in wrapped[2]
     assert "export PATH=" in wrapped[2]

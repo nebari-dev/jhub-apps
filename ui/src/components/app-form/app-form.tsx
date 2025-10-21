@@ -111,6 +111,7 @@ export const AppForm = ({
       conda_env: '',
       custom_command: '',
       profile: '',
+      profile_image: '',
       is_public: false,
       keep_alive: false,
       share_with: {
@@ -134,6 +135,7 @@ export const AppForm = ({
     conda_env: '',
     custom_command: '',
     profile: '',
+    profile_image: '',
     is_public: false,
     keep_alive: false,
     share_with: {
@@ -157,6 +159,7 @@ export const AppForm = ({
       conda_env: '',
       custom_command: '',
       profile: '',
+      profile_image: '',
       is_public: false,
       keep_alive: false,
     });
@@ -439,6 +442,7 @@ export const AppForm = ({
     conda_env,
     custom_command,
     profile,
+    profile_image,
   }) => {
     setIsProcessing(true);
     const displayName = getFriendlyDisplayName(display_name);
@@ -454,6 +458,7 @@ export const AppForm = ({
         env: getFriendlyEnvironmentVariables(variables),
         custom_command,
         profile,
+        profile_image,
         is_public: isPublic,
         share_with: {
           users: currentUserPermissions,
@@ -629,6 +634,7 @@ export const AppForm = ({
         conda_env: currentFormInput.conda_env || '',
         custom_command: currentFormInput.custom_command || '',
         profile: currentFormInput.profile || '',
+        profile_image: currentFormInput.profile_image || '',
       });
       setIsPublic(currentFormInput.is_public);
       setKeepAlive(currentFormInput.keep_alive);

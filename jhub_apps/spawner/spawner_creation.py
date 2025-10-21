@@ -43,7 +43,7 @@ def get_proxy_version(config, app_env=None):
 
 def wrap_command_with_proxy_installer(cmd_list, proxy_version):
     """
-    Wraps a command list in a bash script that installs jhub-app-proxy if needed.
+    Wraps a command list in a bash script that installs jhub-app-proxy.
 
     Args:
         cmd_list: List of command arguments (e.g., ['jhub-app-proxy', '--authtype=oauth', ...])
@@ -56,15 +56,13 @@ def wrap_command_with_proxy_installer(cmd_list, proxy_version):
     cmd_str = ' '.join(shlex.quote(str(arg)) for arg in cmd_list)
 
     install_script = f'''
-# Ensure ~/.local/bin is in PATH first
-export PATH="$HOME/.local/bin:$PATH"
+# Ensure ~/.local/bin and /tmp/.local/bin are in PATH
+export PATH="$HOME/.local/bin:/tmp/.local/bin:$PATH"
 
-# Install jhub-app-proxy if not present
-if ! command -v jhub-app-proxy &> /dev/null; then
-    echo "jhub-app-proxy not found, installing..."
-    echo "Running: curl -fsSL {JHUB_APP_PROXY_INSTALL_URL} | bash -s -- -v {proxy_version}"
-    curl -fsSL {JHUB_APP_PROXY_INSTALL_URL} | bash -s -- -v {proxy_version}
-fi
+# Install jhub-app-proxy (overrides if already present)
+echo "Installing jhub-app-proxy version {proxy_version}..."
+echo "Running: curl -fsSL {JHUB_APP_PROXY_INSTALL_URL} | bash -s -- -v {proxy_version} -d /tmp/.local/bin"
+curl -fsSL {JHUB_APP_PROXY_INSTALL_URL} | bash -s -- -v {proxy_version} -d /tmp/.local/bin
 
 # Execute the original command
 echo "Running command: {cmd_str}"
@@ -158,9 +156,22 @@ def subclass_spawner(base_spawner):
                     env["BOKEH_RESOURCES"] = "cdn"
             return env
 
+        async def load_user_options(self):
+            """Load user options and apply profile_image override"""
+            await super().load_user_options()
+
+            # Apply profile_image as a kubespawner override
+            # This needs to happen after the profile is loaded
+            # but before the pod is created
+            profile_image = self.user_options.get("profile_image")
+            if profile_image:
+                logger.info(f"Overriding profile image with: {profile_image}")
+                self.image = profile_image
+
         async def start(self):
             logger.info("Starting spawner process")
             await self._get_user_auth_state()
+
             framework = self.user_options.get("framework")
             if self.user_options.get("jhub_app"):
                 # JupyterLab has built-in JupyterHub auth, so use authtype=none
@@ -181,13 +192,14 @@ def subclass_spawner(base_spawner):
                 env = self.user_options.get("env", {})
                 if self.user_options.get("keep_alive") or (env and env.get("JH_APPS_KEEP_ALIVE")):
                     logger.info(
-                        "Flag set to force keep alive, will not be deleted by idle culler",
+                        "Flag set to keep alive, will not be deleted by idle culler",
                         app=self.user_options.get("display_name"),
                         framework=self.user_options.get("framework")
                     )
-                    base_cmd.append("--force-alive")
+                    base_cmd.append("--keep-alive=true")
                 else:
-                    base_cmd.append("--no-force-alive")
+                    # Default behavior: report actual activity (allow idle culling)
+                    base_cmd.append("--keep-alive=false")
 
                 # Add git repository arguments to base_cmd (before -- separator)
                 repository = self.user_options.get("repository")

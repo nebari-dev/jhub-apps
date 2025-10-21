@@ -9,6 +9,7 @@ import {
   Radio,
   RadioGroup,
   Stack,
+  TextField,
   Typography,
 } from '@mui/material';
 import { AppProfileProps, AppQueryUpdateProps } from '@src/types/api';
@@ -61,6 +62,9 @@ export const ServerTypes = (): React.ReactElement => {
   const [selectedServerType, setSelectedServerType] = React.useState<string>(
     currentFormInput?.profile || '',
   );
+  const [profileImages, setProfileImages] = React.useState<
+    Record<string, string>
+  >({});
   const [isHeadless] = useRecoilState<boolean>(defaultIsHeadless);
   const id = searchParams.get('id');
 
@@ -89,6 +93,20 @@ export const ServerTypes = (): React.ReactElement => {
       setCurrentFormInput({
         ...currentFormInput,
         profile: slug,
+        profile_image: profileImages[slug] || '',
+      });
+    }
+  };
+
+  const handleImageChange = (slug: string, image: string) => {
+    setProfileImages({
+      ...profileImages,
+      [slug]: image,
+    });
+    if (selectedServerType === slug && currentFormInput) {
+      setCurrentFormInput({
+        ...currentFormInput,
+        profile_image: image,
       });
     }
   };
@@ -108,6 +126,7 @@ export const ServerTypes = (): React.ReactElement => {
         env: getFriendlyEnvironmentVariables(currentFormInput?.env),
         custom_command: currentFormInput?.custom_command || '',
         profile: currentFormInput?.profile || '',
+        profile_image: currentFormInput?.profile_image || '',
         public: currentFormInput?.is_public || false,
         share_with: {
           users: currentFormInput?.share_with?.users || [],
@@ -213,6 +232,70 @@ export const ServerTypes = (): React.ReactElement => {
     }
   }, [error, setCurrentNotification]);
 
+  // Effect 1: Initialize profile images from serverTypes with default images
+  useEffect(() => {
+    if (!serverTypes || serverTypes.length === 0) {
+      return;
+    }
+
+    const images: Record<string, string> = {};
+    let defaultProfileSlug = '';
+
+    serverTypes.forEach((type, index) => {
+      const defaultImage = type.kubespawner_override?.image || '';
+      images[type.slug] = defaultImage;
+
+      // Find the default profile or use the first one
+      if (type.default || (!defaultProfileSlug && index === 0)) {
+        defaultProfileSlug = type.slug;
+      }
+    });
+
+    setProfileImages(images);
+
+    // Auto-select default profile if no profile is currently selected
+    if (!currentFormInput?.profile && defaultProfileSlug && currentFormInput) {
+      setSelectedServerType(defaultProfileSlug);
+      setCurrentFormInput({
+        ...currentFormInput,
+        profile: defaultProfileSlug,
+        profile_image: images[defaultProfileSlug] || '',
+      });
+    }
+  }, [serverTypes]);
+
+  // Effect 2: Populate custom profile image when coming from edit mode
+  // This runs when the profile changes (e.g., when navigating to this page with edit data)
+  useEffect(() => {
+    if (
+      !serverTypes ||
+      serverTypes.length === 0 ||
+      !currentFormInput?.profile
+    ) {
+      return;
+    }
+
+    const profileImage = currentFormInput.profile_image;
+    if (!profileImage) {
+      return;
+    }
+
+    // Find the matching server type to get its default image
+    const matchingType = serverTypes.find(
+      (type) => type.slug === currentFormInput.profile,
+    );
+    const defaultImage = matchingType?.kubespawner_override?.image || '';
+
+    // Only update if the profile_image is different from the default
+    // (meaning the user had customized it previously)
+    if (profileImage !== defaultImage && currentFormInput.profile) {
+      setProfileImages((prev) => ({
+        ...prev,
+        [currentFormInput.profile as string]: profileImage,
+      }));
+    }
+  }, [serverTypes, currentFormInput?.profile]);
+
   return (
     <Box className="container">
       <Stack>
@@ -281,6 +364,24 @@ export const ServerTypes = (): React.ReactElement => {
                           label={type.display_name}
                         />
                         <p>{type.description}</p>
+                        {type.kubespawner_override?.image && (
+                          <Box
+                            sx={{ mt: 2 }}
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <TextField
+                              fullWidth
+                              size="small"
+                              label="Image"
+                              value={profileImages[type.slug] || ''}
+                              onChange={(e) =>
+                                handleImageChange(type.slug, e.target.value)
+                              }
+                              variant="outlined"
+                              placeholder={type.kubespawner_override.image}
+                            />
+                          </Box>
+                        )}
                       </CardContent>
                     </Card>
                   ))}
