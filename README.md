@@ -50,7 +50,12 @@ cd -
 
 For testing JupyterHub Apps with Kubernetes spawners (e.g., KubeSpawner), you can use the k3d development environment which provides a local Kubernetes cluster with Tilt for rapid development.
 
-**Prerequisites**: Install [k3d](https://k3d.io/#installation) and [Tilt](https://docs.tilt.dev/install.html)
+**Prerequisites**:
+
+- Install [k3d](https://k3d.io/#installation)
+- [Tilt](https://docs.tilt.dev/install.html)
+- [Helm](https://helm.sh/docs/intro/install/)
+- [kubectl](https://github.com/kubernetes/kubectl)
 
 ```bash
 cd k3s-dev
