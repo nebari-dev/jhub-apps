@@ -102,9 +102,9 @@ def install_jhub_apps(c, spawner_to_subclass, *, oauth_no_confirm=False):
 
     # Add additional services from JAppsConfig
     if japps_config.additional_services:
-        from jhub_apps.service_utils import pinned_service_to_service_dict
+        from jhub_apps.service_utils import additional_service_to_service_dict
         additional_service_dicts = [
-            pinned_service_to_service_dict(service)
+            additional_service_to_service_dict(service)
             for service in japps_config.additional_services
         ]
         c.JupyterHub.services.extend(additional_service_dicts)

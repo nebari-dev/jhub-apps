@@ -5,7 +5,7 @@ from traitlets import Unicode, Union, List, Callable, Integer, TraitType, TraitE
 
 from traitlets.config import SingletonConfigurable, Enum
 
-from jhub_apps.service.models import StartupApp, PinnedService
+from jhub_apps.service.models import StartupApp, AdditionalService
 
 
 # jhub-app-proxy configuration constants
@@ -139,13 +139,13 @@ class JAppsConfig(SingletonConfigurable):
     ).tag(config=True)
 
     additional_services = List(
-        trait=PydanticModelTrait(PinnedService),
+        trait=PydanticModelTrait(AdditionalService),
         description="List of additional external services to display in JupyterHub UI.",
         default_value=[],
         help="""
         List of additional external services to display in JupyterHub's services menu.
         Services with pinned=True will also appear in the quick access section.
-        Each service should be a PinnedService model instance or dict with keys:
+        Each service should be an AdditionalService model instance or dict with keys:
         name (str), url (str), description (str, optional), pinned (bool, optional),
         thumbnail (str, optional) - can be a URL or base64-encoded data URL.
 

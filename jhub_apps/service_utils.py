@@ -1,7 +1,7 @@
 """Utilities for configuring JupyterHub services."""
 from typing import Dict, Any, Optional
 
-from jhub_apps.service.models import PinnedService
+from jhub_apps.service.models import AdditionalService
 
 
 def service_for_jhub_apps(
@@ -14,15 +14,16 @@ def service_for_jhub_apps(
     """Create a service configuration dict for JupyterHub services.
 
     This helper function creates the proper structure for external services
-    that appear in the JupyterHub UI services menu. It validates the input
-    using the PinnedService Pydantic model.
+    that appear in the JupyterHub UI services menu. Services with pinned=True
+    also appear in the quick access section. It validates the input using
+    the AdditionalService Pydantic model.
 
     Args:
         name: Display name of the service
         url: URL path for the service
         description: Optional description of the service
-        pinned: Whether the service should be pinned in the UI
-        thumbnail: Optional thumbnail URL or data URL for the service icon
+        pinned: Whether the service should appear in the quick access section
+        thumbnail: Optional thumbnail URL or base64-encoded data URL for the service icon
 
     Returns:
         Dictionary with JupyterHub service configuration
@@ -40,7 +41,7 @@ def service_for_jhub_apps(
         ... )
     """
     # Validate inputs using Pydantic model
-    pinned_service = PinnedService(
+    additional_service = AdditionalService(
         name=name,
         url=url,
         description=description,
@@ -49,32 +50,32 @@ def service_for_jhub_apps(
     )
 
     return {
-        "name": pinned_service.name,
+        "name": additional_service.name,
         "display": True,
         "info": {
-            "name": pinned_service.name,
-            "description": pinned_service.description,
-            "url": pinned_service.url,
+            "name": additional_service.name,
+            "description": additional_service.description,
+            "url": additional_service.url,
             "external": True,
-            "pinned": pinned_service.pinned,
-            "thumbnail": pinned_service.thumbnail,
+            "pinned": additional_service.pinned,
+            "thumbnail": additional_service.thumbnail,
         },
     }
 
 
-def pinned_service_to_service_dict(pinned_service: PinnedService) -> Dict[str, Any]:
-    """Convert a PinnedService model to a JupyterHub service dict.
+def additional_service_to_service_dict(additional_service: AdditionalService) -> Dict[str, Any]:
+    """Convert an AdditionalService model to a JupyterHub service dict.
 
     Args:
-        pinned_service: PinnedService model instance
+        additional_service: AdditionalService model instance
 
     Returns:
         Dictionary with JupyterHub service configuration
     """
     return service_for_jhub_apps(
-        name=pinned_service.name,
-        url=pinned_service.url,
-        description=pinned_service.description,
-        pinned=pinned_service.pinned,
-        thumbnail=pinned_service.thumbnail,
+        name=additional_service.name,
+        url=additional_service.url,
+        description=additional_service.description,
+        pinned=additional_service.pinned,
+        thumbnail=additional_service.thumbnail,
     )
