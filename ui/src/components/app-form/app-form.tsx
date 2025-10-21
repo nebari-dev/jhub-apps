@@ -442,6 +442,7 @@ export const AppForm = ({
     conda_env,
     custom_command,
     profile,
+    profile_image,
   }) => {
     setIsProcessing(true);
     const displayName = getFriendlyDisplayName(display_name);
@@ -457,6 +458,7 @@ export const AppForm = ({
         env: getFriendlyEnvironmentVariables(variables),
         custom_command,
         profile,
+        profile_image,
         is_public: isPublic,
         share_with: {
           users: currentUserPermissions,

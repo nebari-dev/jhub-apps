@@ -232,41 +232,69 @@ export const ServerTypes = (): React.ReactElement => {
     }
   }, [error, setCurrentNotification]);
 
+  // Effect 1: Initialize profile images from serverTypes with default images
   useEffect(() => {
-    // Initialize profile images from serverTypes and auto-select default profile
-    if (serverTypes && serverTypes.length > 0) {
-      const images: Record<string, string> = {};
-      let defaultProfileSlug = '';
-
-      serverTypes.forEach((type, index) => {
-        const defaultImage = type.kubespawner_override?.image || '';
-        images[type.slug] =
-          currentFormInput?.profile === type.slug &&
-          currentFormInput?.profile_image
-            ? currentFormInput.profile_image
-            : defaultImage;
-
-        // Find the default profile or use the first one
-        if (type.default || (!defaultProfileSlug && index === 0)) {
-          defaultProfileSlug = type.slug;
-        }
-      });
-
-      setProfileImages(images);
-
-      // Auto-select default profile if no profile is currently selected
-      if (!currentFormInput?.profile && defaultProfileSlug) {
-        setSelectedServerType(defaultProfileSlug);
-        if (currentFormInput) {
-          setCurrentFormInput({
-            ...currentFormInput,
-            profile: defaultProfileSlug,
-            profile_image: images[defaultProfileSlug] || '',
-          });
-        }
-      }
+    if (!serverTypes || serverTypes.length === 0) {
+      return;
     }
-  }, [serverTypes, setCurrentFormInput]);
+
+    const images: Record<string, string> = {};
+    let defaultProfileSlug = '';
+
+    serverTypes.forEach((type, index) => {
+      const defaultImage = type.kubespawner_override?.image || '';
+      images[type.slug] = defaultImage;
+
+      // Find the default profile or use the first one
+      if (type.default || (!defaultProfileSlug && index === 0)) {
+        defaultProfileSlug = type.slug;
+      }
+    });
+
+    setProfileImages(images);
+
+    // Auto-select default profile if no profile is currently selected
+    if (!currentFormInput?.profile && defaultProfileSlug && currentFormInput) {
+      setSelectedServerType(defaultProfileSlug);
+      setCurrentFormInput({
+        ...currentFormInput,
+        profile: defaultProfileSlug,
+        profile_image: images[defaultProfileSlug] || '',
+      });
+    }
+  }, [serverTypes]);
+
+  // Effect 2: Populate custom profile image when coming from edit mode
+  // This runs when the profile changes (e.g., when navigating to this page with edit data)
+  useEffect(() => {
+    if (
+      !serverTypes ||
+      serverTypes.length === 0 ||
+      !currentFormInput?.profile
+    ) {
+      return;
+    }
+
+    const profileImage = currentFormInput.profile_image;
+    if (!profileImage) {
+      return;
+    }
+
+    // Find the matching server type to get its default image
+    const matchingType = serverTypes.find(
+      (type) => type.slug === currentFormInput.profile,
+    );
+    const defaultImage = matchingType?.kubespawner_override?.image || '';
+
+    // Only update if the profile_image is different from the default
+    // (meaning the user had customized it previously)
+    if (profileImage !== defaultImage && currentFormInput.profile) {
+      setProfileImages((prev) => ({
+        ...prev,
+        [currentFormInput.profile as string]: profileImage,
+      }));
+    }
+  }, [serverTypes, currentFormInput?.profile]);
 
   return (
     <Box className="container">
