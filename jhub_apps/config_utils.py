@@ -5,7 +5,7 @@ from traitlets import Unicode, Union, List, Callable, Integer, TraitType, TraitE
 
 from traitlets.config import SingletonConfigurable, Enum
 
-from jhub_apps.service.models import StartupApp
+from jhub_apps.service.models import StartupApp, PinnedService
 
 
 # jhub-app-proxy configuration constants
@@ -136,4 +136,26 @@ class JAppsConfig(SingletonConfigurable):
     jhub_app_proxy_version = Unicode(
         DEFAULT_JHUB_APP_PROXY_VERSION,
         help="Version of jhub-app-proxy to install. Can be overridden by JHUB_APP_PROXY_VERSION environment variable.",
+    ).tag(config=True)
+
+    pinned_services = List(
+        trait=PydanticModelTrait(PinnedService),
+        description="List of external services to pin in JupyterHub UI services menu.",
+        default_value=[],
+        help="""
+        List of external services to display in JupyterHub's services menu.
+        Each service should be a PinnedService model instance or dict with keys:
+        name (str), url (str), description (str, optional), pinned (bool, optional),
+        thumbnail (str, optional).
+
+        Example:
+            c.JAppsConfig.pinned_services = [
+                {
+                    "name": "Monitoring",
+                    "url": "/grafana",
+                    "pinned": True,
+                    "description": "System monitoring",
+                },
+            ]
+        """,
     ).tag(config=True)

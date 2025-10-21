@@ -17,6 +17,32 @@ c.JupyterHub.bind_url = hub_url
 c.JAppsConfig.jupyterhub_config_path = "jupyterhub_config.py"
 c.JAppsConfig.conda_envs = []
 c.JAppsConfig.service_workers = 1
+
+# Configure pinned services via JAppsConfig
+c.JAppsConfig.pinned_services = [
+    {
+        "name": "Argo",
+        "url": "/argo",
+        "pinned": True,
+        "thumbnail": "data:image/jpeg;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAFUlEQVR42mNkYPhfz0AEYBxVSF+FAP5FDvcfRYWgAAAAAElFTkSuQmCC",
+    },
+    {
+        "name": "Users",
+        "url": "/auth/admin/nebari/console/",
+    },
+    {
+        "name": "Environments",
+        "url": "/conda-store",
+        "description": "This is conda-store, your environments manager.",
+        "pinned": True,
+        "thumbnail": "https://raw.githubusercontent.com/conda-incubator/conda-store/main/docusaurus-docs/community/assets/logos/conda-store-logo-vertical-lockup.svg",
+    },
+    {
+        "name": "Monitoring",
+        "url": "/monitoring",
+    },
+]
+
 c.JAppsConfig.startup_apps = [
     {
         "username": "admin",
@@ -65,36 +91,14 @@ c = install_jhub_apps(
 
 c.JupyterHub.template_paths = theme_template_paths
 
-
-def service_for_jhub_apps(name, url, description=None, pinned=False, thumbnail=None):
-    return {
-        "name": name,
-        "display": True,
-        "info": {
-            "name": name,
-            "description": description,
-            "url": url,
-            "external": True,
-            "pinned": pinned,
-            "thumbnail": thumbnail,
-        },
-    }
-
-
-c.JupyterHub.services.extend(
-    [
-        service_for_jhub_apps(name="Argo", url="/argo"),
-        service_for_jhub_apps(name="Users", url="/auth/admin/nebari/console/"),
-        service_for_jhub_apps(
-            name="Environments",
-            description="This is conda-store, your environments manager.",
-            url="/conda-store",
-            pinned=True,
-            thumbnail="https://raw.githubusercontent.com/conda-incubator/conda-store/main/docusaurus-docs/community/assets/logos/conda-store-logo-vertical-lockup.svg",
-        ),
-        service_for_jhub_apps(name="Monitoring", url="/monitoring"),
-    ]
-)
+# NOTE: Pinned services are now configured via c.JAppsConfig.pinned_services above.
+# The old approach was to use c.JupyterHub.services.extend() with service_for_jhub_apps() helper.
+# You can still use that approach if needed:
+#
+# from jhub_apps import service_for_jhub_apps
+# c.JupyterHub.services.extend([
+#     service_for_jhub_apps(name="Custom Service", url="/custom", pinned=True),
+# ])
 
 # nebari will control these as ways to customize the template
 c.JupyterHub.template_vars = {
