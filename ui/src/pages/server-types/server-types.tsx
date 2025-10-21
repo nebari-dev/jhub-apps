@@ -266,7 +266,7 @@ export const ServerTypes = (): React.ReactElement => {
         }
       }
     }
-  }, [serverTypes, currentFormInput, setCurrentFormInput]);
+  }, [serverTypes, setCurrentFormInput]);
 
   return (
     <Box className="container">
