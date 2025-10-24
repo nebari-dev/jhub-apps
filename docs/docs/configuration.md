@@ -144,3 +144,52 @@ Specifies the version of `jhub-app-proxy` to install when deploying apps.
   - This sets the default version globally for all apps
   - Can be overridden per-app by setting the `JHUB_APP_PROXY_VERSION` environment variable in the app's configuration
   - Priority: App-specific `JHUB_APP_PROXY_VERSION` env var > Global config > Default
+
+### `additional_services`
+
+List of additional external services to display in JupyterHub's services menu. Services with `pinned=True`
+will also appear in the quick access section for easy access.
+
+- **Example**:
+  ```python
+  c.JAppsConfig.additional_services = [
+      {
+          "name": "Monitoring",
+          "url": "/grafana",
+          "description": "System monitoring dashboard",
+          "pinned": True,
+          "thumbnail": "https://example.com/grafana-logo.svg",
+      },
+      {
+          "name": "Argo",
+          "url": "/argo",
+      },
+      {
+          "name": "Environments",
+          "url": "/conda-store",
+          "description": "Conda environment manager",
+          "pinned": True,
+          "thumbnail": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAFUlEQVR42mNkYPhfz0AEYBxVSF+FAP5FDvcfRYWgAAAAAElFTkSuQmCC",
+      },
+  ]
+  ```
+- **Fields**:
+  - `name` (required): Display name of the service
+  - `url` (required): URL path for the service
+  - `description` (optional): Description of the service shown in the UI
+  - `pinned` (optional): Whether the service should appear in the quick access section (default: `False`)
+  - `thumbnail` (optional): URL or base64-encoded data URL for the service icon (e.g., `"https://..."` or `"data:image/png;base64,..."`)
+- **Notes**:
+  - This replaces the older approach of manually extending `c.JupyterHub.services` with custom service dictionaries
+  - For advanced use cases, you can still use the programmatic approach with the `service_for_jhub_apps` helper:
+    ```python
+    from jhub_apps import service_for_jhub_apps
+    c.JupyterHub.services.extend([
+        service_for_jhub_apps(
+            name="Custom Service",
+            url="/custom",
+            description="My custom service",
+            pinned=True,
+        ),
+    ])
+    ```

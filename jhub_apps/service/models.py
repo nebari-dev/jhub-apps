@@ -101,3 +101,16 @@ class JHubAppUserOptions(UserOptions):
 class StartupApp(ServerCreation):
     username: str
     user_options: JHubAppUserOptions
+
+
+class AdditionalService(BaseModel):
+    """Configuration for an additional external service in JupyterHub.
+
+    These services appear in the JupyterHub UI services menu.
+    Services with pinned=True also appear in the quick access section.
+    """
+    name: str
+    url: str
+    description: Optional[str] = None
+    pinned: bool = False
+    thumbnail: Optional[str] = None
