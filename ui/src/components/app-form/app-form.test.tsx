@@ -120,7 +120,9 @@ describe('AppForm', () => {
         '.overlay-text',
       ) as HTMLDivElement;
       expect(overlayText).toHaveTextContent('a'.repeat(200));
-      expect(overlayText.querySelector('span')).toHaveStyle('color: red');
+      expect(overlayText.querySelector('span')).toHaveStyle(
+        'color: rgb(255, 0, 0)',
+      );
     }
   });
 
