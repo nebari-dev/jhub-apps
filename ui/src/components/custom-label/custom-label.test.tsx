@@ -35,7 +35,7 @@ describe('CustomLabel', () => {
         />,
       );
       const asterisk = screen.getByText('*');
-      expect(asterisk).toHaveStyle({ color: 'red' });
+      expect(asterisk).toHaveStyle({ color: 'rgb(255, 0, 0)' });
     });
   });
 });
