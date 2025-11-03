@@ -48,6 +48,7 @@ export default [
       // React
       ...hooksPlugin.configs.recommended.rules,
       'react-hooks/exhaustive-deps': 'off',
+      'react-hooks/set-state-in-effect': 'off',
       'react/react-in-jsx-scope': 'off',
     },
   },
