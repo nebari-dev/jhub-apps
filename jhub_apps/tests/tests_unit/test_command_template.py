@@ -24,7 +24,7 @@ def test_wrap_command_with_proxy_installer():
     wrapped = wrap_command_with_proxy_installer(cmd_list, proxy_version)
 
     assert len(wrapped) == 3
-    assert wrapped[0] == "/bin/bash"
+    assert wrapped[0] == "/bin/sh"
     assert wrapped[1] == "-c"
     assert "jhub-app-proxy" in wrapped[2]
     assert "Installing jhub-app-proxy" in wrapped[2]

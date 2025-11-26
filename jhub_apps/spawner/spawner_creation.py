@@ -43,14 +43,14 @@ def get_proxy_version(config, app_env=None):
 
 def wrap_command_with_proxy_installer(cmd_list, proxy_version):
     """
-    Wraps a command list in a bash script that installs jhub-app-proxy.
+    Wraps a command list in a shell script that installs jhub-app-proxy.
 
     Args:
         cmd_list: List of command arguments (e.g., ['jhub-app-proxy', '--authtype=oauth', ...])
         proxy_version: Version of jhub-app-proxy to install
 
     Returns:
-        List with bash wrapper: ['/bin/bash', '-c', '<script>']
+        List with shell wrapper: ['/bin/sh', '-c', '<script>']
     """
     # Convert command list to a shell-escaped string
     cmd_str = ' '.join(shlex.quote(str(arg)) for arg in cmd_list)
@@ -61,15 +61,31 @@ export PATH="$HOME/.local/bin:/tmp/.local/bin:$PATH"
 
 # Install jhub-app-proxy (overrides if already present)
 echo "Installing jhub-app-proxy version {proxy_version}..."
-echo "Running: curl -fsSL {JHUB_APP_PROXY_INSTALL_URL} | bash -s -- -v {proxy_version} -d /tmp/.local/bin"
-curl -fsSL {JHUB_APP_PROXY_INSTALL_URL} | bash -s -- -v {proxy_version} -d /tmp/.local/bin
+
+# Try curl, wget, then Python as fallbacks
+if command -v curl >/dev/null 2>&1; then
+    echo "Using curl to download installer..."
+    curl -fsSL {JHUB_APP_PROXY_INSTALL_URL} | sh -s -- -v {proxy_version} -d /tmp/.local/bin
+elif command -v wget >/dev/null 2>&1; then
+    echo "Using wget to download installer..."
+    wget -qO- {JHUB_APP_PROXY_INSTALL_URL} | sh -s -- -v {proxy_version} -d /tmp/.local/bin
+elif command -v python3 >/dev/null 2>&1; then
+    echo "Using python3 to download installer..."
+    python3 -c "import urllib.request; import sys; response = urllib.request.urlopen('{JHUB_APP_PROXY_INSTALL_URL}'); sys.stdout.buffer.write(response.read())" | sh -s -- -v {proxy_version} -d /tmp/.local/bin
+elif command -v python >/dev/null 2>&1; then
+    echo "Using python to download installer..."
+    python -c "import urllib.request; import sys; response = urllib.request.urlopen('{JHUB_APP_PROXY_INSTALL_URL}'); sys.stdout.buffer.write(response.read())" | sh -s -- -v {proxy_version} -d /tmp/.local/bin
+else
+    echo "Error: No download tool found (tried: curl, wget, python3, python). Cannot download jhub-app-proxy installer." >&2
+    exit 1
+fi
 
 # Execute the original command
 echo "Running command: {cmd_str}"
 exec {cmd_str}
 '''.strip()
 
-    return ['/bin/bash', '-c', install_script]
+    return ['/bin/sh', '-c', install_script]
 
 
 def subclass_spawner(base_spawner):
