@@ -56,8 +56,25 @@ def wrap_command_with_proxy_installer(cmd_list, proxy_version):
     cmd_str = ' '.join(shlex.quote(str(arg)) for arg in cmd_list)
 
     install_script = f'''
-# Ensure ~/.local/bin and /tmp/.local/bin are in PATH
-export PATH="$HOME/.local/bin:/tmp/.local/bin:$PATH"
+INSTALL_DIR="/tmp/.local/bin/jhub-app-proxy-versions/{proxy_version}"
+BIN="$INSTALL_DIR/jhub-app-proxy"
+
+mkdir -p "$INSTALL_DIR"
+
+export PATH="$INSTALL_DIR:$PATH"
+
+# Add /tmp/.local/bin only if it's not already present. 
+# (legacy binaries were stored here)
+if [ -d "/tmp/.local/bin" ] && [[ ":$PATH:" != *":/tmp/.local/bin:"* ]]; then
+  export PATH="$PATH:/tmp/.local/bin"
+fi
+
+# Add ~/.local/bin only if it's not already present.
+# Must be added AFTER /tmp binaries for legacy reasons.
+# (legacy binaries were stored here)
+if [ -d "$HOME/.local/bin" ] && [[ ":$PATH:" != *":$HOME/.local/bin:"* ]]; then
+  export PATH="$PATH:$HOME/.local/bin"
+fi
 
 # Install jhub-app-proxy (overrides if already present)
 echo "Installing jhub-app-proxy version {proxy_version}..."
@@ -65,19 +82,30 @@ echo "Installing jhub-app-proxy version {proxy_version}..."
 # Try curl, wget, then Python as fallbacks
 if command -v curl >/dev/null 2>&1; then
     echo "Using curl to download installer..."
-    curl -fsSL {JHUB_APP_PROXY_INSTALL_URL} | sh -s -- -v {proxy_version} -d /tmp/.local/bin
+    curl -fsSL {JHUB_APP_PROXY_INSTALL_URL} | sh -s -- -v {proxy_version} -d "$INSTALL_DIR"
 elif command -v wget >/dev/null 2>&1; then
     echo "Using wget to download installer..."
-    wget -qO- {JHUB_APP_PROXY_INSTALL_URL} | sh -s -- -v {proxy_version} -d /tmp/.local/bin
+    wget -qO- {JHUB_APP_PROXY_INSTALL_URL} | sh -s -- -v {proxy_version} -d "$INSTALL_DIR"
 elif command -v python3 >/dev/null 2>&1; then
     echo "Using python3 to download installer..."
-    python3 -c "import urllib.request; import sys; response = urllib.request.urlopen('{JHUB_APP_PROXY_INSTALL_URL}'); sys.stdout.buffer.write(response.read())" | sh -s -- -v {proxy_version} -d /tmp/.local/bin
+    python3 -c "import urllib.request; import sys; response = urllib.request.urlopen('{JHUB_APP_PROXY_INSTALL_URL}'); sys.stdout.buffer.write(response.read())" | sh -s -- -v {proxy_version} -d "$INSTALL_DIR"
 elif command -v python >/dev/null 2>&1; then
     echo "Using python to download installer..."
-    python -c "import urllib.request; import sys; response = urllib.request.urlopen('{JHUB_APP_PROXY_INSTALL_URL}'); sys.stdout.buffer.write(response.read())" | sh -s -- -v {proxy_version} -d /tmp/.local/bin
+    python -c "import urllib.request; import sys; response = urllib.request.urlopen('{JHUB_APP_PROXY_INSTALL_URL}'); sys.stdout.buffer.write(response.read())" | sh -s -- -v {proxy_version} -d "$INSTALL_DIR"
 else
     echo "Error: No download tool found (tried: curl, wget, python3, python). Cannot download jhub-app-proxy installer." >&2
     exit 1
+fi
+
+# Air-gapped-friendly fallback:
+# If we couldn't install into /tmp, use whatever is already available on PATH.
+if [ ! -x "$BIN" ]; then
+  if command -v jhub-app-proxy >/dev/null 2>&1; then
+    echo "Warning: could not install requested version; using existing jhub-app-proxy from PATH." >&2
+  else
+    echo "Error: jhub-app-proxy not available and cannot download installer." >&2
+    exit 1
+  fi
 fi
 
 # Execute the original command
