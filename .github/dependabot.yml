@@ -30,6 +30,9 @@ updates:
       - dependency-name: "@types/react-dom"
         versions:
           - ">=18.2.0"
+      - dependency-name: "@types/node"
+        versions:
+          - ">=25.0.0"
       - dependency-name: "@mui/material"
         versions:
           - ">=7.0.0"
