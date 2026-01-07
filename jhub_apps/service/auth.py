@@ -11,7 +11,7 @@ logger = structlog.get_logger(__name__)
 
 def _create_access_token(data: dict, expires_delta: typing.Optional[timedelta] = None):
     logger.info("Creating access token")
-    to_encode = data.copy()
+    to_encode = {"access_token_data": data.get("sub", data)}
     if expires_delta:
         expire = datetime.utcnow() + expires_delta
     else:
@@ -33,7 +33,7 @@ def _get_jhub_token_from_jwt_token(token):
     )
     try:
         payload = jwt.decode(token, os.environ["JHUB_APP_JWT_SECRET_KEY"], algorithms=["HS256"])
-        access_token_data: dict = payload.get("sub")
+        access_token_data: dict = payload.get("access_token_data")
         if access_token_data is None:
             raise credentials_exception
     except jwt.PyJWTError as e:
