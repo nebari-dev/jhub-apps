@@ -81,6 +81,11 @@ const currentServerStatuses = atom<string[]>({
   default: [],
 });
 
+const currentGroups = atom<string[]>({
+  key: 'currentGroups',
+  default: [],
+});
+
 const isStartOpen = atom<boolean>({
   key: 'isStartOpen',
   default: false,
@@ -111,6 +116,7 @@ export {
   currentFile,
   currentFormInput,
   currentFrameworks,
+  currentGroups,
   currentImage,
   currentJhData,
   currentNotification,
