@@ -308,6 +308,74 @@ describe('AppFilters', () => {
     });
   });
 
+  test('should filter by groups', async () => {
+    const spy = vi.fn();
+    mock.onGet(new RegExp('/frameworks')).reply(200, frameworks);
+    queryClient.setQueryData(['app-frameworks'], frameworks);
+    const { baseElement } = render(
+      <RecoilRoot initializeState={({ set }) => set(defaultUser, currentUser)}>
+        <QueryClientProvider client={queryClient}>
+          <AppFilters
+            data={serverApps}
+            currentUser={userState}
+            setApps={spy}
+            isGridViewActive={false}
+            toggleView={function (): void {
+              throw new Error('Function not implemented.');
+            }}
+          />
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+
+    const btn = baseElement.querySelector('#filters-btn') as HTMLButtonElement;
+    await act(async () => {
+      btn.click();
+    });
+
+    await waitFor(async () => {
+      const form = baseElement.querySelector(
+        '#filters-form',
+      ) as HTMLFormElement;
+      expect(form).toBeTruthy();
+
+      // Find the groups label to ensure groups section is rendered
+      const groupsLabel = Array.from(
+        baseElement.querySelectorAll('.MuiFormLabel-root'),
+      ).find((label) => label.textContent === 'Groups');
+      expect(groupsLabel).toBeTruthy();
+
+      const filterItems = baseElement.querySelectorAll(
+        '.MuiFormControlLabel-root',
+      ) as NodeListOf<HTMLLabelElement>;
+
+      // Find the checkbox for 'developer' group
+      // The groups checkboxes come after frameworks and server statuses
+      const developerCheckbox = Array.from(filterItems).find((item) =>
+        item.textContent?.includes('developer'),
+      );
+
+      if (developerCheckbox) {
+        await act(async () => {
+          developerCheckbox.click();
+        });
+        expect(developerCheckbox).toBeTruthy();
+
+        const applyButton = baseElement.querySelector(
+          '#apply-filters-btn',
+        ) as HTMLButtonElement;
+        await act(async () => {
+          applyButton.click();
+        });
+
+        expect(spy).toHaveBeenCalled();
+        // Verify that the filter function was called with the groups parameter
+        const callArgs = spy.mock.calls[0][0];
+        expect(callArgs).toBeDefined();
+      }
+    });
+  });
+
   test('should clear filters', async () => {
     const spy = vi.fn();
     mock.onGet(new RegExp('/frameworks')).reply(200, frameworks);

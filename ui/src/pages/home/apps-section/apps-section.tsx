@@ -27,6 +27,7 @@ import {
   currentNotification,
   currentSearchValue,
   currentFrameworks as defaultFrameworks,
+  currentGroups as defaultGroups,
   currentOwnershipValue as defaultOwnershipValue,
   currentServerStatuses as defaultServerStatuses,
   currentSortValue as defaultSortValue,
@@ -49,6 +50,7 @@ export const AppsSection = (): React.ReactElement => {
   const [isGridViewActive, setIsGridViewActive] = useState<boolean>(true);
   const [, setCurrentSearchValue] = useRecoilState<string>(currentSearchValue);
   const [currentFrameworks] = useRecoilState<string[]>(defaultFrameworks);
+  const [currentGroups] = useRecoilState<string[]>(defaultGroups);
   const [currentOwnershipValue] = useRecoilState<string>(defaultOwnershipValue);
   const [, setNotification] = useRecoilState<string | undefined>(
     currentNotification,
@@ -90,6 +92,7 @@ export const AppsSection = (): React.ReactElement => {
           currentFrameworks,
           currentSortValue,
           currentServerStatuses,
+          currentGroups,
         ),
       );
     }

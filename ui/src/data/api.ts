@@ -231,6 +231,10 @@ export const serverApps = {
         profile: 'small0',
         env: null,
         public: false,
+        share_with: {
+          users: ['user1'],
+          groups: ['analyst', 'viewer'],
+        },
         keep_alive: false,
         username: 'Test User',
       },
@@ -255,6 +259,10 @@ export const serverApps = {
         profile: 'small0',
         env: null,
         public: false,
+        share_with: {
+          users: [],
+          groups: ['superadmin'],
+        },
         keep_alive: false,
         username: 'Test User',
       },

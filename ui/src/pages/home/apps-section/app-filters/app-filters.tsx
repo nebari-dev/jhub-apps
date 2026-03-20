@@ -32,6 +32,7 @@ import React, { SyntheticEvent, useCallback, useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import {
   currentFrameworks as defaultFrameworks,
+  currentGroups as defaultGroups,
   currentOwnershipValue as defaultOwnershipValue,
   currentSearchValue as defaultSearchValue,
   currentServerStatuses as defaultServerStatuses,
@@ -78,6 +79,9 @@ export const AppFilters = ({
   const [currentServerStatuses, setCurrentServerStatuses] = useRecoilState<
     string[]
   >(defaultServerStatuses);
+  const [currentGroups, setCurrentGroups] =
+    useRecoilState<string[]>(defaultGroups);
+  const [availableGroups, setAvailableGroups] = useState<string[]>([]);
   const [filteredCount, setFilteredCount] = useState(0);
   const { data: frameworks, isLoading: frameworksLoading } = useQuery<
     AppFrameworkProps[],
@@ -115,6 +119,7 @@ export const AppFilters = ({
         currentFrameworks,
         value,
         currentServerStatuses,
+        currentGroups,
       ),
     );
     setSortByAnchorEl(null);
@@ -130,6 +135,16 @@ export const AppFilters = ({
     }
   };
 
+  const handleGroupsChange = (event: SyntheticEvent) => {
+    const target = event.target as HTMLInputElement;
+    const value = target.value;
+    if (currentGroups.includes(value)) {
+      setCurrentGroups((prev) => prev.filter((item) => item !== value));
+    } else {
+      setCurrentGroups((prev) => [...prev, value]);
+    }
+  };
+
   const handleApplyFilters = () => {
     setFiltersAnchorEl(null);
     setApps(
@@ -141,6 +156,7 @@ export const AppFilters = ({
         currentFrameworks,
         currentSortValue,
         currentServerStatuses,
+        currentGroups,
       ),
     );
   };
@@ -148,6 +164,7 @@ export const AppFilters = ({
     setCurrentFrameworks([]);
     setCurrentOwnershipValue('Any');
     setCurrentServerStatuses([]);
+    setCurrentGroups([]);
   };
 
   const calculateFilteredCount = useCallback(() => {
@@ -159,6 +176,7 @@ export const AppFilters = ({
       currentFrameworks,
       currentSortValue,
       currentServerStatuses,
+      currentGroups,
     );
     return filteredApps.length;
   }, [
@@ -169,7 +187,24 @@ export const AppFilters = ({
     currentFrameworks,
     currentSortValue,
     currentServerStatuses,
+    currentGroups,
   ]);
+
+  // Extract unique groups from all apps
+  useEffect(() => {
+    if (data) {
+      const allGroups = new Set<string>();
+      const allApps = [...(data.user_apps || []), ...(data.shared_apps || [])];
+      allApps.forEach((app: any) => {
+        if (app.user_options?.share_with?.groups) {
+          app.user_options.share_with.groups.forEach((group: string) => {
+            allGroups.add(group);
+          });
+        }
+      });
+      setAvailableGroups(Array.from(allGroups).sort());
+    }
+  }, [data]);
 
   useEffect(() => {
     setFilteredCount(calculateFilteredCount());
@@ -275,6 +310,34 @@ export const AppFilters = ({
                     checked={currentServerStatuses.includes(status)}
                   />
                 ))}
+              </Box>
+              <Divider sx={{ mt: '24px', mb: '16px' }} />
+              <FormLabel
+                id="groups-label"
+                sx={{
+                  pb: '16px',
+                  fontSize: '14px',
+                  fontWeight: 600,
+                }}
+              >
+                Groups
+              </FormLabel>
+              <Box>
+                {availableGroups.length > 0 ? (
+                  availableGroups.map((group) => (
+                    <FormControlLabel
+                      key={group}
+                      control={<Checkbox value={group} />}
+                      label={group}
+                      onClick={handleGroupsChange}
+                      checked={currentGroups.includes(group)}
+                    />
+                  ))
+                ) : (
+                  <FormLabel sx={{ fontSize: '12px', color: '#666' }}>
+                    No groups available
+                  </FormLabel>
+                )}
               </Box>
               <Divider sx={{ mt: '24px', mb: '16px' }} />
               <FormLabel

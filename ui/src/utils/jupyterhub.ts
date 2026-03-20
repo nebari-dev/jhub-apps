@@ -273,6 +273,7 @@ export const filterAndSortApps = (
   frameworkValues: string[],
   sortByValue: string,
   currentServerStatuses: string[],
+  groupValues: string[],
 ) => {
   const searchToLower = searchValue.toLowerCase();
   const ownershipType =
@@ -299,6 +300,13 @@ export const filterAndSortApps = (
     .filter((app) => {
       if (currentServerStatuses.length > 0) {
         return currentServerStatuses.includes(app.status);
+      }
+      return true;
+    })
+    .filter((app: any) => {
+      if (groupValues.length > 0) {
+        const appGroups = app.share_with?.groups || [];
+        return groupValues.some((group) => appGroups.includes(group));
       }
       return true;
     });

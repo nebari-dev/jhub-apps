@@ -251,6 +251,7 @@ describe('JupyterHub utils', () => {
       [],
       'Recently modified',
       [],
+      [],
     );
     expect(apps[0].name).toBe('Test App');
   });
@@ -264,6 +265,7 @@ describe('JupyterHub utils', () => {
       [],
       'Name: A-Z',
       [],
+      [],
     );
     expect(apps[0].name).toBe('App with a long name that should be truncated');
   });
@@ -276,6 +278,7 @@ describe('JupyterHub utils', () => {
       'all',
       [],
       'Name: Z-A',
+      [],
       [],
     );
     expect(apps[0].name).toBe('TEST App 3');
