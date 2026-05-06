@@ -10,19 +10,9 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      HUSKY: 0
 
     steps:
-      - name: Checkout current repo head
-        if: github.event.pull_request.head.repo.full_name == github.repository
-        uses: actions/checkout@v4.1.1
-        with:
-          ref: ${{ github.head_ref }}
-          fetch-depth: 2
-
-      - name: Checkout default if not upstream repo
-        if: github.event.pull_request.head.repo.full_name != github.repository
+      - name: Checkout repository
         uses: actions/checkout@v4.1.1
 
       - name: Set up Node environment
@@ -34,7 +24,7 @@ jobs:
         run: npm ci
         working-directory: ui
 
-      - name: Build and Copy
+      - name: Build UI
         run: npm run build
         working-directory: ui
 
