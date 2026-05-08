@@ -67,6 +67,20 @@ async def get_current_user(
             detail="Must login with token parameter or Authorization bearer header",
         )
 
+    # Capture an upstream-OIDC access token (RS256, signed by the IdP) when
+    # one is present in the Authorization header but isn't our wrapper JWT.
+    # Downstream code (e.g. JAppsConfig.conda_envs callables that need to
+    # drive token exchange) can then read it from User.access_token to act
+    # on behalf of the user with a *fresh* token, without depending on the
+    # hub's stored auth_state.  The token is treated opaquely here — no
+    # signature/claim validation; consumers are responsible for validating
+    # against their IdP if they care.
+    upstream_access_token = (
+        auth_header
+        if auth_header and _get_jhub_token_from_jwt_token(auth_header) is None
+        else None
+    )
+
     async with get_client() as client:
         endpoint = "/user"
         # normally we auth to Hub API with service api token,
@@ -85,6 +99,7 @@ async def get_current_user(
                 },
             )
     user = User(**resp.json())
+    user.access_token = upstream_access_token
     if is_jupyterhub_5():
         user.share_permissions = get_users_and_group_allowed_to_share_with(user)
     if any(scope in user.scopes for scope in access_scopes):

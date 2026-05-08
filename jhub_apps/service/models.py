@@ -35,6 +35,15 @@ class User(BaseModel):
     scopes: List[str]
     auth_state: Optional[Dict] = None
     share_permissions: typing.Optional[SharePermissions] = None
+    # Raw Authorization-Bearer access token from the incoming request, when
+    # forwarded by an OIDC-aware gateway (e.g. Envoy Gateway with
+    # SecurityPolicy.oidc.forwardAccessToken=true).  Populated by
+    # service.security.get_current_user when a non-jhub-apps-wrapper Bearer
+    # token is present, so JAppsConfig.conda_envs callables and other
+    # downstream code can drive token exchange with a *fresh* token without
+    # depending on the hub's stored auth_state (which goes stale shortly
+    # after login on gateways that don't rotate the AccessToken-* cookie).
+    access_token: Optional[str] = None
 
 
 # https://stackoverflow.com/questions/64501193/fastapi-how-to-use-httpexception-in-responses

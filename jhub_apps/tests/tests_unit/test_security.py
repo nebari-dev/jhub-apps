@@ -211,6 +211,56 @@ def test_get_current_user_uses_bearer_when_it_is_a_wrapper(
     assert captured == ["Bearer hub-oauth-token-from-bearer"]
 
 
+def test_get_current_user_attaches_kc_bearer_to_user(
+    hub_env, jhub_secret, rsa_keypair, monkeypatch
+):
+    """When an upstream-OIDC RS256 Bearer is forwarded by the gateway,
+    get_current_user must surface the raw token on the returned User as
+    `access_token`, so downstream callables (e.g. JAppsConfig.conda_envs)
+    can drive token exchange without depending on stale stored auth_state."""
+    from jhub_apps.service import security
+
+    private_pem, _ = rsa_keypair
+    kc_bearer = _make_rs256_kc_token(private_pem)
+    wrapper_cookie = _make_hs256_wrapper("hub-oauth-token-from-cookie", jhub_secret)
+
+    captured = []
+    monkeypatch.setattr(security, "get_client", _patched_get_client(captured))
+    monkeypatch.setattr(security, "is_jupyterhub_5", lambda: False)
+
+    user = _run(
+        security.get_current_user(
+            auth_param=None, auth_header=kc_bearer, auth_cookie=wrapper_cookie
+        )
+    )
+
+    # The KC bearer wasn't used to call hub (cookie was), but it's surfaced
+    # on the User so downstream code can drive token exchange with a fresh
+    # token.
+    assert user.access_token == kc_bearer
+
+
+def test_get_current_user_no_access_token_when_bearer_is_wrapper(
+    hub_env, jhub_secret, monkeypatch
+):
+    """When the Bearer header IS a jhub-apps wrapper (no upstream-OIDC token
+    forwarded), User.access_token stays None — there's no fresh upstream
+    credential to pass on."""
+    from jhub_apps.service import security
+
+    wrapper_bearer = _make_hs256_wrapper("hub-oauth-token-from-bearer", jhub_secret)
+    captured = []
+    monkeypatch.setattr(security, "get_client", _patched_get_client(captured))
+    monkeypatch.setattr(security, "is_jupyterhub_5", lambda: False)
+
+    user = _run(
+        security.get_current_user(
+            auth_param=None, auth_header=wrapper_bearer, auth_cookie=None
+        )
+    )
+    assert user.access_token is None
+
+
 def test_get_current_user_401_when_kc_bearer_and_no_cookie(
     hub_env, jhub_secret, rsa_keypair, monkeypatch
 ):
