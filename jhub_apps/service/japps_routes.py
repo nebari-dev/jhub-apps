@@ -23,10 +23,14 @@ async def handle_apps(request: Request):
     theme = get_theme(config)
     if not theme:
         theme = themes.DEFAULT_THEME
+    # Use the post-Starlette-0.30 signature: TemplateResponse(request, name, context).
+    # Starlette 1.0 removed the old `(name, context)` positional form entirely,
+    # so passing the old shape would resolve to `name=<context dict>` and crash
+    # in `get_template` with `TypeError: unhashable type: 'dict'`.
     return templates.TemplateResponse(
+        request,
         "japps_custom.html",
         {
-            "request": request,
             "version_hash": now.strftime("%Y%m%d%H%M%S"),
             "hub_title": config.get("hub_title", "JupyterHub"),
             "favicon": theme.get("favicon", "/service/japps/static/favicon.ico"),
