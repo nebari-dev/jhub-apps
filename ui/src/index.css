@@ -1,3 +1,7 @@
+/* App font: the server-rendered <style> from jhub_apps/templates/_font.css
+   sets `:root { --app-font-family: ... }` based on the theme. UI consumers
+   use `var(--app-font-family, 'Inter', sans-serif)` so standalone dev
+   mode (no server theme) falls back to Inter. */
 :root {
   /* Colors */
   --primary-light: #ba18da10;
