@@ -70,7 +70,7 @@ declare module '@mui/material/styles' {
 
 const baseTheme = createTheme({
   typography: {
-    fontFamily: 'var(--app-font-family)',
+    fontFamily: "var(--app-font-family, 'Inter', sans-serif)",
     h1: {
       letterSpacing: '-1.5px',
       fontSize: '96px',
