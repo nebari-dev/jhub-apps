@@ -30,7 +30,9 @@ import {
 import { SharePermissions } from '@src/types/api';
 import { AppSharingItem } from '@src/types/form';
 import { UserState } from '@src/types/user';
+import axios from '@src/utils/axios';
 import { getFullAppUrl } from '@src/utils/jupyterhub';
+import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { currentUser as defaultUser } from '../../store';
@@ -157,25 +159,46 @@ export const AppSharing = ({
     }
   };
 
+  // Fetch on-demand instead of via /user, so the home-page XHRs don't
+  // pay for the cluster-wide enumeration this dropdown needs. `staleTime: 0`
+  // so a freshly-edited Keycloak group shows up the next time the dialog
+  // opens. Falls back to `currentUser.share_permissions` while the query
+  // is in flight — production no longer populates that field so the query
+  // is always the source of truth there; in component tests, where the
+  // axios call cannot reach a server, the fixture's value drives render.
+  const {
+    data: fetchedSharePermissions,
+    isLoading: sharePermissionsLoading,
+    isError: sharePermissionsError,
+  } = useQuery<SharePermissions>({
+    queryKey: ['share-permissions'],
+    queryFn: () =>
+      axios.get('/share-permissions/').then((response) => response.data),
+    enabled: !!currentUser,
+    staleTime: 0,
+  });
+  const sharePermissions =
+    fetchedSharePermissions ?? currentUser?.share_permissions;
+
   // Get users and groups available to the current user
   useEffect(() => {
-    if (currentUser && currentUser.share_permissions) {
+    if (sharePermissions) {
       const usersAndGroups: AppSharingItem[] = [];
       usersAndGroups.push(
-        ...(currentUser.share_permissions.users.map((user) => ({
+        ...(sharePermissions.users.map((user) => ({
           name: user,
           type: 'user',
         })) as AppSharingItem[]),
       );
       usersAndGroups.push(
-        ...(currentUser.share_permissions.groups.map((group) => ({
+        ...(sharePermissions.groups.map((group) => ({
           name: group,
           type: 'group',
         })) as AppSharingItem[]),
       );
       setAvailablePermissions(usersAndGroups);
     }
-  }, [currentUser]);
+  }, [sharePermissions]);
 
   // Set users and groups added to current item
   useEffect(() => {
@@ -200,7 +223,17 @@ export const AppSharing = ({
   return (
     <Box id="app-sharing">
       <Stack direction="column">
-        {currentUser?.share_permissions ? (
+        {!sharePermissions && sharePermissionsLoading ? (
+          <Item>
+            <Typography variant="body2">Loading share permissions…</Typography>
+          </Item>
+        ) : !sharePermissions && sharePermissionsError ? (
+          <Item>
+            <Alert severity="error">
+              Could not load share permissions. Try reopening the dialog.
+            </Alert>
+          </Item>
+        ) : sharePermissions ? (
           <>
             <Item>
               <Alert

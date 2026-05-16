@@ -1,8 +1,9 @@
 import base64
-import itertools
+import contextvars
+import os
+from concurrent.futures import ThreadPoolExecutor
 
 import structlog
-import os
 
 from cachetools import cached, TTLCache
 from unittest.mock import Mock
@@ -169,23 +170,71 @@ def get_theme(config):
 
 
 def get_shared_servers(current_hub_user):
-    # Filter servers shared with the user
-    hub_client_service = HubClient()
-    all_users_servers = list(itertools.chain.from_iterable([
-        list(user['servers'].values()) for user in hub_client_service.get_users()
-    ]))
-    user_servers_without_default_jlab = list(filter(lambda server: server["name"] != "", all_users_servers))
-    hub_client_user = HubClient(username=current_hub_user['name'])
-    shared_servers = hub_client_user.get_shared_servers()
-    shared_server_names = {
-        shared_server["server"]["name"] for shared_server in shared_servers
-        # remove shared apps by current user
-        if shared_server["server"]["user"]["name"] != current_hub_user['name']
-    }
-    shared_servers_rich = [
-        server for server in user_servers_without_default_jlab
-        if server["name"] in shared_server_names
-    ]
+    """Return the full server records for servers shared with the current user.
+
+    The hub's `GET /users/{me}/shared` returns a Share-shaped object that
+    only carries a `SharedServer` subset (name, url, ready, owner.name) —
+    not the `user_options` the UI needs to render an app card. To enrich,
+    we fetch each *unique grantor's* user record (which includes their
+    rich Server records) in parallel, then filter to the shared names.
+
+    Previously this function called `HubClient.get_users()`, which fetches
+    every user on the cluster with `include_stopped_servers=True`. On a
+    typical Nebari deployment that's an O(users * servers) JSON payload
+    pulled on every /server/ GET. This version scales with the number of
+    distinct people who have shared something with you (usually <10),
+    not with cluster size.
+
+    Fan-out errors are tolerated: a single grantor that 404s (renamed user,
+    transient hub blip) is logged and skipped so the home page doesn't 500.
+    """
+    hub_client_user = HubClient(username=current_hub_user["name"])
+    shares = hub_client_user.get_shared_servers()
+
+    # Group shared server names by owner, excluding any shares whose owner
+    # is the current user (those are returned via `user_apps` already).
+    owner_to_servernames: dict = {}
+    for share in shares:
+        owner = share["server"]["user"]["name"]
+        if owner == current_hub_user["name"]:
+            continue
+        owner_to_servernames.setdefault(owner, set()).add(share["server"]["name"])
+
+    if not owner_to_servernames:
+        return []
+
+    owners = list(owner_to_servernames)
+
+    def _safe_get_user(owner):
+        try:
+            return hub_client_user.get_user(owner)
+        except Exception as e:
+            logger.warning(
+                "Skipping share grantor whose user record could not be fetched",
+                owner=owner,
+                error=str(e),
+            )
+            return None
+
+    # `structlog.contextvars` are stdlib ContextVars under the hood, which
+    # are NOT inherited by ThreadPoolExecutor worker threads. Snapshot the
+    # current context and run each worker inside it so request_id, etc.
+    # appear on any log lines the fan-out produces.
+    ctx = contextvars.copy_context()
+    # Fan out one `GET /users/{owner}` per unique grantor. The service token
+    # already has `read:users` so we don't mint anything per call.
+    with ThreadPoolExecutor(max_workers=min(10, len(owners))) as ex:
+        futures = [ex.submit(ctx.run, _safe_get_user, o) for o in owners]
+        owner_users = [f.result() for f in futures]
+
+    shared_servers_rich = []
+    for owner_user in owner_users:
+        if owner_user is None:
+            continue
+        wanted = owner_to_servernames.get(owner_user["name"], set())
+        for server in owner_user["servers"].values():
+            if server["name"] in wanted:
+                shared_servers_rich.append(server)
     return shared_servers_rich
 
 

@@ -20,7 +20,11 @@ from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel, ValidationError
 from starlette.responses import RedirectResponse
 
-from jhub_apps.hub_client.hub_client import HubClient
+from jhub_apps.hub_client.hub_client import (
+    HubClient,
+    get_users_and_group_allowed_to_share_with,
+    is_jupyterhub_5,
+)
 from jhub_apps.service.auth import _create_access_token
 from jhub_apps.service.client import get_client
 from jhub_apps.service.models import (
@@ -287,11 +291,41 @@ async def spawner_profiles(user: User = Depends(get_current_user)):
     return spawner_profiles_
 
 
+@router.get(
+    "/share-permissions/",
+    description=(
+        "Return the users and groups the current user may share an app "
+        "with. Computed live on every call so Keycloak/group changes "
+        "(synced into JupyterHub by Nebari) are reflected immediately."
+    ),
+)
+async def share_permissions(user: User = Depends(get_current_user)):
+    if not is_jupyterhub_5():
+        return {"users": [], "groups": []}
+    return get_users_and_group_allowed_to_share_with(user)
+
+
+# Fields the UI actually renders for each service (see
+# `ui/src/utils/jupyterhub.ts::getServices`). The hub's `/services` response
+# carries additional fields (`command`, `prefix`, `pid`, `roles`) that the
+# service token has access to via `read:services` but a regular user's
+# `list:services` would not. Project the response down so we don't widen
+# disclosure when we use the service token instead of minting a per-user
+# token.
+_SERVICE_FIELDS_FOR_UI = ("name", "kind", "admin", "display", "info", "url")
+
+
 @router.get("/services/", description="Get all services")
 async def hub_services(user: User = Depends(get_current_user)):
-    logger.info(f"Getting hub services for user: {user}")
+    logger.info("Getting hub services", user=user.name)
     hub_client = HubClient(username=user.name)
-    return hub_client.get_services()
+    services = hub_client.get_services()
+    if not isinstance(services, dict):
+        return services
+    return {
+        name: {k: svc[k] for k in _SERVICE_FIELDS_FOR_UI if k in svc}
+        for name, svc in services.items()
+    }
 
 
 @router.post("/app-config-from-git/",)
