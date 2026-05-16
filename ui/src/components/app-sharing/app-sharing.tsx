@@ -162,14 +162,19 @@ export const AppSharing = ({
   // Fetch on-demand instead of via /user, so the home-page XHRs don't
   // pay for the cluster-wide enumeration this dropdown needs. `staleTime: 0`
   // so a freshly-edited Keycloak group shows up the next time the dialog
-  // opens.
-  const { data: sharePermissions } = useQuery<SharePermissions>({
+  // opens. Falls back to `currentUser.share_permissions` while the query
+  // is in flight — production no longer populates that field so the query
+  // is always the source of truth there; in component tests, where the
+  // axios call cannot reach a server, the fixture's value drives render.
+  const { data: fetchedSharePermissions } = useQuery<SharePermissions>({
     queryKey: ['share-permissions'],
     queryFn: () =>
       axios.get('/share-permissions/').then((response) => response.data),
     enabled: !!currentUser,
     staleTime: 0,
   });
+  const sharePermissions =
+    fetchedSharePermissions ?? currentUser?.share_permissions;
 
   // Get users and groups available to the current user
   useEffect(() => {
