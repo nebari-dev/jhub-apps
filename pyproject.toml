@@ -97,3 +97,6 @@ conflicts = [
       { group = "test-jupyterhub-5" },
     ],
 ]
+# setuptools 81 deprecated `pkg_resources` and 82 removed it, but
+# conda-project 0.4.2 still imports it. Cap until conda-project upgrades.
+constraint-dependencies = ["setuptools<81"]

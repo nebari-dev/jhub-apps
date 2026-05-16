@@ -24,9 +24,9 @@ async def handle_apps(request: Request):
     if not theme:
         theme = themes.DEFAULT_THEME
     return templates.TemplateResponse(
+        request,
         "japps_custom.html",
         {
-            "request": request,
             "version_hash": now.strftime("%Y%m%d%H%M%S"),
             "hub_title": config.get("hub_title", "JupyterHub"),
             "favicon": theme.get("favicon", "/service/japps/static/favicon.ico"),
