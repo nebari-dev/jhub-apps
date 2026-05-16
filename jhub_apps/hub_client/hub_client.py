@@ -18,6 +18,11 @@ JUPYTERHUB_API_TOKEN = os.environ.get("JUPYTERHUB_API_TOKEN")
 
 logger = structlog.get_logger(__name__)
 
+# Single keep-alive session shared across HubClient instances. The hub API is
+# called many times per page load; reusing TCP connections avoids a fresh
+# handshake per call (worst on k8s pod networking).
+_session = requests.Session()
+
 
 def requires_user_token(func):
     """Decorator to apply to methods of HubClient to create user token before
@@ -62,7 +67,7 @@ class HubClient:
     def _create_token_for_user(self):
         assert self.username
         logger.info("Creating token for user", username=self.username)
-        r = requests.post(
+        r = _session.post(
             API_URL + f"/users/{self.username}/tokens",
             headers=self._headers(token=JUPYTERHUB_API_TOKEN),
             json={
@@ -86,7 +91,7 @@ class HubClient:
         assert self.username
         assert token_id
         logger.debug(f"Revoking token: {token_id}")
-        r = requests.delete(
+        r = _session.delete(
             API_URL + f"/users/{self.username}/tokens/{token_id}",
             headers=self._headers(token=JUPYTERHUB_API_TOKEN),
         )
@@ -100,7 +105,7 @@ class HubClient:
         return r
 
     def get_users(self) -> typing.List[dict]:
-        r = requests.get(
+        r = _session.get(
             API_URL + "/users",
             params={"include_stopped_servers": True},
             # We explicitly want to use japps app token for this
@@ -110,12 +115,15 @@ class HubClient:
         users = r.json()
         return users
 
-    @requires_user_token
     def get_user(self, user=None):
-        r = requests.get(
+        # Uses the service token directly. The japps-service-role has
+        # `read:users`, which covers `GET /users/{name}` for any user — same
+        # data the prior user-impersonation token returned, two fewer hub
+        # roundtrips per call (no token create + revoke).
+        r = _session.get(
             API_URL + f"/users/{user or self.username}",
             params={"include_stopped_servers": True},
-            headers=self._headers()
+            headers=self._headers(token=self.tokens[0]),
         )
         r.raise_for_status()
         user = r.json()
@@ -168,7 +176,7 @@ class HubClient:
             user_options = server["user_options"]
         url = f"/users/{server_owner}/servers/{servername}"
         data = {"name": servername, **user_options}
-        response = requests.post(API_URL + url, headers=self._headers(), json=data)
+        response = _session.post(API_URL + url, headers=self._headers(), json=data)
         logger.info("Start server response", status_code=response.status_code, servername=servername)
         return response
 
@@ -207,7 +215,7 @@ class HubClient:
         params = user_options.model_dump()
         data = {"name": servername, **params}
         logger.info("Creating new server", server_name=servername)
-        r = requests.post(API_URL + url, headers=self._headers(), json=data)
+        r = _session.post(API_URL + url, headers=self._headers(), json=data)
         r.raise_for_status()
         if user_options.framework != Framework.jupyterlab.value:
             if is_jupyterhub_5():
@@ -240,7 +248,7 @@ class HubClient:
             raise ValueError("None of share_to_user or share_to_group provided")
         share_with = share_to_group or share_to_user
         logger.info(f"Sharing {username}/{servername} with {share_with}")
-        return requests.post(
+        return _session.post(
             API_URL + url,
             headers=self._headers(),
             json=data
@@ -291,9 +299,8 @@ class HubClient:
         """Revoke all shared access to a given server"""
         logger.info("Revoking shared servers access", user=username, servername=servername)
         url = f"/shares/{username}/{servername}"
-        return requests.delete(API_URL + url, headers=self._headers())
+        return _session.delete(API_URL + url, headers=self._headers())
 
-    @requires_user_token
     def get_shared_servers(self, username: str = None):
         """List servers shared with user"""
         username = username or self.username
@@ -302,7 +309,11 @@ class HubClient:
             return []
         logger.info("Getting shared servers", user=username)
         url = f"/users/{username}/shared"
-        response = requests.get(API_URL + url, headers=self._headers())
+        # Use the service token; `shares` (granted by japps-service-role on
+        # jh>=5) covers `read:users:shares`. Skips the token create+revoke.
+        response = _session.get(
+            API_URL + url, headers=self._headers(token=self.tokens[0])
+        )
         rjson = response.json()
         shared_servers = rjson["items"]
         return shared_servers
@@ -315,19 +326,22 @@ class HubClient:
         url = f"/users/{username}/servers/{server_name}"
         # This will remove it from the database, otherwise it will just stop the server
         params = {"remove": remove}
-        r = requests.delete(API_URL + url, headers=self._headers(), json=params)
+        r = _session.delete(API_URL + url, headers=self._headers(), json=params)
         r.raise_for_status()
         return r.status_code
 
-    @requires_user_token
     def get_services(self):
-        r = requests.get(API_URL + "/services", headers=self._headers())
+        # `read:services` on the service role covers this — no need to mint
+        # a user-impersonation token.
+        r = _session.get(
+            API_URL + "/services", headers=self._headers(token=self.tokens[0])
+        )
         r.raise_for_status()
         return r.json()
 
     def get_groups(self):
         """Returns all the groups in JupyterHub"""
-        r = requests.get(API_URL + "/groups", headers=self._headers())
+        r = _session.get(API_URL + "/groups", headers=self._headers())
         r.raise_for_status()
         return r.json()
 

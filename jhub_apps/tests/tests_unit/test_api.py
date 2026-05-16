@@ -167,43 +167,38 @@ def test_api_update_server(edit_server, get_jupyterhub_config, client):
     assert response.json() == create_server_response
 
 
-@patch.object(HubClient, "get_users")
+@patch.object(HubClient, "get_user")
 @patch.object(HubClient, "get_shared_servers")
-def test_shared_server_filtering(hub_get_shared_servers, get_users):
+def test_shared_server_filtering(hub_get_shared_servers, get_user):
     current_hub_user = {"name": "fakeuser"}
-    get_users.return_value = [
-        {
-            "servers": {
-                '': {'name': ''},
-                "panel-12": {"name": "panel-12"}
-            }
-        },
-        {
-            "servers": {
-                '': {'name': ''},
-                "panel-34": {"name": "panel-34", "fullname": "panel shared 34"}
-            }
-        },
-        {
-            "servers": {
-                '': {'name': ''},
-                "panel-56": {"name": "panel-56", "fullname": "panel shared server"}
-            }
-        }
-    ]
+    # Shares granted to `fakeuser`. Two are owned by `another-user`; two are
+    # owned by `fakeuser` itself and must be filtered out (already in `user_apps`).
     hub_get_shared_servers.return_value = [
         {"server": {"name": "panel-56", "user": {"name": "another-user"}}},
         {"server": {"name": "panel-34", "user": {"name": "another-user"}}},
         {"server": {"name": "panel-23", "user": {"name": "fakeuser"}}},
         {"server": {"name": "panel-42", "user": {"name": "fakeuser"}}},
     ]
+    # We expect exactly one `get_user("another-user")` (de-duplicated by owner).
+    owner_record = {
+        "name": "another-user",
+        "servers": {
+            "": {"name": ""},  # default jlab; should not surface
+            "panel-34": {"name": "panel-34", "fullname": "panel shared 34"},
+            "panel-56": {"name": "panel-56", "fullname": "panel shared server"},
+            "panel-99": {"name": "panel-99", "fullname": "not shared with me"},
+        },
+    }
+    get_user.return_value = owner_record
+
     shared_servers = get_shared_servers(current_hub_user)
-    assert shared_servers == [
+    assert sorted(shared_servers, key=lambda s: s["name"]) == [
         {"name": "panel-34", "fullname": "panel shared 34"},
-        {"name": "panel-56", "fullname": "panel shared server"}
+        {"name": "panel-56", "fullname": "panel shared server"},
     ]
     hub_get_shared_servers.assert_called_once_with()
-    get_users.assert_called_once_with()
+    # Only one hub call to enrich, regardless of how many shares the owner granted.
+    get_user.assert_called_once_with("another-user")
 
 
 @pytest.mark.parametrize("allowed_frameworks, blocked_frameworks,", [
