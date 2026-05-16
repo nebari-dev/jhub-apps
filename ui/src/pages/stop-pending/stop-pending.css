@@ -3,7 +3,7 @@
     flex-direction: column;
     align-items: center;
     text-align: center;
-    font-family: Arial, sans-serif;
+    font-family: var(--app-font-family);
     padding-top: 50px; 
 }
 

@@ -1,10 +1,12 @@
 /* Copyright (c) Nebari Development Team. */
 /* Distributed under the terms of the Modified BSD License. */
 
+{% include '_font.css' %}
+
 :root {
-    /* Typography */
-    --base-font-family: "Atkinson Hyperlegible", "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
-    --headings-font-family: "Poppins Bold", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+    /* Typography — font defined in _font.css */
+    --base-font-family: var(--app-font-family);
+    --headings-font-family: var(--app-font-family);
 
     --font-size-base: 100%;
     --line-height-base: 1.65;

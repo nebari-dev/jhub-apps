@@ -3,9 +3,17 @@ from jhub_apps.version import get_version
 LOGO = "/services/japps/static/img/Nebari-Logo-Horizontal-Lockup-Black-text.svg"
 FAVICON = "/services/japps/static/favicon.ico"
 
+DEFAULT_FONT_FAMILY = "'Inter', sans-serif"
+DEFAULT_FONT_URL = (
+    "https://fonts.googleapis.com/css2?"
+    "family=Inter:wght@300;400;500;600;700&display=swap"
+)
+
 DEFAULT_THEME = {
     "logo": LOGO,
     "favicon": FAVICON,
+    "font_family": DEFAULT_FONT_FAMILY,
+    "font_url": DEFAULT_FONT_URL,
     "primary_color": "#ba18da",
     "primary_color_light": "#BA18DA10",
     "primary_color_dark": "#9b00ce",

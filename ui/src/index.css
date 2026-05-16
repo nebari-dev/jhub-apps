@@ -1,4 +1,9 @@
+/* Standalone dev fallback for --app-font-family.
+   In production this is overridden by the server-rendered <style>
+   from jhub_apps/templates/_font.css (driven by theme.font_family). */
 :root {
+  --app-font-family: 'Inter', sans-serif;
+
   /* Colors */
   --primary-light: #ba18da10;
   --primary: #ba18da;

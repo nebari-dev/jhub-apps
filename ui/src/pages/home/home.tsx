@@ -590,7 +590,7 @@ export const Home = (): React.ReactElement => {
           }
           sx={{
             width: '100%',
-            fontFamily: 'Inter, sans-serif',
+            fontFamily: 'var(--app-font-family)',
             fontWeight: 600,
             // Use background and text color based on severity
             backgroundColor:
