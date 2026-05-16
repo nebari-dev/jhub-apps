@@ -16,5 +16,8 @@ export interface UserState {
   server: string | null;
   servers: any;
   session_id: string | null;
-  share_permissions: SharePermissions;
+  // No longer present in /user responses — fetch from
+  // `GET /share-permissions/` instead. Kept optional so the type still
+  // matches existing test fixtures.
+  share_permissions?: SharePermissions;
 }

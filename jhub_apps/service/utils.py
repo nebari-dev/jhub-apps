@@ -1,4 +1,5 @@
 import base64
+import contextvars
 import os
 from concurrent.futures import ThreadPoolExecutor
 
@@ -183,13 +184,16 @@ def get_shared_servers(current_hub_user):
     pulled on every /server/ GET. This version scales with the number of
     distinct people who have shared something with you (usually <10),
     not with cluster size.
+
+    Fan-out errors are tolerated: a single grantor that 404s (renamed user,
+    transient hub blip) is logged and skipped so the home page doesn't 500.
     """
     hub_client_user = HubClient(username=current_hub_user["name"])
     shares = hub_client_user.get_shared_servers()
 
     # Group shared server names by owner, excluding any shares whose owner
     # is the current user (those are returned via `user_apps` already).
-    owner_to_servernames: dict[str, set[str]] = {}
+    owner_to_servernames: dict = {}
     for share in shares:
         owner = share["server"]["user"]["name"]
         if owner == current_hub_user["name"]:
@@ -199,15 +203,34 @@ def get_shared_servers(current_hub_user):
     if not owner_to_servernames:
         return []
 
-    # Fan out one `GET /users/{owner}` per unique grantor. The service token
-    # already has `read:users` so we don't mint anything per call. Bounded
-    # to 10 workers so we don't stampede the hub if a user is in many shares.
     owners = list(owner_to_servernames)
+
+    def _safe_get_user(owner):
+        try:
+            return hub_client_user.get_user(owner)
+        except Exception as e:
+            logger.warning(
+                "Skipping share grantor whose user record could not be fetched",
+                owner=owner,
+                error=str(e),
+            )
+            return None
+
+    # `structlog.contextvars` are stdlib ContextVars under the hood, which
+    # are NOT inherited by ThreadPoolExecutor worker threads. Snapshot the
+    # current context and run each worker inside it so request_id, etc.
+    # appear on any log lines the fan-out produces.
+    ctx = contextvars.copy_context()
+    # Fan out one `GET /users/{owner}` per unique grantor. The service token
+    # already has `read:users` so we don't mint anything per call.
     with ThreadPoolExecutor(max_workers=min(10, len(owners))) as ex:
-        owner_users = list(ex.map(hub_client_user.get_user, owners))
+        futures = [ex.submit(ctx.run, _safe_get_user, o) for o in owners]
+        owner_users = [f.result() for f in futures]
 
     shared_servers_rich = []
     for owner_user in owner_users:
+        if owner_user is None:
+            continue
         wanted = owner_to_servernames.get(owner_user["name"], set())
         for server in owner_user["servers"].values():
             if server["name"] in wanted:

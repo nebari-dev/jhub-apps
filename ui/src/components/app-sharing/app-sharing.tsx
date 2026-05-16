@@ -166,7 +166,11 @@ export const AppSharing = ({
   // is in flight — production no longer populates that field so the query
   // is always the source of truth there; in component tests, where the
   // axios call cannot reach a server, the fixture's value drives render.
-  const { data: fetchedSharePermissions } = useQuery<SharePermissions>({
+  const {
+    data: fetchedSharePermissions,
+    isLoading: sharePermissionsLoading,
+    isError: sharePermissionsError,
+  } = useQuery<SharePermissions>({
     queryKey: ['share-permissions'],
     queryFn: () =>
       axios.get('/share-permissions/').then((response) => response.data),
@@ -219,7 +223,17 @@ export const AppSharing = ({
   return (
     <Box id="app-sharing">
       <Stack direction="column">
-        {sharePermissions ? (
+        {!sharePermissions && sharePermissionsLoading ? (
+          <Item>
+            <Typography variant="body2">Loading share permissions…</Typography>
+          </Item>
+        ) : !sharePermissions && sharePermissionsError ? (
+          <Item>
+            <Alert severity="error">
+              Could not load share permissions. Try reopening the dialog.
+            </Alert>
+          </Item>
+        ) : sharePermissions ? (
           <>
             <Item>
               <Alert

@@ -5,7 +5,6 @@ from fastapi import HTTPException, Security, status
 from fastapi.security import OAuth2AuthorizationCodeBearer, APIKeyCookie
 from fastapi.security.api_key import APIKeyQuery
 
-from jhub_apps.hub_client.hub_client import is_jupyterhub_5  # noqa: F401
 from .auth import _get_jhub_token_from_jwt_token
 from .client import get_client
 from .models import User

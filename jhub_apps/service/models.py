@@ -34,7 +34,9 @@ class User(BaseModel):
     servers: Optional[Dict[str, Server]] = None
     scopes: List[str]
     auth_state: Optional[Dict] = None
-    share_permissions: typing.Optional[SharePermissions] = None
+    # `share_permissions` is no longer populated on /user. The dedicated
+    # `GET /share-permissions/` endpoint serves the share-with dropdown on
+    # demand so the home-page XHRs don't pay for a cluster enumeration.
 
 
 # https://stackoverflow.com/questions/64501193/fastapi-how-to-use-httpexception-in-responses

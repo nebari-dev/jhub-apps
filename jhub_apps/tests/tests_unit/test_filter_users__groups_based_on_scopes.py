@@ -8,7 +8,7 @@ from jhub_apps.hub_client.utils import is_jupyterhub_5
 
 @pytest.mark.skipif(not is_jupyterhub_5(), reason="requires jupyterhub>=5")
 @pytest.mark.parametrize(
-    "scopes,kind,current_name,expected,expect_list_call,group_calls",
+    "scopes,kind,current_name,expected,expect_users_call,expect_groups_call",
     [
         # Scope filters carry the names directly — no hub call needed.
         (
@@ -17,7 +17,7 @@ from jhub_apps.hub_client.utils import is_jupyterhub_5
             None,
             ["user_b", "user_c"],
             False,
-            [],
+            False,
         ),
         # Current user is filtered out of the result.
         (
@@ -26,29 +26,40 @@ from jhub_apps.hub_client.utils import is_jupyterhub_5
             "alice",
             ["bob"],
             False,
-            [],
+            False,
         ),
-        # Group-scoped: one `GET /groups/{name}` per distinct group, no
-        # `GET /users` list call.
+        # Group-scoped: ONE `GET /users` call covers any number of
+        # `!group=` filters; we filter users by their `groups` field
+        # client-side. Avoids `GET /groups/{name}` which the service
+        # token lacks `read:groups` scope to call.
         (
             ["read:users:name!group=team-x", "read:users:name!group=team-y"],
             "users",
             None,
             ["alice", "bob", "carol"],
+            True,
             False,
-            ["team-x", "team-y"],
+        ),
+        # Mixed: explicit `!user=` UNION `!group=` membership.
+        (
+            ["read:users:name!user=dave", "read:users:name!group=team-x"],
+            "users",
+            None,
+            ["alice", "bob", "dave"],
+            True,
+            False,
         ),
         # Broad scope falls back to a single list call.
         (
             ["read:users:name"],
             "users",
             None,
-            ["alice", "bob", "carol"],
+            ["alice", "bob", "carol", "dave"],
             True,
-            [],
+            False,
         ),
         # No relevant scopes → empty, no calls.
-        ([], "users", None, [], False, []),
+        ([], "users", None, [], False, False),
         # Same logic for groups: explicit names, no list call.
         (
             ["read:groups:name!group=team-x", "read:groups:name!group=team-y"],
@@ -56,7 +67,7 @@ from jhub_apps.hub_client.utils import is_jupyterhub_5
             None,
             ["team-x", "team-y"],
             False,
-            [],
+            False,
         ),
         # Broad groups scope → single list call.
         (
@@ -64,35 +75,28 @@ from jhub_apps.hub_client.utils import is_jupyterhub_5
             "groups",
             None,
             ["team-x", "team-y"],
+            False,
             True,
-            [],
         ),
     ],
 )
 def test_resolve_share_targets(
-    scopes, kind, current_name, expected, expect_list_call, group_calls
+    scopes, kind, current_name, expected, expect_users_call, expect_groups_call
 ):
     hclient = MagicMock()
     hclient.get_users.return_value = [
-        {"name": "alice"},
-        {"name": "bob"},
-        {"name": "carol"},
+        {"name": "alice", "groups": ["team-x"]},
+        {"name": "bob", "groups": ["team-x", "team-y"]},
+        {"name": "carol", "groups": ["team-y"]},
+        {"name": "dave", "groups": []},
     ]
     hclient.get_groups.return_value = [
         {"name": "team-x"},
         {"name": "team-y"},
     ]
-    members = {
-        "team-x": {"name": "team-x", "users": ["alice", "bob"]},
-        "team-y": {"name": "team-y", "users": ["bob", "carol"]},
-    }
-    hclient.get_group.side_effect = lambda name: members[name]
 
     result = _resolve_share_targets(hclient, scopes, kind, current_name)
 
     assert set(result) == set(expected)
-    assert hclient.get_users.called is (expect_list_call and kind == "users")
-    assert hclient.get_groups.called is (expect_list_call and kind == "groups")
-    assert sorted(c.args[0] for c in hclient.get_group.call_args_list) == sorted(
-        group_calls
-    )
+    assert hclient.get_users.called is expect_users_call
+    assert hclient.get_groups.called is expect_groups_call

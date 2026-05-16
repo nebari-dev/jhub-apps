@@ -8,6 +8,8 @@ import re
 import uuid
 
 import requests
+from requests.adapters import HTTPAdapter
+from urllib.parse import quote
 
 from jhub_apps.service.models import UserOptions, SharePermissions
 from jhub_apps.hub_client.utils import is_jupyterhub_5
@@ -20,8 +22,17 @@ logger = structlog.get_logger(__name__)
 
 # Single keep-alive session shared across HubClient instances. The hub API is
 # called many times per page load; reusing TCP connections avoids a fresh
-# handshake per call (worst on k8s pod networking).
+# handshake per call (worst on k8s pod networking). Default urllib3
+# `HTTPAdapter` ships with `pool_maxsize=10`, which is exactly the width of
+# our share fan-out — bump it so concurrent in-flight calls don't blow past
+# the pool and spawn fresh sockets.
 _session = requests.Session()
+_session.mount(
+    "http://", HTTPAdapter(pool_connections=20, pool_maxsize=50)
+)
+_session.mount(
+    "https://", HTTPAdapter(pool_connections=20, pool_maxsize=50)
+)
 
 
 def requires_user_token(func):
@@ -129,17 +140,21 @@ class HubClient:
         user = r.json()
         return user
 
-    @requires_user_token
     def get_server(self, username, servername=None) -> typing.Optional[typing.Union[dict, typing.Iterable[dict]]]:
-        """Returns the given server for the given user or all servers if servername is None"""
-        users = self.get_users()
-        filter_given_user = [user for user in users if user["name"] == username]
-        if not filter_given_user:
-            logger.info(f"No user with username: {username} found.")
-            return
-        else:
-            assert len(filter_given_user) == 1
-            given_user = filter_given_user[0]
+        """Returns the given server for the given user or all servers if servername is None.
+
+        Used to read on the service token via `get_users()` (a full cluster
+        scan) wrapped in `@requires_user_token` (two extra hub roundtrips).
+        Now a single `GET /users/{username}` — same data, ~5x fewer hub
+        roundtrips on the create/edit/start paths.
+        """
+        try:
+            given_user = self.get_user(username)
+        except requests.HTTPError as e:
+            if e.response is not None and e.response.status_code == 404:
+                logger.info(f"No user with username: {username} found.")
+                return
+            raise
                 
         if servername: 
             for name, server in given_user["servers"].items():
@@ -301,14 +316,21 @@ class HubClient:
         url = f"/shares/{username}/{servername}"
         return _session.delete(API_URL + url, headers=self._headers())
 
-    def get_shared_servers(self, username: str = None):
-        """List servers shared with user"""
-        username = username or self.username
+    def get_shared_servers(self):
+        """List servers shared with the current user (`self.username`).
+
+        Intentionally takes no `username` argument: the previous signature
+        allowed any caller to enumerate any user's shares — fine today
+        because the only caller passes nothing, but a future caller
+        threading a user-controlled value through would be an IDOR
+        primitive. Lock the API surface to "shares granted to me".
+        """
+        assert self.username
         if not is_jupyterhub_5():
             logger.info("Unable to get shared servers as this feature is not available in JupyterHub < 5.x")
             return []
-        logger.info("Getting shared servers", user=username)
-        url = f"/users/{username}/shared"
+        logger.info("Getting shared servers", user=self.username)
+        url = f"/users/{quote(self.username, safe='')}/shared"
         # Use the service token; `shares` (granted by japps-service-role on
         # jh>=5) covers `read:users:shares`. Skips the token create+revoke.
         response = _session.get(
@@ -345,15 +367,6 @@ class HubClient:
         r.raise_for_status()
         return r.json()
 
-    def get_group(self, name: str) -> dict:
-        """Return a single group. Includes the member usernames in `users`."""
-        r = _session.get(
-            API_URL + f"/groups/{name}",
-            headers=self._headers(token=self.tokens[0]),
-        )
-        r.raise_for_status()
-        return r.json()
-
     @requires_user_token
     def get_user_scopes(self):
         assert self.token_json
@@ -375,11 +388,15 @@ def get_users_and_group_allowed_to_share_with(user):
 
       - extracts explicit `!user=NAME` / `!group=NAME` targets straight
         out of the scope strings — no hub call,
-      - resolves `read:users:name!group=G` to G's member list via one
-        `GET /groups/{G}` call (the most direct endpoint for that),
+      - resolves `read:users:name!group=G` filters by filtering the
+        cluster user list on the `groups` membership field (a single
+        `GET /users` covers any number of `!group=` filters at once;
+        we deliberately avoid `GET /groups/{G}` because the service
+        role only has `list:groups`, not `read:groups`, so that
+        endpoint would 403),
       - falls back to a single full `GET /users` (or `GET /groups`)
-        only when the holder has the *broad* `read:users:name` /
-        `read:groups:name` scope, where the answer is the whole cluster.
+        when the holder has the *broad* `read:users:name` /
+        `read:groups:name` scope and the answer is the whole cluster.
     """
     hclient = HubClient(username=user.name)
     user_scopes = hclient.get_user_scopes()
@@ -406,21 +423,28 @@ def _resolve_share_targets(hclient, scopes, kind, current_name):
 
     if any(s in expanded for s in broad_scopes):
         # Truly cluster-wide — listing is unavoidable, but we only do it
-        # in this branch.
+        # in this branch. Strict superset of any explicit/group filter
+        # the scope set might also carry.
         if kind == "users":
             names = {u["name"] for u in hclient.get_users()}
         else:
             names = {g["name"] for g in hclient.get_groups()}
     else:
-        names = set()
+        names: set = set()
+        wanted_groups: set = set()
         for scope in expanded:
             if scope.startswith(name_prefix):
                 names.add(scope[len(name_prefix):])
             elif kind == "users" and scope.startswith(group_prefix):
-                gname = scope[len(group_prefix):]
-                # Most direct: `GET /groups/{gname}` returns member names.
-                group = hclient.get_group(gname)
-                names.update(group.get("users") or [])
+                wanted_groups.add(scope[len(group_prefix):])
+        if wanted_groups:
+            # One `GET /users` covers all `!group=` filters in this scope
+            # set. We pull the cluster user list (service has `read:users`)
+            # and filter on the `groups` field client-side — `list:groups`
+            # is too narrow to call `GET /groups/{name}` directly.
+            for u in hclient.get_users():
+                if wanted_groups.intersection(u.get("groups") or []):
+                    names.add(u["name"])
 
     if current_name is not None:
         names.discard(current_name)
