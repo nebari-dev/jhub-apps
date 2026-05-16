@@ -74,6 +74,15 @@ wheels = [
 ]
 
 [[package]]
+name = "annotated-doc"
+version = "0.0.4"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/57/ba/046ceea27344560984e26a590f90bc7f4a75b06701f653222458922b558c/annotated_doc-0.0.4.tar.gz", hash = "sha256:fbcda96e87e9c92ad167c2e53839e57503ecfda18804ea28102353485033faa4", size = 7288, upload-time = "2025-11-10T22:07:42.062Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/1e/d3/26bf1008eb3d2daa8ef4cacc7f3bfdc11818d111f7e2d0201bc6e3b49d45/annotated_doc-0.0.4-py3-none-any.whl", hash = "sha256:571ac1dc6991c450b25a9c2d84a3705e2ae7a53467b5d111c24fa8baabbed320", size = 5303, upload-time = "2025-11-10T22:07:40.673Z" },
+]
+
+[[package]]
 name = "annotated-types"
 version = "0.7.0"
 source = { registry = "https://pypi.org/simple" }
@@ -1379,16 +1388,44 @@ wheels = [
 
 [[package]]
 name = "fastapi"
-version = "0.118.3"
+version = "0.128.8"
 source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "pydantic" },
-    { name = "starlette" },
-    { name = "typing-extensions" },
+resolution-markers = [
+    "python_full_version < '3.10'",
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/44/e0/b2c4c5fed29587f0c0c56cec9b59f2c3ca58fd40e6c96d9a788219662a35/fastapi-0.118.3.tar.gz", hash = "sha256:5bf36d9bb0cd999e1aefcad74985a6d6a1fc3a35423d497f9e1317734633411d", size = 312055, upload-time = "2025-10-10T10:40:18.15Z" }
+dependencies = [
+    { name = "annotated-doc", marker = "python_full_version < '3.10' or (extra == 'group-9-jhub-apps-test-jupyterhub-4' and extra == 'group-9-jhub-apps-test-jupyterhub-5')" },
+    { name = "pydantic", marker = "python_full_version < '3.10' or (extra == 'group-9-jhub-apps-test-jupyterhub-4' and extra == 'group-9-jhub-apps-test-jupyterhub-5')" },
+    { name = "starlette", version = "0.49.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.10' or (extra == 'group-9-jhub-apps-test-jupyterhub-4' and extra == 'group-9-jhub-apps-test-jupyterhub-5')" },
+    { name = "typing-extensions", marker = "python_full_version < '3.10' or (extra == 'group-9-jhub-apps-test-jupyterhub-4' and extra == 'group-9-jhub-apps-test-jupyterhub-5')" },
+    { name = "typing-inspection", marker = "python_full_version < '3.10' or (extra == 'group-9-jhub-apps-test-jupyterhub-4' and extra == 'group-9-jhub-apps-test-jupyterhub-5')" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/01/72/0df5c58c954742f31a7054e2dd1143bae0b408b7f36b59b85f928f9b456c/fastapi-0.128.8.tar.gz", hash = "sha256:3171f9f328c4a218f0a8d2ba8310ac3a55d1ee12c28c949650288aee25966007", size = 375523, upload-time = "2026-02-11T15:19:36.69Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/24/04/2f9e8a965f4214883258a6f716fea324d1b81e97bce6346cfbafffe6b86c/fastapi-0.118.3-py3-none-any.whl", hash = "sha256:8b9673dc083b4b9d3d295d49ba1c0a2abbfb293d34ba210fd9b0a90d5f39981e", size = 97957, upload-time = "2025-10-10T10:40:16.118Z" },
+    { url = "https://files.pythonhosted.org/packages/9f/37/37b07e276f8923c69a5df266bfcb5bac4ba8b55dfe4a126720f8c48681d1/fastapi-0.128.8-py3-none-any.whl", hash = "sha256:5618f492d0fe973a778f8fec97723f598aa9deee495040a8d51aaf3cf123ecf1", size = 103630, upload-time = "2026-02-11T15:19:35.209Z" },
+]
+
+[[package]]
+name = "fastapi"
+version = "0.136.1"
+source = { registry = "https://pypi.org/simple" }
+resolution-markers = [
+    "python_full_version >= '3.14'",
+    "python_full_version == '3.13.*'",
+    "python_full_version == '3.12.*'",
+    "python_full_version == '3.11.*'",
+    "python_full_version == '3.10.*'",
+]
+dependencies = [
+    { name = "annotated-doc", marker = "python_full_version >= '3.10' or (extra == 'group-9-jhub-apps-test-jupyterhub-4' and extra == 'group-9-jhub-apps-test-jupyterhub-5')" },
+    { name = "pydantic", marker = "python_full_version >= '3.10' or (extra == 'group-9-jhub-apps-test-jupyterhub-4' and extra == 'group-9-jhub-apps-test-jupyterhub-5')" },
+    { name = "starlette", version = "0.52.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.10' or (extra == 'group-9-jhub-apps-test-jupyterhub-4' and extra == 'group-9-jhub-apps-test-jupyterhub-5')" },
+    { name = "typing-extensions", marker = "python_full_version >= '3.10' or (extra == 'group-9-jhub-apps-test-jupyterhub-4' and extra == 'group-9-jhub-apps-test-jupyterhub-5')" },
+    { name = "typing-inspection", marker = "python_full_version >= '3.10' or (extra == 'group-9-jhub-apps-test-jupyterhub-4' and extra == 'group-9-jhub-apps-test-jupyterhub-5')" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/5d/45/c130091c2dfa061bbfe3150f2a5091ef1adf149f2a8d2ae769ecaf6e99a2/fastapi-0.136.1.tar.gz", hash = "sha256:7af665ad7acfa0a3baf8983d393b6b471b9da10ede59c60045f49fbc89a0fa7f", size = 397448, upload-time = "2026-04-23T16:49:44.046Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/5a/ff/2e4eca3ade2c22fe1dea7043b8ee9dabe47753349eb1b56a202de8af6349/fastapi-0.136.1-py3-none-any.whl", hash = "sha256:a6e9d7eeada96c93a4d69cb03836b44fa34e2854accb7244a1ece36cd4781c3f", size = 117683, upload-time = "2026-04-23T16:49:42.437Z" },
 ]
 
 [[package]]
@@ -1575,7 +1612,7 @@ resolution-markers = [
 dependencies = [
     { name = "aiofiles", version = "23.2.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.10' or (extra == 'group-9-jhub-apps-test-jupyterhub-4' and extra == 'group-9-jhub-apps-test-jupyterhub-5')" },
     { name = "anyio", marker = "python_full_version < '3.10' or (extra == 'group-9-jhub-apps-test-jupyterhub-4' and extra == 'group-9-jhub-apps-test-jupyterhub-5')" },
-    { name = "fastapi", marker = "python_full_version < '3.10' or (extra == 'group-9-jhub-apps-test-jupyterhub-4' and extra == 'group-9-jhub-apps-test-jupyterhub-5')" },
+    { name = "fastapi", version = "0.128.8", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.10' or (extra == 'group-9-jhub-apps-test-jupyterhub-4' and extra == 'group-9-jhub-apps-test-jupyterhub-5')" },
     { name = "ffmpy", marker = "python_full_version < '3.10' or (extra == 'group-9-jhub-apps-test-jupyterhub-4' and extra == 'group-9-jhub-apps-test-jupyterhub-5')" },
     { name = "gradio-client", version = "1.3.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.10' or (extra == 'group-9-jhub-apps-test-jupyterhub-4' and extra == 'group-9-jhub-apps-test-jupyterhub-5')" },
     { name = "httpx", marker = "python_full_version < '3.10' or (extra == 'group-9-jhub-apps-test-jupyterhub-4' and extra == 'group-9-jhub-apps-test-jupyterhub-5')" },
@@ -1622,7 +1659,7 @@ dependencies = [
     { name = "anyio", marker = "python_full_version >= '3.10' or (extra == 'group-9-jhub-apps-test-jupyterhub-4' and extra == 'group-9-jhub-apps-test-jupyterhub-5')" },
     { name = "audioop-lts", marker = "python_full_version >= '3.13' or (extra == 'group-9-jhub-apps-test-jupyterhub-4' and extra == 'group-9-jhub-apps-test-jupyterhub-5')" },
     { name = "brotli", marker = "python_full_version >= '3.10' or (extra == 'group-9-jhub-apps-test-jupyterhub-4' and extra == 'group-9-jhub-apps-test-jupyterhub-5')" },
-    { name = "fastapi", marker = "python_full_version >= '3.10' or (extra == 'group-9-jhub-apps-test-jupyterhub-4' and extra == 'group-9-jhub-apps-test-jupyterhub-5')" },
+    { name = "fastapi", version = "0.136.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.10' or (extra == 'group-9-jhub-apps-test-jupyterhub-4' and extra == 'group-9-jhub-apps-test-jupyterhub-5')" },
     { name = "ffmpy", marker = "python_full_version >= '3.10' or (extra == 'group-9-jhub-apps-test-jupyterhub-4' and extra == 'group-9-jhub-apps-test-jupyterhub-5')" },
     { name = "gradio-client", version = "1.13.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.10' or (extra == 'group-9-jhub-apps-test-jupyterhub-4' and extra == 'group-9-jhub-apps-test-jupyterhub-5')" },
     { name = "groovy", marker = "python_full_version >= '3.10' or (extra == 'group-9-jhub-apps-test-jupyterhub-4' and extra == 'group-9-jhub-apps-test-jupyterhub-5')" },
@@ -1643,7 +1680,7 @@ dependencies = [
     { name = "ruff", marker = "python_full_version >= '3.10' or (extra == 'group-9-jhub-apps-test-jupyterhub-4' and extra == 'group-9-jhub-apps-test-jupyterhub-5')" },
     { name = "safehttpx", marker = "python_full_version >= '3.10' or (extra == 'group-9-jhub-apps-test-jupyterhub-4' and extra == 'group-9-jhub-apps-test-jupyterhub-5')" },
     { name = "semantic-version", marker = "python_full_version >= '3.10' or (extra == 'group-9-jhub-apps-test-jupyterhub-4' and extra == 'group-9-jhub-apps-test-jupyterhub-5')" },
-    { name = "starlette", marker = "python_full_version >= '3.10' or (extra == 'group-9-jhub-apps-test-jupyterhub-4' and extra == 'group-9-jhub-apps-test-jupyterhub-5')" },
+    { name = "starlette", version = "0.52.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.10' or (extra == 'group-9-jhub-apps-test-jupyterhub-4' and extra == 'group-9-jhub-apps-test-jupyterhub-5')" },
     { name = "tomlkit", version = "0.13.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.10' or (extra == 'group-9-jhub-apps-test-jupyterhub-4' and extra == 'group-9-jhub-apps-test-jupyterhub-5')" },
     { name = "typer", marker = "python_full_version >= '3.10' or (extra == 'group-9-jhub-apps-test-jupyterhub-4' and extra == 'group-9-jhub-apps-test-jupyterhub-5')" },
     { name = "typing-extensions", marker = "python_full_version >= '3.10' or (extra == 'group-9-jhub-apps-test-jupyterhub-4' and extra == 'group-9-jhub-apps-test-jupyterhub-5')" },
@@ -2207,7 +2244,8 @@ dependencies = [
     { name = "bokeh-root-cmd" },
     { name = "cachetools" },
     { name = "conda-project" },
-    { name = "fastapi" },
+    { name = "fastapi", version = "0.128.8", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.10' or (extra == 'group-9-jhub-apps-test-jupyterhub-4' and extra == 'group-9-jhub-apps-test-jupyterhub-5')" },
+    { name = "fastapi", version = "0.136.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.10' or (extra == 'group-9-jhub-apps-test-jupyterhub-4' and extra == 'group-9-jhub-apps-test-jupyterhub-5')" },
     { name = "gitpython" },
     { name = "hatch" },
     { name = "hatchling" },
@@ -5381,15 +5419,38 @@ wheels = [
 
 [[package]]
 name = "starlette"
-version = "0.48.0"
+version = "0.49.3"
 source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "anyio" },
-    { name = "typing-extensions", marker = "python_full_version < '3.13' or (extra == 'group-9-jhub-apps-test-jupyterhub-4' and extra == 'group-9-jhub-apps-test-jupyterhub-5')" },
+resolution-markers = [
+    "python_full_version < '3.10'",
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/a7/a5/d6f429d43394057b67a6b5bbe6eae2f77a6bf7459d961fdb224bf206eee6/starlette-0.48.0.tar.gz", hash = "sha256:7e8cee469a8ab2352911528110ce9088fdc6a37d9876926e73da7ce4aa4c7a46", size = 2652949, upload-time = "2025-09-13T08:41:05.699Z" }
+dependencies = [
+    { name = "anyio", marker = "python_full_version < '3.10' or (extra == 'group-9-jhub-apps-test-jupyterhub-4' and extra == 'group-9-jhub-apps-test-jupyterhub-5')" },
+    { name = "typing-extensions", marker = "python_full_version < '3.10' or (extra == 'group-9-jhub-apps-test-jupyterhub-4' and extra == 'group-9-jhub-apps-test-jupyterhub-5')" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/de/1a/608df0b10b53b0beb96a37854ee05864d182ddd4b1156a22f1ad3860425a/starlette-0.49.3.tar.gz", hash = "sha256:1c14546f299b5901a1ea0e34410575bc33bbd741377a10484a54445588d00284", size = 2655031, upload-time = "2025-11-01T15:12:26.13Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/be/72/2db2f49247d0a18b4f1bb9a5a39a0162869acf235f3a96418363947b3d46/starlette-0.48.0-py3-none-any.whl", hash = "sha256:0764ca97b097582558ecb498132ed0c7d942f233f365b86ba37770e026510659", size = 73736, upload-time = "2025-09-13T08:41:03.869Z" },
+    { url = "https://files.pythonhosted.org/packages/a3/e0/021c772d6a662f43b63044ab481dc6ac7592447605b5b35a957785363122/starlette-0.49.3-py3-none-any.whl", hash = "sha256:b579b99715fdc2980cf88c8ec96d3bf1ce16f5a8051a7c2b84ef9b1cdecaea2f", size = 74340, upload-time = "2025-11-01T15:12:24.387Z" },
+]
+
+[[package]]
+name = "starlette"
+version = "0.52.1"
+source = { registry = "https://pypi.org/simple" }
+resolution-markers = [
+    "python_full_version >= '3.14'",
+    "python_full_version == '3.13.*'",
+    "python_full_version == '3.12.*'",
+    "python_full_version == '3.11.*'",
+    "python_full_version == '3.10.*'",
+]
+dependencies = [
+    { name = "anyio", marker = "python_full_version >= '3.10' or (extra == 'group-9-jhub-apps-test-jupyterhub-4' and extra == 'group-9-jhub-apps-test-jupyterhub-5')" },
+    { name = "typing-extensions", marker = "(python_full_version >= '3.10' and python_full_version < '3.13') or (python_full_version < '3.10' and extra == 'group-9-jhub-apps-test-jupyterhub-4' and extra == 'group-9-jhub-apps-test-jupyterhub-5') or (python_full_version >= '3.13' and extra == 'group-9-jhub-apps-test-jupyterhub-4' and extra == 'group-9-jhub-apps-test-jupyterhub-5')" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/c4/68/79977123bb7be889ad680d79a40f339082c1978b5cfcf62c2d8d196873ac/starlette-0.52.1.tar.gz", hash = "sha256:834edd1b0a23167694292e94f597773bc3f89f362be6effee198165a35d62933", size = 2653702, upload-time = "2026-01-18T13:34:11.062Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/81/0d/13d1d239a25cbfb19e740db83143e95c772a1fe10202dda4b76792b114dd/starlette-0.52.1-py3-none-any.whl", hash = "sha256:0029d43eb3d273bc4f83a08720b4912ea4b071087a3b48db01b7c839f7954d74", size = 74272, upload-time = "2026-01-18T13:34:09.188Z" },
 ]
 
 [[package]]
