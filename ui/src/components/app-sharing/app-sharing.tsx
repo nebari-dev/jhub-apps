@@ -30,7 +30,9 @@ import {
 import { SharePermissions } from '@src/types/api';
 import { AppSharingItem } from '@src/types/form';
 import { UserState } from '@src/types/user';
+import axios from '@src/utils/axios';
 import { getFullAppUrl } from '@src/utils/jupyterhub';
+import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { currentUser as defaultUser } from '../../store';
@@ -157,25 +159,37 @@ export const AppSharing = ({
     }
   };
 
+  // Fetch on-demand instead of via /user, so the home-page XHRs don't
+  // pay for the cluster-wide enumeration this dropdown needs. `staleTime: 0`
+  // so a freshly-edited Keycloak group shows up the next time the dialog
+  // opens.
+  const { data: sharePermissions } = useQuery<SharePermissions>({
+    queryKey: ['share-permissions'],
+    queryFn: () =>
+      axios.get('/share-permissions/').then((response) => response.data),
+    enabled: !!currentUser,
+    staleTime: 0,
+  });
+
   // Get users and groups available to the current user
   useEffect(() => {
-    if (currentUser && currentUser.share_permissions) {
+    if (sharePermissions) {
       const usersAndGroups: AppSharingItem[] = [];
       usersAndGroups.push(
-        ...(currentUser.share_permissions.users.map((user) => ({
+        ...(sharePermissions.users.map((user) => ({
           name: user,
           type: 'user',
         })) as AppSharingItem[]),
       );
       usersAndGroups.push(
-        ...(currentUser.share_permissions.groups.map((group) => ({
+        ...(sharePermissions.groups.map((group) => ({
           name: group,
           type: 'group',
         })) as AppSharingItem[]),
       );
       setAvailablePermissions(usersAndGroups);
     }
-  }, [currentUser]);
+  }, [sharePermissions]);
 
   // Set users and groups added to current item
   useEffect(() => {
@@ -200,7 +214,7 @@ export const AppSharing = ({
   return (
     <Box id="app-sharing">
       <Stack direction="column">
-        {currentUser?.share_permissions ? (
+        {sharePermissions ? (
           <>
             <Item>
               <Alert

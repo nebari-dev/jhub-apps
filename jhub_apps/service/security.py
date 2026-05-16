@@ -5,7 +5,7 @@ from fastapi import HTTPException, Security, status
 from fastapi.security import OAuth2AuthorizationCodeBearer, APIKeyCookie
 from fastapi.security.api_key import APIKeyQuery
 
-from jhub_apps.hub_client.hub_client import get_users_and_group_allowed_to_share_with, is_jupyterhub_5
+from jhub_apps.hub_client.hub_client import is_jupyterhub_5  # noqa: F401
 from .auth import _get_jhub_token_from_jwt_token
 from .client import get_client
 from .models import User
@@ -74,8 +74,11 @@ async def get_current_user(
                 },
             )
     user = User(**resp.json())
-    if is_jupyterhub_5():
-        user.share_permissions = get_users_and_group_allowed_to_share_with(user)
+    # share_permissions is *not* populated here. It used to be — which fired
+    # `get_users()` + `get_groups()` + a token mint/revoke on *every*
+    # authenticated request, including the home-page XHRs that never look
+    # at the share dropdown. The UI now fetches it on demand from
+    # `/share-permissions/` (only when opening the share UI).
     if any(scope in user.scopes for scope in access_scopes):
         return user
     else:

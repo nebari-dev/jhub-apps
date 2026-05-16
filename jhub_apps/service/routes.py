@@ -20,7 +20,11 @@ from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel, ValidationError
 from starlette.responses import RedirectResponse
 
-from jhub_apps.hub_client.hub_client import HubClient
+from jhub_apps.hub_client.hub_client import (
+    HubClient,
+    get_users_and_group_allowed_to_share_with,
+    is_jupyterhub_5,
+)
 from jhub_apps.service.auth import _create_access_token
 from jhub_apps.service.client import get_client
 from jhub_apps.service.models import (
@@ -285,6 +289,20 @@ async def spawner_profiles(user: User = Depends(get_current_user)):
     spawner_profiles_ = await get_spawner_profiles(config, auth_state=auth_state)
     logger.debug(f"Loaded spawner profiles: {spawner_profiles_}")
     return spawner_profiles_
+
+
+@router.get(
+    "/share-permissions/",
+    description=(
+        "Return the users and groups the current user may share an app "
+        "with. Computed live on every call so Keycloak/group changes "
+        "(synced into JupyterHub by Nebari) are reflected immediately."
+    ),
+)
+async def share_permissions(user: User = Depends(get_current_user)):
+    if not is_jupyterhub_5():
+        return {"users": [], "groups": []}
+    return get_users_and_group_allowed_to_share_with(user)
 
 
 @router.get("/services/", description="Get all services")

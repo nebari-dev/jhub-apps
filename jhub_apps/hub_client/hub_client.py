@@ -345,6 +345,15 @@ class HubClient:
         r.raise_for_status()
         return r.json()
 
+    def get_group(self, name: str) -> dict:
+        """Return a single group. Includes the member usernames in `users`."""
+        r = _session.get(
+            API_URL + f"/groups/{name}",
+            headers=self._headers(token=self.tokens[0]),
+        )
+        r.raise_for_status()
+        return r.json()
+
     @requires_user_token
     def get_user_scopes(self):
         assert self.token_json
@@ -353,29 +362,68 @@ class HubClient:
 
 
 def get_users_and_group_allowed_to_share_with(user):
-    """Returns a list of users and groups"""
+    """Names the user is permitted to read for the share-with dropdown.
+
+    Never cached: group membership can change in Keycloak at any moment
+    (Nebari syncs that through), and the share dropdown must reflect
+    the change on the very next open.
+
+    Walks the user's *full role-scoped* permissions (the OAuth-issued
+    JWT scopes are a strict subset and don't carry the read scopes the
+    user's role grants — minting a token and reading its `.scopes`
+    field is still the most direct way to enumerate them) and:
+
+      - extracts explicit `!user=NAME` / `!group=NAME` targets straight
+        out of the scope strings — no hub call,
+      - resolves `read:users:name!group=G` to G's member list via one
+        `GET /groups/{G}` call (the most direct endpoint for that),
+      - falls back to a single full `GET /users` (or `GET /groups`)
+        only when the holder has the *broad* `read:users:name` /
+        `read:groups:name` scope, where the answer is the whole cluster.
+    """
     hclient = HubClient(username=user.name)
-    users = hclient.get_users()
-    user_names = [u["name"] for u in users if u["name"] != user.name]
-    groups = hclient.get_groups()
-    group_names = [group['name'] for group in groups]
     user_scopes = hclient.get_user_scopes()
     return {
-        "users": filter_entity_based_on_scopes(
-            scopes=user_scopes, entities=user_names
+        "users": _resolve_share_targets(
+            hclient, user_scopes, kind="users", current_name=user.name
         ),
-        "groups": filter_entity_based_on_scopes(
-            scopes=user_scopes, entities=group_names, entity_key="group"
-        )
+        "groups": _resolve_share_targets(
+            hclient, user_scopes, kind="groups", current_name=None
+        ),
     }
 
 
-def filter_entity_based_on_scopes(scopes, entities, entity_key="user"):
+def _resolve_share_targets(hclient, scopes, kind, current_name):
+    """kind is 'users' or 'groups'."""
     # only available in JupyterHub>=5
-    from jupyterhub.scopes import has_scope, expand_scopes
-    allowed_entities_to_read = set()
-    expanded_scopes = expand_scopes(scopes)
-    for entity in entities:
-        if has_scope(f'read:{entity_key}s:name!{entity_key}={entity}', expanded_scopes):
-            allowed_entities_to_read.add(entity)
-    return list(allowed_entities_to_read)
+    from jupyterhub.scopes import expand_scopes
+
+    expanded = expand_scopes(scopes)
+    singular = kind[:-1]  # 'users' -> 'user'
+    name_prefix = f"read:{kind}:name!{singular}="
+    group_prefix = f"read:{kind}:name!group="
+    broad_scopes = {f"read:{kind}:name", f"read:{kind}"}
+
+    if any(s in expanded for s in broad_scopes):
+        # Truly cluster-wide — listing is unavoidable, but we only do it
+        # in this branch.
+        if kind == "users":
+            names = {u["name"] for u in hclient.get_users()}
+        else:
+            names = {g["name"] for g in hclient.get_groups()}
+    else:
+        names = set()
+        for scope in expanded:
+            if scope.startswith(name_prefix):
+                names.add(scope[len(name_prefix):])
+            elif kind == "users" and scope.startswith(group_prefix):
+                gname = scope[len(group_prefix):]
+                # Most direct: `GET /groups/{gname}` returns member names.
+                group = hclient.get_group(gname)
+                names.update(group.get("users") or [])
+
+    if current_name is not None:
+        names.discard(current_name)
+    return sorted(names)
+
+
