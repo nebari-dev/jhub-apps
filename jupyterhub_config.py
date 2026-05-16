@@ -1,3 +1,5 @@
+import sys
+
 from jupyterhub.spawner import SimpleLocalProcessSpawner
 
 from jhub_apps import theme_template_paths, themes
@@ -17,6 +19,7 @@ c.JupyterHub.bind_url = hub_url
 c.JAppsConfig.jupyterhub_config_path = "jupyterhub_config.py"
 c.JAppsConfig.conda_envs = []
 c.JAppsConfig.service_workers = 1
+c.JAppsConfig.python_exec = sys.executable
 
 # Configure additional services via JAppsConfig
 c.JAppsConfig.additional_services = [
