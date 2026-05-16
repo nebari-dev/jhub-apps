@@ -270,6 +270,13 @@ async def conda_environments(user: User = Depends(get_current_user)):
     config = get_jupyterhub_config()
     hclient = HubClient(username=user.name)
     user_from_service = hclient.get_user(user.name)
+    # Forward the upstream-OIDC Bearer token captured by get_current_user
+    # (e.g. an Envoy-injected Keycloak access token) onto the user dict the
+    # JAppsConfig.conda_envs callable receives, so the callable can drive
+    # token exchange with a *fresh* token instead of relying on the hub's
+    # stored — and possibly stale — auth_state.
+    if user.access_token and isinstance(user_from_service, dict):
+        user_from_service["access_token"] = user.access_token
     conda_envs = get_conda_envs(config, user_from_service)
     logger.info(f"Found conda environments: {conda_envs}")
     return conda_envs
