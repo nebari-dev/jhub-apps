@@ -1,8 +1,8 @@
-import { UserState } from '@src/types/user';
+import type { UserState } from '@src/types/user';
 import { atom } from 'recoil';
-import { AppProfileProps } from './types/api';
-import { AppFormInput } from './types/form';
-import { JhApp, JhData } from './types/jupyterhub';
+import type { AppProfileProps } from './types/api';
+import type { AppFormInput } from './types/form';
+import type { JhApp, JhData } from './types/jupyterhub';
 
 const currentUser = atom<UserState | undefined>({
   key: 'currentUser',

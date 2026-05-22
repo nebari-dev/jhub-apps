@@ -1,6 +1,6 @@
 import { Box, CircularProgress } from '@mui/material';
-import { AppQueryGetProps } from '@src/types/api';
-import { UserState } from '@src/types/user';
+import type { AppQueryGetProps } from '@src/types/api';
+import type { UserState } from '@src/types/user';
 import axios from '@src/utils/axios';
 import { APP_BASE_URL } from '@src/utils/constants';
 import { getSpawnPendingUrl, storeAppToStart } from '@src/utils/jupyterhub';

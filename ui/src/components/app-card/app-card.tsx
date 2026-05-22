@@ -9,14 +9,14 @@ import CardMedia from '@mui/material/CardMedia';
 import Chip from '@mui/material/Chip';
 import Typography from '@mui/material/Typography';
 import { StatusChip } from '@src/components';
+import type { AppProfileProps } from '@src/types/api';
+import type { JhApp } from '@src/types/jupyterhub';
+import type { UserState } from '@src/types/user';
 import { API_BASE_URL } from '@src/utils/constants';
 import { useQuery } from '@tanstack/react-query';
-
-import { AppProfileProps } from '@src/types/api';
-import { JhApp } from '@src/types/jupyterhub';
-import { UserState } from '@src/types/user';
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import type React from 'react';
+import { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 
 import {
@@ -28,7 +28,9 @@ import {
   isStartOpen,
   isStopOpen,
 } from '../../store';
-import ContextMenu, { ContextMenuItem } from '../context-menu/context-menu';
+import ContextMenu, {
+  type ContextMenuItem,
+} from '../context-menu/context-menu';
 import './app-card.css';
 interface AppCardProps {
   id: string;

@@ -17,9 +17,9 @@ import {
   RadioGroup,
 } from '@mui/material';
 import { ButtonGroup } from '@src/components';
-import { AppFrameworkProps } from '@src/types/api';
-import { JhApp } from '@src/types/jupyterhub';
-import { UserState } from '@src/types/user';
+import type { AppFrameworkProps } from '@src/types/api';
+import type { JhApp } from '@src/types/jupyterhub';
+import type { UserState } from '@src/types/user';
 import axios from '@src/utils/axios';
 import {
   OWNERSHIP_TYPES,
@@ -28,7 +28,12 @@ import {
 } from '@src/utils/constants';
 import { filterAndSortApps } from '@src/utils/jupyterhub';
 import { useQuery } from '@tanstack/react-query';
-import React, { SyntheticEvent, useCallback, useEffect, useState } from 'react';
+import React, {
+  type SyntheticEvent,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react';
 import { useRecoilState } from 'recoil';
 import {
   currentFrameworks as defaultFrameworks,

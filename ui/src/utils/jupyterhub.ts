@@ -1,12 +1,12 @@
 import { JUPYTER_LOGO, VSCODE_LOGO } from '@src/data/logos';
-import {
+import type {
   JhApp,
   JhService,
   JhServiceApp,
   JhServiceFull,
 } from '@src/types/jupyterhub';
-import { JhData } from '@src/types/jupyterhub.ts';
-import { UserState } from '@src/types/user';
+import type { JhData } from '@src/types/jupyterhub.ts';
+import type { UserState } from '@src/types/user';
 import { APP_BASE_URL, APP_TO_START_KEY } from './constants';
 
 export const getJhData = (): JhData => {
@@ -16,7 +16,7 @@ export const getJhData = (): JhData => {
 export const getServices = (services: JhServiceFull[], user: string) => {
   const jhServices: JhService[] = [];
   for (const key in services) {
-    if (Object.hasOwnProperty.call(services, key)) {
+    if (Object.hasOwn(services, key)) {
       const service = services[key];
       if (service.display === true && service.info.name) {
         const serviceInfo = service.info;

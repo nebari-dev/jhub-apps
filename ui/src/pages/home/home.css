@@ -7,7 +7,7 @@
 }
 .card-dialog-note {
   color: var(--text-secondary, rgba(15, 16, 21, 0.6));
-  font-family: var(--app-font-family, 'Inter', sans-serif);
+  font-family: var(--app-font-family, "Inter", sans-serif);
   font-size: 14px;
   font-style: normal;
   font-weight: 400;

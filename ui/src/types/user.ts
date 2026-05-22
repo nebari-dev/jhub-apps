@@ -1,4 +1,4 @@
-import { SharePermissions } from './api';
+import type { SharePermissions } from './api';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export interface UserState {

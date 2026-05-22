@@ -1,4 +1,4 @@
-import { SharePermissions } from './api';
+import type { SharePermissions } from './api';
 
 export interface FormInput {
   username: string;

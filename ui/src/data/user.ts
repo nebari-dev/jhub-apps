@@ -1,4 +1,4 @@
-import { UserState } from '../types/user';
+import type { UserState } from '../types/user';
 
 export const currentUser: UserState = {
   name: 'testuser1@email.com',

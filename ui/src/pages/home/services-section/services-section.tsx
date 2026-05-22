@@ -1,10 +1,11 @@
 import { Box, Divider, Grid, Stack, Typography } from '@mui/material';
-import { JhApp, JhServiceApp, JhServiceFull } from '@src/types/jupyterhub';
-import { UserState } from '@src/types/user';
+import type { JhApp, JhServiceApp, JhServiceFull } from '@src/types/jupyterhub';
+import type { UserState } from '@src/types/user';
 import axios from '@src/utils/axios';
 import { getPinnedApps, getPinnedServices } from '@src/utils/jupyterhub';
 import { useQuery } from '@tanstack/react-query';
-import React, { useEffect, useState } from 'react';
+import type React from 'react';
+import { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import {
   currentNotification,

@@ -1,5 +1,5 @@
 import { createTheme } from '@mui/material';
-import { PaletteColorOptions } from '@mui/material/styles';
+import type { PaletteColorOptions } from '@mui/material/styles';
 
 import {
   black,

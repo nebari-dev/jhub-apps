@@ -1,7 +1,5 @@
 import AddIcon from '@mui/icons-material/AddRounded';
 import SearchIcon from '@mui/icons-material/Search';
-import InputAdornment from '@mui/material/InputAdornment';
-
 import {
   Box,
   Button,
@@ -11,8 +9,9 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import { JhApp } from '@src/types/jupyterhub';
-import { UserState } from '@src/types/user';
+import InputAdornment from '@mui/material/InputAdornment';
+import type { JhApp } from '@src/types/jupyterhub';
+import type { UserState } from '@src/types/user';
 import axios from '@src/utils/axios';
 import { API_BASE_URL } from '@src/utils/constants';
 import {
@@ -21,7 +20,8 @@ import {
   getApps,
 } from '@src/utils/jupyterhub';
 import { useQuery } from '@tanstack/react-query';
-import React, { SyntheticEvent, useEffect, useState } from 'react';
+import type React from 'react';
+import { type SyntheticEvent, useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import {
   currentNotification,

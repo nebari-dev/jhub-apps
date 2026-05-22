@@ -19,14 +19,14 @@ import {
   Tooltip,
   Typography,
 } from '@mui/material';
-import {
+import type {
   AppFrameworkProps,
   AppProfileProps,
   AppQueryGetProps,
   AppQueryUpdateProps,
 } from '@src/types/api';
-import { AppFormInput, AppFormProps, RepoData } from '@src/types/form';
-import { UserState } from '@src/types/user';
+import type { AppFormInput, AppFormProps, RepoData } from '@src/types/form';
+import type { UserState } from '@src/types/user';
 import axios from '@src/utils/axios';
 import { APP_BASE_URL } from '@src/utils/constants';
 import {
@@ -36,11 +36,11 @@ import {
 } from '@src/utils/jupyterhub';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { isAxiosError } from 'axios';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Controller, SubmitHandler, useForm } from 'react-hook-form';
+import type React from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { Controller, type SubmitHandler, useForm } from 'react-hook-form';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
-import { AppSharing, EnvironmentVariables, Thumbnail } from '..';
 import {
   currentNotification,
   currentFile as defaultFile,
@@ -51,6 +51,7 @@ import {
   currentUser as defaultUser,
 } from '../../store';
 import { StyledFormSection } from '../../styles/styled-form-section';
+import { AppSharing, EnvironmentVariables, Thumbnail } from '..';
 import CustomLabel from '../custom-label/custom-label';
 import './app-form.css';
 
@@ -738,7 +739,7 @@ export const AppForm = ({
                       onChange={(e) => setGitUrl(e.target.value)} // Don't validate here, just set the value
                       error={!!error && shouldValidate} // Only show error if shouldValidate is true
                       helperText={
-                        !!error && shouldValidate
+                        error && shouldValidate
                           ? error
                           : 'Enter a valid GitHub URL'
                       }

@@ -1,4 +1,8 @@
-import { JhService, JhServiceApp, JhServiceFull } from '../types/jupyterhub';
+import type {
+  JhService,
+  JhServiceApp,
+  JhServiceFull,
+} from '../types/jupyterhub';
 
 export const services: JhService[] = [
   {

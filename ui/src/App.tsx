@@ -1,6 +1,7 @@
 import { Box } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
-import React, { useEffect } from 'react';
+import type React from 'react';
+import { useEffect } from 'react';
 import { Route, Routes } from 'react-router';
 
 import { useSearchParams } from 'react-router-dom';
@@ -20,9 +21,9 @@ import {
   currentProfiles as defaultProfiles,
   currentUser as defaultUser,
 } from './store';
-import { AppProfileProps } from './types/api';
-import { JhData } from './types/jupyterhub';
-import { UserState } from './types/user';
+import type { AppProfileProps } from './types/api';
+import type { JhData } from './types/jupyterhub';
+import type { UserState } from './types/user';
 import axios from './utils/axios';
 import { getJhData } from './utils/jupyterhub';
 

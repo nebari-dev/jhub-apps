@@ -1,8 +1,9 @@
 import AddIcon from '@mui/icons-material/AddRounded';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import { Box, Button, IconButton, Stack, TextField } from '@mui/material';
-import { KeyValuePair } from '@src/types/api';
-import React, { ChangeEvent, useEffect, useState } from 'react';
+import type { KeyValuePair } from '@src/types/api';
+import type React from 'react';
+import { type ChangeEvent, useEffect, useState } from 'react';
 import { Item } from '../../styles/styled-item';
 
 export interface EnvironmentVariablesProps {

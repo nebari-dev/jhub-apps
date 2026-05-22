@@ -13,13 +13,13 @@ import {
   Typography,
 } from '@mui/material';
 import { ButtonGroup } from '@src/components';
-import {
+import type {
   AppQueryDeleteProps,
   AppQueryGetProps,
   AppQueryPostProps,
 } from '@src/types/api';
-import { JhApp } from '@src/types/jupyterhub';
-import { UserState } from '@src/types/user';
+import type { JhApp } from '@src/types/jupyterhub';
+import type { UserState } from '@src/types/user';
 import axios from '@src/utils/axios';
 import {
   clearAppToStart,
@@ -28,7 +28,8 @@ import {
   isDefaultApp,
 } from '@src/utils/jupyterhub';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import React, { useEffect, useState } from 'react';
+import type React from 'react';
+import { useEffect, useState } from 'react';
 
 import { useRecoilState } from 'recoil';
 import {
