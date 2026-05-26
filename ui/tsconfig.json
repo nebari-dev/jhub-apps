@@ -31,7 +31,7 @@
 
     /* Paths */
     "paths": {
-      "@/*": ["./src/*"],
+      "src/*": ["./src/*"],
       "@src/components": ["./src/components"],
       "@src/data/*": ["./src/data/*"],
       "@src/hooks/*": ["./src/hooks/*"],
