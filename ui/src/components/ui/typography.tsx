@@ -1,6 +1,5 @@
+import { cn } from '@src/lib/utils';
 import * as React from 'react';
-
-import { cn } from 'src/lib/utils';
 
 // Class-string map ported from ui/src/theme/theme.tsx so MUI <Typography variant="…">
 // can be swapped for <Text variant="…"> (or `className={typographyVariants.h5}`)

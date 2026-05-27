@@ -1,8 +1,7 @@
 import { Slot } from '@radix-ui/react-slot';
+import { cn } from '@src/lib/utils';
 import { cva, type VariantProps } from 'class-variance-authority';
 import * as React from 'react';
-
-import { cn } from 'src/lib/utils';
 
 // Variants map the MUI theme matrix (contained|outlined|text × primary|secondary|destructive).
 // Tailwind tokens (primary/secondary/destructive/accent) are wired to the brand palette in index.css.

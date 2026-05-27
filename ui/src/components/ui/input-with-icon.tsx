@@ -1,7 +1,6 @@
+import { Input } from '@src/components/ui/input';
+import { cn } from '@src/lib/utils';
 import * as React from 'react';
-
-import { Input } from 'src/components/ui/input';
-import { cn } from 'src/lib/utils';
 
 export interface InputWithIconProps
   extends React.ComponentPropsWithoutRef<typeof Input> {

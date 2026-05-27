@@ -12,6 +12,9 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
+import { StyledFormParagraph } from '@src/styles/styled-form-paragraph';
+import { StyledFormSection } from '@src/styles/styled-form-section';
+import { Item } from '@src/styles/styled-item';
 import type { AppProfileProps, AppQueryUpdateProps } from '@src/types/api';
 import type { AppFormInput } from '@src/types/form';
 import type { UserState } from '@src/types/user';
@@ -25,9 +28,6 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
-import { StyledFormParagraph } from 'src/styles/styled-form-paragraph';
-import { StyledFormSection } from 'src/styles/styled-form-section';
-import { Item } from 'src/styles/styled-item';
 import {
   currentNotification,
   currentFile as defaultFile,

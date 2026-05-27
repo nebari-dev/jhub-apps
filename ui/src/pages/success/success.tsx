@@ -1,12 +1,12 @@
 import { Box, Stack, Typography } from '@mui/material';
+import { StyledFormParagraph } from '@src/styles/styled-form-paragraph';
+import { Item } from '@src/styles/styled-item';
 import type { UserState } from '@src/types/user';
 import { APP_BASE_URL } from '@src/utils/constants';
 import type React from 'react';
 import { type SyntheticEvent, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
-import { StyledFormParagraph } from 'src/styles/styled-form-paragraph';
-import { Item } from 'src/styles/styled-item';
 import { currentUser as defaultUser } from '../../store';
 
 export const Success = (): React.ReactElement => {

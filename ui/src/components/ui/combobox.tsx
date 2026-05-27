@@ -1,8 +1,5 @@
-import { Check, ChevronsUpDown, X } from 'lucide-react';
-import * as React from 'react';
-
-import { Badge } from 'src/components/ui/badge';
-import { Button } from 'src/components/ui/button';
+import { Badge } from '@src/components/ui/badge';
+import { Button } from '@src/components/ui/button';
 import {
   Command,
   CommandEmpty,
@@ -10,13 +7,15 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from 'src/components/ui/command';
+} from '@src/components/ui/command';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from 'src/components/ui/popover';
-import { cn } from 'src/lib/utils';
+} from '@src/components/ui/popover';
+import { cn } from '@src/lib/utils';
+import { Check, ChevronsUpDown, X } from 'lucide-react';
+import * as React from 'react';
 
 export interface ComboboxProps<T> {
   options: T[];
