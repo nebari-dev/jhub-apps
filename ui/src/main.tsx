@@ -6,6 +6,7 @@ import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
 import { App } from './App.tsx';
+import { TooltipProvider } from './components/ui/tooltip';
 import './index.css';
 import { theme } from './theme/theme.tsx';
 
@@ -23,7 +24,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         <ThemeProvider theme={theme}>
           <CssBaseline />
           <QueryClientProvider client={queryClient}>
-            <App />
+            <TooltipProvider>
+              <App />
+            </TooltipProvider>
           </QueryClientProvider>
         </ThemeProvider>
       </RecoilRoot>

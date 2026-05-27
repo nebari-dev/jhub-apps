@@ -1,36 +1,84 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 /* App font: the server-rendered <style> from jhub_apps/templates/_font.css
    sets `:root { --app-font-family: ... }` based on the theme. UI consumers
    use `var(--app-font-family, 'Inter', sans-serif)` so standalone dev
    mode (no server theme) falls back to Inter. */
-:root {
-  /* Colors */
-  --primary-light: #ba18da10;
-  --primary: #ba18da;
-  --primary-dark: #9b00ce;
-  --secondary-light: #20aaa110;
-  --secondary: #18817a;
-  --secondary-dark: #12635e;
-  --white: #ffffff;
-  --black: #000000;
-  --gray-lightest: #f0f0f0;
-  --gray-lighter: #e6e6e6;
-  --gray-light: #adadad;
-  --gray: #757575;
-  --gray-dark: #454545;
-  --gray-darker: #171717;
-  --gray-darkest: #5c5c5c;
-  --success: #00a91c;
-  --success-light: #ecf3ec;
-  --warning: #ffbe2e;
-  --warning-light: #fde68a;
-  --error: #d54309;
-  --error-light: #f4e3db;
-  --info: #00bde3;
-  --info-light: #e7f6f8;
+@layer base {
+  :root {
+    /* shadcn semantic tokens (HSL triples; consumed via hsl(var(--name))). */
+    --background: 210 25% 99%;
+    --foreground: 225 17% 7%;
+    --card: 0 0% 100%;
+    --card-foreground: 225 17% 7%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 225 17% 7%;
+    --primary: 289 81% 47%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 0 0% 93%;
+    --secondary-foreground: 225 17% 7%;
+    --muted: 0 0% 96%;
+    --muted-foreground: 210 4% 37%;
+    --accent: 289 81% 95%;
+    --accent-foreground: 289 81% 30%;
+    --destructive: 351 67% 51%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 0% 88%;
+    --input: 0 0% 88%;
+    --ring: 289 81% 47%;
+    --radius: 0.5rem;
 
-  /* Misc Colors */
-  --text-color: #1c1d26;
-  --link-text-color: #276be9;
+    /* Legacy color tokens preserved for existing CSS files. */
+    --primary-light: #ba18da10;
+    --primary-dark: #9b00ce;
+    --secondary-light: #20aaa110;
+    --secondary-dark: #12635e;
+    --white: #ffffff;
+    --black: #000000;
+    --gray-lightest: #f0f0f0;
+    --gray-lighter: #e6e6e6;
+    --gray-light: #adadad;
+    --gray: #757575;
+    --gray-dark: #454545;
+    --gray-darker: #171717;
+    --gray-darkest: #5c5c5c;
+    --success: #00a91c;
+    --success-light: #ecf3ec;
+    --warning: #ffbe2e;
+    --warning-light: #fde68a;
+    --error: #d54309;
+    --error-light: #f4e3db;
+    --info: #00bde3;
+    --info-light: #e7f6f8;
+
+    /* Misc Colors */
+    --text-color: #1c1d26;
+    --link-text-color: #276be9;
+  }
+
+  .dark {
+    --background: 225 17% 7%;
+    --foreground: 0 0% 98%;
+    --card: 225 17% 10%;
+    --card-foreground: 0 0% 98%;
+    --popover: 225 17% 10%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 289 81% 60%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 225 10% 18%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 225 10% 16%;
+    --muted-foreground: 0 0% 65%;
+    --accent: 289 50% 20%;
+    --accent-foreground: 289 81% 90%;
+    --destructive: 351 67% 51%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 225 10% 20%;
+    --input: 225 10% 20%;
+    --ring: 289 81% 60%;
+  }
 }
 
 /* Global Styling */
