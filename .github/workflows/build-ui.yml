@@ -1,14 +1,16 @@
-name: Build UI
+name: UI
 
 on:
   pull_request:
+    branches: [main]
+  push:
     branches: [main]
 
 permissions:
   contents: read
 
 jobs:
-  build:
+  ui:
     runs-on: ubuntu-latest
 
     steps:
@@ -22,6 +24,14 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+        working-directory: ui
+
+      - name: Run Biome Check
+        run: npm run check
+        working-directory: ui
+
+      - name: Run Vitest Tests
+        run: npm run test:coverage
         working-directory: ui
 
       - name: Build UI
