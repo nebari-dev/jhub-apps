@@ -1,7 +1,7 @@
 import { apps, serverApps } from '@src/data/api';
 import { servicesFull } from '@src/data/jupyterhub';
 import { currentUser } from '@src/data/user';
-import { JhServiceFull } from '@src/types/jupyterhub';
+import type { JhServiceFull } from '@src/types/jupyterhub';
 import {
   clearAppToStart,
   filterAndSortApps,

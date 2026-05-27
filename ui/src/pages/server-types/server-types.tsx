@@ -12,9 +12,9 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import { AppProfileProps, AppQueryUpdateProps } from '@src/types/api';
-import { AppFormInput } from '@src/types/form';
-import { UserState } from '@src/types/user';
+import type { AppProfileProps, AppQueryUpdateProps } from '@src/types/api';
+import type { AppFormInput } from '@src/types/form';
+import type { UserState } from '@src/types/user';
 import axios from '@src/utils/axios';
 import { APP_BASE_URL } from '@src/utils/constants';
 import {

@@ -1,9 +1,8 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
-    "target": "ES2020",
+    "target": "ES2022",
     "useDefineForClassFields": true,
-    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "module": "ESNext",
     "skipLibCheck": true,
     "esModuleInterop": true,
@@ -32,12 +31,13 @@
 
     /* Paths */
     "paths": {
-      "@src/components": ["src/components"],
-      "@src/data/*": ["src/data/*"],
-      "@src/hooks/*": ["src/hooks/*"],
-      "@src/pages/*": ["src/pages/*"],
-      "@src/types/*": ["src/types/*"],
-      "@src/utils/*": ["src/utils/*"]
+      "src/*": ["./src/*"],
+      "@src/components": ["./src/components"],
+      "@src/data/*": ["./src/data/*"],
+      "@src/hooks/*": ["./src/hooks/*"],
+      "@src/pages/*": ["./src/pages/*"],
+      "@src/types/*": ["./src/types/*"],
+      "@src/utils/*": ["./src/utils/*"]
     }
   },
   "include": ["src"],

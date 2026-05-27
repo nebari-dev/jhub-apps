@@ -46,7 +46,7 @@
 }
 
 .card-content-header .img-overlay::after {
-  content: '';
+  content: "";
   object-fit: contain;
   position: absolute;
   top: 0;

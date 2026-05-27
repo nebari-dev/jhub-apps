@@ -1,6 +1,6 @@
 import StopCircleRoundedIcon from '@mui/icons-material/StopCircleRounded';
 import { Chip, IconButton } from '@mui/material';
-import { JhApp } from '@src/types/jupyterhub';
+import type { JhApp } from '@src/types/jupyterhub';
 import { useRecoilState } from 'recoil';
 import { currentApp, isStopOpen } from '../../store';
 import './status-chip.css';

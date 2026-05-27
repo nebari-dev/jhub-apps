@@ -1,10 +1,10 @@
-import {
+import type {
   AppFrameworkProps,
   AppProfileProps,
   AppQueryGetProps,
 } from '@src/types/api';
-import { JhApp } from '@src/types/jupyterhub';
-import { UserState } from '@src/types/user';
+import type { JhApp } from '@src/types/jupyterhub';
+import type { UserState } from '@src/types/user';
 import { DEFAULT_APP_LOGO } from './logos';
 
 const currentDate = new Date();

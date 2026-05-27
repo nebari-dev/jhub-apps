@@ -27,9 +27,9 @@ import {
   Tooltip,
   Typography,
 } from '@mui/material';
-import { SharePermissions } from '@src/types/api';
-import { AppSharingItem } from '@src/types/form';
-import { UserState } from '@src/types/user';
+import type { SharePermissions } from '@src/types/api';
+import type { AppSharingItem } from '@src/types/form';
+import type { UserState } from '@src/types/user';
 import { getFullAppUrl } from '@src/utils/jupyterhub';
 import { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';

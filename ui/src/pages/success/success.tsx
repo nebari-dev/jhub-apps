@@ -1,7 +1,8 @@
 import { Box, Stack, Typography } from '@mui/material';
-import { UserState } from '@src/types/user';
+import type { UserState } from '@src/types/user';
 import { APP_BASE_URL } from '@src/utils/constants';
-import React, { SyntheticEvent, useEffect } from 'react';
+import type React from 'react';
+import { type SyntheticEvent, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import { StyledFormParagraph } from 'src/styles/styled-form-paragraph';

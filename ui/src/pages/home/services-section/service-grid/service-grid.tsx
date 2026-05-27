@@ -1,6 +1,6 @@
 import { AppCard } from '@src/components';
-import { JhApp, JhServiceApp } from '@src/types/jupyterhub';
-import React from 'react';
+import type { JhApp, JhServiceApp } from '@src/types/jupyterhub';
+import type React from 'react';
 
 interface ServiceGridProps {
   services: JhServiceApp[];

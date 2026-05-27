@@ -14,9 +14,10 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import { StatusChip } from '@src/components';
-import { JhApp } from '@src/types/jupyterhub';
+import type { JhApp } from '@src/types/jupyterhub';
 import { API_BASE_URL } from '@src/utils/constants';
-import React, { useEffect, useState } from 'react';
+import type React from 'react';
+import { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import {
   currentApp,

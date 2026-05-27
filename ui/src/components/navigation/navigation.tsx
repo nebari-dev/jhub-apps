@@ -22,8 +22,8 @@ import {
 } from '@mui/material';
 import { styled, useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import { JhApp, JhService, JhServiceFull } from '@src/types/jupyterhub';
-import { UserState } from '@src/types/user';
+import type { JhApp, JhService, JhServiceFull } from '@src/types/jupyterhub';
+import type { UserState } from '@src/types/user';
 import axios from '@src/utils/axios';
 import { APP_BASE_URL } from '@src/utils/constants';
 import {

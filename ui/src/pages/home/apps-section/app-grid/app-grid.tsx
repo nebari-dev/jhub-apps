@@ -1,5 +1,5 @@
-import { JhApp } from '@src/types/jupyterhub';
-import React from 'react';
+import type { JhApp } from '@src/types/jupyterhub';
+import type React from 'react';
 import AppCard from '../../../../components/app-card/app-card';
 
 interface AppsGridProps {

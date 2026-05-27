@@ -2,7 +2,7 @@
 import { Box, Button, CircularProgress, Typography } from '@mui/material';
 import { APP_BASE_URL } from '@src/utils/constants';
 import { navigateToUrl } from '@src/utils/jupyterhub';
-import React from 'react';
+import type React from 'react';
 import './stop-pending.css';
 
 export const StopPending = (): React.ReactElement => {

@@ -12,7 +12,8 @@ import {
 import { AppForm } from '@src/components';
 import { APP_BASE_URL } from '@src/utils/constants';
 import { navigateToUrl } from '@src/utils/jupyterhub';
-import React, { useState } from 'react';
+import type React from 'react';
+import { useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { isHeadless as defaultIsHeadless } from '../../store';
 import { StyledFormParagraph } from '../../styles/styled-form-paragraph';
