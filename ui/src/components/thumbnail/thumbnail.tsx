@@ -1,12 +1,8 @@
-import CloseIcon from '@mui/icons-material/Close';
-import InsertPhotoIcon from '@mui/icons-material/CropOriginalRounded';
-import DeleteIcon from '@mui/icons-material/DeleteRounded';
-import ErrorIcon from '@mui/icons-material/Error';
-import UploadRoundedIcon from '@mui/icons-material/UploadRounded';
-import { Box, Button, Dialog, IconButton, Typography } from '@mui/material';
-import { useTheme } from '@mui/material/styles';
+import { Button } from '@src/components/ui/button';
+import { Dialog, DialogContent } from '@src/components/ui/dialog';
+import { cn } from '@src/lib/utils';
+import { ImageIcon, Trash2, Upload, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
-import './thumbnail.css';
 
 export interface ThumbnailProps {
   /**
@@ -44,7 +40,6 @@ export const Thumbnail = ({
   setCurrentFile,
   ...props
 }: ThumbnailProps & JSX.IntrinsicElements['input']) => {
-  const theme = useTheme();
   const [dragging, setDragging] = useState(false);
   const [open, setOpen] = useState(false);
   const [error, setError] = useState<string | undefined>(undefined);
@@ -115,116 +110,68 @@ export const Thumbnail = ({
     }
   }, [inputRef, setCurrentFile]);
 
+  const hasSelection = !!currentFile || !!currentImage;
+
   return (
-    <Box
-      id={`thumbnail-${id}`}
-      className="thumbnail"
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        columnGap: '24px',
-        width: '100%',
-        border: 'none',
-      }}
-    >
+    <div id={`thumbnail-${id}`} className="flex w-full flex-col">
       {error ? (
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            backgroundColor: '#FDEDED',
-            color: theme.palette.error.main,
-            padding: '8px',
-            borderRadius: '4px',
-            marginBottom: '16px',
-          }}
-        >
-          <ErrorIcon sx={{ marginRight: '8px' }} />
-          <Typography
-            variant="body2"
-            sx={{ flexGrow: 1, width: '100%', color: theme.palette.gray.main }}
-          >
-            <span className="error-msg">
-              <span className="weight600">File is too large.</span> Maximum file
-              size is 5MB.
+        <div className="mb-4 flex items-center rounded bg-[#FDEDED] p-2 text-[rgb(95,33,32)]">
+          <X className="mr-2 h-5 w-5 text-destructive" />
+          <p className="m-0 w-full flex-1 text-sm text-gray-500">
+            <span className="text-[#5f2120]">
+              <span className="font-semibold">File is too large.</span> Maximum
+              file size is 5MB.
             </span>
-          </Typography>
-          <IconButton
-            size="small"
+          </p>
+          <Button
+            type="button"
+            variant="ghost-secondary"
+            size="icon"
             onClick={() => setError(undefined)}
-            sx={{ color: theme.palette.gray.main }}
+            className="h-8 w-8 text-gray-500"
+            aria-label="Dismiss error"
           >
-            <CloseIcon />
-          </IconButton>
-        </Box>
+            <X />
+          </Button>
+        </div>
       ) : null}
-      <Box
+      {/* biome-ignore lint/a11y/noStaticElementInteractions: drag-and-drop target for file upload */}
+      <div
         id={`thumbnail-body-${id}`}
-        className={`thumbnail-body ${dragging ? 'dragging' : ''} ${currentFile || currentImage ? 'selected' : ''}`}
+        data-dragging={dragging ? '' : undefined}
+        data-selected={hasSelection ? '' : undefined}
+        className={cn(
+          'flex h-[180px] flex-row gap-x-6',
+          dragging && 'border-2 border-dashed border-primary',
+        )}
         onDragOver={handleDragOver}
         onDragEnter={handleDragEnter}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
-        sx={{
-          display: 'flex',
-          flexDirection: 'row',
-          columnGap: '24px',
-          height: '180px',
-        }}
       >
-        <Box
-          className="thumbnail-dropzone"
-          sx={{
-            height: '130px',
-            backgroundColor: '#90969c',
-            borderRadius: '4px',
-          }}
-        >
-          {currentFile || currentImage ? (
-            <Box sx={{ margin: 'auto auto' }}>
+        <div className="h-[130px] rounded bg-[#90969c]">
+          {hasSelection ? (
+            <div className="m-auto">
               <img
                 src={
                   currentFile ? URL.createObjectURL(currentFile) : currentImage
                 }
                 alt="App thumbnail"
                 title="Click to view image"
-                className="thumbnail-img"
-                style={{
-                  maxWidth: '225px',
-                  maxHeight: '130px',
-                  borderRadius: '4px',
-                  cursor: 'pointer',
-                }}
+                className="max-h-[130px] max-w-[225px] cursor-pointer rounded"
                 onClick={handleViewThumbnail}
               />
-            </Box>
+            </div>
           ) : (
-            <Box
-              tabIndex={0}
+            <button
+              type="button"
               title="Select an image"
-              className="thumbnail-icon-container"
-              sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-                alignItems: 'center',
-                width: '225px',
-                height: '130px',
-                cursor: 'pointer',
-                '&:focus': {
-                  outlineColor: theme.palette.primary.main,
-                },
-              }}
+              aria-label="Select an image"
+              className="flex h-[130px] w-[225px] cursor-pointer flex-col items-center justify-center border-0 bg-transparent p-0 text-current focus:outline focus:outline-2 focus:outline-primary"
               onClick={handleBrowseThumbnails}
             >
-              <InsertPhotoIcon
-                sx={{
-                  width: '64px',
-                  height: '64px',
-                  color: theme.palette.common.white,
-                }}
-              />
-            </Box>
+              <ImageIcon className="!h-16 !w-16 text-white" />
+            </button>
           )}
           <input
             ref={inputRef}
@@ -233,65 +180,49 @@ export const Thumbnail = ({
             type="file"
             accept="image/*"
             onChange={handleFileChange}
-            style={{ display: 'none' }}
+            className="hidden"
             {...props}
           />
-        </Box>
-        <Box sx={{ display: 'flex', flexDirection: 'column', rowGap: '16px' }}>
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: { xs: 'column', sm: 'row' },
-              columnGap: '16px',
-              rowGap: '12px',
-              height: '40px',
-            }}
-          >
+        </div>
+        <div className="flex flex-col gap-y-4">
+          <div className="flex h-10 flex-col gap-x-4 gap-y-3 sm:flex-row">
             <Button
+              type="button"
               id="upload-thumbnail-btn"
-              variant="contained"
-              color="secondary"
-              startIcon={<UploadRoundedIcon />}
+              variant="secondary"
               onClick={handleBrowseThumbnails}
-              sx={{ width: '100%', maxWidth: '170px' }}
+              className="w-full max-w-[170px]"
             >
+              <Upload />
               Select an image
             </Button>
-            {currentFile || currentImage ? (
+            {hasSelection ? (
               <Button
+                type="button"
                 id="remove-thumbnail-btn"
-                variant="contained"
-                color="secondary"
-                startIcon={<DeleteIcon />}
+                variant="secondary"
                 onClick={handleRemoveThumbnail}
-                hidden={!currentFile && !currentImage}
-                sx={{ width: '100%', maxWidth: '170px' }}
+                className="w-full max-w-[170px]"
               >
+                <Trash2 />
                 Remove image
               </Button>
-            ) : (
-              <></>
-            )}
-          </Box>
-          <Typography
-            variant="body1"
-            sx={{
-              color: '#0F101599',
-              width: '340px',
-              display: { xs: 'none', md: 'block' },
-            }}
-          >
+            ) : null}
+          </div>
+          <p className="hidden w-[340px] text-base text-[#0F101599] md:block">
             Recommended size: 225x130 | JPG, PNG, Max size: 5MB
-          </Typography>
-        </Box>
-      </Box>
-      <Dialog onClose={() => setOpen(false)} open={open}>
-        <img
-          src={currentFile ? URL.createObjectURL(currentFile) : currentImage}
-          alt="App thumbnail"
-        />
+          </p>
+        </div>
+      </div>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent className="max-w-fit p-6">
+          <img
+            src={currentFile ? URL.createObjectURL(currentFile) : currentImage}
+            alt="App thumbnail"
+          />
+        </DialogContent>
       </Dialog>
-    </Box>
+    </div>
   );
 };
 

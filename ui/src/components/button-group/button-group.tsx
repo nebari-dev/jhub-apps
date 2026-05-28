@@ -1,7 +1,6 @@
-import classnames from 'classnames';
+import { cn } from '@src/lib/utils';
 import type React from 'react';
 import { Children, type ReactNode } from 'react';
-import './button-group.css';
 
 export interface ButtonGroupProps {
   /**
@@ -26,13 +25,11 @@ export const ButtonGroup = ({
   className,
   children,
 }: ButtonGroupProps): React.ReactElement => {
-  const classes = classnames('button-group', className);
-
   return (
-    <ul id={id} className={classes}>
+    <ul id={id} className={cn('flex flex-row justify-end', className)}>
       {Children.map(children, (child: ReactNode, index) => {
         return (
-          <li key={index} className="button-group-item">
+          <li key={index} className="m-1 list-none">
             {child}
           </li>
         );

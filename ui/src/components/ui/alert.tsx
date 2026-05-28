@@ -10,6 +10,17 @@ const alertVariants = cva(
         default: 'bg-background text-foreground',
         destructive:
           'border-destructive/50 text-destructive dark:border-destructive [&>svg]:text-destructive',
+        // MUI standardError parity
+        error:
+          'border-transparent bg-[rgb(253,237,237)] text-[rgb(95,33,32)] [&>svg]:text-[rgb(239,83,80)]',
+        // MUI standardWarning parity
+        warning:
+          'border-transparent bg-[rgb(255,244,229)] text-[rgb(102,60,0)] [&>svg]:text-[rgb(245,124,0)]',
+        // MUI standardInfo parity
+        info: 'border-transparent bg-[rgb(229,246,253)] text-[rgb(1,67,97)] [&>svg]:text-[rgb(3,169,244)]',
+        // MUI standardSuccess parity
+        success:
+          'border-transparent bg-[rgb(237,247,237)] text-[rgb(30,70,32)] [&>svg]:text-[rgb(46,125,50)]',
       },
     },
     defaultVariants: {
@@ -55,4 +66,4 @@ const AlertDescription = React.forwardRef<
 ));
 AlertDescription.displayName = 'AlertDescription';
 
-export { Alert, AlertDescription, AlertTitle };
+export { Alert, AlertDescription, AlertTitle, alertVariants };

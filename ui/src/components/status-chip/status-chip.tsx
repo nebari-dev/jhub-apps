@@ -1,9 +1,22 @@
-import StopCircleRoundedIcon from '@mui/icons-material/StopCircleRounded';
-import { Chip, IconButton } from '@mui/material';
+import { Badge } from '@src/components/ui/badge';
+import { cn } from '@src/lib/utils';
 import type { JhApp } from '@src/types/jupyterhub';
 import { useRecoilState } from 'recoil';
 import { currentApp, isStopOpen } from '../../store';
-import './status-chip.css';
+
+// Filled-circle-with-cutout-stop, matching MUI's StopCircleRounded. The inner
+// rounded-square subpath winds opposite the outer circle, so non-zero fill
+// punches it out and the badge color shows through.
+const StopCircleFilled = ({ className }: { className?: string }) => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="currentColor"
+    aria-hidden="true"
+    className={className}
+  >
+    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm3 14H9c-.55 0-1-.45-1-1V9c0-.55.45-1 1-1h6c.55 0 1 .45 1 1v6c0 .55-.45 1-1 1z" />
+  </svg>
+);
 
 interface StatusChipProps {
   status: string;
@@ -11,37 +24,31 @@ interface StatusChipProps {
   app?: JhApp;
   size?: 'small' | 'medium';
 }
-const getStatusStyles = (status: string) => {
-  let styles;
+
+const getStatusStyles = (status: string): React.CSSProperties => {
   switch (status) {
     case 'Ready':
-      styles = {
-        bgcolor: 'rgb(255, 255, 255)', // #ffffff
-        border: '1px solid rgb(46, 125, 50)', // #2E7D32
-        color: 'rgb(46, 125, 50)', // #2E7D32
+      return {
+        backgroundColor: 'rgb(255, 255, 255)',
+        border: '1px solid rgb(46, 125, 50)',
+        color: 'rgb(46, 125, 50)',
       };
-      break;
     case 'Pending':
-      styles = {
-        bgcolor: 'rgb(234, 181, 78)', // #EAB54E
+      return {
+        backgroundColor: 'rgb(234, 181, 78)',
         color: 'black',
       };
-      break;
     case 'Running':
-      styles = {
-        bgcolor: 'rgb(46, 125, 50)', // #2E7D32
+      return {
+        backgroundColor: 'rgb(46, 125, 50)',
         color: 'white',
       };
-      break;
-    case 'Unknown':
     default:
-      styles = {
-        bgcolor: 'rgb(121, 121, 124)', // #79797C
+      return {
+        backgroundColor: 'rgb(121, 121, 124)',
         color: 'white',
       };
-      break;
   }
-  return styles;
 };
 
 export const StatusChip = ({
@@ -53,66 +60,52 @@ export const StatusChip = ({
   const [, setCurrentApp] = useRecoilState<JhApp | undefined>(currentApp);
   const [, setIsStopOpen] = useRecoilState<boolean>(isStopOpen);
 
-  const getLabel = () => {
-    if (status === 'Running' && additionalInfo) {
-      return (
-        <>
-          {app && !app.shared ? (
-            <>
-              <span
-                className="chip-label-info"
-                style={{ position: 'relative', top: '1px' }}
-              >
-                {status} on {additionalInfo}
-              </span>
-              <IconButton
-                onClick={(event) => {
-                  event.preventDefault();
-                  event.stopPropagation();
-                  setCurrentApp(app);
-                  setIsStopOpen(true);
-                }}
-                aria-label="Stop"
-                sx={{
-                  pl: 0,
-                  position: 'relative',
-                  top: 0,
-                  left: '6px',
-                }}
-                color="inherit"
-                disabled={app.shared}
-              >
-                <StopCircleRoundedIcon
-                  sx={{
-                    fontSize: '16px',
-                  }}
-                />
-              </IconButton>
-            </>
-          ) : (
-            <span>{status}</span>
-          )}
-        </>
-      );
-    }
-    return status || 'Default';
-  };
+  const hasStopButton =
+    status === 'Running' && !!additionalInfo && !!app && !app.shared;
+
+  const sizeClasses =
+    size === 'medium' ? 'h-8 px-3 text-sm' : 'h-6 px-2.5 text-xs';
 
   return (
-    <Chip
-      label={getLabel()}
-      className={
-        status !== 'Running' || !additionalInfo || app?.shared
-          ? 'chip-base'
-          : ''
-      }
-      size={size}
-      sx={{
-        fontWeight: 600,
-        fontSize: '12px',
-        ...getStatusStyles(status),
-      }}
-    />
+    <Badge
+      data-testid="status-chip"
+      data-status={status}
+      className={cn(
+        'font-semibold border-transparent rounded-full hover:bg-current/100',
+        sizeClasses,
+        hasStopButton ? 'pr-1' : '',
+      )}
+      style={getStatusStyles(status)}
+    >
+      {status === 'Running' && additionalInfo ? (
+        app && !app.shared ? (
+          <>
+            <span>
+              {status} on {additionalInfo}
+            </span>
+            <button
+              type="button"
+              onClick={(event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                setCurrentApp(app);
+                setIsStopOpen(true);
+              }}
+              aria-label="Stop"
+              data-testid="status-chip-stop"
+              className="ml-1.5 inline-flex h-5 w-5 cursor-pointer items-center justify-center rounded-full border-0 bg-transparent p-0 text-current hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50"
+              disabled={app.shared}
+            >
+              <StopCircleFilled className="h-4 w-4" />
+            </button>
+          </>
+        ) : (
+          <span>{status}</span>
+        )
+      ) : (
+        status || 'Default'
+      )}
+    </Badge>
   );
 };
 export default StatusChip;

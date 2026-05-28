@@ -114,12 +114,12 @@ Migrate the smallest, most-reused components — they are leaves and don't depen
 **Design source**: Figma — components: NotificationBar/Alert, StatusChip/Badge, CustomLabel, Thumbnail, ButtonGroup, EnvironmentVariables.
 
 ### Files
-- [ ] `ui/src/components/notification-bar/notification-bar.tsx` — `Alert` → shadcn `Alert`.
-- [ ] `ui/src/components/status-chip/status-chip.tsx` — `Chip` → `Badge` (use Figma badge variants).
-- [ ] `ui/src/components/custom-label/custom-label.tsx` — `Typography`/`Box` → `<span>`/`<div>` + Tailwind.
-- [ ] `ui/src/components/thumbnail/thumbnail.tsx` — drop `useTheme`; replace `sx` with Tailwind classes.
-- [ ] `ui/src/components/button-group/button-group.tsx` — flex of shadcn buttons.
-- [ ] `ui/src/components/environment-variables/environment-variables.tsx` — TextField → `Input` + `Label`.
+- [x] `ui/src/components/notification-bar/notification-bar.tsx` — `Alert` → shadcn `Alert`.
+- [x] `ui/src/components/status-chip/status-chip.tsx` — `Chip` → `Badge` (use Figma badge variants).
+- [x] `ui/src/components/custom-label/custom-label.tsx` — `Typography`/`Box` → `<span>`/`<div>` + Tailwind.
+- [x] `ui/src/components/thumbnail/thumbnail.tsx` — drop `useTheme`; replace `sx` with Tailwind classes.
+- [x] `ui/src/components/button-group/button-group.tsx` — flex of shadcn buttons.
+- [x] `ui/src/components/environment-variables/environment-variables.tsx` — TextField → `Input` + `Label`.
 
 ### Done when
 - Each migrated component visually matches its Figma frame in all states.
