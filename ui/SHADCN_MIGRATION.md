@@ -135,10 +135,10 @@ Replace the MUI `Menu`/`MenuItem`/`Divider` implementation with shadcn `Dropdown
 **Design source**: Figma — ContextMenu / DropdownMenu component (item, separator, destructive item, disabled item, hover/focus states).
 
 ### Tasks
-- [ ] `ui/src/components/context-menu/context-menu.tsx` — replace `Menu` + `MenuItem` + `Divider` with `DropdownMenu` + `DropdownMenuItem` + `DropdownMenuSeparator`.
-- [ ] Drop `useTheme` usage; rely on Tailwind classes.
-- [ ] Map any MUI icons to `lucide-react` equivalents.
-- [ ] Update any tests that select on MUI internals.
+- [x] `ui/src/components/context-menu/context-menu.tsx` — replace `Menu` + `MenuItem` + `Divider` with `DropdownMenu` + `DropdownMenuItem` + `DropdownMenuSeparator`.
+- [x] Drop `useTheme` usage; rely on Tailwind classes.
+- [x] Map any MUI icons to `lucide-react` equivalents.
+- [x] Update any tests that select on MUI internals.
 
 ### Done when
 - Visual + interaction parity with the Figma menu design.
@@ -154,8 +154,8 @@ Replace MUI `Card`/`CardContent`/`CardMedia`/`Chip`/`Tooltip`/`Typography` with 
 **Design source**: Figma — AppCard component (default, hover, pinned, error, with thumbnail, without thumbnail).
 
 ### Files
-- [ ] `ui/src/components/app-card/app-card.tsx`
-- [ ] `ui/src/components/app-card/app-card.css` — audit for `.Mui*` selectors and remove.
+- [x] `ui/src/components/app-card/app-card.tsx`
+- [x] `ui/src/components/app-card/app-card.css` — audit for `.Mui*` selectors and remove.
 
 ### Done when
 - Visual parity with Figma in every state.
