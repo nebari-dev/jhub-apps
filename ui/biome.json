@@ -7,7 +7,7 @@
     "root": ".."
   },
   "files": {
-    "includes": ["**", "!**/*.test.tsx"]
+    "includes": ["**", "!**/*.test.tsx", "!src/data/logos.ts"]
   },
   "formatter": {
     "enabled": true,

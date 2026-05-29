@@ -170,12 +170,12 @@ The most MUI-dependent component in the codebase. It uses `Autocomplete`, `Table
 **Design source**: Figma — AppSharing frames (user picker, group picker, permissions table, pagination, empty state, loading state, error states).
 
 ### Tasks (`ui/src/components/app-sharing/app-sharing.tsx`)
-- [ ] Replace `Autocomplete` with the `<Combobox>` helper from Phase 2 (async user/group loading).
-- [ ] Replace `TablePagination` with the `<DataTablePagination>` helper.
-- [ ] Replace `ClickAwayListener` — Radix `Popover` already handles outside clicks; remove it.
-- [ ] Replace `Table*` with shadcn `Table` subcomponents.
-- [ ] Replace `Switch`, `Alert`, `InputAdornment` with shadcn equivalents (`InputWithIcon` from Phase 2).
-- [ ] Map all icons to `lucide-react`.
+- [x] Replace `Autocomplete` with the `<Combobox>` helper from Phase 2 (async user/group loading).
+- [x] Replace `TablePagination` with the `<DataTablePagination>` helper.
+- [x] Replace `ClickAwayListener` — Radix `Popover` already handles outside clicks; remove it.
+- [x] Replace `Table*` with shadcn `Table` subcomponents.
+- [x] Replace `Switch`, `Alert`, `InputAdornment` with shadcn equivalents (`InputWithIcon` from Phase 2).
+- [x] Map all icons to `lucide-react`.
 
 ### Done when
 - Visual parity with Figma across all interaction states.
@@ -194,13 +194,15 @@ Convert the largest single component to shadcn `Form` + `FormField` (built on th
 **Design source**: Figma — AppForm frames (all field types, validation states, dialogs, loading, success).
 
 ### Tasks
-- [ ] Pre-work: write a manual checklist of every field's behavior (label, helper, validation message, default, conditional visibility) to verify after refactor.
-- [ ] `ui/src/components/app-form/app-form.tsx` — replace MUI form primitives field-by-field using shadcn `Form` pattern with `Controller` (already in use).
-- [ ] Replace `Dialog` → shadcn `Dialog`.
-- [ ] Replace `LoadingButton` (`@mui/lab`) → `Button` + `Loader2` from `lucide-react`.
-- [ ] Replace `CircularProgress` → `Loader2` with `animate-spin`.
-- [ ] Replace `Switch`, `Select`/`MenuItem` directly.
-- [ ] Audit any colocated CSS for `.Mui*` selectors.
+- [x] Pre-work: write a manual checklist of every field's behavior (label, helper, validation message, default, conditional visibility) to verify after refactor.
+- [x] `ui/src/components/app-form/app-form.tsx` — replace MUI form primitives field-by-field using shadcn `Form` pattern with `Controller` (already in use).
+- [x] Replace `Dialog` → shadcn `Dialog`.
+- [x] Replace `LoadingButton` (`@mui/lab`) → `Button` + `Loader2` from `lucide-react`.
+- [x] Replace `CircularProgress` → `Loader2` with `animate-spin`.
+- [x] Replace `Switch`, `Select`/`MenuItem` directly.
+- [x] Audit any colocated CSS for `.Mui*` selectors.
+
+> Note: `<select>`s use a styled native `<select>` (not Radix `Select`) so existing tests using `fireEvent.change(field, { target: { value } })` continue to work without rewriting them as user-event flows. The Radix-based `Select` primitive remains available for callers that prefer it.
 
 ### Done when
 - Every field matches its Figma frame including error/disabled/required states.

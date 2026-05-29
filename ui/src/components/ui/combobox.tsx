@@ -104,7 +104,7 @@ export function Combobox<T>({
                   <Badge
                     key={keyFor(option)}
                     variant="secondary"
-                    className="gap-1"
+                    className="gap-1 pr-1"
                   >
                     {getOptionLabel(option)}
                     <button
@@ -121,8 +121,9 @@ export function Combobox<T>({
                           remove(option);
                         }
                       }}
+                      className="inline-flex h-4 w-4 cursor-pointer items-center justify-center rounded-full border-0 bg-gray-400 p-0 text-secondary hover:bg-gray-500"
                     >
-                      <X className="h-3 w-3" />
+                      <X className="h-2.5 w-2.5" />
                     </button>
                   </Badge>
                 ))
