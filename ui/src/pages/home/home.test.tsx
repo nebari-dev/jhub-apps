@@ -1,3 +1,4 @@
+import { Toaster } from '@src/components/ui/sonner';
 import { app, apps } from '@src/data/api';
 import { currentUser } from '@src/data/user';
 import axios from '@src/utils/axios';
@@ -46,6 +47,7 @@ describe('Home', () => {
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
           <Home />
+          <Toaster />
         </BrowserRouter>
       </QueryClientProvider>
     </RecoilRoot>
@@ -73,7 +75,6 @@ describe('Home', () => {
       expect(button).toBeTruthy();
       fireEvent.click(button);
     });
-    // TODO: Update this test when everything is running in single react app
     expect(window.location.pathname).not.toBe('/create-app');
   });
 
@@ -86,22 +87,23 @@ describe('Home', () => {
   });
 
   test('should render with start modal', async () => {
-    const { baseElement } = render(
+    render(
       <RecoilRoot initializeState={({ set }) => set(isStartOpen, true)}>
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
             <Home />
+            <Toaster />
           </BrowserRouter>
         </QueryClientProvider>
       </RecoilRoot>,
     );
 
     await waitFor(() => {
-      const startModal = within(baseElement).getByTestId('StartModal');
+      const startModal = within(document.body).getByTestId('StartModal');
       expect(startModal).toBeInTheDocument();
     });
 
-    const cancelBtn = baseElement.querySelector(
+    const cancelBtn = document.querySelector(
       '#cancel-btn',
     ) as HTMLButtonElement;
     await act(async () => {
@@ -111,33 +113,31 @@ describe('Home', () => {
   });
 
   test('should render with start modal and click away', async () => {
-    const { baseElement } = render(
+    render(
       <RecoilRoot initializeState={({ set }) => set(isStartOpen, true)}>
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
             <Home />
+            <Toaster />
           </BrowserRouter>
         </QueryClientProvider>
       </RecoilRoot>,
     );
 
     await waitFor(() => {
-      const startModal = within(baseElement).getByTestId('StartModal');
+      const startModal = within(document.body).getByTestId('StartModal');
       expect(startModal).toBeInTheDocument();
     });
 
-    const backdrop = baseElement.querySelector(
-      '.MuiBackdrop-root',
-    ) as HTMLElement;
     await act(async () => {
-      backdrop.click();
+      fireEvent.keyDown(document.body, { key: 'Escape' });
     });
     expect(document.location.pathname).toBe('/');
   });
 
   test('should render with start modal and submit', async () => {
-    mock.onPost('/server/test-app-1').reply(200); // Mock the delete API endpoint
-    const { baseElement } = render(
+    mock.onPost('/server/test-app-1').reply(200);
+    render(
       <RecoilRoot
         initializeState={({ set }) => {
           set(isStartOpen, true);
@@ -147,19 +147,18 @@ describe('Home', () => {
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
             <Home />
+            <Toaster />
           </BrowserRouter>
         </QueryClientProvider>
       </RecoilRoot>,
     );
 
     await waitFor(() => {
-      const startModal = within(baseElement).getByTestId('StartModal');
+      const startModal = within(document.body).getByTestId('StartModal');
       expect(startModal).toBeInTheDocument();
     });
 
-    const startBtn = baseElement.querySelector(
-      '#start-btn',
-    ) as HTMLButtonElement;
+    const startBtn = document.querySelector('#start-btn') as HTMLButtonElement;
     await act(async () => {
       startBtn.click();
     });
@@ -168,7 +167,7 @@ describe('Home', () => {
 
   test('should render with start modal and not submit when no current app', async () => {
     mock.onPost(new RegExp('/server/*')).reply(500, { message: 'Some error' });
-    const { baseElement } = render(
+    render(
       <RecoilRoot
         initializeState={({ set }) => {
           set(isStartOpen, true);
@@ -178,19 +177,18 @@ describe('Home', () => {
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
             <Home />
+            <Toaster />
           </BrowserRouter>
         </QueryClientProvider>
       </RecoilRoot>,
     );
 
     await waitFor(() => {
-      const startModal = within(baseElement).getByTestId('StartModal');
+      const startModal = within(document.body).getByTestId('StartModal');
       expect(startModal).toBeInTheDocument();
     });
 
-    const startBtn = baseElement.querySelector(
-      '#start-btn',
-    ) as HTMLButtonElement;
+    const startBtn = document.querySelector('#start-btn') as HTMLButtonElement;
     await act(async () => {
       startBtn.click();
     });
@@ -198,22 +196,23 @@ describe('Home', () => {
   });
 
   test('should render with stop modal', async () => {
-    const { baseElement } = render(
+    render(
       <RecoilRoot initializeState={({ set }) => set(isStopOpen, true)}>
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
             <Home />
+            <Toaster />
           </BrowserRouter>
         </QueryClientProvider>
       </RecoilRoot>,
     );
 
     await waitFor(() => {
-      const startModal = within(baseElement).getByTestId('StopModal');
+      const startModal = within(document.body).getByTestId('StopModal');
       expect(startModal).toBeInTheDocument();
     });
 
-    const cancelBtn = baseElement.querySelector(
+    const cancelBtn = document.querySelector(
       '#cancel-btn',
     ) as HTMLButtonElement;
     await act(async () => {
@@ -223,33 +222,31 @@ describe('Home', () => {
   });
 
   test('should render with stop modal and click away', async () => {
-    const { baseElement } = render(
+    render(
       <RecoilRoot initializeState={({ set }) => set(isStopOpen, true)}>
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
             <Home />
+            <Toaster />
           </BrowserRouter>
         </QueryClientProvider>
       </RecoilRoot>,
     );
 
     await waitFor(() => {
-      const startModal = within(baseElement).getByTestId('StopModal');
+      const startModal = within(document.body).getByTestId('StopModal');
       expect(startModal).toBeInTheDocument();
     });
 
-    const backdrop = baseElement.querySelector(
-      '.MuiBackdrop-root',
-    ) as HTMLElement;
     await act(async () => {
-      backdrop.click();
+      fireEvent.keyDown(document.body, { key: 'Escape' });
     });
     expect(document.location.pathname).toBe('/');
   });
 
   test('should render with stop modal and submit', async () => {
-    mock.onDelete('/server/test-app-1').reply(200); // Mock the stop API endpoint
-    const { baseElement, getByText } = render(
+    mock.onDelete('/server/test-app-1').reply(200);
+    render(
       <RecoilRoot
         initializeState={({ set }) => {
           set(isStopOpen, true);
@@ -259,24 +256,26 @@ describe('Home', () => {
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
             <Home />
+            <Toaster />
           </BrowserRouter>
         </QueryClientProvider>
       </RecoilRoot>,
     );
 
     await waitFor(() => {
-      const stopModal = within(baseElement).getByTestId('StopModal');
+      const stopModal = within(document.body).getByTestId('StopModal');
       expect(stopModal).toBeInTheDocument();
     });
 
-    const stopBtn = baseElement.querySelector('#stop-btn') as HTMLButtonElement;
+    const stopBtn = document.querySelector('#stop-btn') as HTMLButtonElement;
     await act(async () => {
       stopBtn.click();
     });
 
     await waitFor(() => {
-      const snackbar = getByText('Server stopped successfully');
-      expect(snackbar).toBeInTheDocument();
+      expect(
+        within(document.body).getByText('Server stopped successfully'),
+      ).toBeInTheDocument();
     });
 
     expect(document.location.pathname).toBe('/');
@@ -286,7 +285,7 @@ describe('Home', () => {
     mock
       .onDelete(new RegExp('/server/*'))
       .reply(500, { message: 'Some error' });
-    const { baseElement } = render(
+    render(
       <RecoilRoot
         initializeState={({ set }) => {
           set(isStopOpen, true);
@@ -296,17 +295,18 @@ describe('Home', () => {
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
             <Home />
+            <Toaster />
           </BrowserRouter>
         </QueryClientProvider>
       </RecoilRoot>,
     );
 
     await waitFor(() => {
-      const stopModal = within(baseElement).getByTestId('StopModal');
+      const stopModal = within(document.body).getByTestId('StopModal');
       expect(stopModal).toBeInTheDocument();
     });
 
-    const stopBtn = baseElement.querySelector('#stop-btn') as HTMLButtonElement;
+    const stopBtn = document.querySelector('#stop-btn') as HTMLButtonElement;
     await act(async () => {
       stopBtn.click();
     });
@@ -315,22 +315,23 @@ describe('Home', () => {
   });
 
   test('should render with delete modal', async () => {
-    const { baseElement } = render(
+    render(
       <RecoilRoot initializeState={({ set }) => set(isDeleteOpen, true)}>
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
             <Home />
+            <Toaster />
           </BrowserRouter>
         </QueryClientProvider>
       </RecoilRoot>,
     );
 
     await waitFor(() => {
-      const deleteModal = within(baseElement).getByTestId('DeleteModal');
+      const deleteModal = within(document.body).getByTestId('DeleteModal');
       expect(deleteModal).toBeInTheDocument();
     });
 
-    const cancelBtn = baseElement.querySelector(
+    const cancelBtn = document.querySelector(
       '#cancel-btn',
     ) as HTMLButtonElement;
     await act(async () => {
@@ -340,33 +341,31 @@ describe('Home', () => {
   });
 
   test('should render with delete modal and click away', async () => {
-    const { baseElement } = render(
+    render(
       <RecoilRoot initializeState={({ set }) => set(isDeleteOpen, true)}>
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
             <Home />
+            <Toaster />
           </BrowserRouter>
         </QueryClientProvider>
       </RecoilRoot>,
     );
 
     await waitFor(() => {
-      const deleteModal = within(baseElement).getByTestId('DeleteModal');
+      const deleteModal = within(document.body).getByTestId('DeleteModal');
       expect(deleteModal).toBeInTheDocument();
     });
 
-    const backdrop = baseElement.querySelector(
-      '.MuiBackdrop-root',
-    ) as HTMLElement;
     await act(async () => {
-      backdrop.click();
+      fireEvent.keyDown(document.body, { key: 'Escape' });
     });
     expect(document.location.pathname).toBe('/');
   });
 
   test('should render with delete modal and submit', async () => {
-    mock.onDelete('/server/test-app-1').reply(200); // Mock the delete API endpoint
-    const { baseElement, getByText } = render(
+    mock.onDelete('/server/test-app-1').reply(200);
+    render(
       <RecoilRoot
         initializeState={({ set }) => {
           set(isDeleteOpen, true);
@@ -376,17 +375,18 @@ describe('Home', () => {
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
             <Home />
+            <Toaster />
           </BrowserRouter>
         </QueryClientProvider>
       </RecoilRoot>,
     );
 
     await waitFor(() => {
-      const deleteModal = within(baseElement).getByTestId('DeleteModal');
+      const deleteModal = within(document.body).getByTestId('DeleteModal');
       expect(deleteModal).toBeInTheDocument();
     });
 
-    const deleteBtn = baseElement.querySelector(
+    const deleteBtn = document.querySelector(
       '#delete-btn',
     ) as HTMLButtonElement;
     await act(async () => {
@@ -394,8 +394,9 @@ describe('Home', () => {
     });
 
     await waitFor(() => {
-      const snackbar = getByText('App deleted successfully');
-      expect(snackbar).toBeInTheDocument();
+      expect(
+        within(document.body).getByText('App deleted successfully'),
+      ).toBeInTheDocument();
     });
 
     expect(document.location.pathname).toBe('/');
@@ -405,7 +406,7 @@ describe('Home', () => {
     mock
       .onDelete(new RegExp('/server/*'))
       .reply(500, { message: 'Some error' });
-    const { baseElement } = render(
+    render(
       <RecoilRoot
         initializeState={({ set }) => {
           set(isDeleteOpen, true);
@@ -415,17 +416,18 @@ describe('Home', () => {
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
             <Home />
+            <Toaster />
           </BrowserRouter>
         </QueryClientProvider>
       </RecoilRoot>,
     );
 
     await waitFor(() => {
-      const deleteModal = within(baseElement).getByTestId('DeleteModal');
+      const deleteModal = within(document.body).getByTestId('DeleteModal');
       expect(deleteModal).toBeInTheDocument();
     });
 
-    const deleteBtn = baseElement.querySelector(
+    const deleteBtn = document.querySelector(
       '#delete-btn',
     ) as HTMLButtonElement;
     await act(async () => {
@@ -443,6 +445,7 @@ describe('Home', () => {
       <RecoilRoot initializeState={({ set }) => set(defaultUser, currentUser)}>
         <QueryClientProvider client={queryClient}>
           <Home />
+          <Toaster />
         </QueryClientProvider>
       </RecoilRoot>,
     );
@@ -451,26 +454,27 @@ describe('Home', () => {
 
   test('should render with server not running modal', async () => {
     mock.onGet(new RegExp('/server/app-1')).reply(200, app);
-    const { baseElement } = render(
+    render(
       <RecoilRoot
         initializeState={({ set }) => set(isStartNotRunningOpen, true)}
       >
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
             <Home />
+            <Toaster />
           </BrowserRouter>
         </QueryClientProvider>
       </RecoilRoot>,
     );
 
     await waitFor(() => {
-      const startModal = within(baseElement).getByTestId(
+      const startModal = within(document.body).getByTestId(
         'StartNotRunningModal',
       );
       expect(startModal).toBeInTheDocument();
     });
 
-    const cancelBtn = baseElement.querySelector(
+    const cancelBtn = document.querySelector(
       '#cancel-btn',
     ) as HTMLButtonElement;
     await act(async () => {
@@ -481,7 +485,7 @@ describe('Home', () => {
 
   test('should render with server not running modal and submit', async () => {
     mock.onGet('/server/test-app-1').reply(200);
-    const { baseElement } = render(
+    render(
       <RecoilRoot
         initializeState={({ set }) => {
           set(isStartNotRunningOpen, true);
@@ -491,21 +495,20 @@ describe('Home', () => {
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
             <Home />
+            <Toaster />
           </BrowserRouter>
         </QueryClientProvider>
       </RecoilRoot>,
     );
 
     await waitFor(() => {
-      const startModal = within(baseElement).getByTestId(
+      const startModal = within(document.body).getByTestId(
         'StartNotRunningModal',
       );
       expect(startModal).toBeInTheDocument();
     });
 
-    const startBtn = baseElement.querySelector(
-      '#start-btn',
-    ) as HTMLButtonElement;
+    const startBtn = document.querySelector('#start-btn') as HTMLButtonElement;
     await act(async () => {
       startBtn.click();
     });
@@ -514,33 +517,32 @@ describe('Home', () => {
 
   test('should render with server not running modal for default app and submit', async () => {
     mock.onGet('/server/test-app-1').reply(200);
-    const app = { ...apps[0], id: '', name: 'JupyterLab' };
-    const { baseElement } = render(
+    const defaultAppData = { ...apps[0], id: '', name: 'JupyterLab' };
+    render(
       <RecoilRoot
         initializeState={({ set }) => {
           set(isStartNotRunningOpen, true);
-          set(defaultApp, app);
+          set(defaultApp, defaultAppData);
           set(defaultUser, currentUser);
         }}
       >
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
             <Home />
+            <Toaster />
           </BrowserRouter>
         </QueryClientProvider>
       </RecoilRoot>,
     );
 
     await waitFor(() => {
-      const startModal = within(baseElement).getByTestId(
+      const startModal = within(document.body).getByTestId(
         'StartNotRunningModal',
       );
       expect(startModal).toBeInTheDocument();
     });
 
-    const startBtn = baseElement.querySelector(
-      '#start-btn',
-    ) as HTMLButtonElement;
+    const startBtn = document.querySelector('#start-btn') as HTMLButtonElement;
     await act(async () => {
       startBtn.click();
     });
@@ -549,33 +551,32 @@ describe('Home', () => {
 
   test('should render with server not running modal for default app and not submit', async () => {
     mock.onGet('/server/test-app-1').reply(200);
-    const app = { ...apps[0], id: '', name: 'JupyterLab' };
-    const { baseElement } = render(
+    const defaultAppData = { ...apps[0], id: '', name: 'JupyterLab' };
+    render(
       <RecoilRoot
         initializeState={({ set }) => {
           set(isStartNotRunningOpen, true);
-          set(defaultApp, app);
+          set(defaultApp, defaultAppData);
           set(defaultUser, undefined);
         }}
       >
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
             <Home />
+            <Toaster />
           </BrowserRouter>
         </QueryClientProvider>
       </RecoilRoot>,
     );
 
     await waitFor(() => {
-      const startModal = within(baseElement).getByTestId(
+      const startModal = within(document.body).getByTestId(
         'StartNotRunningModal',
       );
       expect(startModal).toBeInTheDocument();
     });
 
-    const startBtn = baseElement.querySelector(
-      '#start-btn',
-    ) as HTMLButtonElement;
+    const startBtn = document.querySelector('#start-btn') as HTMLButtonElement;
     await act(async () => {
       startBtn.click();
     });
@@ -584,7 +585,7 @@ describe('Home', () => {
 
   test('should render with server not running modal and not submit when no current app', async () => {
     mock.onGet(new RegExp('/server/*')).reply(500, { message: 'Some error' });
-    const { baseElement } = render(
+    render(
       <RecoilRoot
         initializeState={({ set }) => {
           set(isStartNotRunningOpen, true);
@@ -594,21 +595,20 @@ describe('Home', () => {
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
             <Home />
+            <Toaster />
           </BrowserRouter>
         </QueryClientProvider>
       </RecoilRoot>,
     );
 
     await waitFor(() => {
-      const startModal = within(baseElement).getByTestId(
+      const startModal = within(document.body).getByTestId(
         'StartNotRunningModal',
       );
       expect(startModal).toBeInTheDocument();
     });
 
-    const startBtn = baseElement.querySelector(
-      '#start-btn',
-    ) as HTMLButtonElement;
+    const startBtn = document.querySelector('#start-btn') as HTMLButtonElement;
     await act(async () => {
       startBtn.click();
     });
@@ -616,9 +616,9 @@ describe('Home', () => {
   });
 
   test('should render with start modal and submit with success snackbar', async () => {
-    mock.onPost('/server/test-app-1').reply(200); // Mock the start API endpoint
+    mock.onPost('/server/test-app-1').reply(200);
 
-    const { baseElement, getByText } = render(
+    render(
       <RecoilRoot
         initializeState={({ set }) => {
           set(isStartOpen, true);
@@ -628,33 +628,33 @@ describe('Home', () => {
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
             <Home />
+            <Toaster />
           </BrowserRouter>
         </QueryClientProvider>
       </RecoilRoot>,
     );
 
     await waitFor(() => {
-      const startModal = within(baseElement).getByTestId('StartModal');
+      const startModal = within(document.body).getByTestId('StartModal');
       expect(startModal).toBeInTheDocument();
     });
 
-    const startBtn = baseElement.querySelector(
-      '#start-btn',
-    ) as HTMLButtonElement;
+    const startBtn = document.querySelector('#start-btn') as HTMLButtonElement;
     await act(async () => {
       startBtn.click();
     });
 
     await waitFor(() => {
-      const snackbar = getByText('App started successfully');
-      expect(snackbar).toBeInTheDocument();
+      expect(
+        within(document.body).getByText('App started successfully'),
+      ).toBeInTheDocument();
     });
   });
 
   test('should render with stop modal and submit with success snackbar', async () => {
-    mock.onDelete('/server/test-app-1').reply(200); // Mock the stop API endpoint
+    mock.onDelete('/server/test-app-1').reply(200);
 
-    const { baseElement, getByText } = render(
+    render(
       <RecoilRoot
         initializeState={({ set }) => {
           set(isStopOpen, true);
@@ -664,30 +664,33 @@ describe('Home', () => {
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
             <Home />
+            <Toaster />
           </BrowserRouter>
         </QueryClientProvider>
       </RecoilRoot>,
     );
 
     await waitFor(() => {
-      const stopModal = within(baseElement).getByTestId('StopModal');
+      const stopModal = within(document.body).getByTestId('StopModal');
       expect(stopModal).toBeInTheDocument();
     });
 
-    const stopBtn = baseElement.querySelector('#stop-btn') as HTMLButtonElement;
+    const stopBtn = document.querySelector('#stop-btn') as HTMLButtonElement;
     await act(async () => {
       stopBtn.click();
     });
 
     await waitFor(() => {
-      const snackbar = getByText('Server stopped successfully');
-      expect(snackbar).toBeInTheDocument();
+      expect(
+        within(document.body).getByText('Server stopped successfully'),
+      ).toBeInTheDocument();
     });
   });
-  test('should render with delete modal and submit with success snackbar', async () => {
-    mock.onDelete('/server/test-app-1').reply(200); // Mock the delete API endpoint
 
-    const { baseElement, getByText } = render(
+  test('should render with delete modal and submit with success snackbar', async () => {
+    mock.onDelete('/server/test-app-1').reply(200);
+
+    render(
       <RecoilRoot
         initializeState={({ set }) => {
           set(isDeleteOpen, true);
@@ -697,17 +700,18 @@ describe('Home', () => {
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
             <Home />
+            <Toaster />
           </BrowserRouter>
         </QueryClientProvider>
       </RecoilRoot>,
     );
 
     await waitFor(() => {
-      const deleteModal = within(baseElement).getByTestId('DeleteModal');
+      const deleteModal = within(document.body).getByTestId('DeleteModal');
       expect(deleteModal).toBeInTheDocument();
     });
 
-    const deleteBtn = baseElement.querySelector(
+    const deleteBtn = document.querySelector(
       '#delete-btn',
     ) as HTMLButtonElement;
     await act(async () => {
@@ -715,15 +719,16 @@ describe('Home', () => {
     });
 
     await waitFor(() => {
-      const snackbar = getByText('App deleted successfully');
-      expect(snackbar).toBeInTheDocument();
+      expect(
+        within(document.body).getByText('App deleted successfully'),
+      ).toBeInTheDocument();
     });
   });
 
   test('should show 403 error snackbar when trying to start a shared app', async () => {
-    mock.onPost('/server/test-app-1').reply(403); // Mocking 403 Forbidden for shared app
+    mock.onPost('/server/test-app-1').reply(403);
 
-    const { baseElement, getByText } = render(
+    render(
       <RecoilRoot
         initializeState={({ set }) => {
           set(isStartOpen, true);
@@ -737,43 +742,41 @@ describe('Home', () => {
             shared: true,
             last_activity: new Date(),
             status: 'Ready',
-          }); // App is shared
+          });
         }}
       >
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
             <Home />
+            <Toaster />
           </BrowserRouter>
         </QueryClientProvider>
       </RecoilRoot>,
     );
 
-    // Modal should be present
     await waitFor(() => {
-      const startModal = within(baseElement).getByTestId('StartModal');
+      const startModal = within(document.body).getByTestId('StartModal');
       expect(startModal).toBeInTheDocument();
     });
 
-    // Simulate clicking the Start button
-    const startBtn = baseElement.querySelector(
-      '#start-btn',
-    ) as HTMLButtonElement;
+    const startBtn = document.querySelector('#start-btn') as HTMLButtonElement;
     await act(async () => {
       startBtn.click();
     });
 
-    // Expect the snackbar to display the 403 Forbidden error message
     await waitFor(() => {
-      const snackbar = getByText(
-        /You don't have permission to start this app. Please ask the owner to start it./,
-      );
-      expect(snackbar).toBeInTheDocument();
+      expect(
+        within(document.body).getByText(
+          /You don't have permission to start this app. Please ask the owner to start it./,
+        ),
+      ).toBeInTheDocument();
     });
   });
-  test('should show 403 error snackbar when trying to stop a shared app', async () => {
-    mock.onDelete('/server/test-app-1').reply(403); // Mocking 403 Forbidden for shared app
 
-    const { baseElement, getByText } = render(
+  test('should show 403 error snackbar when trying to stop a shared app', async () => {
+    mock.onDelete('/server/test-app-1').reply(403);
+
+    render(
       <RecoilRoot
         initializeState={({ set }) => {
           set(isStopOpen, true);
@@ -787,37 +790,37 @@ describe('Home', () => {
             shared: true,
             last_activity: new Date(),
             status: 'Running',
-          }); // App is shared
+          });
         }}
       >
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
             <Home />
+            <Toaster />
           </BrowserRouter>
         </QueryClientProvider>
       </RecoilRoot>,
     );
 
-    // Modal should be present
     await waitFor(() => {
-      const stopModal = within(baseElement).getByTestId('StopModal');
+      const stopModal = within(document.body).getByTestId('StopModal');
       expect(stopModal).toBeInTheDocument();
     });
 
-    // Simulate clicking the Stop button
-    const stopBtn = baseElement.querySelector('#stop-btn') as HTMLButtonElement;
+    const stopBtn = document.querySelector('#stop-btn') as HTMLButtonElement;
     await act(async () => {
       stopBtn.click();
     });
 
-    // Expect the snackbar to display the 403 Forbidden error message
     await waitFor(() => {
-      const snackbar = getByText(
-        /You don't have permission to stop this app. Please ask the owner/,
-      );
-      expect(snackbar).toBeInTheDocument();
+      expect(
+        within(document.body).getByText(
+          /You don't have permission to stop this app. Please ask the owner/,
+        ),
+      ).toBeInTheDocument();
     });
   });
+
   test('should include creator name as query parameter when starting app', async () => {
     const creatorName = 'userx';
     const appId = 'test-app-1';
@@ -827,7 +830,7 @@ describe('Home', () => {
       return [200];
     });
 
-    const { baseElement } = render(
+    render(
       <RecoilRoot
         initializeState={({ set }) => {
           set(isStartOpen, true);
@@ -848,14 +851,13 @@ describe('Home', () => {
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
             <Home />
+            <Toaster />
           </BrowserRouter>
         </QueryClientProvider>
       </RecoilRoot>,
     );
 
-    const startBtn = baseElement.querySelector(
-      '#start-btn',
-    ) as HTMLButtonElement;
+    const startBtn = document.querySelector('#start-btn') as HTMLButtonElement;
     await act(async () => {
       startBtn.click();
     });

@@ -1,21 +1,25 @@
-import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
-import EditRoundedIcon from '@mui/icons-material/EditRounded';
-import GroupRoundedIcon from '@mui/icons-material/GroupRounded';
-import LockRoundedIcon from '@mui/icons-material/LockRounded';
-import PlayCircleRoundedIcon from '@mui/icons-material/PlayCircleRounded';
-import PublicRoundedIcon from '@mui/icons-material/PublicRounded';
-import StopCircleRoundedIcon from '@mui/icons-material/StopCircleRounded';
-import { Box, Button, Chip } from '@mui/material';
-import Paper from '@mui/material/Paper';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
 import { StatusChip } from '@src/components';
+import { Badge } from '@src/components/ui/badge';
+import { Button } from '@src/components/ui/button';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@src/components/ui/table';
 import type { JhApp } from '@src/types/jupyterhub';
 import { API_BASE_URL } from '@src/utils/constants';
+import {
+  CirclePlay,
+  CircleStop,
+  Globe,
+  Lock,
+  Pencil,
+  Trash2,
+  Users,
+} from 'lucide-react';
 import type React from 'react';
 import { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
@@ -46,7 +50,7 @@ export const AppTable = ({ apps }: AppTableProps): React.ReactElement => {
   const serverStatus = apps.map((app) => app.status);
   useEffect(() => {
     if (serverStatus) {
-      setAppStatus(serverStatus.join(', ')); // Convert the array of strings to a single string
+      setAppStatus(serverStatus.join(', '));
     }
   }, [serverStatus, setNotification]);
 
@@ -55,139 +59,134 @@ export const AppTable = ({ apps }: AppTableProps): React.ReactElement => {
   }, [apps]);
 
   const getIcon = (isPublic: boolean, isShared: boolean) => {
-    if (isPublic)
+    if (isPublic) {
       return (
-        <PublicRoundedIcon
-          data-testid="PublicRoundedIcon"
-          fontSize="small"
-          className="align-vertical-center"
+        <Globe
+          data-testid="public-icon"
+          className="inline-block h-4 w-4 align-middle"
         />
       );
-    if (isShared)
+    }
+    if (isShared) {
       return (
-        <GroupRoundedIcon
-          data-testid="GroupRoundedIcon"
-          fontSize="small"
-          className="align-vertical-center"
+        <Users
+          data-testid="group-icon"
+          className="inline-block h-4 w-4 align-middle"
         />
       );
+    }
     return (
-      <LockRoundedIcon
-        data-testid="LockRoundedIcon"
-        fontSize="small"
-        className="align-vertical-center"
+      <Lock
+        data-testid="lock-icon"
+        className="inline-block h-4 w-4 align-middle"
       />
     );
   };
 
   return (
-    <>
-      <Box sx={{ height: '100%', width: '100%' }}>
-        <TableContainer component={Paper}>
-          <Table sx={{ minWidth: 650 }} aria-label="App table">
-            <TableHead>
-              <TableRow className="app-header">
-                <TableCell>Name</TableCell>
-                <TableCell>Status</TableCell>
-                <TableCell>Created by</TableCell>
-                <TableCell>Tags</TableCell>
-                <TableCell>Actions</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {updatedApps.map((app) => (
-                <TableRow
-                  key={app.id}
-                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                >
-                  <TableCell component="th" scope="row">
-                    {getIcon(app.public, app.shared)}
-                    <span className="inline relative icon-text">
-                      {app.name}
-                    </span>
-                  </TableCell>
-                  <TableCell>
-                    <StatusChip status={app.status} size="medium" />
-                  </TableCell>
-                  <TableCell>{app.username}</TableCell>
-                  <TableCell>
-                    <Chip
-                      label={app.framework}
-                      variant="outlined"
-                      size="medium"
-                    />
-                  </TableCell>
-                  <TableCell>
-                    {app.status === 'Running' ? (
-                      <Button
-                        onClick={() => {
-                          setIsStopOpen(true);
-                          setCurrentApp(app);
-                        }}
-                        aria-label="Stop"
-                        color="inherit"
-                        size="small"
-                        className="action-button"
-                        data-testid="StopCircleRoundedIcon"
-                        disabled={app.shared}
-                      >
-                        <StopCircleRoundedIcon />
-                      </Button>
-                    ) : (
-                      <Button
-                        onClick={() => {
-                          setIsStartOpen(true);
-                          setCurrentApp(app);
-                        }}
-                        aria-label="Start"
-                        color="inherit"
-                        size="small"
-                        className="action-button"
-                        data-testid="PlayCircleRoundedIcon"
-                        disabled={
-                          app.status === 'Pending' || app.status === 'Unknown'
-                        }
-                        style={{ borderRadius: '50%', minWidth: 'none' }}
-                      >
-                        <PlayCircleRoundedIcon />
-                      </Button>
-                    )}
-                    <Button
-                      onClick={() =>
-                        (window.location.href = `${API_BASE_URL}/edit-app?id=${app.id}`)
-                      }
-                      aria-label="Edit"
-                      color="inherit"
-                      size="small"
-                      className="action-button"
-                      data-testid="EditRoundedIcon"
-                      disabled={app.shared}
-                      style={{ borderRadius: '50%', minWidth: 'none' }}
-                    >
-                      <EditRoundedIcon />
-                    </Button>
+    <div className="h-full w-full">
+      <div className="rounded-md border border-border bg-background shadow-lg">
+        <Table aria-label="App table" className="min-w-[650px]">
+          <TableHeader>
+            <TableRow className="app-header">
+              <TableHead className="font-semibold text-foreground">
+                Name
+              </TableHead>
+              <TableHead className="font-semibold text-foreground">
+                Status
+              </TableHead>
+              <TableHead className="font-semibold text-foreground">
+                Created by
+              </TableHead>
+              <TableHead className="font-semibold text-foreground">
+                Tags
+              </TableHead>
+              <TableHead className="font-semibold text-foreground">
+                Actions
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {updatedApps.map((app) => (
+              <TableRow key={app.id}>
+                <TableCell>
+                  {getIcon(app.public, app.shared)}
+                  <span className="icon-text inline relative">{app.name}</span>
+                </TableCell>
+                <TableCell>
+                  <StatusChip status={app.status} size="medium" />
+                </TableCell>
+                <TableCell>{app.username}</TableCell>
+                <TableCell>
+                  <Badge variant="outline">{app.framework}</Badge>
+                </TableCell>
+                <TableCell>
+                  {app.status === 'Running' ? (
                     <Button
                       onClick={() => {
-                        setIsDeleteOpen(true);
+                        setIsStopOpen(true);
                         setCurrentApp(app);
                       }}
-                      aria-label="Delete"
-                      color="inherit"
-                      size="small"
+                      aria-label="Stop"
+                      variant="ghost"
+                      size="icon"
                       className="action-button"
-                      data-testid="DeleteRoundedIcon"
+                      data-testid="stop-button"
                       disabled={app.shared}
-                      style={{ borderRadius: '50%', minWidth: 'none' }}
                     >
-                      <DeleteRoundedIcon />
+                      <CircleStop />
                     </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </Box>
-    </>
+                  ) : (
+                    <Button
+                      onClick={() => {
+                        setIsStartOpen(true);
+                        setCurrentApp(app);
+                      }}
+                      aria-label="Start"
+                      variant="ghost"
+                      size="icon"
+                      className="action-button"
+                      data-testid="start-button"
+                      disabled={
+                        app.status === 'Pending' || app.status === 'Unknown'
+                      }
+                    >
+                      <CirclePlay />
+                    </Button>
+                  )}
+                  <Button
+                    onClick={() =>
+                      (window.location.href = `${API_BASE_URL}/edit-app?id=${app.id}`)
+                    }
+                    aria-label="Edit"
+                    variant="ghost"
+                    size="icon"
+                    className="action-button"
+                    data-testid="edit-button"
+                    disabled={app.shared}
+                  >
+                    <Pencil />
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      setIsDeleteOpen(true);
+                      setCurrentApp(app);
+                    }}
+                    aria-label="Delete"
+                    variant="ghost"
+                    size="icon"
+                    className="action-button"
+                    data-testid="delete-button"
+                    disabled={app.shared}
+                  >
+                    <Trash2 />
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+    </div>
   );
 };

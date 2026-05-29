@@ -1,15 +1,6 @@
-import AddIcon from '@mui/icons-material/AddRounded';
-import SearchIcon from '@mui/icons-material/Search';
-import {
-  Box,
-  Button,
-  Divider,
-  Grid,
-  Stack,
-  TextField,
-  Typography,
-} from '@mui/material';
-import InputAdornment from '@mui/material/InputAdornment';
+import { Button } from '@src/components/ui/button';
+import { InputWithIcon } from '@src/components/ui/input-with-icon';
+import { Separator } from '@src/components/ui/separator';
 import type { JhApp } from '@src/types/jupyterhub';
 import type { UserState } from '@src/types/user';
 import axios from '@src/utils/axios';
@@ -20,6 +11,7 @@ import {
   getApps,
 } from '@src/utils/jupyterhub';
 import { useQuery } from '@tanstack/react-query';
+import { Plus, Search } from 'lucide-react';
 import type React from 'react';
 import { type SyntheticEvent, useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
@@ -33,7 +25,6 @@ import {
   currentSortValue as defaultSortValue,
   currentUser as defaultUser,
 } from '../../../store';
-import { Item } from '../../../styles/styled-item';
 import { AppFilters } from './app-filters/app-filters';
 import { AppGrid } from './app-grid/app-grid';
 import { AppTable } from './app-table/app-table';
@@ -42,7 +33,6 @@ export const AppsSection = (): React.ReactElement => {
   const [apps, setApps] = useState<JhApp[]>([]);
   const [, setAppStatus] = useState('');
   const [currentUser] = useRecoilState<UserState | undefined>(defaultUser);
-  const [focused, setFocused] = useState(false);
   const [, setCurrentNotification] = useRecoilState<string | undefined>(
     currentNotification,
   );
@@ -59,7 +49,7 @@ export const AppsSection = (): React.ReactElement => {
   const [currentServerStatuses] = useRecoilState<string[]>(
     defaultServerStatuses,
   );
-  const toggleView = () => setIsGridViewActive((prev) => !prev); // Added toggleView function
+  const toggleView = () => setIsGridViewActive((prev) => !prev);
 
   const {
     isLoading,
@@ -101,7 +91,7 @@ export const AppsSection = (): React.ReactElement => {
   useEffect(() => {
     const serverStatus = apps.map((app) => app.status);
     if (serverStatus) {
-      setAppStatus(serverStatus.join(', ')); // Convert the array of strings to a single string
+      setAppStatus(serverStatus.join(', '));
     }
   }, [apps, setNotification, setAppStatus]);
 
@@ -110,7 +100,7 @@ export const AppsSection = (): React.ReactElement => {
       const appsWithStatus = getApps(serverData, 'all', currentUser?.name ?? '')
         .map((app) => ({
           ...app,
-          status: getAppStatus(app), // Compute and assign the status here
+          status: getAppStatus(app),
         }))
         .sort((a, b) => {
           return a.last_activity > b.last_activity ? -1 : 1;
@@ -128,131 +118,59 @@ export const AppsSection = (): React.ReactElement => {
   }, [error, setCurrentNotification]);
 
   return (
-    <>
-      <Box>
-        <Stack>
-          <Item>
-            <Grid container spacing={2} alignItems="center">
-              <Grid item xs={12} md={4} sx={{ padding: '0' }}>
-                <Item>
-                  <Typography component="h2" variant="h6">
-                    App Library
-                  </Typography>
-                </Item>
-              </Grid>
-              <Grid
-                alignItems="center"
-                container
-                item
-                xs={12}
-                md={8}
-                direction="row"
-                sx={{
-                  display: 'flex',
-                  flexWrap: 'nowrap',
-                  justifyContent: { xs: 'flex-start', md: 'flex-end' },
-                }}
-              >
-                <Item>
-                  <TextField
-                    id="search"
-                    size="small"
-                    placeholder="Search Apps..."
-                    aria-label="Search for an app"
-                    onChange={handleSearch}
-                    onFocus={() => setFocused(true)}
-                    onBlur={() => setFocused(false)}
-                    sx={{
-                      my: '0',
-                      width: { sm: '200px', md: '300px', lg: '600px' },
-                      mr: '16px',
-                      color: 'rgba(15, 16, 21, 0.56)',
-                      backgroundColor: '#fff',
-                      '& .MuiOutlinedInput-root': {
-                        '& fieldset': {
-                          borderColor: 'rgba(15, 16, 21, 0.12)',
-                        },
-                        '&:hover fieldset': {
-                          borderColor: 'rgba(15, 16, 21, 0.56)',
-                        },
-                        '&.Mui-focused fieldset': {
-                          borderColor: '#ba18da',
-                        },
-                      },
-                    }}
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          {!focused && (
-                            <SearchIcon
-                              style={{ fill: 'rgba(15, 16, 21, 0.56)' }}
-                            />
-                          )}
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                </Item>
-                <Item>
-                  <Button
-                    id="create-app"
-                    variant="contained"
-                    color="primary"
-                    size="large"
-                    startIcon={<AddIcon />}
-                    onClick={() => {
-                      window.location.href = `${API_BASE_URL}/create-app`;
-                    }}
-                  >
-                    Deploy App
-                  </Button>
-                </Item>
-              </Grid>
-            </Grid>
-          </Item>
-          <Item sx={{ pt: '16px', pb: '24px' }}>
-            <Divider />
-          </Item>
-          <Item>
-            {serverData && currentUser ? (
-              <AppFilters
-                data={serverData}
-                currentUser={currentUser}
-                setApps={setApps}
-                isGridViewActive={isGridViewActive}
-                toggleView={toggleView} // Added toggleView function
-              />
-            ) : (
-              <></>
-            )}
-          </Item>
-          <Item>
-            <Box
-              sx={{
-                display: 'flex',
-                flexDirection: 'row',
-                flexWrap: 'wrap',
-                gap: 2,
-                rowGap: 2,
-                justifyContent: 'flex-start',
-                paddingBottom: '48px',
+    <section>
+      <div className="flex flex-col">
+        <div className="flex flex-wrap items-center gap-4">
+          <h2 className="flex-1 text-xl font-bold">App Library</h2>
+          <div className="flex items-center gap-4">
+            <InputWithIcon
+              id="search"
+              placeholder="Search Apps..."
+              aria-label="Search for an app"
+              onChange={handleSearch}
+              startIcon={<Search className="h-4 w-4" />}
+              containerClassName="w-[200px] md:w-[300px] lg:w-[600px]"
+              className="bg-background"
+            />
+            <Button
+              id="create-app"
+              variant="default"
+              size="lg"
+              onClick={() => {
+                window.location.href = `${API_BASE_URL}/create-app`;
               }}
             >
-              {isLoading ? (
-                <div className="font-bold">Loading...</div>
-              ) : apps.length > 0 ? (
-                isGridViewActive ? (
-                  <AppGrid apps={apps} />
-                ) : (
-                  <AppTable apps={apps} />
-                )
-              ) : (
-                <div>No apps available</div>
-              )}
-            </Box>
-          </Item>
-        </Stack>
-      </Box>
-    </>
+              <Plus className="h-4 w-4" />
+              Deploy App
+            </Button>
+          </div>
+        </div>
+        <div className="pt-4 pb-6">
+          <Separator />
+        </div>
+        {serverData && currentUser ? (
+          <AppFilters
+            data={serverData}
+            currentUser={currentUser}
+            setApps={setApps}
+            isGridViewActive={isGridViewActive}
+            toggleView={toggleView}
+          />
+        ) : null}
+        <div className="flex flex-row flex-wrap items-start gap-4 pb-12">
+          {isLoading ? (
+            <div className="font-bold">Loading...</div>
+          ) : apps.length > 0 ? (
+            isGridViewActive ? (
+              <AppGrid apps={apps} />
+            ) : (
+              <AppTable apps={apps} />
+            )
+          ) : (
+            <div>No apps available</div>
+          )}
+        </div>
+      </div>
+    </section>
   );
 };

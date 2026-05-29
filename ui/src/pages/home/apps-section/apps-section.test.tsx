@@ -148,6 +148,6 @@ describe('AppsSection', () => {
     await act(async () => {
       fireEvent.click(button);
     });
-    expect(baseElement.querySelector('.MuiTable-root')).toBeTruthy();
+    expect(baseElement.querySelector('table')).toBeTruthy();
   });
 });

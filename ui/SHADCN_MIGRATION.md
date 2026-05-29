@@ -241,13 +241,13 @@ Migrate the home page and its subtree (filters, table, grid, services). Replace 
 **Design source**: Figma — Home, AppFilters, AppTable, AppGrid, ServicesSection, ServiceGrid, confirmation dialogs (start/stop/delete), toast notifications.
 
 ### Files
-- [ ] `ui/src/pages/home/apps-section/app-filters/app-filters.tsx` — fold `ui/src/styles/styled-filter-button.tsx` into a shadcn Button variant from Figma.
-- [ ] `ui/src/pages/home/apps-section/app-table/app-table.tsx` — Table → shadcn Table; drop Paper. **Replace MUI-icon test ids** (e.g. `data-testid="PublicRoundedIcon"`) with neutral ids set by us.
-- [ ] `ui/src/pages/home/apps-section/app-grid/app-grid.tsx` — Grid → Tailwind grid.
-- [ ] `ui/src/pages/home/apps-section/apps-section.tsx`
-- [ ] `ui/src/pages/home/services-section/services-section.tsx`
-- [ ] `ui/src/pages/home/services-section/service-grid/service-grid.tsx`
-- [ ] `ui/src/pages/home/home.tsx` — replace `Snackbar`/`Alert` state with `toast()` from Sonner; replace confirmation `Dialog`s with shadcn `Dialog`; drop `SvgIcon` wrapper for the custom check icon.
+- [x] `ui/src/pages/home/apps-section/app-filters/app-filters.tsx` — fold `ui/src/styles/styled-filter-button.tsx` into a shadcn Button variant from Figma.
+- [x] `ui/src/pages/home/apps-section/app-table/app-table.tsx` — Table → shadcn Table; drop Paper. **Replace MUI-icon test ids** (e.g. `data-testid="PublicRoundedIcon"`) with neutral ids set by us.
+- [x] `ui/src/pages/home/apps-section/app-grid/app-grid.tsx` — Grid → Tailwind grid.
+- [x] `ui/src/pages/home/apps-section/apps-section.tsx`
+- [x] `ui/src/pages/home/services-section/services-section.tsx`
+- [x] `ui/src/pages/home/services-section/service-grid/service-grid.tsx`
+- [x] `ui/src/pages/home/home.tsx` — replace `Snackbar`/`Alert` state with `toast()` from Sonner; replace confirmation `Dialog`s with shadcn `Dialog`; drop `SvgIcon` wrapper for the custom check icon.
 
 ### Done when
 - Visual parity with Figma at all breakpoints, table view + grid view + services.
