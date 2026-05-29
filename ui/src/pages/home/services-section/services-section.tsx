@@ -1,4 +1,4 @@
-import { Box, Divider, Grid, Stack, Typography } from '@mui/material';
+import { Separator } from '@src/components/ui/separator';
 import type { JhApp, JhServiceApp, JhServiceFull } from '@src/types/jupyterhub';
 import type { UserState } from '@src/types/user';
 import axios from '@src/utils/axios';
@@ -11,7 +11,6 @@ import {
   currentNotification,
   currentUser as defaultUser,
 } from '../../../store';
-import { Item } from '../../../styles/styled-item';
 import { ServiceGrid } from './service-grid/service-grid';
 
 export const ServicesSection = (): React.ReactElement => {
@@ -81,43 +80,22 @@ export const ServicesSection = (): React.ReactElement => {
   }, [servicesError, appsError, setCurrentNotification]);
 
   return (
-    <Box>
-      <Stack>
-        <Item>
-          <Grid container spacing={2}>
-            <Grid item xs={12} md={4}>
-              <Item>
-                <Typography component="h2" variant="h6">
-                  Quick Access
-                </Typography>
-              </Item>
-            </Grid>
-          </Grid>
-        </Item>
-        <Item sx={{ pt: '16px', pb: '24px' }}>
-          <Divider />
-        </Item>
-        <Item>
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: 'row',
-              flexWrap: 'wrap',
-              gap: '16px',
-              justifyContent: 'flex-start',
-              paddingBottom: '48px',
-            }}
-          >
-            {servicesLoading || appsLoading ? (
-              <div className="font-bold">Loading...</div>
-            ) : services.length > 0 || apps.length > 0 ? (
-              <ServiceGrid services={services} apps={apps} />
-            ) : (
-              <div>No services available</div>
-            )}
-          </Box>
-        </Item>
-      </Stack>
-    </Box>
+    <section>
+      <div className="flex flex-col">
+        <h2 className="text-xl font-bold">Quick Access</h2>
+        <div className="pt-4 pb-6">
+          <Separator />
+        </div>
+        <div className="flex flex-row flex-wrap items-start gap-4 pb-12">
+          {servicesLoading || appsLoading ? (
+            <div className="font-bold">Loading...</div>
+          ) : services.length > 0 || apps.length > 0 ? (
+            <ServiceGrid services={services} apps={apps} />
+          ) : (
+            <div>No services available</div>
+          )}
+        </div>
+      </div>
+    </section>
   );
 };

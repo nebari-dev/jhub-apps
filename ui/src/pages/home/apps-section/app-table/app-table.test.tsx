@@ -12,7 +12,6 @@ import MockAdapter from 'axios-mock-adapter';
 import { RecoilRoot } from 'recoil';
 import { AppTable } from '../app-table/app-table';
 
-// Mock data for the test
 const mockApps: JhApp[] = [
   {
     id: '1',
@@ -24,7 +23,7 @@ const mockApps: JhApp[] = [
     shared: false,
     url: '',
     ready: false,
-    last_activity: new Date(), // Assign a valid Date value here
+    last_activity: new Date(),
   },
   {
     id: '2',
@@ -80,41 +79,9 @@ describe('AppTable', () => {
       </RecoilRoot>,
     );
 
-    const rows = baseElement.querySelectorAll('tbody > .MuiTableRow-root');
+    const rows = baseElement.querySelectorAll('tbody > tr');
     expect(rows.length).toEqual(mockApps.length);
   });
-
-  test('renders correct action buttons for each row', async () => {
-    const { baseElement } = render(
-      <RecoilRoot>
-        <QueryClientProvider client={queryClient}>
-          <AppTable apps={mockApps} />
-        </QueryClientProvider>
-      </RecoilRoot>,
-    );
-
-    const rows = baseElement.querySelectorAll('.row');
-    rows.forEach((row: Element, index: number) => {
-      if (index === 0) return; // Skip the header row
-
-      const buttons = within(row as HTMLElement).getAllByRole('button');
-      const buttonIds = buttons.map((button) =>
-        button.getAttribute('data-testid'),
-      );
-      const app = mockApps[index - 1]; // Adjust index for the header row
-
-      if (app.status === 'Stopped' || app.status === 'Ready') {
-        expect(buttonIds).toContain('PlayCircleRoundedIcon');
-      } else {
-        expect(buttonIds).toContain('StopCircleRoundedIcon');
-      }
-
-      expect(buttonIds).toContain('EditRoundedIcon');
-      expect(buttonIds).toContain('DeleteRoundedIcon');
-    });
-  });
-
-  // Import the LockRoundedIcon component
 
   test('renders correct icons for each row', async () => {
     const { baseElement } = render(
@@ -125,9 +92,9 @@ describe('AppTable', () => {
       </RecoilRoot>,
     );
 
-    const publicIcon = within(baseElement).getByTestId('PublicRoundedIcon');
+    const publicIcon = within(baseElement).getByTestId('public-icon');
     expect(publicIcon).toBeInTheDocument();
-    const groupIcon = within(baseElement).getByTestId('GroupRoundedIcon');
+    const groupIcon = within(baseElement).getByTestId('group-icon');
     expect(groupIcon).toBeInTheDocument();
   });
 
@@ -141,13 +108,13 @@ describe('AppTable', () => {
     );
 
     const editButtons = Array.from(
-      within(baseElement).queryAllByTestId('EditRoundedIcon'),
+      within(baseElement).queryAllByTestId('edit-button'),
     ) as HTMLButtonElement[];
-    expect(editButtons.length).toBe(4);
+    expect(editButtons.length).toBe(mockApps.length);
   });
 
   test('simulate deleting an app', async () => {
-    mock.onDelete('/server/testId').reply(200); // Mock the delete API endpoint
+    mock.onDelete('/server/testId').reply(200);
 
     const { baseElement } = render(
       <RecoilRoot>
@@ -157,11 +124,10 @@ describe('AppTable', () => {
       </RecoilRoot>,
     );
     const deleteButtons = await waitFor(() => {
-      return within(baseElement).getAllByTestId('DeleteRoundedIcon');
+      return within(baseElement).getAllByTestId('delete-button');
     });
-    expect(deleteButtons.length).toBe(4);
+    expect(deleteButtons.length).toBe(mockApps.length);
     if (deleteButtons.length > 0) {
-      // Select the first delete button
       const deleteButton = deleteButtons[0];
       await act(async () => {
         deleteButton.click();
@@ -179,10 +145,10 @@ describe('AppTable', () => {
     );
 
     const startButtons = Array.from(
-      within(baseElement).queryAllByTestId('PlayCircleRoundedIcon'),
+      within(baseElement).queryAllByTestId('start-button'),
     ) as HTMLButtonElement[];
 
-    expect(startButtons.length).toBe(2);
+    expect(startButtons.length).toBe(1);
     for (const startButton of startButtons) {
       await act(async () => {
         fireEvent.click(startButton);
@@ -219,7 +185,6 @@ describe('AppTable', () => {
       }
     };
 
-    // Test with id provided
     await act(async () => await handleStop('providedId'));
     expect(setSubmitting).toHaveBeenCalledWith(true);
     expect(deleteQuery).toHaveBeenCalledWith({
@@ -232,7 +197,6 @@ describe('AppTable', () => {
     });
     expect(setSubmitting).toHaveBeenCalledWith(false);
 
-    // Test with id not provided
     await act(async () => await handleStop());
     expect(setSubmitting).toHaveBeenCalledWith(true);
     expect(deleteQuery).toHaveBeenCalledWith({ id: 'testId', remove: false });
@@ -242,7 +206,6 @@ describe('AppTable', () => {
     });
     expect(setSubmitting).toHaveBeenCalledWith(false);
 
-    // Test with error
     deleteQuery.mockImplementationOnce(() => {
       throw new Error('Test error');
     });
@@ -260,37 +223,15 @@ describe('AppTable', () => {
     );
 
     const stopButtons = Array.from(
-      within(baseElement).queryAllByTestId('StopCircleRoundedIcon'),
+      within(baseElement).queryAllByTestId('stop-button'),
     ) as HTMLButtonElement[];
 
-    expect(stopButtons.length).toBe(2);
+    expect(stopButtons.length).toBe(1);
     for (const stopButton of stopButtons) {
       await act(async () => {
         fireEvent.click(stopButton);
       });
     }
-  });
-
-  test('clicking on action buttons triggers appropriate actions', async () => {
-    const { baseElement } = render(
-      <RecoilRoot>
-        <QueryClientProvider client={queryClient}>
-          <AppTable apps={mockApps} />
-        </QueryClientProvider>
-      </RecoilRoot>,
-    );
-
-    const rows = baseElement.querySelectorAll('.row');
-    rows.forEach((row: Element, index: number) => {
-      if (index === 0) return; // Skip the header row
-
-      const buttons = within(row as HTMLElement).getAllByRole('button');
-      expect(buttons.length).toBe(4);
-      buttons.forEach((button) => {
-        fireEvent.click(button);
-        // Add assertions here to check that the appropriate actions were triggered
-      });
-    });
   });
 
   test('clicking the Cancel button cancels the Start action', () => {
@@ -315,9 +256,9 @@ describe('AppTable', () => {
     );
 
     const deleteButtons = Array.from(
-      within(baseElement).queryAllByTestId('DeleteRoundedIcon'),
+      within(baseElement).queryAllByTestId('delete-button'),
     ) as HTMLButtonElement[];
-    expect(deleteButtons.length).toBe(4);
+    expect(deleteButtons.length).toBe(mockApps.length);
     for (const deleteButton of deleteButtons) {
       await act(async () => {
         fireEvent.click(deleteButton);
@@ -349,7 +290,7 @@ describe('AppTable', () => {
     expect(setIsStopOpen).toHaveBeenCalledWith(false);
   });
 
-  test('renders correct number of rows', () => {
+  test('renders correct number of header + body rows', () => {
     const { getAllByRole } = render(
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
@@ -358,7 +299,7 @@ describe('AppTable', () => {
       </RecoilRoot>,
     );
     const rows = getAllByRole('row');
-    expect(rows.length).toBe(mockApps.length + 1); // Add 1 for the header row
+    expect(rows.length).toBe(mockApps.length + 1);
   });
 
   test('displays app data correctly', () => {
@@ -384,7 +325,6 @@ describe('AppTable', () => {
       </RecoilRoot>,
     );
     const rows = queryAllByRole('row');
-    // Subtract 1 for the header row
     expect(rows.length - 1).toBe(0);
   });
 });

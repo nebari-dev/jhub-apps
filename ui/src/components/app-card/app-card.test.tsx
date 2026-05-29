@@ -2,6 +2,7 @@ import { app, environments, frameworks, profiles } from '@src/data/api';
 import axios from '@src/utils/axios';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, render, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import MockAdapter from 'axios-mock-adapter';
 import { RecoilRoot } from 'recoil';
 import AppCard from './app-card';
@@ -59,7 +60,7 @@ describe('AppCard', () => {
       </RecoilRoot>,
     );
     expect(baseElement).toBeInTheDocument();
-    const appLabel = baseElement.querySelector('.MuiTypography-h5');
+    const appLabel = baseElement.querySelector('.card-title');
     expect(appLabel).toHaveTextContent('Test App');
     expect(baseElement).toHaveTextContent('Pending');
   });
@@ -80,7 +81,7 @@ describe('AppCard', () => {
       </RecoilRoot>,
     );
     expect(baseElement).toBeInTheDocument();
-    const appLabel = baseElement.querySelector('.MuiTypography-h5');
+    const appLabel = baseElement.querySelector('.card-title');
     expect(appLabel).toHaveTextContent('Test App');
   });
 
@@ -101,9 +102,9 @@ describe('AppCard', () => {
       </RecoilRoot>,
     );
     expect(baseElement).toBeInTheDocument();
-    const appLabel = baseElement.querySelector('.MuiTypography-h5');
+    const appLabel = baseElement.querySelector('.card-title');
     expect(appLabel).toHaveTextContent('Test App');
-    const author = baseElement.querySelector('.MuiTypography-body2');
+    const author = baseElement.querySelector('.card-description-service');
     expect(author).not.toHaveTextContent('Developer');
   });
 
@@ -124,7 +125,7 @@ describe('AppCard', () => {
         </QueryClientProvider>
       </RecoilRoot>,
     );
-    const appLabel = baseElement.querySelector('.MuiTypography-h5');
+    const appLabel = baseElement.querySelector('.card-title');
     expect(appLabel).toHaveTextContent('Test App');
     const img = baseElement.querySelector('img');
     expect(img).toHaveAttribute('src', '/some-thumbnail.png');
@@ -150,21 +151,17 @@ describe('AppCard', () => {
       </RecoilRoot>,
     );
 
-    const menu = baseElement.querySelectorAll(
-      '.MuiButtonBase-root',
-    )[0] as HTMLButtonElement;
+    const menu = baseElement.querySelector(
+      '[data-testid="context-menu-button-card-menu-1"]',
+    ) as HTMLButtonElement;
     expect(menu).toBeInTheDocument();
-    await act(async () => {
-      menu.click();
-    });
+    await userEvent.setup().click(menu);
 
     const btn = baseElement.querySelectorAll(
-      '.MuiList-root li.MuiButtonBase-root',
-    )[0] as HTMLAnchorElement;
+      '[role="menuitem"]',
+    )[0] as HTMLElement;
     expect(btn).toBeInTheDocument();
-    await act(async () => {
-      btn.click();
-    });
+    await userEvent.setup().click(btn);
   });
 
   test('simulates starting an app', async () => {
@@ -186,22 +183,18 @@ describe('AppCard', () => {
       </RecoilRoot>,
     );
 
-    const menu = baseElement.querySelectorAll(
-      '.MuiButtonBase-root',
-    )[0] as HTMLButtonElement;
-    await act(async () => {
-      menu.click();
-    });
+    const menu = baseElement.querySelector(
+      '[data-testid="context-menu-button-card-menu-1"]',
+    ) as HTMLButtonElement;
+    await userEvent.setup().click(menu);
 
     const btn = baseElement.querySelectorAll(
-      '.MuiList-root li.MuiButtonBase-root',
-    )[0] as HTMLAnchorElement;
+      '[role="menuitem"]',
+    )[0] as HTMLElement;
     expect(btn).toBeInTheDocument();
     expect(btn).toHaveTextContent('Start');
     expect(btn).not.toHaveAttribute('disabled', 'disabled');
-    await act(async () => {
-      btn.click();
-    });
+    await userEvent.setup().click(btn);
 
     // Start
     const startBtn = await waitFor(
@@ -234,19 +227,15 @@ describe('AppCard', () => {
       </RecoilRoot>,
     );
 
-    const menu = baseElement.querySelectorAll(
-      '.MuiButtonBase-root',
-    )[0] as HTMLButtonElement;
-    await act(async () => {
-      menu.click();
-    });
+    const menu = baseElement.querySelector(
+      '[data-testid="context-menu-button-card-menu-1"]',
+    ) as HTMLButtonElement;
+    await userEvent.setup().click(menu);
 
     const btn = baseElement.querySelectorAll(
-      '.MuiList-root li.MuiButtonBase-root',
-    )[1] as HTMLAnchorElement;
-    await act(async () => {
-      btn.click();
-    });
+      '[role="menuitem"]',
+    )[1] as HTMLElement;
+    await userEvent.setup().click(btn);
   });
 
   test('simulates stopping an app', async () => {
@@ -268,22 +257,18 @@ describe('AppCard', () => {
       </RecoilRoot>,
     );
 
-    const menu = baseElement.querySelectorAll(
-      '.MuiButtonBase-root',
-    )[0] as HTMLButtonElement;
-    await act(async () => {
-      menu.click();
-    });
+    const menu = baseElement.querySelector(
+      '[data-testid="context-menu-button-card-menu-1"]',
+    ) as HTMLButtonElement;
+    await userEvent.setup().click(menu);
 
     const btn = baseElement.querySelectorAll(
-      '.MuiList-root li.MuiButtonBase-root',
-    )[1] as HTMLAnchorElement;
+      '[role="menuitem"]',
+    )[1] as HTMLElement;
     expect(btn).toBeInTheDocument();
     expect(btn).toHaveTextContent('Stop');
     expect(btn).not.toHaveAttribute('disabled', 'disabled');
-    await act(async () => {
-      btn.click();
-    });
+    await userEvent.setup().click(btn);
 
     const stopBtn = await waitFor(
       () => baseElement.querySelector('#stop-btn') as HTMLButtonElement,
@@ -326,22 +311,18 @@ describe('AppCard', () => {
       </RecoilRoot>,
     );
 
-    const menu = baseElement.querySelectorAll(
-      '.MuiButtonBase-root',
-    )[0] as HTMLButtonElement;
-    await act(async () => {
-      menu.click();
-    });
+    const menu = baseElement.querySelector(
+      '[data-testid="context-menu-button-card-menu-1"]',
+    ) as HTMLButtonElement;
+    await userEvent.setup().click(menu);
 
     const btn = baseElement.querySelectorAll(
-      '.MuiList-root li.MuiButtonBase-root',
-    )[2] as HTMLAnchorElement;
+      '[role="menuitem"]',
+    )[2] as HTMLElement;
     expect(btn).toBeInTheDocument();
     expect(btn).toHaveTextContent('Edit');
     expect(btn).not.toHaveAttribute('disabled', 'disabled');
-    await act(async () => {
-      btn.click();
-    });
+    await userEvent.setup().click(btn);
     // TODO: Update this test when everything is running in single react app
     expect(window.location.pathname).not.toBe('/edit-app/app-1');
   });
@@ -369,22 +350,18 @@ describe('AppCard', () => {
       </RecoilRoot>,
     );
 
-    const menu = baseElement.querySelectorAll(
-      '.MuiButtonBase-root',
-    )[0] as HTMLButtonElement;
-    await act(async () => {
-      menu.click();
-    });
+    const menu = baseElement.querySelector(
+      '[data-testid="context-menu-button-card-menu-1"]',
+    ) as HTMLButtonElement;
+    await userEvent.setup().click(menu);
 
     const btn = baseElement.querySelectorAll(
-      '.MuiList-root li.MuiButtonBase-root',
-    )[2] as HTMLAnchorElement;
+      '[role="menuitem"]',
+    )[2] as HTMLElement;
     expect(btn).toBeInTheDocument();
     expect(btn).toHaveTextContent('Edit');
     expect(btn).not.toHaveAttribute('disabled', 'disabled');
-    await act(async () => {
-      btn.click();
-    });
+    await userEvent.setup().click(btn);
     // TODO: Update this test when everything is running in single react app
     expect(window.location.pathname).not.toBe('/edit-app/app-1');
   });
@@ -408,22 +385,18 @@ describe('AppCard', () => {
       </RecoilRoot>,
     );
 
-    const menu = baseElement.querySelectorAll(
-      '.MuiButtonBase-root',
-    )[0] as HTMLButtonElement;
-    await act(async () => {
-      menu.click();
-    });
+    const menu = baseElement.querySelector(
+      '[data-testid="context-menu-button-card-menu-1"]',
+    ) as HTMLButtonElement;
+    await userEvent.setup().click(menu);
 
     const btn = baseElement.querySelectorAll(
-      '.MuiList-root li.MuiButtonBase-root',
-    )[3] as HTMLAnchorElement;
+      '[role="menuitem"]',
+    )[3] as HTMLElement;
     expect(btn).toBeInTheDocument();
     expect(btn).toHaveTextContent('Delete');
     expect(btn).not.toHaveAttribute('disabled', 'disabled');
-    await act(async () => {
-      btn.click();
-    });
+    await userEvent.setup().click(btn);
   });
 
   test('simulates deleting an app', async () => {
@@ -445,30 +418,22 @@ describe('AppCard', () => {
       </RecoilRoot>,
     );
 
-    const menu = baseElement.querySelectorAll(
-      '.MuiButtonBase-root',
-    )[0] as HTMLButtonElement;
-    await act(async () => {
-      menu.click();
-    });
+    const menu = baseElement.querySelector(
+      '[data-testid="context-menu-button-card-menu-1"]',
+    ) as HTMLButtonElement;
+    await userEvent.setup().click(menu);
 
     const btn = baseElement.querySelectorAll(
-      '.MuiList-root li.MuiButtonBase-root',
-    )[3] as HTMLAnchorElement;
+      '[role="menuitem"]',
+    )[3] as HTMLElement;
     expect(btn).toBeInTheDocument();
     expect(btn).toHaveTextContent('Delete');
     expect(btn).not.toHaveAttribute('disabled', 'disabled');
-    await act(async () => {
-      btn.click();
-    });
+    await userEvent.setup().click(btn);
 
-    await act(async () => {
-      menu.click();
-    });
+    await userEvent.setup().click(menu);
 
-    await act(async () => {
-      btn.click();
-    });
+    await userEvent.setup().click(btn);
 
     const deleteBtn = await waitFor(
       () => baseElement.querySelector('#delete-btn') as HTMLButtonElement,
@@ -500,19 +465,15 @@ describe('AppCard', () => {
       </RecoilRoot>,
     );
 
-    const menu = baseElement.querySelectorAll(
-      '.MuiButtonBase-root',
-    )[0] as HTMLButtonElement;
-    await act(async () => {
-      menu.click();
-    });
+    const menu = baseElement.querySelector(
+      '[data-testid="context-menu-button-card-menu-1"]',
+    ) as HTMLButtonElement;
+    await userEvent.setup().click(menu);
 
     const btn = baseElement.querySelectorAll(
-      '.MuiList-root li.MuiButtonBase-root',
-    )[0] as HTMLAnchorElement;
-    await act(async () => {
-      btn.click();
-    });
+      '[role="menuitem"]',
+    )[0] as HTMLElement;
+    await userEvent.setup().click(btn);
 
     const deleteBtn = await waitFor(
       () => baseElement.querySelector('#delete-btn') as HTMLButtonElement,
@@ -526,7 +487,7 @@ describe('AppCard', () => {
   });
 
   // icon tests:
-  test('returns PublicRoundedIcon when isPublic is true', () => {
+  test('renders public icon when isPublic is true', () => {
     const { getByTestId } = render(
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
@@ -541,10 +502,10 @@ describe('AppCard', () => {
         </QueryClientProvider>
       </RecoilRoot>,
     );
-    expect(getByTestId('PublicRoundedIcon')).toBeInTheDocument();
+    expect(getByTestId('app-card-icon-public')).toBeInTheDocument();
   });
 
-  test('returns GroupRoundedIcon when isShared is true', () => {
+  test('renders shared icon when isShared is true', () => {
     const { getByTestId } = render(
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
@@ -559,10 +520,10 @@ describe('AppCard', () => {
         </QueryClientProvider>
       </RecoilRoot>,
     );
-    expect(getByTestId('GroupRoundedIcon')).toBeInTheDocument();
+    expect(getByTestId('app-card-icon-shared')).toBeInTheDocument();
   });
 
-  test('returns LockRoundedIcon when both isPublic and isShared are false', () => {
+  test('renders private icon when both isPublic and isShared are false', () => {
     const { getByTestId } = render(
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
@@ -576,7 +537,7 @@ describe('AppCard', () => {
         </QueryClientProvider>
       </RecoilRoot>,
     );
-    expect(getByTestId('LockRoundedIcon')).toBeInTheDocument();
+    expect(getByTestId('app-card-icon-private')).toBeInTheDocument();
   });
   test('renders context menu with start, stop, edit, and delete actions', async () => {
     const { getByTestId, getByText } = render(
@@ -614,9 +575,7 @@ describe('AppCard', () => {
 
     // Open context menu first
     const contextMenuButton = getByTestId('context-menu-button-card-menu-1');
-    act(() => {
-      contextMenuButton.click();
-    });
+    await userEvent.setup().click(contextMenuButton);
 
     const startMenuItem = await waitFor(() => getByText('Start'));
     const stopMenuItem = getByText('Stop');
@@ -664,9 +623,7 @@ describe('AppCard', () => {
 
     // Open context menu first
     const contextMenuButton = getByTestId('context-menu-button-card-menu-1');
-    act(() => {
-      contextMenuButton.click();
-    });
+    await userEvent.setup().click(contextMenuButton);
 
     const stopMenuItem = await waitFor(() => getByText('Stop'));
     expect(stopMenuItem).toBeInTheDocument();
@@ -738,9 +695,7 @@ describe('AppCard', () => {
 
     // Open context menu first
     const contextMenuButton = getByTestId('context-menu-button-card-menu-1');
-    act(() => {
-      contextMenuButton.click();
-    });
+    await userEvent.setup().click(contextMenuButton);
 
     const editMenuItem = await waitFor(() => getByText('Edit'));
     const deleteMenuItem = getByText('Delete');

@@ -54,7 +54,7 @@ describe('NotRunning', () => {
     await act(async () => {
       expect(baseElement).toBeTruthy();
       expect(
-        baseElement.querySelector('.MuiCircularProgress-root'),
+        baseElement.querySelector('[data-testid="not-running-spinner"]'),
       ).toBeTruthy();
     });
   });

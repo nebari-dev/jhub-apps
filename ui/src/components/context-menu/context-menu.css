@@ -16,17 +16,3 @@
   width: 24px;
   z-index: 2;
 }
-
-.context-menu button {
-  top: -11px;
-  right: 21px;
-}
-
-.context-menu button:hover,
-.context-menu button:focus {
-  background-color: transparent;
-}
-
-.context-menu-list {
-  width: 151px;
-}

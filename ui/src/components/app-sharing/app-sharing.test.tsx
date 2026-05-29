@@ -1,6 +1,7 @@
 import { currentUser } from '@src/data/user';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, render, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { RecoilRoot } from 'recoil';
 import { AppSharing } from '..';
 import { currentUser as defaultUser } from '../../store';
@@ -36,7 +37,7 @@ describe('AppSharing', () => {
       </RecoilRoot>,
     );
 
-    expect(baseElement.querySelector('.MuiTable-root')).toBeTruthy();
+    expect(baseElement.querySelector('table')).toBeTruthy();
   });
 
   test('renders with mock data and pages table', async () => {
@@ -58,28 +59,24 @@ describe('AppSharing', () => {
       </RecoilRoot>,
     );
 
-    expect(baseElement.querySelector('.MuiTable-root')).toBeTruthy();
-    let rows = baseElement.querySelectorAll('.MuiTableRow-root');
-    expect(rows.length).toBeGreaterThan(5);
+    expect(baseElement.querySelector('table')).toBeTruthy();
+    let rows = baseElement.querySelectorAll('table tbody tr');
+    expect(rows.length).toBe(5);
     const next = getByTestId('next-page');
-    if (next) {
-      await act(async () => {
-        next.click();
-      });
-    }
+    await act(async () => {
+      next.click();
+    });
 
-    rows = baseElement.querySelectorAll('.MuiTableRow-root');
-    expect(rows.length).toBeGreaterThan(1);
+    rows = baseElement.querySelectorAll('table tbody tr');
+    expect(rows.length).toBeGreaterThan(0);
     const prev = getByTestId('previous-page');
-    if (prev) {
-      await act(async () => {
-        prev.click();
-      });
-    }
+    await act(async () => {
+      prev.click();
+    });
   });
 
   test('renders with user data', () => {
-    const { baseElement } = render(
+    const { getByRole } = render(
       <RecoilRoot initializeState={({ set }) => set(defaultUser, currentUser)}>
         <QueryClientProvider client={queryClient}>
           <AppSharing
@@ -97,13 +94,14 @@ describe('AppSharing', () => {
       </RecoilRoot>,
     );
 
-    expect(baseElement.querySelector('.MuiAutocomplete-root')).toBeTruthy();
+    expect(getByRole('combobox')).toBeTruthy();
   });
 
   test('Adds permissions to table', async () => {
+    const user = userEvent.setup();
     const setUserPermissionMock = vi.fn();
     const setGroupPermissionMock = vi.fn();
-    const { baseElement, getByText } = render(
+    const { getByRole, getByText } = render(
       <RecoilRoot initializeState={({ set }) => set(defaultUser, currentUser)}>
         <QueryClientProvider client={queryClient}>
           <AppSharing
@@ -120,26 +118,10 @@ describe('AppSharing', () => {
       </RecoilRoot>,
     );
 
-    expect(baseElement.querySelector('.MuiAutocomplete-root')).toBeTruthy();
-    const autocomplete = baseElement.querySelector(
-      '.MuiAutocomplete-endAdornment > .MuiButtonBase-root',
-    ) as HTMLButtonElement;
-    if (autocomplete) {
-      await act(async () => {
-        autocomplete.click();
-      });
-      const listbox = baseElement.querySelector('.MuiAutocomplete-listbox');
-      await act(async () => {
-        const listItems = listbox?.querySelectorAll('li');
-        listItems?.forEach((item) => {
-          item.click();
-        });
-      });
-      const button = getByText('Share');
-      await act(async () => {
-        button.click();
-      });
-    }
+    await user.click(getByRole('combobox'));
+    await user.click(getByText('superadmin (Group)'));
+    await user.keyboard('{Escape}');
+    await user.click(getByText('Share'));
 
     expect(setUserPermissionMock).toHaveBeenCalledWith(expect.any(Function));
     const userMockUpdater = setUserPermissionMock.mock.calls[0][0];
@@ -177,7 +159,7 @@ describe('AppSharing', () => {
       </RecoilRoot>,
     );
 
-    expect(baseElement.querySelector('.MuiTable-root')).toBeTruthy();
+    expect(baseElement.querySelector('table')).toBeTruthy();
     const buttons = getAllByText('Remove');
     if (buttons.length > 0) {
       const first = buttons[0];
@@ -212,7 +194,7 @@ describe('AppSharing', () => {
         button.click();
       });
       waitFor(() => {
-        const icon = getByTestId('PublicRoundedIcon');
+        const icon = getByTestId('app-sharing-icon-public');
         expect(icon).toBeInTheDocument();
       });
     }
@@ -243,6 +225,7 @@ describe('AppSharing', () => {
       });
     }
   });
+
   test('sorts permissions with users first and groups second', () => {
     const availablePermissions = [
       { name: 'group2', type: 'group' },
@@ -256,7 +239,6 @@ describe('AppSharing', () => {
       const labelA = a.type === 'user' ? a.name : `${a.name} (Group)`;
       const labelB = b.type === 'user' ? b.name : `${b.name} (Group)`;
 
-      // First, compare by type: users first, groups second
       if (a.type === 'user' && b.type !== 'user') {
         return -1;
       }

@@ -1,4 +1,3 @@
-import { CssBaseline, ThemeProvider } from '@mui/material';
 import { API_BASE_URL, APP_BASE_URL } from '@src/utils/constants.ts';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import React from 'react';
@@ -6,8 +5,9 @@ import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
 import { App } from './App.tsx';
+import { Toaster } from './components/ui/sonner';
+import { TooltipProvider } from './components/ui/tooltip';
 import './index.css';
-import { theme } from './theme/theme.tsx';
 
 const currentUrl = new URL(window.location.href);
 const queryClient = new QueryClient();
@@ -20,12 +20,12 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
       }
     >
       <RecoilRoot>
-        <ThemeProvider theme={theme}>
-          <CssBaseline />
-          <QueryClientProvider client={queryClient}>
+        <QueryClientProvider client={queryClient}>
+          <TooltipProvider>
             <App />
-          </QueryClientProvider>
-        </ThemeProvider>
+            <Toaster />
+          </TooltipProvider>
+        </QueryClientProvider>
       </RecoilRoot>
     </BrowserRouter>
   </React.StrictMode>,

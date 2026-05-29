@@ -31,11 +31,13 @@
 
     /* Paths */
     "paths": {
-      "src/*": ["./src/*"],
       "@src/components": ["./src/components"],
+      "@src/components/*": ["./src/components/*"],
       "@src/data/*": ["./src/data/*"],
       "@src/hooks/*": ["./src/hooks/*"],
+      "@src/lib/*": ["./src/lib/*"],
       "@src/pages/*": ["./src/pages/*"],
+      "@src/styles/*": ["./src/styles/*"],
       "@src/types/*": ["./src/types/*"],
       "@src/utils/*": ["./src/utils/*"]
     }

@@ -48,10 +48,10 @@ describe('EnvironmentVariables', () => {
       />,
     );
 
-    const button = getAllByTestId('CloseRoundedIcon')[0];
+    const button = getAllByTestId('env-var-remove')[0];
     if (button) {
       await act(async () => {
-        (button.parentNode as HTMLButtonElement)?.click();
+        (button as HTMLButtonElement).click();
       });
     }
 
@@ -70,7 +70,7 @@ describe('EnvironmentVariables', () => {
     );
     let input = baseElement.querySelector(
       '#environment-variable-key-0',
-    ) as HTMLButtonElement;
+    ) as HTMLInputElement;
     if (input) {
       await act(async () => {
         fireEvent.change(input, { target: { value: 'new key' } });
@@ -80,7 +80,7 @@ describe('EnvironmentVariables', () => {
 
     input = baseElement.querySelector(
       '#environment-variable-value-0',
-    ) as HTMLButtonElement;
+    ) as HTMLInputElement;
     if (input) {
       await act(async () => {
         fireEvent.change(input, { target: { value: 'new value' } });

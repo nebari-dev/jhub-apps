@@ -1,88 +1,30 @@
-import ContentCopyRoundedIcon from '@mui/icons-material/ContentCopyRounded';
-import GroupRoundedIcon from '@mui/icons-material/GroupRounded';
-import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
-import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
-import PublicRoundedIcon from '@mui/icons-material/PublicRounded';
-import WarningRoundedIcon from '@mui/icons-material/WarningRounded';
+import { Alert } from '@src/components/ui/alert';
+import { Button } from '@src/components/ui/button';
+import { Combobox } from '@src/components/ui/combobox';
+import { DataTablePagination } from '@src/components/ui/data-table-pagination';
+import { InputWithIcon } from '@src/components/ui/input-with-icon';
+import { Switch } from '@src/components/ui/switch';
 import {
-  Alert,
-  Autocomplete,
-  Box,
-  Button,
-  ClickAwayListener,
-  FormControlLabel,
-  IconButton,
-  InputAdornment,
-  Paper,
-  Stack,
-  Switch,
   Table,
   TableBody,
   TableCell,
-  TableContainer,
-  TableFooter,
-  TablePagination,
   TableRow,
-  TextField,
+} from '@src/components/ui/table';
+import {
   Tooltip,
-  Typography,
-} from '@mui/material';
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@src/components/ui/tooltip';
 import type { SharePermissions } from '@src/types/api';
 import type { AppSharingItem } from '@src/types/form';
 import type { UserState } from '@src/types/user';
 import { getFullAppUrl } from '@src/utils/jupyterhub';
+import { Copy, Globe, TriangleAlert, Users } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { currentUser as defaultUser } from '../../store';
-import { Item } from '../../styles/styled-item';
 import './app-sharing.css';
-
-interface TablePaginationActionsProps {
-  count: number;
-  page: number;
-  rowsPerPage: number;
-  onPageChange: (
-    event: React.MouseEvent<HTMLButtonElement>,
-    newPage: number,
-  ) => void;
-}
-
-function TablePaginationActions(props: TablePaginationActionsProps) {
-  const { count, page, rowsPerPage, onPageChange } = props;
-
-  const handleBackButtonClick = (
-    event: React.MouseEvent<HTMLButtonElement>,
-  ) => {
-    onPageChange(event, page - 1);
-  };
-
-  const handleNextButtonClick = (
-    event: React.MouseEvent<HTMLButtonElement>,
-  ) => {
-    onPageChange(event, page + 1);
-  };
-
-  return (
-    <Box sx={{ flexShrink: 0, ml: 2.5 }}>
-      <IconButton
-        onClick={handleBackButtonClick}
-        disabled={page === 0}
-        aria-label="previous page"
-        data-testid="previous-page"
-      >
-        <KeyboardArrowLeft />
-      </IconButton>
-      <IconButton
-        onClick={handleNextButtonClick}
-        disabled={page >= Math.ceil(count / rowsPerPage) - 1}
-        aria-label="next page"
-        data-testid="next-page"
-      >
-        <KeyboardArrowRight />
-      </IconButton>
-    </Box>
-  );
-}
 
 interface AppSharingProps {
   url?: string;
@@ -119,7 +61,6 @@ export const AppSharing = ({
     const labelA = a.type === 'user' ? a.name : `${a.name} (Group)`;
     const labelB = b.type === 'user' ? b.name : `${b.name} (Group)`;
 
-    // First, compare by type: users first, groups second
     if (a.type === 'user' && b.type !== 'user') {
       return -1;
     }
@@ -148,18 +89,8 @@ export const AppSharing = ({
     setSelectedValue([]);
   };
 
-  const handleChangePage = (
-    event: React.MouseEvent<HTMLButtonElement> | null,
-    newPage: number,
-  ) => {
-    if (event) {
-      setPage(newPage);
-    }
-  };
-
-  // Get users and groups available to the current user
   useEffect(() => {
-    if (currentUser && currentUser.share_permissions) {
+    if (currentUser?.share_permissions) {
       const usersAndGroups: AppSharingItem[] = [];
       usersAndGroups.push(
         ...(currentUser.share_permissions.users.map((user) => ({
@@ -177,7 +108,6 @@ export const AppSharing = ({
     }
   }, [currentUser]);
 
-  // Set users and groups added to current item
   useEffect(() => {
     if (permissions) {
       const usersAndGroups: AppSharingItem[] = [];
@@ -197,327 +127,211 @@ export const AppSharing = ({
     }
   }, [permissions]);
 
+  const pagedItems = currentItems.slice(
+    page * rowsPerPage,
+    page * rowsPerPage + rowsPerPage,
+  );
+
   return (
-    <Box id="app-sharing">
-      <Stack direction="column">
-        {currentUser?.share_permissions ? (
-          <>
-            <Item>
-              <Alert
-                id="sharing-notification"
-                severity="warning"
-                icon={
-                  <WarningRoundedIcon
-                    sx={{ color: '#EAB54E', top: '-2px', position: 'relative' }}
-                  />
-                }
-                sx={{ mb: '16px', position: 'relative' }}
+    <div id="app-sharing" className="flex flex-col">
+      {currentUser?.share_permissions ? (
+        <>
+          <div>
+            <Alert
+              id="sharing-notification"
+              variant="warning"
+              className="relative mb-4 pl-12"
+            >
+              <TriangleAlert
+                className="absolute left-4 top-4 h-5 w-5"
+                style={{ color: '#EAB54E' }}
+              />
+              {message}
+            </Alert>
+          </div>
+          <div className="pb-2">
+            <h6 className="pb-0 text-base font-normal">
+              Individuals and group access
+            </h6>
+            <div className="flex w-full flex-row items-start gap-2 py-4">
+              <div
+                className="flex flex-row justify-start"
+                style={{ width: 510 }}
               >
-                {message}
-              </Alert>
-            </Item>
-            <Item sx={{ pb: '8px' }}>
-              <Typography variant="subtitle1" sx={{ fontWeight: 400, pb: 0 }}>
-                Individuals and group access
-              </Typography>
-              <Box
-                sx={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  width: '100%',
-                  gap: '8px',
-                  py: '16px',
-                }}
-              >
-                <Box
-                  sx={{
-                    display: 'flex',
-                    flexDirection: 'row',
-                    justifyContent: 'flex-start',
+                <Combobox<AppSharingItem>
+                  id="share-permissions-autocomplete"
+                  options={sortedPermissions}
+                  value={selectedValue}
+                  multiple
+                  getOptionLabel={(option) =>
+                    option.type === 'user'
+                      ? option.name
+                      : `${option.name} (Group)`
+                  }
+                  getOptionKey={(option) => `${option.type}:${option.name}`}
+                  placeholder="Search one or more usernames or group names"
+                  searchPlaceholder="Search…"
+                  triggerClassName="border-input"
+                  onChange={(value) => {
+                    setCurrentShare(value);
+                    setSelectedValue(value);
                   }}
+                />
+              </div>
+              <div className="my-auto flex flex-row justify-end">
+                <Button
+                  type="button"
+                  variant="default"
+                  onClick={handleShare}
+                  disabled={currentShare.length === 0}
+                  className="h-[42px] px-[22px] py-2"
                 >
-                  <Autocomplete
-                    disablePortal
-                    id="share-permissions-autocomplete"
-                    options={sortedPermissions}
-                    getOptionLabel={(option) =>
-                      option.type === 'user'
-                        ? option.name
-                        : `${option.name} (Group)`
-                    }
-                    multiple
-                    disableCloseOnSelect
-                    clearOnBlur
-                    limitTags={2}
-                    sx={{ width: 510 }}
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        placeholder={
-                          selectedValue.length > 0
-                            ? undefined
-                            : 'Search one or more usernames or group names'
-                        }
-                      />
-                    )}
-                    value={selectedValue}
-                    onChange={(event, value) => {
-                      if (event && value) {
-                        setCurrentShare(value);
-                        setSelectedValue(value);
-                      }
-                    }}
-                  />
-                </Box>
-                <Box
-                  sx={{
-                    display: 'flex',
-                    flexDirection: 'row',
-                    justifyContent: 'flex-end',
-                    margin: 'auto auto',
-                  }}
-                >
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={handleShare}
-                    disabled={currentShare.length === 0}
-                    sx={{ height: '42px', px: '22px', py: '8px' }}
-                  >
-                    Share
-                  </Button>
-                </Box>
-              </Box>
-            </Item>
-            {currentItems.length > 0 ? (
-              <Item sx={{ pb: '20px' }}>
-                <Paper elevation={0}>
-                  <TableContainer>
-                    <Table aria-label="Individuals and Groups" size="small">
-                      <TableBody>
-                        {currentItems
-                          .slice(
-                            page * rowsPerPage,
-                            page * rowsPerPage + rowsPerPage,
-                          )
-                          .map((item) => (
-                            <TableRow
-                              key={item.name}
-                              sx={{
-                                '&:last-child td, &:last-child th': {
-                                  border: 0,
-                                },
-                              }}
-                            >
-                              <TableCell
-                                component="td"
-                                scope="row"
-                                sx={{ fontSize: '16px' }}
-                              >
-                                {item.name}{' '}
-                                {item.type === 'group' ? (
-                                  <span style={{ fontWeight: 600 }}>
-                                    {' '}
-                                    (Group)
-                                  </span>
-                                ) : (
-                                  <></>
-                                )}
-                              </TableCell>
-                              <TableCell align="right">
-                                <Button
-                                  variant="text"
-                                  color="error"
-                                  size="small"
-                                  sx={{ fontWeight: '600', fontSize: '14px' }}
-                                  onClick={() => {
-                                    setCurrentItems((prev) =>
-                                      prev.filter((i) => i.name !== item.name),
-                                    );
-                                    if (item.type === 'group') {
-                                      setCurrentGroupPermissions((prev) =>
-                                        prev.filter((i) => i !== item.name),
-                                      );
-                                    } else {
-                                      setCurrentUserPermissions((prev) =>
-                                        prev.filter((i) => i !== item.name),
-                                      );
-                                    }
-                                  }}
-                                >
-                                  Remove
-                                </Button>
-                              </TableCell>
-                            </TableRow>
-                          ))}
-                      </TableBody>
-                      <TableFooter>
-                        <TableRow>
-                          <TablePagination
-                            colSpan={2}
-                            count={currentItems.length}
-                            rowsPerPage={rowsPerPage}
-                            rowsPerPageOptions={[
-                              5,
-                              10,
-                              25,
-                              { label: 'All', value: -1 },
-                            ]}
-                            page={page}
-                            showFirstButton={false}
-                            showLastButton={false}
-                            width="500px"
-                            slotProps={{
-                              select: {
-                                inputProps: {
-                                  'aria-label': 'rows per page',
-                                  width: '500px',
-                                },
-                                native: false,
-                              },
-                            }}
-                            onPageChange={handleChangePage}
-                            ActionsComponent={TablePaginationActions}
-                          />
-                        </TableRow>
-                      </TableFooter>
-                    </Table>
-                  </TableContainer>
-                </Paper>
-              </Item>
+                  Share
+                </Button>
+              </div>
+            </div>
+          </div>
+          {currentItems.length > 0 ? (
+            <div className="pb-5">
+              <Table aria-label="Individuals and Groups">
+                <TableBody>
+                  {pagedItems.map((item) => (
+                    <TableRow
+                      key={item.name}
+                      className="hover:bg-transparent [&>td]:border-0 [&>td]:px-2 [&>td]:py-1"
+                    >
+                      <TableCell className="text-base">
+                        {item.name}{' '}
+                        {item.type === 'group' ? (
+                          <span className="font-semibold"> (Group)</span>
+                        ) : null}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className="text-destructive font-semibold text-sm hover:bg-transparent hover:text-destructive"
+                          onClick={() => {
+                            setCurrentItems((prev) =>
+                              prev.filter((i) => i.name !== item.name),
+                            );
+                            if (item.type === 'group') {
+                              setCurrentGroupPermissions((prev) =>
+                                prev.filter((i) => i !== item.name),
+                              );
+                            } else {
+                              setCurrentUserPermissions((prev) =>
+                                prev.filter((i) => i !== item.name),
+                              );
+                            }
+                          }}
+                        >
+                          Remove
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+              <DataTablePagination
+                count={currentItems.length}
+                page={page}
+                rowsPerPage={rowsPerPage}
+                hideLabel
+                onPageChange={setPage}
+              />
+            </div>
+          ) : null}
+        </>
+      ) : null}
+      <div className="flex flex-col">
+        <div className="pt-2">
+          <label
+            htmlFor="is-public"
+            className="flex items-center justify-between gap-2 text-sm"
+          >
+            <span>Public access</span>
+            <Switch
+              id="is-public"
+              checked={isPublic}
+              onCheckedChange={() => setIsPublic(!isPublic)}
+            />
+          </label>
+        </div>
+        <div className="px-4 pb-1 pt-4">
+          <div className="flex flex-row items-center gap-2 pb-2">
+            {isPublic ? (
+              <>
+                <Globe
+                  className="h-6 w-6"
+                  data-testid="app-sharing-icon-public"
+                />
+                <p className="text-base">Link sharing public</p>
+              </>
             ) : (
-              <></>
+              <>
+                <Users
+                  className="h-6 w-6"
+                  data-testid="app-sharing-icon-restricted"
+                />
+                <p className="text-base">Link sharing restricted</p>
+              </>
             )}
-          </>
-        ) : (
-          <></>
-        )}
-        <Item>
-          <Box>
-            <Paper elevation={0}>
-              <Stack direction="column">
-                <Item sx={{ pt: '8px' }}>
-                  <FormControlLabel
-                    control={
-                      <Switch
-                        id="is-public"
-                        checked={isPublic}
-                        onChange={() => setIsPublic(!isPublic)}
-                      />
-                    }
-                    label="Public access"
-                    labelPlacement="start"
-                  />
-                </Item>
-                <Item sx={{ px: '16px', pt: '16px', pb: '4px' }}>
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      flexDirection: 'row',
-                      gap: '8px',
-                      pb: '8px',
-                    }}
-                  >
-                    {isPublic ? (
-                      <>
-                        <PublicRoundedIcon
-                          sx={{
-                            fontSize: '24px',
-                          }}
-                        />
-                        <Typography variant="body1">
-                          Link sharing public
-                        </Typography>
-                      </>
-                    ) : (
-                      <>
-                        <GroupRoundedIcon
-                          sx={{
-                            fontSize: '24px',
-                          }}
-                        />
-                        <Typography variant="body1">
-                          Link sharing restricted
-                        </Typography>
-                      </>
-                    )}
-                  </Box>
-                </Item>
-                <Item sx={{ pl: '16px', pb: '16px' }}>
-                  {isPublic ? (
-                    <Typography variant="body2">
-                      This app is accessible to{' '}
-                      <Typography
-                        component="span"
-                        variant="body2"
-                        color="error"
+          </div>
+        </div>
+        <div className="pb-4 pl-4">
+          {isPublic ? (
+            <p className="text-sm">
+              This app is accessible to{' '}
+              <span className="text-destructive">
+                anyone via its link and sign in is not required.
+              </span>
+            </p>
+          ) : (
+            <p className="text-sm">
+              This app is accessible to you and the people added above via its
+              link.
+            </p>
+          )}
+        </div>
+        {url ? (
+          <div className="p-4 pt-0">
+            <TooltipProvider>
+              <Tooltip open={tooltipOpen} onOpenChange={setTooltipOpen}>
+                <InputWithIcon
+                  id="sharing-link"
+                  placeholder="http://"
+                  aria-label="Sharing link"
+                  readOnly
+                  value={getFullAppUrl(url)}
+                  endIcon={
+                    <TooltipTrigger asChild>
+                      <button
+                        type="button"
+                        id="copy-to-clipboard"
+                        aria-label="Copy to clipboard"
+                        className="pointer-events-auto inline-flex h-6 w-6 cursor-pointer items-center justify-center rounded border-0 bg-transparent text-muted-foreground hover:text-foreground"
+                        onClick={() => {
+                          // istanbul ignore next
+                          if (url && window.isSecureContext) {
+                            navigator.clipboard.writeText(getFullAppUrl(url));
+                            setTooltipOpen(true);
+                          }
+                        }}
                       >
-                        anyone via its link and sign in is not required.
-                      </Typography>
-                    </Typography>
-                  ) : (
-                    <Typography variant="body2">
-                      This app is accessible to you and the people added above
-                      via its link.
-                    </Typography>
-                  )}
-                </Item>
-                {url ? (
-                  <Item sx={{ p: '16px', pt: 0 }}>
-                    <TextField
-                      id="sharing-link"
-                      placeholder="http://"
-                      aria-label="Sharing link"
-                      fullWidth
-                      InputProps={{
-                        endAdornment: (
-                          <InputAdornment position="end">
-                            <ClickAwayListener
-                              onClickAway={() => setTooltipOpen(false)}
-                            >
-                              <Tooltip
-                                PopperProps={{
-                                  disablePortal: true,
-                                }}
-                                onClose={() => setTooltipOpen(false)}
-                                open={tooltipOpen}
-                                disableFocusListener
-                                disableHoverListener
-                                disableTouchListener
-                                title="Copied to clipboard!"
-                                placement="top"
-                              >
-                                <IconButton
-                                  id="copy-to-clipboard"
-                                  onClick={() => {
-                                    // istanbul ignore next
-                                    if (url && window.isSecureContext) {
-                                      navigator.clipboard.writeText(
-                                        getFullAppUrl(url),
-                                      );
-                                      setTooltipOpen(true);
-                                    }
-                                  }}
-                                >
-                                  <ContentCopyRoundedIcon />
-                                </IconButton>
-                              </Tooltip>
-                            </ClickAwayListener>
-                          </InputAdornment>
-                        ),
-                      }}
-                      value={getFullAppUrl(url)}
-                    />
-                  </Item>
-                ) : (
-                  <></>
-                )}
-              </Stack>
-            </Paper>
-          </Box>
-        </Item>
-      </Stack>
-    </Box>
+                        <Copy className="h-4 w-4" />
+                      </button>
+                    </TooltipTrigger>
+                  }
+                />
+                <TooltipContent side="top">Copied to clipboard!</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
+        ) : null}
+      </div>
+    </div>
   );
 };
 
