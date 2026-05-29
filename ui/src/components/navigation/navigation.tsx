@@ -174,16 +174,16 @@ export const TopNavigation = (): React.ReactElement => {
             type="button"
             aria-label="open drawer"
             onClick={() => setMobileSheetOpen((prev) => !prev)}
-            className="mr-2 inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border-0 bg-transparent text-brand-black hover:bg-gray-50 sm:hidden"
+            className="mr-2 inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border-0 bg-transparent text-brand-black hover:bg-gray-50 sm:!hidden"
           >
             <Menu className="h-6 w-6" />
           </button>
-          <div className="hidden flex-grow sm:block">
+          <div className="max-sm:hidden flex-grow">
             <a href={APP_BASE_URL}>
               <img id="app-logo" src={getAppLogoUrl()} alt="logo" height="28" />
             </a>
           </div>
-          <div className="hidden sm:block">
+          <div className="max-sm:hidden">
             <DropdownMenu
               open={profileMenuOpen}
               onOpenChange={setProfileMenuOpen}
@@ -243,7 +243,7 @@ export const TopNavigation = (): React.ReactElement => {
         <aside
           data-testid="nav-drawer"
           className={cn(
-            'fixed left-0 top-16 z-[1200] hidden h-[calc(100%-4rem)] w-56 border-r border-border bg-background shadow sm:block',
+            'fixed left-0 top-16 z-[1200] h-[calc(100%-4rem)] w-56 border-r border-border bg-background shadow max-sm:hidden',
           )}
         >
           {drawerContent}
@@ -251,7 +251,7 @@ export const TopNavigation = (): React.ReactElement => {
         <Sheet open={mobileSheetOpen} onOpenChange={setMobileSheetOpen}>
           <SheetContent
             side="left"
-            className="w-56 p-0 sm:hidden"
+            className="w-56 p-0 sm:!hidden"
             data-testid="nav-drawer-mobile"
           >
             {drawerContent}
