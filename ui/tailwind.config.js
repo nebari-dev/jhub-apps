@@ -54,7 +54,8 @@ export default {
           // Hover/active tint of the primary color. Themed via the light
           // primary variant; falls back to the shadcn HSL token in dev/dark.
           DEFAULT: 'var(--primary-color-light, hsl(var(--accent)))',
-          foreground: 'var(--primary-color-dark, hsl(var(--accent-foreground)))',
+          foreground:
+            'var(--primary-color-dark, hsl(var(--accent-foreground)))',
         },
         destructive: {
           DEFAULT: 'hsl(var(--destructive))',
