@@ -12,7 +12,7 @@ const buttonVariants = cva(
       variant: {
         // contained × primary
         default:
-          'bg-primary text-primary-foreground font-bold hover:bg-brand-purple-dark',
+          'bg-primary text-primary-foreground font-bold hover:bg-primary-dark',
         // contained × secondary
         secondary:
           'bg-secondary text-secondary-foreground font-semibold border border-secondary hover:bg-gray-300 hover:border-gray-300',

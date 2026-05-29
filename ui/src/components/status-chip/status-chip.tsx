@@ -25,29 +25,20 @@ interface StatusChipProps {
   size?: 'small' | 'medium';
 }
 
-const getStatusStyles = (status: string): React.CSSProperties => {
+// Tailwind utilities, not inline styles: the config sets `important: true`
+// (to beat JupyterHub's Bootstrap), so the Badge variant's `bg-primary` would
+// override an inline `backgroundColor`. Returning classes lets twMerge drop the
+// default variant's color utilities and apply the status color instead.
+const getStatusClasses = (status: string): string => {
   switch (status) {
     case 'Ready':
-      return {
-        backgroundColor: 'rgb(255, 255, 255)',
-        border: '1px solid rgb(46, 125, 50)',
-        color: 'rgb(46, 125, 50)',
-      };
+      return 'bg-white text-[rgb(46,125,50)] border-[rgb(46,125,50)] hover:bg-white';
     case 'Pending':
-      return {
-        backgroundColor: 'rgb(234, 181, 78)',
-        color: 'black',
-      };
+      return 'bg-[rgb(234,181,78)] text-black border-transparent hover:bg-[rgb(234,181,78)]';
     case 'Running':
-      return {
-        backgroundColor: 'rgb(46, 125, 50)',
-        color: 'white',
-      };
+      return 'bg-[rgb(46,125,50)] text-white border-transparent hover:bg-[rgb(46,125,50)]';
     default:
-      return {
-        backgroundColor: 'rgb(121, 121, 124)',
-        color: 'white',
-      };
+      return 'bg-[rgb(121,121,124)] text-white border-transparent hover:bg-[rgb(121,121,124)]';
   }
 };
 
@@ -71,11 +62,11 @@ export const StatusChip = ({
       data-testid="status-chip"
       data-status={status}
       className={cn(
-        'font-semibold border-transparent rounded-full hover:bg-current/100',
+        'font-semibold rounded-full',
+        getStatusClasses(status),
         sizeClasses,
         hasStopButton ? 'pr-1' : '',
       )}
-      style={getStatusStyles(status)}
     >
       {status === 'Running' && additionalInfo ? (
         app && !app.shared ? (

@@ -200,7 +200,7 @@ export const AppFilters = ({
           <PopoverContent
             id="filters-list"
             align="start"
-            className="w-[450px] p-0"
+            className="w-[560px] p-0"
           >
             <form
               name="filters-form"

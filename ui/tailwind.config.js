@@ -3,6 +3,12 @@ import tailwindcssAnimate from 'tailwindcss-animate';
 /** @type {import('tailwindcss').Config} */
 export default {
   darkMode: 'class',
+  // JupyterHub's wrapper template bundles Bootstrap 5, whose utilities
+  // (.bg-primary, .text-primary, .border-primary, etc.) collide with
+  // Tailwind's and are declared `!important`. Marking Tailwind utilities
+  // `!important` too lets the later-loaded index.css win the tie on source
+  // order, so theming (and all other utilities) apply over Bootstrap.
+  important: true,
   content: ['./index.html', './src/**/*.{ts,tsx}'],
   theme: {
     // Match the MUI default breakpoints currently in use.
@@ -29,8 +35,12 @@ export default {
           foreground: 'hsl(var(--popover-foreground))',
         },
         primary: {
-          DEFAULT: 'hsl(var(--primary))',
+          // Server-injected `--primary-color` (hex) wins; falls back to the
+          // shadcn HSL token so standalone dev mode and dark mode still work.
+          DEFAULT: 'var(--primary-color, hsl(var(--primary)))',
           foreground: 'hsl(var(--primary-foreground))',
+          dark: 'var(--primary-color-dark, #9B00CE)',
+          light: 'var(--primary-color-light, #BA18DA10)',
         },
         secondary: {
           DEFAULT: 'hsl(var(--secondary))',
@@ -41,8 +51,10 @@ export default {
           foreground: 'hsl(var(--muted-foreground))',
         },
         accent: {
-          DEFAULT: 'hsl(var(--accent))',
-          foreground: 'hsl(var(--accent-foreground))',
+          // Hover/active tint of the primary color. Themed via the light
+          // primary variant; falls back to the shadcn HSL token in dev/dark.
+          DEFAULT: 'var(--primary-color-light, hsl(var(--accent)))',
+          foreground: 'var(--primary-color-dark, hsl(var(--accent-foreground)))',
         },
         destructive: {
           DEFAULT: 'hsl(var(--destructive))',
@@ -50,7 +62,13 @@ export default {
         },
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
-        ring: 'hsl(var(--ring))',
+        // Focus ring follows the themed primary color.
+        ring: 'var(--primary-color, hsl(var(--ring)))',
+        // Top header bar — server-injected navbar theme with sensible defaults.
+        navbar: {
+          DEFAULT: 'var(--navbar-background-color, #ffffff)',
+          foreground: 'var(--navbar-text-color, #2E2F33)',
+        },
         // Raw brand palette mirrors src/theme/colors.tsx so Tailwind classes
         // can render exact MUI palette values during coexistence.
         brand: {

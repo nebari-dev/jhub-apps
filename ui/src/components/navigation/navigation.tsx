@@ -121,7 +121,7 @@ export const TopNavigation = (): React.ReactElement => {
           <button
             type="button"
             onClick={() => navigateToUrl(`${APP_BASE_URL}`)}
-            className="relative mx-2 flex w-[calc(100%-1rem)] cursor-pointer items-center rounded-lg border-0 bg-brand-purple-light px-6 py-2 text-left before:absolute before:bottom-0 before:left-0 before:top-0 before:w-2 before:rounded-l-lg before:bg-primary before:content-[''] hover:bg-gray-50"
+            className="relative mx-2 flex w-[calc(100%-1rem)] cursor-pointer items-center rounded-lg border-0 bg-[var(--primary-color-light,#BA18DA10)] px-6 py-2 text-left before:absolute before:bottom-0 before:left-0 before:top-0 before:w-2 before:rounded-l-lg before:bg-[var(--primary-color,#BA18DA)] before:content-[''] hover:bg-gray-50"
           >
             <HomeIcon className="mr-2 h-6 w-6 text-brand-black" />
             <span className="relative top-[2px] text-base font-semibold leading-tight">
@@ -164,7 +164,7 @@ export const TopNavigation = (): React.ReactElement => {
     <div hidden={isHeadless}>
       <header
         id="app-bar"
-        className="fixed inset-x-0 top-0 z-[1201] bg-white shadow-sm"
+        className="fixed inset-x-0 top-0 z-[1201] bg-navbar shadow-md"
       >
         <div
           id="toolbar"
@@ -174,7 +174,7 @@ export const TopNavigation = (): React.ReactElement => {
             type="button"
             aria-label="open drawer"
             onClick={() => setMobileSheetOpen((prev) => !prev)}
-            className="mr-2 inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border-0 bg-transparent text-brand-black hover:bg-gray-50 sm:!hidden"
+            className="mr-2 inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border-0 bg-transparent text-navbar-foreground hover:bg-gray-50 sm:!hidden"
           >
             <Menu className="h-6 w-6" />
           </button>
@@ -197,14 +197,14 @@ export const TopNavigation = (): React.ReactElement => {
                 <Button
                   id="profile-menu-btn"
                   variant="ghost"
-                  className="button-menu bg-transparent font-bold text-brand-black hover:bg-gray-50 focus:bg-transparent focus-visible:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
+                  className="button-menu bg-transparent font-bold text-navbar-foreground hover:bg-gray-50 focus:bg-transparent focus-visible:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
                   aria-haspopup="true"
                 >
                   {currentUser?.name}{' '}
                   {currentUser?.admin && (
                     <Badge
                       variant="secondary"
-                      className="chip ml-2 bg-gray-300 text-brand-black"
+                      className="chip ml-2 bg-gray-300 text-navbar-foreground"
                     >
                       admin
                     </Badge>
