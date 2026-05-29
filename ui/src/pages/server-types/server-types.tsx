@@ -1,20 +1,8 @@
-import ArrowBackIcon from '@mui/icons-material/ArrowBackRounded';
-import { LoadingButton } from '@mui/lab';
-import {
-  Box,
-  Button,
-  Card,
-  CardContent,
-  FormControlLabel,
-  Radio,
-  RadioGroup,
-  Stack,
-  TextField,
-  Typography,
-} from '@mui/material';
-import { StyledFormParagraph } from '@src/styles/styled-form-paragraph';
-import { StyledFormSection } from '@src/styles/styled-form-section';
-import { Item } from '@src/styles/styled-item';
+import { Button } from '@src/components/ui/button';
+import { Card } from '@src/components/ui/card';
+import { Input } from '@src/components/ui/input';
+import { Label } from '@src/components/ui/label';
+import { RadioGroup, RadioGroupItem } from '@src/components/ui/radio-group';
 import type { AppProfileProps, AppQueryUpdateProps } from '@src/types/api';
 import type { AppFormInput } from '@src/types/form';
 import type { UserState } from '@src/types/user';
@@ -25,6 +13,7 @@ import {
   navigateToUrl,
 } from '@src/utils/jupyterhub';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { ArrowLeft, Loader2 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
@@ -68,7 +57,6 @@ export const ServerTypes = (): React.ReactElement => {
   const [isHeadless] = useRecoilState<boolean>(defaultIsHeadless);
   const id = searchParams.get('id');
 
-  // Use `useQuery` with an inline async function for the Axios call
   const {
     data: serverTypes,
     isLoading,
@@ -297,27 +285,24 @@ export const ServerTypes = (): React.ReactElement => {
   }, [serverTypes, currentFormInput?.profile]);
 
   return (
-    <Box className="container">
-      <Stack>
-        <Item hidden={isHeadless}>
+    <div className="container">
+      <div className="flex flex-col">
+        <div hidden={isHeadless}>
           <div className="form-breadcrumb">
             <Button
               id="back-btn"
               type="button"
-              variant="text"
-              color="primary"
-              startIcon={<ArrowBackIcon />}
+              variant="ghost"
               onClick={() => navigateToUrl(APP_BASE_URL)}
             >
+              <ArrowLeft className="h-4 w-4" />
               Back To Home
             </Button>
           </div>
-        </Item>
-        <Item>
-          <Typography component="h1" variant="h5">
-            Server Type
-          </Typography>
-          <StyledFormParagraph>
+        </div>
+        <div>
+          <h1 className="text-2xl font-bold">Server Type</h1>
+          <p className="max-w-[600px] pt-[10px] pb-[30px]">
             Please select the appropriate server for your app. For more
             information on server types,{' '}
             <span>
@@ -331,70 +316,62 @@ export const ServerTypes = (): React.ReactElement => {
               </a>
             </span>
             .
-          </StyledFormParagraph>
-        </Item>
-        <Item>
+          </p>
+        </div>
+        <div>
           {isLoading ? (
             <div className="font-bold center">Loading...</div>
           ) : serverTypes && serverTypes.length > 0 ? (
             <form className="form" onSubmit={handleSubmit}>
-              <StyledFormSection sx={{ pb: '36px' }}>
-                <RadioGroup>
-                  {serverTypes?.map((type: AppProfileProps, index: number) => (
+              <div className="pb-9">
+                <RadioGroup
+                  value={selectedServerType}
+                  onValueChange={handleCardClick}
+                >
+                  {serverTypes?.map((type: AppProfileProps) => (
                     <Card
                       key={`server-type-card-${type.slug}`}
-                      className="server-type-card"
-                      onClick={() => handleCardClick(type.slug)}
-                      tabIndex={0}
+                      className="server-type-card border-0 shadow-md"
                     >
-                      <CardContent>
-                        <FormControlLabel
-                          value={type.slug}
-                          key={type.slug}
-                          id={type.slug}
-                          control={
-                            <Radio
-                              checked={
-                                selectedServerType
-                                  ? selectedServerType === type.slug
-                                  : index === 0
-                              }
-                            />
-                          }
-                          label={type.display_name}
-                        />
+                      <Label
+                        htmlFor={type.slug}
+                        className="block cursor-pointer p-6"
+                      >
+                        <div className="mb-3 flex items-center gap-2">
+                          <RadioGroupItem value={type.slug} id={type.slug} />
+                          <span>{type.display_name}</span>
+                        </div>
                         <p>{type.description}</p>
-                        {type.kubespawner_override?.image && (
-                          <Box
-                            sx={{ mt: 2 }}
-                            onClick={(e) => e.stopPropagation()}
+                      </Label>
+                      {type.kubespawner_override?.image && (
+                        <div className="px-6 pb-6">
+                          <Label
+                            htmlFor={`${type.slug}-image`}
+                            className="mb-1 block"
                           >
-                            <TextField
-                              fullWidth
-                              size="small"
-                              label="Image"
-                              value={profileImages[type.slug] || ''}
-                              onChange={(e) =>
-                                handleImageChange(type.slug, e.target.value)
-                              }
-                              variant="outlined"
-                              placeholder={type.kubespawner_override.image}
-                            />
-                          </Box>
-                        )}
-                      </CardContent>
+                            Image
+                          </Label>
+                          <Input
+                            id={`${type.slug}-image`}
+                            value={profileImages[type.slug] || ''}
+                            onChange={(e) =>
+                              handleImageChange(type.slug, e.target.value)
+                            }
+                            placeholder={type.kubespawner_override.image}
+                          />
+                        </div>
+                      )}
                     </Card>
                   ))}
                 </RadioGroup>
-              </StyledFormSection>
+              </div>
               <hr />
               <div className="button-section">
                 <div className="prev">
                   <Button
                     id="cancel-btn"
                     type="button"
-                    variant="text"
-                    color="primary"
+                    variant="ghost"
                     onClick={() =>
                       navigate(id ? `/edit-app?id=${id}` : '/create-app')
                     }
@@ -403,23 +380,23 @@ export const ServerTypes = (): React.ReactElement => {
                   </Button>
                 </div>
                 <div className="next">
-                  <LoadingButton
-                    id="submit-btn"
-                    type="submit"
-                    variant="contained"
-                    color="primary"
-                    loading={submitting}
-                  >
-                    {id ? 'Save' : 'Deploy App'}
-                  </LoadingButton>
+                  <Button id="submit-btn" type="submit" disabled={submitting}>
+                    {submitting ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : id ? (
+                      'Save'
+                    ) : (
+                      'Deploy App'
+                    )}
+                  </Button>
                 </div>
               </div>
             </form>
           ) : (
             <div>No servers available</div>
           )}
-        </Item>
-      </Stack>
-    </Box>
+        </div>
+      </div>
+    </div>
   );
 };

@@ -1,6 +1,3 @@
-import { Box, Stack, Typography } from '@mui/material';
-import { StyledFormParagraph } from '@src/styles/styled-form-paragraph';
-import { Item } from '@src/styles/styled-item';
 import type { UserState } from '@src/types/user';
 import { APP_BASE_URL } from '@src/utils/constants';
 import type React from 'react';
@@ -29,19 +26,11 @@ export const Success = (): React.ReactElement => {
   }, []);
 
   return (
-    <Box
-      className="container"
-      sx={{
-        height: '100ch',
-        display: 'flex',
-      }}
-    >
-      <Stack>
-        <Item>
-          <Typography component="h1" variant="h5">
-            App Submitted Successfully!
-          </Typography>
-          <StyledFormParagraph>
+    <div className="container flex h-[100ch]">
+      <div className="flex flex-col">
+        <div>
+          <h1 className="text-2xl font-normal">App Submitted Successfully!</h1>
+          <p className="max-w-[600px] pb-[30px]">
             To view the status of your app deployment, please click{' '}
             <a
               href="#"
@@ -51,9 +40,9 @@ export const Success = (): React.ReactElement => {
               here
             </a>
             .
-          </StyledFormParagraph>
-        </Item>
-      </Stack>
-    </Box>
+          </p>
+        </div>
+      </div>
+    </div>
   );
 };
