@@ -18,6 +18,7 @@ import { Check, ChevronsUpDown, X } from 'lucide-react';
 import * as React from 'react';
 
 export interface ComboboxProps<T> {
+  id?: string;
   options: T[];
   value: T[];
   onChange: (value: T[]) => void;
@@ -36,6 +37,7 @@ export interface ComboboxProps<T> {
 }
 
 export function Combobox<T>({
+  id,
   options,
   value,
   onChange,
@@ -86,6 +88,7 @@ export function Combobox<T>({
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
+            id={id}
             type="button"
             variant="outline"
             role="combobox"

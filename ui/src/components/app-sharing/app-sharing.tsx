@@ -159,6 +159,7 @@ export const AppSharing = ({
                 style={{ width: 510 }}
               >
                 <Combobox<AppSharingItem>
+                  id="share-permissions-autocomplete"
                   options={sortedPermissions}
                   value={selectedValue}
                   multiple
