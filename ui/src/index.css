@@ -2,24 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Tailwind preflight is disabled during MUI -> shadcn coexistence; restore the
-   transform CSS variable defaults that preflight normally provides so that
-   `translate-*`, `rotate-*`, `scale-*`, `skew-*` utilities work. Without these,
-   the chained `transform: translate(var(--tw-translate-x), var(--tw-translate-y))
-   rotate(var(--tw-rotate)) skew(...) scaleX(...) scaleY(...)` evaluates to
-   invalid CSS (undefined vars) and browsers drop the whole `transform`. */
-*,
-::before,
-::after {
-  --tw-translate-x: 0;
-  --tw-translate-y: 0;
-  --tw-rotate: 0;
-  --tw-skew-x: 0;
-  --tw-skew-y: 0;
-  --tw-scale-x: 1;
-  --tw-scale-y: 1;
-}
-
 /* App font: the server-rendered <style> from jhub_apps/templates/_font.css
    sets `:root { --app-font-family: ... }` based on the theme. UI consumers
    use `var(--app-font-family, 'Inter', sans-serif)` so standalone dev

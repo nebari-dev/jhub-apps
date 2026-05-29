@@ -180,7 +180,12 @@ export const TopNavigation = (): React.ReactElement => {
           </button>
           <div className="max-sm:hidden flex-grow">
             <a href={APP_BASE_URL}>
-              <img id="app-logo" src={getAppLogoUrl()} alt="logo" height="28" />
+              <img
+                id="app-logo"
+                src={getAppLogoUrl()}
+                alt="logo"
+                className="h-7 w-auto"
+              />
             </a>
           </div>
           <div className="max-sm:hidden">

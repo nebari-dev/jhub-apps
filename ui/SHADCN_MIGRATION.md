@@ -221,12 +221,12 @@ Migrate the simpler pages. Match each page's Figma frame.
 **Design source**: Figma — page frames: Success, StopPending, NotRunning, ServerTypes, CreateApp, EditApp.
 
 ### Files
-- [ ] `ui/src/pages/success/success.tsx`
-- [ ] `ui/src/pages/stop-pending/stop-pending.tsx`
-- [ ] `ui/src/pages/not-running/not-running.tsx`
-- [ ] `ui/src/pages/server-types/server-types.tsx` — Grid → Tailwind grid utilities.
-- [ ] `ui/src/pages/create-app/create-app.tsx`
-- [ ] `ui/src/pages/edit-app/edit-app.tsx`
+- [x] `ui/src/pages/success/success.tsx`
+- [x] `ui/src/pages/stop-pending/stop-pending.tsx`
+- [x] `ui/src/pages/not-running/not-running.tsx`
+- [x] `ui/src/pages/server-types/server-types.tsx` — Grid → Tailwind grid utilities.
+- [x] `ui/src/pages/create-app/create-app.tsx`
+- [x] `ui/src/pages/edit-app/edit-app.tsx`
 
 ### Done when
 - Each page visually matches Figma at each breakpoint.
@@ -285,15 +285,15 @@ Migrate the app shell — the most complex layout file after `app-form` and `app
 Remove MUI entirely, re-enable Tailwind preflight, and clean up.
 
 ### Tasks
-- [ ] Re-enable Tailwind preflight: remove `corePlugins: { preflight: false }`. Triage and fix any preflight-driven regressions (button background, h-tag margins).
-- [ ] Remove `<ThemeProvider>` and `<CssBaseline />` from `ui/src/main.tsx`.
-- [ ] Delete `ui/src/theme/` directory.
-- [ ] Delete `ui/src/styles/styled-form-section.tsx`, `styled-form-paragraph.tsx`, `styled-item.tsx`, `styled-filter-button.tsx`.
-- [ ] Reconcile `ui/src/index.css` with shadcn `globals.css` — single source of truth from Figma tokens.
-- [ ] Audit all 15 component CSS files for any remaining `.Mui*` selectors.
-- [ ] Uninstall: `@mui/material`, `@mui/icons-material`, `@mui/lab`, `@emotion/react`, `@emotion/styled`, `sass`. Replace `classnames` with `clsx` + `tailwind-merge` if any uses remain.
-- [ ] Run `npx eslint src/ --fix` and `npx prettier src --write`.
-- [ ] Run `npm test`; fix any final selector regressions.
+- [x] Re-enable Tailwind preflight: remove `corePlugins: { preflight: false }`. Triage and fix any preflight-driven regressions (button background, h-tag margins).
+- [x] Remove `<ThemeProvider>` and `<CssBaseline />` from `ui/src/main.tsx`.
+- [x] Delete `ui/src/theme/` directory.
+- [x] Delete `ui/src/styles/styled-form-section.tsx`, `styled-form-paragraph.tsx`, `styled-item.tsx`, `styled-filter-button.tsx`.
+- [x] Reconcile `ui/src/index.css` with shadcn `globals.css` — single source of truth from Figma tokens.
+- [x] Audit all 15 component CSS files for any remaining `.Mui*` selectors.
+- [x] Uninstall: `@mui/material`, `@mui/icons-material`, `@mui/lab`, `@emotion/react`, `@emotion/styled`, `sass`. Replace `classnames` with `clsx` + `tailwind-merge` if any uses remain.
+- [x] Run `npm run lint` (biome) — clean.
+- [x] Run `npm test`; fix any final selector regressions.
 - [ ] Manual smoke-test all 7 routes + `?headless=true`.
 
 ### Done when

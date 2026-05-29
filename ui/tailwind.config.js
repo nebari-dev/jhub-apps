@@ -4,8 +4,6 @@ import tailwindcssAnimate from 'tailwindcss-animate';
 export default {
   darkMode: 'class',
   content: ['./index.html', './src/**/*.{ts,tsx}'],
-  // Disabled during MUI -> shadcn coexistence; re-enable at Phase 7 teardown.
-  corePlugins: { preflight: false },
   theme: {
     // Match the MUI default breakpoints currently in use.
     screens: {
@@ -16,7 +14,7 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ['var(--app-font-family)', 'Inter', 'sans-serif'],
+        sans: ['var(--app-font-family, Inter, sans-serif)'],
       },
       colors: {
         // shadcn semantic tokens, HSL triples sourced from CSS variables.
