@@ -1,27 +1,14 @@
-import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
-import KeyboardArrowDownRoundedIcon from '@mui/icons-material/KeyboardArrowDownRounded';
-import KeyboardArrowUpRoundedIcon from '@mui/icons-material/KeyboardArrowUpRounded';
-import MenuIcon from '@mui/icons-material/Menu';
+import { Badge } from '@src/components/ui/badge';
+import { Button } from '@src/components/ui/button';
 import {
-  AppBar,
-  Box,
-  Button,
-  Chip,
-  Drawer,
-  IconButton,
-  Link,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  Menu,
-  MenuItem,
-  Toolbar,
-  Typography,
-} from '@mui/material';
-import { styled, useTheme } from '@mui/material/styles';
-import useMediaQuery from '@mui/material/useMediaQuery';
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@src/components/ui/dropdown-menu';
+import { Sheet, SheetContent } from '@src/components/ui/sheet';
+import { useMediaQuery } from '@src/hooks/use-media-query';
+import { cn } from '@src/lib/utils';
 import type { JhApp, JhService, JhServiceFull } from '@src/types/jupyterhub';
 import type { UserState } from '@src/types/user';
 import axios from '@src/utils/axios';
@@ -33,45 +20,20 @@ import {
   navigateToUrl,
 } from '@src/utils/jupyterhub';
 import { useQuery } from '@tanstack/react-query';
-import React, { useEffect, useState } from 'react';
+import { ChevronDown, ChevronUp, Home as HomeIcon, Menu } from 'lucide-react';
+import type React from 'react';
+import { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import {
   currentNotification,
   isHeadless as defaultIsHeadless,
   currentUser as defaultUser,
 } from '../../store';
-import './navigation.css';
-export const StyledListItemTextHeader = styled(ListItemText)(({ theme }) => ({
-  fontWeight: 400,
-  fontSize: '16px',
-  paddingLeft: theme.spacing(4),
-  paddingTop: theme.spacing(1),
-  paddingBottom: theme.spacing(1),
-}));
 
-export const StyledListItemTextHeaderWithIcon = styled(ListItemText)(
-  ({ theme }) => ({
-    fontWeight: 400,
-    fontSize: '16px',
-    paddingTop: theme.spacing(1),
-    paddingBottom: theme.spacing(1),
-  }),
-);
-
-export const StyledListItemButton = styled(ListItemButton)(({ theme }) => ({
-  paddingLeft: theme.spacing(4),
-}));
-
-export const TopNavigation = ({ ...props }): React.ReactElement => {
-  const theme = useTheme();
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const profileMenuOpen = Boolean(anchorEl);
-  const isMobileBreakpoint = useMediaQuery(theme.breakpoints.down('sm')); // Use to determine if the drawer should be open or closed
-  // eslint-disable-next-line react/prop-types
-  const { window } = props;
-  const [mobileOpen, setMobileOpen] = useState(
-    isMobileBreakpoint ? false : true,
-  );
+export const TopNavigation = (): React.ReactElement => {
+  const [profileMenuOpen, setProfileMenuOpen] = useState(false);
+  const isMobileBreakpoint = useMediaQuery('(max-width: 599.95px)');
+  const [mobileSheetOpen, setMobileSheetOpen] = useState(false);
   const [currentUser] = useRecoilState<UserState | undefined>(defaultUser);
   const [, setCurrentNotification] = useRecoilState<string | undefined>(
     currentNotification,
@@ -117,10 +79,6 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
     enabled: !!currentUser,
   });
 
-  const handleDrawerToggle = () => {
-    setMobileOpen((prevState) => !prevState);
-  };
-
   useEffect(() => {
     if (!appsLoading && appsData && currentUser) {
       setPinnedApps(() => getPinnedApps(appsData, currentUser.name));
@@ -151,276 +109,156 @@ export const TopNavigation = ({ ...props }): React.ReactElement => {
   }, [servicesError, appsError, setCurrentNotification]);
 
   useEffect(() => {
-    if (isMobileBreakpoint) {
-      setMobileOpen(false);
-    } else {
-      setMobileOpen(true);
+    if (!isMobileBreakpoint) {
+      setMobileSheetOpen(false);
     }
   }, [isMobileBreakpoint]);
 
-  const drawer = (
-    <Box>
-      <List>
-        <ListItem disablePadding sx={{ mt: 10 }}>
-          <ListItemButton
-            sx={{
-              px: '1.5rem',
-              mx: '.5rem',
-              backgroundColor: theme.palette.primary.light,
-              borderRadius: '8px',
-              position: 'relative',
-              display: 'flex',
-              alignItems: 'center',
-              '&::before': {
-                content: '""',
-                position: 'absolute',
-                left: 0,
-                top: 0,
-                bottom: 0,
-                width: '8px',
-                backgroundColor: theme.palette.primary.main,
-                borderTopLeftRadius: '8px',
-                borderBottomLeftRadius: '8px',
-              },
-              '&:hover': {
-                backgroundColor: theme.palette.gray[50],
-                '&::before': {
-                  backgroundColor: theme.palette.primary.main,
-                },
-              },
-            }}
+  const drawerContent = (
+    <div>
+      <ul className="m-0 list-none p-0 pb-4">
+        <li className="mt-4">
+          <button
+            type="button"
             onClick={() => navigateToUrl(`${APP_BASE_URL}`)}
+            className="relative mx-2 flex w-[calc(100%-1rem)] cursor-pointer items-center rounded-lg border-0 bg-brand-purple-light px-6 py-2 text-left before:absolute before:bottom-0 before:left-0 before:top-0 before:w-2 before:rounded-l-lg before:bg-primary before:content-[''] hover:bg-gray-50"
           >
-            <ListItemIcon
-              sx={{
-                minWidth: 'auto',
-                mr: '8px',
-                display: 'flex',
-                alignItems: 'center',
-              }}
-            >
-              <HomeRoundedIcon
-                sx={{
-                  color: theme.palette.common.black,
-                  width: '28px',
-                  height: '28px',
-                }}
-              />
-            </ListItemIcon>
-            <ListItemText
-              primary={
-                <Typography
-                  variant="body1"
-                  sx={{
-                    fontSize: '16px',
-                    fontWeight: 600,
-                    lineHeight: '1.2',
-                    position: 'relative',
-                    top: '2px',
-                  }}
-                >
-                  Home
-                </Typography>
-              }
-            />
-          </ListItemButton>
-        </ListItem>
-      </List>
-      <List sx={{ px: 1 }}>
-        <ListItem disablePadding>
-          <StyledListItemTextHeaderWithIcon
-            primary="Services"
-            disableTypography
-            sx={{
-              px: '24px',
-              py: '4px',
-              fontSize: '14px',
-              textTransform: 'uppercase',
-              fontWeight: 600,
-              color: 'rgba(15 16 21 / 60%)',
-            }}
-          />
-        </ListItem>
+            <HomeIcon className="mr-2 h-6 w-6 text-brand-black" />
+            <span className="relative top-[2px] text-base font-semibold leading-tight">
+              Home
+            </span>
+          </button>
+        </li>
+      </ul>
+      <ul className="m-0 list-none px-1 py-0">
+        <li>
+          <p className="m-0 px-6 py-1 text-sm font-semibold uppercase text-[rgb(15_16_21_/_60%)]">
+            Services
+          </p>
+        </li>
         {pinnedApps.map((item, index) => (
-          <ListItem key={index} disablePadding>
-            <Link
+          <li key={`pinned-${index}`}>
+            <a
               href={item.url}
-              sx={{
-                borderRadius: '4px',
-                textDecoration: 'none',
-                display: 'block',
-                width: '100%',
-                px: '24px',
-                py: '4px',
-                color: 'rgb(15 16 21 / 87%)',
-                '&:hover': {
-                  backgroundColor: 'rgba(0, 0, 0, 0.04)',
-                  textDecoration: 'none',
-                },
-              }}
+              className="block w-full rounded px-6 py-2 text-base text-[rgb(15_16_21_/_87%)] no-underline hover:bg-gray-50 hover:no-underline"
             >
-              <ListItemText
-                primary={
-                  <Typography
-                    variant="body2"
-                    sx={{ fontSize: '1rem', color: 'rgb(15 16 21 / 87%)' }}
-                  >
-                    {item.name}
-                  </Typography>
-                }
-              />
-            </Link>
-          </ListItem>
+              {item.name}
+            </a>
+          </li>
         ))}
         {services.map((item, index) => (
-          <ListItem key={index} disablePadding>
-            <Link
+          <li key={`service-${index}`}>
+            <a
               href={item.url}
-              sx={{
-                borderRadius: '4px',
-                textDecoration: 'none',
-                display: 'block',
-                width: '100%',
-                px: '24px',
-                py: '4px',
-                color: 'rgb(15 16 21 / 87%)',
-                '&:hover': {
-                  backgroundColor: 'rgba(0, 0, 0, 0.04)',
-                  textDecoration: 'none',
-                },
-              }}
+              className="block w-full rounded px-6 py-2 text-base text-[rgb(15_16_21_/_87%)] no-underline hover:bg-gray-50 hover:no-underline"
             >
-              <ListItemText
-                primary={
-                  <Typography
-                    variant="body2"
-                    sx={{ fontSize: '1rem', color: 'rgb(15 16 21 / 87%)' }}
-                  >
-                    {item.name}
-                  </Typography>
-                }
-              />
-            </Link>
-          </ListItem>
+              {item.name}
+            </a>
+          </li>
         ))}
-      </List>
-    </Box>
+      </ul>
+    </div>
   );
 
   return (
-    <Box sx={{ flexGrow: 1 }} hidden={isHeadless}>
-      <AppBar
+    <div hidden={isHeadless}>
+      <header
         id="app-bar"
-        position="fixed"
-        sx={{
-          zIndex: (theme) => theme.zIndex.drawer + 1,
-          backgroundColor: (theme) => theme.palette.common.white,
-        }}
+        className="fixed inset-x-0 top-0 z-[1201] bg-white shadow-sm"
       >
-        <Toolbar id="toolbar">
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            edge="start"
-            onClick={handleDrawerToggle}
-            sx={{ mr: 2, display: { sm: 'none' } }}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Box
-            component="div"
-            sx={{ flexGrow: 1, display: { xs: 'none', sm: 'block' } }}
-          >
-            <Link href={APP_BASE_URL}>
-              <img id="app-logo" src={getAppLogoUrl()} alt="logo" height="28" />
-            </Link>
-          </Box>
-          <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
-            <Button
-              id="profile-menu-btn"
-              className="button-menu"
-              aria-controls={profileMenuOpen ? 'profile-menu-list' : undefined}
-              aria-haspopup="true"
-              aria-expanded={profileMenuOpen ? 'true' : undefined}
-              onClick={(event) => setAnchorEl(event.currentTarget)}
-              endIcon={
-                profileMenuOpen ? (
-                  <KeyboardArrowUpRoundedIcon />
-                ) : (
-                  <KeyboardArrowDownRoundedIcon />
-                )
-              }
-              sx={{
-                '&:hover': {
-                  backgroundColor: theme.palette.gray[50],
-                },
-              }}
-            >
-              {currentUser?.name}{' '}
-              {currentUser?.admin && (
-                <Chip
-                  label="admin"
-                  size="small"
-                  className="chip"
-                  sx={{
-                    marginLeft: theme.spacing(1),
-                  }}
-                />
-              )}
-            </Button>
-            <Menu
-              id="profile-menu-list"
-              anchorEl={anchorEl}
-              open={profileMenuOpen}
-              onClose={() => setAnchorEl(null)}
-              MenuListProps={{
-                'aria-labelledby': 'profile-menu-btn',
-              }}
-              sx={{ marginTop: '20px' }}
-            >
-              <MenuItem
-                onClick={() => navigateToUrl(`${APP_BASE_URL}/token`)}
-                sx={{ width: '180px' }}
-              >
-                Tokens
-              </MenuItem>
-              {currentUser?.admin && (
-                <MenuItem
-                  onClick={() => navigateToUrl(`${APP_BASE_URL}/admin`)}
-                >
-                  Admin
-                </MenuItem>
-              )}
-              <MenuItem onClick={() => navigateToUrl(`${APP_BASE_URL}/logout`)}>
-                Logout
-              </MenuItem>
-            </Menu>
-          </Box>
-        </Toolbar>
-      </AppBar>
-      <nav>
-        <Drawer
-          container={
-            window !== undefined ? () => window().document.body : undefined
-          }
-          variant="persistent"
-          open={mobileOpen}
-          onClose={handleDrawerToggle}
-          ModalProps={{
-            keepMounted: true,
-          }}
-          sx={{
-            '& .MuiDrawer-paper': {
-              boxSizing: 'border-box',
-              width: 224,
-              boxShadow: 1,
-            },
-          }}
+        <div
+          id="toolbar"
+          className="flex min-h-16 items-center gap-2 px-4 sm:px-6"
         >
-          {drawer}
-        </Drawer>
+          <button
+            type="button"
+            aria-label="open drawer"
+            onClick={() => setMobileSheetOpen((prev) => !prev)}
+            className="mr-2 inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border-0 bg-transparent text-brand-black hover:bg-gray-50 sm:hidden"
+          >
+            <Menu className="h-6 w-6" />
+          </button>
+          <div className="hidden flex-grow sm:block">
+            <a href={APP_BASE_URL}>
+              <img id="app-logo" src={getAppLogoUrl()} alt="logo" height="28" />
+            </a>
+          </div>
+          <div className="hidden sm:block">
+            <DropdownMenu
+              open={profileMenuOpen}
+              onOpenChange={setProfileMenuOpen}
+            >
+              <DropdownMenuTrigger asChild>
+                <Button
+                  id="profile-menu-btn"
+                  variant="ghost"
+                  className="button-menu bg-transparent font-bold text-brand-black hover:bg-gray-50 focus:bg-transparent focus-visible:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
+                  aria-haspopup="true"
+                >
+                  {currentUser?.name}{' '}
+                  {currentUser?.admin && (
+                    <Badge
+                      variant="secondary"
+                      className="chip ml-2 bg-gray-300 text-brand-black"
+                    >
+                      admin
+                    </Badge>
+                  )}
+                  {profileMenuOpen ? (
+                    <ChevronUp className="h-4 w-4" />
+                  ) : (
+                    <ChevronDown className="h-4 w-4" />
+                  )}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                id="profile-menu-list"
+                align="end"
+                sideOffset={12}
+                className="w-[180px]"
+              >
+                <DropdownMenuItem
+                  onSelect={() => navigateToUrl(`${APP_BASE_URL}/token`)}
+                >
+                  Tokens
+                </DropdownMenuItem>
+                {currentUser?.admin && (
+                  <DropdownMenuItem
+                    onSelect={() => navigateToUrl(`${APP_BASE_URL}/admin`)}
+                  >
+                    Admin
+                  </DropdownMenuItem>
+                )}
+                <DropdownMenuItem
+                  onSelect={() => navigateToUrl(`${APP_BASE_URL}/logout`)}
+                >
+                  Logout
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </div>
+      </header>
+      <nav>
+        <aside
+          data-testid="nav-drawer"
+          className={cn(
+            'fixed left-0 top-16 z-[1200] hidden h-[calc(100%-4rem)] w-56 border-r border-border bg-background shadow sm:block',
+          )}
+        >
+          {drawerContent}
+        </aside>
+        <Sheet open={mobileSheetOpen} onOpenChange={setMobileSheetOpen}>
+          <SheetContent
+            side="left"
+            className="w-56 p-0 sm:hidden"
+            data-testid="nav-drawer-mobile"
+          >
+            {drawerContent}
+          </SheetContent>
+        </Sheet>
       </nav>
-    </Box>
+    </div>
   );
 };
 

@@ -21,8 +21,8 @@ const InputWithIcon = React.forwardRef<HTMLInputElement, InputWithIconProps>(
         <Input
           ref={ref}
           className={cn(
-            startIcon ? 'pl-9' : null,
-            endIcon ? 'pr-9' : null,
+            startIcon ? '!pl-9' : null,
+            endIcon ? '!pr-9' : null,
             className,
           )}
           {...props}

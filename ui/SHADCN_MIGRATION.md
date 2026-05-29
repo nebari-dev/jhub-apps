@@ -264,13 +264,13 @@ Migrate the app shell — the most complex layout file after `app-form` and `app
 **Design source**: Figma — Navigation frames: desktop persistent sidebar, mobile collapsed, mobile expanded (sheet), header, user menu.
 
 ### Tasks
-- [ ] `ui/src/components/navigation/navigation.tsx` — replace `AppBar` + `Toolbar` with semantic `<header>` + Tailwind classes from Figma.
-- [ ] Replace `Drawer` with shadcn `Sheet` for mobile + plain `<aside>` for the persistent desktop sidebar.
-- [ ] Replace `Menu` with shadcn `DropdownMenu`.
-- [ ] Replace `useMediaQuery` with the `useMediaQuery` hook from Phase 2 (or Tailwind responsive utilities where possible).
-- [ ] Inline all `styled()` definitions as Tailwind classes.
-- [ ] `ui/src/components/navigation/navigation.css` — remove `.MuiDrawer-paper` and other `.Mui*` selectors.
-- [ ] `ui/src/App.tsx` — replace `<Box component="main" sx={…}>` with `<main className="…">`. Headless mode (`?headless=true`) toggles padding via classes / data attribute.
+- [x] `ui/src/components/navigation/navigation.tsx` — replace `AppBar` + `Toolbar` with semantic `<header>` + Tailwind classes from Figma.
+- [x] Replace `Drawer` with shadcn `Sheet` for mobile + plain `<aside>` for the persistent desktop sidebar.
+- [x] Replace `Menu` with shadcn `DropdownMenu`.
+- [x] Replace `useMediaQuery` with the `useMediaQuery` hook from Phase 2 (or Tailwind responsive utilities where possible).
+- [x] Inline all `styled()` definitions as Tailwind classes.
+- [x] `ui/src/components/navigation/navigation.css` — remove `.MuiDrawer-paper` and other `.Mui*` selectors.
+- [x] `ui/src/App.tsx` — replace `<Box component="main" sx={…}>` with `<main className="…">`. Headless mode (`?headless=true`) toggles padding via classes / data attribute.
 
 ### Done when
 - Visual parity with Figma at desktop, tablet, and mobile breakpoints.

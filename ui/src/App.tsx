@@ -1,4 +1,3 @@
-import { Box } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 import type React from 'react';
 import { useEffect } from 'react';
@@ -104,15 +103,13 @@ export const App = (): React.ReactElement => {
   return (
     <div>
       <Navigation />
-      <Box
-        component="main"
-        sx={{
-          flexGrow: 1,
-          pt: isHeadless ? 1 : 9,
-          pl: { xs: 1, sm: isHeadless ? 1 : 33 },
-          pr: 1,
-          backgroundColor: '#fafbfc',
-        }}
+      <main
+        data-headless={isHeadless ? 'true' : undefined}
+        className={
+          isHeadless
+            ? 'flex-grow bg-[#fafbfc] pl-1 pr-1 pt-1'
+            : 'flex-grow bg-[#fafbfc] pl-1 pr-1 pt-[72px] sm:pl-[264px]'
+        }
       >
         {notification ? (
           <NotificationBar
@@ -132,7 +129,7 @@ export const App = (): React.ReactElement => {
           <Route path="/success" element={<Success />} />
           <Route path="/" element={<Home />} />
         </Routes>
-      </Box>
+      </main>
     </div>
   );
 };
