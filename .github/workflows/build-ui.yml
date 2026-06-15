@@ -27,7 +27,7 @@ jobs:
         working-directory: ui
 
       - name: Run Biome Check
-        run: npm run check
+        run: npm run ci
         working-directory: ui
 
       - name: Run Vitest Tests
