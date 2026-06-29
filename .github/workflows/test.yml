@@ -33,7 +33,7 @@ jobs:
 
     - name: Install uv
       # https://github.com/astral-sh/setup-uv/releases/tag/v8.2.0
-      uses: astral-sh/setup-uv@v8
+      uses: astral-sh/setup-uv@v8.2.0
 
     - name: Install dependencies
       run: |
