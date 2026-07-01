@@ -42,6 +42,3 @@ updates:
       - dependency-name: "@mui/lab"
       - dependency-name: "@rollup/rollup-linux-x64-gnu"
       - dependency-name: "@esbuild/linux-x64"
-      - dependency-name: "vite"
-        versions:
-          - ">=7.0.0"
