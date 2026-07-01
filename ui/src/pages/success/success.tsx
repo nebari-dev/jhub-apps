@@ -42,13 +42,13 @@ export const Success = (): React.ReactElement => {
             App Submitted Successfully!
           </Typography>
           <StyledFormParagraph>
-            To view the status of your app deployment, please click{' '}
+            To view the status of your app deployment, please{' '}
             <a
               href="#"
               onClick={handleNavigate}
               className="form-paragraph-link"
             >
-              here
+              open the deployment status page
             </a>
             .
           </StyledFormParagraph>

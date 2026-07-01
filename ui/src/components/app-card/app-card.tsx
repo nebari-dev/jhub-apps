@@ -32,6 +32,7 @@ import ContextMenu, {
   type ContextMenuItem,
 } from '../context-menu/context-menu';
 import './app-card.css';
+
 interface AppCardProps {
   id: string;
   title: string;
