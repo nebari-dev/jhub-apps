@@ -37,7 +37,8 @@ export default defineConfig(({ command }) => ({
         // Keep the single stylesheet named index-*.css (cssCodeSplit: false
         // otherwise names it style-*.css) so build-and-copy.sh finds it.
         assetFileNames: (assetInfo) => {
-          const names = assetInfo.names ?? (assetInfo.name ? [assetInfo.name] : []);
+          const names =
+            assetInfo.names ?? (assetInfo.name ? [assetInfo.name] : []);
           return names.some((name) => name.endsWith('.css'))
             ? 'assets/index-[hash][extname]'
             : 'assets/[name]-[hash][extname]';
