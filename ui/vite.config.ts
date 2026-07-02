@@ -5,7 +5,7 @@ import EnvironmentPlugin from 'vite-plugin-environment';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
 // https://vitejs.dev/config/
-export default defineConfig({
+export default defineConfig(({ command }) => ({
   plugins: [
     react(),
     tsconfigPaths(),
@@ -36,10 +36,12 @@ export default defineConfig({
         inlineDynamicImports: true,
         // Keep the single stylesheet named index-*.css (cssCodeSplit: false
         // otherwise names it style-*.css) so build-and-copy.sh finds it.
-        assetFileNames: (assetInfo) =>
-          assetInfo.names?.some((name) => name.endsWith('.css'))
+        assetFileNames: (assetInfo) => {
+          const names = assetInfo.names ?? (assetInfo.name ? [assetInfo.name] : []);
+          return names.some((name) => name.endsWith('.css'))
             ? 'assets/index-[hash][extname]'
-            : 'assets/[name]-[hash][extname]',
+            : 'assets/[name]-[hash][extname]';
+        },
       },
     },
     // A single IIFE chunk otherwise inlines CSS into the JS; keep it extracted
@@ -55,9 +57,13 @@ export default defineConfig({
   // the iife format and emits EMPTY_IMPORT_META warnings. The app itself never
   // uses `import.meta` (only process.env via vite-plugin-environment), so it's
   // safe to statically replace it, matching rolldown's own suggested fix.
-  define: {
-    'import.meta': '{}',
-  },
+  // Scope this to production builds only: replacing `import.meta` globally would
+  // break Vite's dev/HMR client and test transforms, which rely on it.
+  ...(command === 'build' && {
+    define: {
+      'import.meta': '{}',
+    },
+  }),
   server: {
     port: 8080,
   },
@@ -80,4 +86,4 @@ export default defineConfig({
       },
     },
   },
-});
+}));
