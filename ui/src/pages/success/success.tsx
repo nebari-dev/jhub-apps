@@ -31,13 +31,13 @@ export const Success = (): React.ReactElement => {
         <div>
           <h1 className="text-2xl font-normal">App Submitted Successfully!</h1>
           <p className="max-w-[600px] pb-[30px]">
-            To view the status of your app deployment, please click{' '}
+            To view the status of your app deployment, please{' '}
             <a
               href="#"
               onClick={handleNavigate}
               className="form-paragraph-link"
             >
-              here
+              open the deployment status page
             </a>
             .
           </p>
