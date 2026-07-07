@@ -201,7 +201,7 @@ export const AppCard = ({
 
   return (
     <div
-      className={`card ${isAppCard ? '' : 'service'}`}
+      className={`card border-0 ${isAppCard ? '' : 'service'}`}
       id={`card-${id}`}
       tabIndex={0}
     >
