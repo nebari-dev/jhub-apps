@@ -1,20 +1,19 @@
-import GroupRoundedIcon from '@mui/icons-material/GroupRounded';
-import LockRoundedIcon from '@mui/icons-material/LockRounded';
-import PublicRoundedIcon from '@mui/icons-material/PublicRounded';
-import PushPinRoundedIcon from '@mui/icons-material/PushPinRounded';
-import { Box, Link, Tooltip } from '@mui/material';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
-import Chip from '@mui/material/Chip';
-import Typography from '@mui/material/Typography';
 import { StatusChip } from '@src/components';
+import { Badge } from '@src/components/ui/badge';
+import { Card } from '@src/components/ui/card';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@src/components/ui/tooltip';
 import type { AppProfileProps } from '@src/types/api';
 import type { JhApp } from '@src/types/jupyterhub';
 import type { UserState } from '@src/types/user';
 import { API_BASE_URL } from '@src/utils/constants';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
+import { Globe, Lock, Pin, Users } from 'lucide-react';
 import type React from 'react';
 import { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
@@ -45,7 +44,6 @@ interface AppCardProps {
   isShared?: boolean;
   serverStatus: string;
   lastModified?: Date;
-  sx?: object;
   isAppCard?: boolean;
   app?: JhApp;
 }
@@ -57,7 +55,6 @@ export const AppCard = ({
   framework,
   thumbnail,
   url,
-  // username,
   isPublic = false,
   isShared,
   serverStatus,
@@ -82,7 +79,6 @@ export const AppCard = ({
     }
   }, [serverStatus, setNotification]);
 
-  // Fetch user data and check admin status
   const { data: currentUserData } = useQuery<UserState>({
     queryKey: ['current-user'],
     queryFn: () =>
@@ -95,30 +91,27 @@ export const AppCard = ({
   const getIcon = () => {
     if (!isAppCard)
       return (
-        <PushPinRoundedIcon
-          sx={{ fontSize: '18px', position: 'relative', bottom: '2px' }}
-          data-testid="PushPinRoundedIcon"
+        <Pin
+          className="relative -bottom-0.5 h-[18px] w-[18px]"
+          data-testid="app-card-icon-service"
         />
       );
     if (isPublic)
       return (
-        <PublicRoundedIcon
-          sx={{ fontSize: '18px' }}
-          data-testid="PublicRoundedIcon"
+        <Globe
+          className="h-[18px] w-[18px]"
+          data-testid="app-card-icon-public"
         />
       );
     if (isShared)
       return (
-        <GroupRoundedIcon
-          sx={{ fontSize: '18px' }}
-          data-testid="GroupRoundedIcon"
+        <Users
+          className="h-[18px] w-[18px]"
+          data-testid="app-card-icon-shared"
         />
       );
     return (
-      <LockRoundedIcon
-        sx={{ fontSize: '18px' }}
-        data-testid="LockRoundedIcon"
-      />
+      <Lock className="h-[18px] w-[18px]" data-testid="app-card-icon-private" />
     );
   };
 
@@ -127,25 +120,22 @@ export const AppCard = ({
       id: 'start',
       title: 'Start',
       onClick: async () => {
-        // Allow admins to start shared apps
         if (isShared && !currentUserData?.admin) {
-          // Show error if it's a shared app
           setNotification(
             "You don't have permission to start this app. Please ask the owner to start it.",
           );
           return;
         }
         setIsStartOpen(true);
-        setCurrentApp(app!); // Add the non-null assertion operator (!) to ensure that app is not undefined
+        setCurrentApp(app!);
       },
       visible: true,
-      disabled: serverStatus !== 'Ready', // Disable start if the app is already running
+      disabled: serverStatus !== 'Ready',
     },
     {
       id: 'stop',
       title: 'Stop',
       onClick: async () => {
-        // Allow admins to stop shared apps
         if (isShared && !currentUserData?.admin) {
           setNotification(
             "You don't have permission to stop this app. Please ask the owner to stop it.",
@@ -156,7 +146,7 @@ export const AppCard = ({
         setCurrentApp(app!);
       },
       visible: true,
-      disabled: serverStatus !== 'Running', // Disable stop if the app is not running
+      disabled: serverStatus !== 'Running',
     },
     {
       id: 'edit',
@@ -175,7 +165,7 @@ export const AppCard = ({
         setCurrentApp(app!);
       },
       visible: true,
-      disabled: isShared || id === '' || !isAppCard, // Disable delete for shared apps
+      disabled: isShared || id === '' || !isAppCard,
       danger: true,
     },
   ];
@@ -210,19 +200,18 @@ export const AppCard = ({
   };
 
   return (
-    <Box
-      className={`card ${isAppCard ? '' : 'service'}`}
+    <div
+      className={`card border-0 ${isAppCard ? '' : 'service'}`}
       id={`card-${id}`}
       tabIndex={0}
     >
-      <Link
+      <a
         href={url}
+        className="block h-full no-underline"
         onClick={(e) => {
           if (serverStatus === 'Running') {
-            // Redirect to the app's URL if it is already running
             window.location.href = url;
           } else if (app && serverStatus === 'Ready') {
-            // Set the current app and open the Start modal
             e.preventDefault();
             setCurrentApp({
               id,
@@ -234,13 +223,17 @@ export const AppCard = ({
               shared: app?.shared || isShared || false,
               last_activity: new Date(app?.last_activity || ''),
               status: 'Ready',
-              full_name: app?.full_name || '', // Ensure full_name is set
+              full_name: app?.full_name || '',
             });
-            setIsStartNotRunningOpen(true); // Open the Start modal
+            setIsStartNotRunningOpen(true);
           }
         }}
       >
-        <Card id={`card-${id}`} tabIndex={0} className="Mui-card">
+        <Card
+          id={`card-${id}`}
+          tabIndex={0}
+          className="relative h-full rounded border-0 shadow-md overflow-hidden"
+        >
           <div
             className={`card-content-header ${isAppCard ? '' : 'card-content-header-service'}`}
           >
@@ -264,7 +257,7 @@ export const AppCard = ({
             ) : (
               <></>
             )}
-            <CardMedia>
+            <div>
               <div
                 className={
                   isAppCard && thumbnail ? 'img-overlay' : 'img-overlay-service'
@@ -276,7 +269,7 @@ export const AppCard = ({
                   <span style={{ fontWeight: 'bold' }}>{title}</span>
                 )}
               </div>
-            </CardMedia>
+            </div>
           </div>
           <div className="card-content-content">
             {isAppCard ? (
@@ -284,100 +277,71 @@ export const AppCard = ({
                 id={`card-content-container-${id}`}
                 className={`card-content-container ${getHoverClass(id)}`}
               >
-                <CardContent className="card-inner-content">
+                <div className="card-inner-content px-4 pb-6">
                   {framework ? (
                     <div className="chip-container">
                       <div className="menu-chip">
-                        <Chip
-                          color="default"
-                          variant="outlined"
-                          label={framework}
+                        <Badge
+                          variant="outline"
                           id={`chip-${id}`}
-                          size="small"
-                          sx={{ mb: '8px', fontWeight: 600 }}
-                        />
+                          className="mb-2 font-semibold"
+                        >
+                          {framework}
+                        </Badge>
                       </div>
                     </div>
                   ) : (
                     <></>
                   )}
-                  <div>
-                    <span className="inline relative iconic">{getIcon()}</span>
-                    <Typography
-                      gutterBottom
-                      variant="h5"
-                      component="div"
-                      className="card-title"
-                      sx={{ position: 'relative', top: '5px' }}
-                    >
-                      <Tooltip title={title} placement="top-start">
-                        <span
-                          className="card-content-truncate"
-                          style={{
-                            maxWidth: '220px',
-                          }}
-                        >
-                          {title}
-                        </span>
-                      </Tooltip>
-                    </Typography>
+                  <div className="mt-2 flex items-center gap-2">
+                    <span className="iconic flex-shrink-0">{getIcon()}</span>
+                    <div className="card-title text-xl font-bold leading-tight">
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <span
+                              className="card-content-truncate"
+                              style={{ maxWidth: '220px' }}
+                            >
+                              {title}
+                            </span>
+                          </TooltipTrigger>
+                          <TooltipContent side="top" align="start">
+                            {title}
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </div>
                   </div>
-                  <Typography
-                    variant="body2"
-                    color="text.secondary"
-                    className="card-description"
-                    sx={{
-                      fontSize: '12px',
-                      mt: '8px',
-                    }}
-                  >
+                  <div className="card-description mt-2 text-xs text-muted-foreground">
                     {description}
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    color="text.primary"
-                    className="card-author"
-                    sx={{ mt: '6px' }}
-                  >
+                  </div>
+                  <div className="card-author mt-1.5">
                     <span
-                      className="card-content-truncate"
-                      style={{
-                        maxWidth: '220px',
-                        fontSize: '12px',
-                      }}
+                      className="card-content-truncate text-xs"
+                      style={{ maxWidth: '220px' }}
                     >
                       {app?.full_name?.split('/')[0] || ''}
                     </span>
-                  </Typography>
-                </CardContent>
+                  </div>
+                </div>
               </div>
             ) : (
-              <Box className="card-content-container app-service no-hover">
-                <CardContent className="card-inner-content">
-                  <Typography
-                    gutterBottom
-                    variant="h5"
-                    component="div"
-                    className="card-title"
-                    sx={{ position: 'relative', bottom: '3px' }}
-                  >
+              <div className="card-content-container app-service no-hover">
+                <div className="card-inner-content px-4 pb-6">
+                  <div className="card-title relative -top-[3px] mb-2 text-xl font-bold">
                     {title}
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    color="text.secondary"
-                    className="card-description-service"
-                    sx={{ fontSize: '12px', mt: '8px' }}
-                  >
+                  </div>
+                  <div className="card-description-service mt-2 text-xs text-muted-foreground">
                     {description}
-                  </Typography>
-                </CardContent>
-              </Box>
+                  </div>
+                </div>
+              </div>
             )}
           </div>
         </Card>
-      </Link>
-    </Box>
+      </a>
+    </div>
   );
 };
 

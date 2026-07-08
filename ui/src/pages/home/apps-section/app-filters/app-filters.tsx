@@ -1,22 +1,13 @@
-import FilterAltRoundedIcon from '@mui/icons-material/FilterAltRounded';
-import KeyboardArrowDownRoundedIcon from '@mui/icons-material/KeyboardArrowDownRounded';
-import KeyboardArrowUpRoundedIcon from '@mui/icons-material/KeyboardArrowUpRounded';
-import SortRounded from '@mui/icons-material/SortRounded';
-import SpaceDashboardIcon from '@mui/icons-material/SpaceDashboard';
-import TableRowsIcon from '@mui/icons-material/TableRows';
-import {
-  Box,
-  Button,
-  Checkbox,
-  Divider,
-  FormControlLabel,
-  FormLabel,
-  Grid,
-  Menu,
-  Radio,
-  RadioGroup,
-} from '@mui/material';
 import { ButtonGroup } from '@src/components';
+import { Button } from '@src/components/ui/button';
+import { Checkbox } from '@src/components/ui/checkbox';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@src/components/ui/popover';
+import { RadioGroup, RadioGroupItem } from '@src/components/ui/radio-group';
+import { Separator } from '@src/components/ui/separator';
 import type { AppFrameworkProps } from '@src/types/api';
 import type { JhApp } from '@src/types/jupyterhub';
 import type { UserState } from '@src/types/user';
@@ -28,12 +19,16 @@ import {
 } from '@src/utils/constants';
 import { filterAndSortApps } from '@src/utils/jupyterhub';
 import { useQuery } from '@tanstack/react-query';
-import React, {
-  type SyntheticEvent,
-  useCallback,
-  useEffect,
-  useState,
-} from 'react';
+import {
+  ChevronDown,
+  ChevronUp,
+  Filter,
+  LayoutGrid,
+  Rows3,
+  SortAsc,
+} from 'lucide-react';
+import type React from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import {
   currentFrameworks as defaultFrameworks,
@@ -43,8 +38,6 @@ import {
   currentServerStatuses as defaultServerStatuses,
   currentSortValue as defaultSortValue,
 } from '../../../../store';
-import { StyledFilterButton } from '../../../../styles/styled-filter-button';
-import { Item } from '../../../../styles/styled-item';
 import './app-filters.css';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -64,15 +57,8 @@ export const AppFilters = ({
   setApps,
 }: AppFiltersProps): React.ReactElement => {
   const [currentSearchValue] = useRecoilState<string>(defaultSearchValue);
-  const [filtersAnchorEl, setFiltersAnchorEl] =
-    React.useState<null | HTMLElement>(null);
-  // const [bulkActionsAnchorEl, setBulkActionsAnchorEl] =
-  // React.useState<null | HTMLElement>(null); // Not using now, may in the future
-  const [sortByAnchorEl, setSortByAnchorEl] =
-    React.useState<null | HTMLElement>(null);
-  const filtersOpen = Boolean(filtersAnchorEl);
-  // const bulkActionsOpen = Boolean(bulkActionsAnchorEl); // Not using now, may in the future
-  const sortByOpen = Boolean(sortByAnchorEl);
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const [sortByOpen, setSortByOpen] = useState(false);
   const [currentFrameworks, setCurrentFrameworks] =
     useRecoilState<string[]>(defaultFrameworks);
   const [currentOwnershipValue, setCurrentOwnershipValue] = useRecoilState(
@@ -80,7 +66,6 @@ export const AppFilters = ({
   );
   const [currentSortValue, setCurrentSortValue] =
     useRecoilState(defaultSortValue);
-  // const [hasBulkSelections] = useState(false); // Not using now, may in the future
   const [currentServerStatuses, setCurrentServerStatuses] = useRecoilState<
     string[]
   >(defaultServerStatuses);
@@ -99,18 +84,16 @@ export const AppFilters = ({
       }),
   });
 
-  const handleFrameworkChange = (event: SyntheticEvent) => {
-    const target = event.target as HTMLInputElement;
-    const value = target.value;
-    if (currentFrameworks.includes(value)) {
-      setCurrentFrameworks((prev) => prev.filter((item) => item !== value));
+  const toggleInList = (
+    list: string[],
+    value: string,
+    setter: React.Dispatch<React.SetStateAction<string[]>>,
+  ) => {
+    if (list.includes(value)) {
+      setter((prev) => prev.filter((item) => item !== value));
     } else {
-      setCurrentFrameworks((prev) => [...prev, value]);
+      setter((prev) => [...prev, value]);
     }
-  };
-
-  const handleOwnershipTypeChange = (value: string) => {
-    setCurrentOwnershipValue(value);
   };
 
   const handleSortByClick = (value: string) => {
@@ -127,31 +110,11 @@ export const AppFilters = ({
         currentGroups,
       ),
     );
-    setSortByAnchorEl(null);
-  };
-
-  const handleServerStatusChange = (event: SyntheticEvent) => {
-    const target = event.target as HTMLInputElement;
-    const value = target.value;
-    if (currentServerStatuses.includes(value)) {
-      setCurrentServerStatuses((prev) => prev.filter((item) => item !== value));
-    } else {
-      setCurrentServerStatuses((prev) => [...prev, value]);
-    }
-  };
-
-  const handleGroupsChange = (event: SyntheticEvent) => {
-    const target = event.target as HTMLInputElement;
-    const value = target.value;
-    if (currentGroups.includes(value)) {
-      setCurrentGroups((prev) => prev.filter((item) => item !== value));
-    } else {
-      setCurrentGroups((prev) => [...prev, value]);
-    }
+    setSortByOpen(false);
   };
 
   const handleApplyFilters = () => {
-    setFiltersAnchorEl(null);
+    setFiltersOpen(false);
     setApps(
       filterAndSortApps(
         data,
@@ -195,7 +158,6 @@ export const AppFilters = ({
     currentGroups,
   ]);
 
-  // Extract unique groups from all apps
   useEffect(() => {
     if (data) {
       const allGroups = new Set<string>();
@@ -214,391 +176,262 @@ export const AppFilters = ({
   useEffect(() => {
     setFilteredCount(calculateFilteredCount());
   }, [calculateFilteredCount]);
+
   return (
-    <Grid container spacing={2} paddingBottom="32px">
-      <Grid item xs={12} md={4}>
-        <Item sx={{ pb: 0 }}>
-          <StyledFilterButton
-            id="filters-btn"
-            variant="text"
-            color="secondary"
-            onClick={(event) => setFiltersAnchorEl(event.currentTarget)}
-            startIcon={<FilterAltRoundedIcon />}
-            sx={{
-              fontSize: '16px',
-              fontWeight: 600,
-              top: '-8px',
-              background: 'none',
-            }}
-            endIcon={
-              filtersOpen ? (
-                <KeyboardArrowUpRoundedIcon />
+    <div className="flex flex-wrap items-center gap-4 pb-8">
+      <div className="flex-1 min-w-[200px]">
+        <Popover open={filtersOpen} onOpenChange={setFiltersOpen}>
+          <PopoverTrigger asChild>
+            <Button
+              id="filters-btn"
+              variant="ghost-secondary"
+              disabled={frameworksLoading || false}
+              className="text-base font-semibold"
+            >
+              <Filter className="h-4 w-4" />
+              Filters
+              {filtersOpen ? (
+                <ChevronUp className="h-4 w-4" />
               ) : (
-                <KeyboardArrowDownRoundedIcon />
-              )
-            }
-            disabled={frameworksLoading || false}
-          >
-            Filters
-          </StyledFilterButton>
-          <Menu
+                <ChevronDown className="h-4 w-4" />
+              )}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent
             id="filters-list"
-            anchorEl={filtersAnchorEl}
-            open={filtersOpen}
-            onClose={() => setFiltersAnchorEl(null)}
-            MenuListProps={{
-              'aria-labelledby': 'filters-btn',
-              style: { paddingTop: 0, paddingBottom: 0 },
-              sx: {
-                '.MuiFormLabel-root': { fontSize: '14px' },
-                '.MuiFormControlLabel-label': {
-                  fontSize: '14px', // Targets labels within FormControlLabel
-                },
-              },
-            }}
+            align="start"
+            className="w-[560px] p-0"
           >
-            <Box
-              component="form"
+            <form
               name="filters-form"
               id="filters-form"
-              sx={{
-                width: '450px',
-                px: '16px',
-                pb: 0,
-                mt: 3,
-              }}
+              className="px-4 pt-4 pb-0"
             >
-              <FormLabel
-                id="frameworks-label"
-                sx={{
-                  py: '16px',
-                  fontWeight: 600,
-                }}
-              >
+              <p className="filter-section-label py-4 text-sm font-semibold">
                 Frameworks
-              </FormLabel>
-              <Box>
-                {frameworks?.map((framework) => (
-                  <FormControlLabel
-                    key={framework.name}
-                    control={<Checkbox value={framework.display_name} />}
-                    label={framework.display_name}
-                    sx={{
-                      width: '120px',
-                      '& > :last-child': {
-                        minWidth: '100%',
-                      },
-                    }}
-                    onClick={handleFrameworkChange}
-                    checked={currentFrameworks.includes(framework.display_name)}
-                  />
-                ))}
-              </Box>
-              <Divider sx={{ mt: '24px', mb: '16px' }} />
-              <FormLabel
-                id="server-statuses-label"
-                sx={{
-                  pb: '16px',
-                  fontSize: '14px',
-                  fontWeight: 600,
-                }}
-              >
+              </p>
+              <div className="flex flex-wrap">
+                {frameworks?.map((framework) => {
+                  const id = `framework-${framework.name}`;
+                  const checked = currentFrameworks.includes(
+                    framework.display_name,
+                  );
+                  return (
+                    <label
+                      key={framework.name}
+                      htmlFor={id}
+                      className="filter-item flex items-center gap-2 w-[120px] py-1 text-sm cursor-pointer"
+                    >
+                      <Checkbox
+                        id={id}
+                        checked={checked}
+                        onCheckedChange={() =>
+                          toggleInList(
+                            currentFrameworks,
+                            framework.display_name,
+                            setCurrentFrameworks,
+                          )
+                        }
+                      />
+                      {framework.display_name}
+                    </label>
+                  );
+                })}
+              </div>
+              <Separator className="mt-6 mb-4" />
+              <p className="filter-section-label pb-4 text-sm font-semibold">
                 Server Status
-              </FormLabel>
-              <Box>
-                {SERVER_STATUSES.map((status) => (
-                  <FormControlLabel
-                    key={status}
-                    control={<Checkbox value={status} />}
-                    label={status}
-                    onClick={handleServerStatusChange}
-                    checked={currentServerStatuses.includes(status)}
-                  />
-                ))}
-              </Box>
-              <Divider sx={{ mt: '24px', mb: '16px' }} />
-              <FormLabel
-                id="groups-label"
-                sx={{
-                  pb: '16px',
-                  fontSize: '14px',
-                  fontWeight: 600,
-                }}
-              >
+              </p>
+              <div className="flex flex-wrap">
+                {SERVER_STATUSES.map((status) => {
+                  const id = `status-${status}`;
+                  const checked = currentServerStatuses.includes(status);
+                  return (
+                    <label
+                      key={status}
+                      htmlFor={id}
+                      className="filter-item flex items-center gap-2 w-[120px] py-1 text-sm cursor-pointer"
+                    >
+                      <Checkbox
+                        id={id}
+                        checked={checked}
+                        onCheckedChange={() =>
+                          toggleInList(
+                            currentServerStatuses,
+                            status,
+                            setCurrentServerStatuses,
+                          )
+                        }
+                      />
+                      {status}
+                    </label>
+                  );
+                })}
+              </div>
+              <Separator className="mt-6 mb-4" />
+              <p className="filter-section-label pb-4 text-sm font-semibold">
                 Groups
-              </FormLabel>
-              <Box>
+              </p>
+              <div className="flex flex-wrap">
                 {availableGroups.length > 0 ? (
-                  availableGroups.map((group) => (
-                    <FormControlLabel
-                      key={group}
-                      control={<Checkbox value={group} />}
-                      label={group}
-                      onClick={handleGroupsChange}
-                      checked={currentGroups.includes(group)}
-                    />
-                  ))
+                  availableGroups.map((group) => {
+                    const id = `group-${group}`;
+                    const checked = currentGroups.includes(group);
+                    return (
+                      <label
+                        key={group}
+                        htmlFor={id}
+                        className="filter-item flex items-center gap-2 w-[120px] py-1 text-sm cursor-pointer"
+                      >
+                        <Checkbox
+                          id={id}
+                          checked={checked}
+                          onCheckedChange={() =>
+                            toggleInList(currentGroups, group, setCurrentGroups)
+                          }
+                        />
+                        {group}
+                      </label>
+                    );
+                  })
                 ) : (
-                  <FormLabel sx={{ fontSize: '12px', color: '#666' }}>
+                  <p className="filter-section-label text-xs text-muted-foreground">
                     No groups available
-                  </FormLabel>
+                  </p>
                 )}
-              </Box>
-              <Divider sx={{ mt: '24px', mb: '16px' }} />
-              <FormLabel
-                id="ownership-label"
-                sx={{
-                  pb: '16px',
-                  fontSize: '14px',
-                  fontWeight: 600,
-                }}
-              >
+              </div>
+              <Separator className="mt-6 mb-4" />
+              <p className="filter-section-label pb-4 text-sm font-semibold">
                 Ownership
-              </FormLabel>
-              <Box>
-                <RadioGroup
-                  aria-labelledby="ownership-label"
-                  defaultValue="any"
-                  name="ownership-group"
-                  sx={{
-                    '& .MuiFormControlLabel-root': {
-                      pb: '3px',
-                    },
-                  }}
-                  row
-                >
-                  {OWNERSHIP_TYPES.map((value) => (
-                    <FormControlLabel
-                      key={value}
-                      control={<Radio value={value} />}
-                      label={value}
-                      onClick={() => handleOwnershipTypeChange(value)}
-                      checked={currentOwnershipValue === value}
-                    />
-                  ))}
-                </RadioGroup>
-              </Box>
-              <Box
-                sx={{
-                  backgroundColor: '#EEE',
-                  p: 1,
-                  pt: 0.75,
-                  mx: -2,
-                  width: 'auto',
-                  fontSize: '14px',
-                }}
+              </p>
+              <RadioGroup
+                aria-label="Ownership"
+                value={currentOwnershipValue}
+                onValueChange={setCurrentOwnershipValue}
+                className="flex flex-row gap-4"
               >
+                {OWNERSHIP_TYPES.map((value) => {
+                  const id = `ownership-${value}`;
+                  return (
+                    <label
+                      key={value}
+                      htmlFor={id}
+                      className="filter-item flex items-center gap-2 text-sm cursor-pointer"
+                    >
+                      <RadioGroupItem value={value} id={id} />
+                      {value}
+                    </label>
+                  );
+                })}
+              </RadioGroup>
+              <div className="mt-4 -mx-4 bg-[#EEE] px-2 py-2">
                 <ButtonGroup>
                   <Button
                     id="clear-filters-btn"
                     data-testid="clear-filters-btn"
-                    variant="text"
-                    sx={{
-                      color: '#0F1015',
-                      display: 'flex',
-                      alignItems: 'center',
-                    }}
-                    size="small"
+                    variant="ghost-secondary"
+                    size="sm"
                     onClick={handleClearFilters}
                   >
                     Clear
                   </Button>
                   <Button
                     id="apply-filters-btn"
-                    variant="contained"
-                    size="small"
+                    variant="default"
+                    size="sm"
                     onClick={handleApplyFilters}
-                    sx={{ px: 'none !important', minWidth: '20px' }}
                   >
                     Show {filteredCount} results
                   </Button>
                 </ButtonGroup>
-              </Box>
-            </Box>
-          </Menu>
-          {/* <StyledFilterButton   // Not using now, may in the future
-            id="bulk-actions-btn"
-            variant="outlined"
-            color="secondary"
-            onClick={(event) => setBulkActionsAnchorEl(event.currentTarget)}
-            endIcon={
-              bulkActionsOpen ? (
-                <KeyboardArrowUpRoundedIcon />
-              ) : (
-                <KeyboardArrowDownRoundedIcon />
-              )
-            }
-            disabled={!hasBulkSelections}
-          >
-            Bulk Actions
-          </StyledFilterButton>
-          <Menu
-            id="bulk-actions-list"
-            anchorEl={bulkActionsAnchorEl}
-            open={bulkActionsOpen}
-            onClose={() => setBulkActionsAnchorEl(null)}
-            MenuListProps={{
-              'aria-labelledby': 'bulk-actions-btn',
-            }}
-          >
-            <Box
-              component="form"
-              name="bulk-actions-form"
-              sx={{ px: '16px', py: '8px' }}
-            ></Box>
-          </Menu> */}
-        </Item>
-      </Grid>
-      <Grid
-        container
-        item
-        xs={8}
-        md={8}
-        direction="row"
-        sx={{
-          display: 'flex',
-          justifyContent: 'flex-end',
-          flexWrap: 'nowrap',
-        }}
-      >
-        <Item>
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: 'row',
-            }}
-          >
+              </div>
+            </form>
+          </PopoverContent>
+        </Popover>
+      </div>
+
+      <div className="flex items-center gap-6">
+        <Popover open={sortByOpen} onOpenChange={setSortByOpen}>
+          <PopoverTrigger asChild>
             <Button
               id="sort-by-btn"
-              variant="text"
-              color="secondary"
-              onClick={(event) => setSortByAnchorEl(event.currentTarget)}
-              sx={{
-                position: 'relative',
-                bottom: '8px',
-                fontSize: '16px',
-                fontWeight: 600,
-                color: 'common.black',
-                mr: '24px',
-              }}
-              endIcon={
-                sortByOpen ? (
-                  <KeyboardArrowUpRoundedIcon />
-                ) : (
-                  <KeyboardArrowDownRoundedIcon />
-                )
-              }
+              variant="ghost-secondary"
+              className="text-base font-semibold"
             >
-              <SortRounded sx={{ position: 'relative', marginRight: '8px' }} />
+              <SortAsc className="h-4 w-4" />
               {currentSortValue}
+              {sortByOpen ? (
+                <ChevronUp className="h-4 w-4" />
+              ) : (
+                <ChevronDown className="h-4 w-4" />
+              )}
             </Button>
-            <Menu
-              id="sort-by-list"
-              anchorEl={sortByAnchorEl}
-              open={sortByOpen}
-              onClose={() => setSortByAnchorEl(null)}
-              MenuListProps={{
-                'aria-labelledby': 'sort-by-btn',
-              }}
-              anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'left',
-              }}
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'left',
-              }}
-              sx={{
-                transform: 'translateX(-85px)', // Move menu left/right
-                '.MuiFormControlLabel-label': {
-                  fontSize: '14px', // Applies to all labels in the FormControlLabel within this Menu
-                },
-              }}
-            >
-              <Box
-                component="form"
-                name="sort-by-form"
-                sx={{ px: '16px', width: '220px' }}
-              >
-                <RadioGroup
-                  defaultValue="any"
-                  name="sort-by-group"
-                  aria-describedby="sort-by-label"
-                >
-                  {SORT_TYPES.map((value) => (
-                    <FormControlLabel
-                      key={value}
-                      control={<Radio value={value} />}
-                      label={value}
-                      onClick={() => handleSortByClick(value)}
-                      checked={currentSortValue === value}
-                    />
-                  ))}
-                </RadioGroup>
-              </Box>
-            </Menu>
-          </Box>
-        </Item>
-        <Item>
-          <Box
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-around',
-              border: '1px solid #DFDFE0',
-              borderRadius: '4px',
-              position: 'relative',
-              top: '-6px',
-            }}
+          </PopoverTrigger>
+          <PopoverContent
+            id="sort-by-list"
+            align="start"
+            className="w-[220px] p-4"
           >
-            <Button
-              onClick={toggleView}
-              disabled={isGridViewActive}
-              aria-label="Grid View"
-              sx={{
-                color: 'inherit',
-                backgroundColor: isGridViewActive ? '#E8E8EA' : 'transparent',
-                boxShadow: 'none',
-                padding: '5px',
-                minWidth: 'auto',
-                borderRadius: '4px 0px 0px 4px',
-                borderRight: '1px solid #DFDFE0',
-                '&:hover': {
-                  backgroundColor: isGridViewActive ? '#E8E8EA' : 'transparent',
-                  boxShadow: 'none',
-                },
-              }}
-            >
-              <SpaceDashboardIcon
-                sx={{ color: isGridViewActive ? '#2E2F33' : '#76777B' }}
-              />
-            </Button>
-            <Button
-              onClick={toggleView}
-              disabled={!isGridViewActive}
-              aria-label="Table View"
-              sx={{
-                color: 'inherit',
-                backgroundColor: !isGridViewActive ? '#E8E8EA' : 'transparent',
-                boxShadow: 'none',
-                borderRadius: '0px 4px 4px 0px',
-                padding: '5px',
-                minWidth: 'auto',
-                '&:hover': {
-                  backgroundColor: !isGridViewActive
-                    ? '#E8E8EA'
-                    : 'transparent',
-                  boxShadow: 'none',
-                },
-              }}
-            >
-              <TableRowsIcon
-                sx={{ color: !isGridViewActive ? '#2E2F33' : '#76777B' }}
-              />
-            </Button>
-          </Box>
-        </Item>
-      </Grid>
-    </Grid>
+            <form name="sort-by-form">
+              <RadioGroup
+                aria-label="Sort by"
+                value={currentSortValue}
+                onValueChange={handleSortByClick}
+                className="gap-2"
+              >
+                {SORT_TYPES.map((value) => {
+                  const id = `sort-${value}`;
+                  return (
+                    <label
+                      key={value}
+                      htmlFor={id}
+                      className="filter-item flex items-center gap-2 text-sm cursor-pointer"
+                    >
+                      <RadioGroupItem value={value} id={id} />
+                      {value}
+                    </label>
+                  );
+                })}
+              </RadioGroup>
+            </form>
+          </PopoverContent>
+        </Popover>
+
+        <div className="flex items-center rounded border border-border">
+          <Button
+            onClick={toggleView}
+            disabled={isGridViewActive}
+            aria-label="Grid View"
+            variant="ghost"
+            size="icon"
+            className={`h-9 w-9 rounded-r-none border-r border-border ${
+              isGridViewActive ? 'bg-[#E8E8EA]' : 'bg-transparent'
+            }`}
+          >
+            <LayoutGrid
+              className={`h-4 w-4 ${
+                isGridViewActive ? 'text-[#2E2F33]' : 'text-[#76777B]'
+              }`}
+            />
+          </Button>
+          <Button
+            onClick={toggleView}
+            disabled={!isGridViewActive}
+            aria-label="Table View"
+            variant="ghost"
+            size="icon"
+            className={`h-9 w-9 rounded-l-none ${
+              !isGridViewActive ? 'bg-[#E8E8EA]' : 'bg-transparent'
+            }`}
+          >
+            <Rows3
+              className={`h-4 w-4 ${
+                !isGridViewActive ? 'text-[#2E2F33]' : 'text-[#76777B]'
+              }`}
+            />
+          </Button>
+        </div>
+      </div>
+    </div>
   );
 };

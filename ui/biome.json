@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.4.15/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.4.16/schema.json",
   "vcs": {
     "enabled": true,
     "clientKind": "git",
@@ -13,7 +13,8 @@
       "package.json",
       "tsconfig*.json",
       "vite.config.ts",
-      "!**/*.test.tsx"
+      "!**/*.test.tsx",
+      "!src/data/logos.ts"
     ]
   },
   "formatter": {
@@ -47,7 +48,8 @@
       "suspicious": {
         "noArrayIndexKey": "off",
         "noExplicitAny": "off",
-        "noImplicitAnyLet": "off"
+        "noImplicitAnyLet": "off",
+        "noUnknownAtRules": "off"
       }
     }
   },

@@ -1,10 +1,10 @@
-import AddIcon from '@mui/icons-material/AddRounded';
-import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
-import { Box, Button, IconButton, Stack, TextField } from '@mui/material';
+import { Button } from '@src/components/ui/button';
+import { Input } from '@src/components/ui/input';
+import { Label } from '@src/components/ui/label';
 import type { KeyValuePair } from '@src/types/api';
+import { Plus, X } from 'lucide-react';
 import type React from 'react';
 import { type ChangeEvent, useEffect, useState } from 'react';
-import { Item } from '../../styles/styled-item';
 
 export interface EnvironmentVariablesProps {
   variables: string | null;
@@ -70,69 +70,61 @@ export const EnvironmentVariables = ({
   }, [variables, rows.length]);
 
   return (
-    <Box id="environment-variables">
-      <Stack>
-        {rows.length > 0 ? (
-          <Item sx={{ pb: '16px' }}>
-            {rows.map((row, index) => (
-              <Stack
-                direction="row"
-                gap={1}
-                key={`environment-variable-row-${index}`}
-                sx={{ pb: '16px' }}
+    <div id="environment-variables" className="flex flex-col">
+      {rows.length > 0 ? (
+        <div className="pb-4">
+          {rows.map((row, index) => (
+            <div
+              key={`environment-variable-row-${index}`}
+              className="flex flex-row items-end gap-2 pb-4"
+            >
+              <div className="flex w-full flex-col gap-1.5">
+                <Label htmlFor={`environment-variable-key-${index}`}>Key</Label>
+                <Input
+                  id={`environment-variable-key-${index}`}
+                  name="key"
+                  placeholder="Key"
+                  value={row.key}
+                  onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                    handleChange(index, e)
+                  }
+                />
+              </div>
+              <div className="flex w-full flex-col gap-1.5">
+                <Label htmlFor={`environment-variable-value-${index}`}>
+                  Value
+                </Label>
+                <Input
+                  id={`environment-variable-value-${index}`}
+                  name="value"
+                  placeholder="Value"
+                  value={row.value}
+                  onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                    handleChange(index, e)
+                  }
+                />
+              </div>
+              <Button
+                type="button"
+                variant="ghost-secondary"
+                size="icon"
+                onClick={() => handleRemoveRow(index)}
+                aria-label="Remove"
+                data-testid="env-var-remove"
               >
-                <Item sx={{ width: '100%' }}>
-                  <TextField
-                    id={`environment-variable-key-${index}`}
-                    name="key"
-                    label="Key"
-                    placeholder="Key"
-                    value={row.key}
-                    onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                      handleChange(index, e)
-                    }
-                  />
-                </Item>
-                <Item sx={{ width: '100%' }}>
-                  <TextField
-                    id={`environment-variable-value-${index}`}
-                    name="value"
-                    label="Value"
-                    placeholder="Value"
-                    value={row.value}
-                    onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                      handleChange(index, e)
-                    }
-                  />
-                </Item>
-                <Item>
-                  <IconButton
-                    sx={{ mt: '7px' }}
-                    onClick={() => handleRemoveRow(index)}
-                    aria-label="Remove"
-                  >
-                    <CloseRoundedIcon />
-                  </IconButton>
-                </Item>
-              </Stack>
-            ))}
-          </Item>
-        ) : (
-          <></>
-        )}
-        <Item>
-          <Button
-            variant="contained"
-            color="secondary"
-            startIcon={<AddIcon />}
-            onClick={handleAddRow}
-            sx={{}}
-          >
-            Add Variable
-          </Button>
-        </Item>
-      </Stack>
-    </Box>
+                <X />
+              </Button>
+            </div>
+          ))}
+        </div>
+      ) : null}
+      <div>
+        <Button type="button" variant="secondary" onClick={handleAddRow}>
+          <Plus />
+          Add Variable
+        </Button>
+      </div>
+    </div>
   );
 };
 

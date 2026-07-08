@@ -1,18 +1,11 @@
-import CheckIcon from '@mui/icons-material/Check';
-import ErrorRoundedIcon from '@mui/icons-material/ErrorRounded';
+import { ButtonGroup } from '@src/components';
+import { Button } from '@src/components/ui/button';
 import {
-  Alert,
-  Box,
-  Button,
   Dialog,
   DialogContent,
+  DialogHeader,
   DialogTitle,
-  Grid,
-  Snackbar,
-  SvgIcon,
-  Typography,
-} from '@mui/material';
-import { ButtonGroup } from '@src/components';
+} from '@src/components/ui/dialog';
 import type {
   AppQueryDeleteProps,
   AppQueryGetProps,
@@ -32,6 +25,7 @@ import type React from 'react';
 import { useEffect, useState } from 'react';
 
 import { useRecoilState } from 'recoil';
+import { toast } from 'sonner';
 import {
   currentNotification,
   currentApp as defaultApp,
@@ -41,23 +35,9 @@ import {
   isStartOpen as isStartOpenState,
   isStopOpen as isStopOpenState,
 } from '../../../src/store';
-import { Item } from '../../styles/styled-item';
 import { AppsSection } from './apps-section/apps-section';
 import './home.css';
 import { ServicesSection } from './services-section/services-section';
-
-const CustomCheckIcon = () => (
-  <SvgIcon
-    sx={{
-      backgroundColor: 'green',
-      color: 'white',
-      borderRadius: '50%',
-      padding: '2px',
-    }}
-  >
-    <CheckIcon />
-  </SvgIcon>
-);
 
 export const Home = (): React.ReactElement => {
   const [, setNotification] = useRecoilState<string | undefined>(
@@ -76,15 +56,9 @@ export const Home = (): React.ReactElement => {
   );
   const [submitting, setSubmitting] = useState(false);
   const queryClient = useQueryClient();
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState('');
-  const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>(
-    'success',
-  ); // Set severity
 
   const handleStartRequest = async ({ id, full_name }: AppQueryPostProps) => {
-    // Extract the creator's name from the full_name
-    const creatorName = full_name?.split('/')[0]; // Extract 'userx' from 'userx/my-panel-app-git-86d9635'
+    const creatorName = full_name?.split('/')[0];
     const requestConfig = {
       method: 'post',
       url: `/server/${id}`,
@@ -117,7 +91,6 @@ export const Home = (): React.ReactElement => {
     enabled: !!currentAppId,
   });
 
-  // Fetch user data and check admin status
   const { data: currentUserData } = useQuery<UserState>({
     queryKey: ['current-user'],
     queryFn: () =>
@@ -127,7 +100,6 @@ export const Home = (): React.ReactElement => {
     enabled: true,
   });
 
-  // Mutations
   const { mutate: startQuery } = useMutation({
     mutationFn: handleStartRequest,
     retry: 1,
@@ -148,8 +120,7 @@ export const Home = (): React.ReactElement => {
           setSubmitting(false);
           setIsDeleteOpen(false);
           queryClient.invalidateQueries({ queryKey: ['app-state'] });
-          setSnackbarMessage('App deleted successfully');
-          setSnackbarOpen(true);
+          toast.success('App deleted successfully');
         },
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         onError: async (error: any) => {
@@ -160,30 +131,35 @@ export const Home = (): React.ReactElement => {
     );
   };
 
-  // Type guard to check if error has a 'response' property
   const isErrorWithResponse = (
     error: unknown,
   ): error is { response: { status: number } } => {
     return typeof error === 'object' && error !== null && 'response' in error;
   };
+
+  const messageFromStatus = (status: number | undefined, action: string) => {
+    if (status === 403) {
+      return `You don't have permission to ${action} this app. Please ask the owner to ${action} it.`;
+    }
+    if (status === 404) return 'App not found (404).';
+    if (status === 500) return 'Internal server error (500).';
+    return 'An unknown server error occurred.';
+  };
+
   const handleStart = async () => {
     const appId = currentApp?.id || '';
     const fullName = currentApp?.full_name || '';
     setSubmitting(true);
 
-    // Close the modal immediately when the Start button is clicked
     setIsStartOpen(false);
     setIsStartNotRunningOpen(false);
 
-    // Check if the app is shared and if the user has permissions
     const sharedApp = currentApp?.shared;
     if (sharedApp && !currentUserData?.admin) {
       setSubmitting(false);
-      setSnackbarMessage(
+      toast.error(
         "You don't have permission to start this app. Please ask the owner to start it.",
       );
-      setSnackbarSeverity('error');
-      setSnackbarOpen(true);
       return;
     }
 
@@ -193,32 +169,14 @@ export const Home = (): React.ReactElement => {
         onSuccess: async () => {
           setSubmitting(false);
           queryClient.invalidateQueries({ queryKey: ['app-state'] });
-          setSnackbarMessage('App started successfully');
-          setSnackbarSeverity('success');
-          setSnackbarOpen(true);
+          toast.success('App started successfully');
         },
         onError: (error: unknown) => {
           setSubmitting(false);
-
-          if (isErrorWithResponse(error)) {
-            const status = error.response?.status;
-            if (status === 403) {
-              setSnackbarMessage(
-                "You don't have permission to start this app. Please ask the owner to start it.",
-              );
-            } else if (status === 404) {
-              setSnackbarMessage('App not found (404).');
-            } else if (status === 500) {
-              setSnackbarMessage('Internal server error (500).');
-            } else {
-              setSnackbarMessage('An unknown server error occurred.');
-            }
-          } else {
-            setSnackbarMessage('An unknown error occurred.');
-          }
-
-          setSnackbarSeverity('error');
-          setSnackbarOpen(true);
+          const status = isErrorWithResponse(error)
+            ? error.response?.status
+            : undefined;
+          toast.error(messageFromStatus(status, 'start'));
         },
       },
     );
@@ -228,18 +186,14 @@ export const Home = (): React.ReactElement => {
     const appId = currentApp?.id || '';
     setSubmitting(true);
 
-    // Close the modal immediately when the Stop button is clicked
     setIsStopOpen(false);
 
-    // Check if the app is shared and if the user has permissions
     const sharedApp = currentApp?.shared;
     if (sharedApp && !currentUserData?.admin) {
       setSubmitting(false);
-      setSnackbarMessage(
+      toast.error(
         "You don't have permission to stop this app. Please ask the owner to stop it.",
       );
-      setSnackbarSeverity('error');
-      setSnackbarOpen(true);
       return;
     }
 
@@ -249,30 +203,14 @@ export const Home = (): React.ReactElement => {
         onSuccess: () => {
           setSubmitting(false);
           queryClient.invalidateQueries({ queryKey: ['app-state'] });
-          setSnackbarMessage('Server stopped successfully');
-          setSnackbarSeverity('success');
-          setSnackbarOpen(true);
+          toast.success('Server stopped successfully');
         },
         onError: (error: unknown) => {
           setSubmitting(false);
-          if (isErrorWithResponse(error)) {
-            const status = error.response?.status;
-            if (status === 403) {
-              setSnackbarMessage(
-                "You don't have permission to stop this app. Please ask the owner to stop it.",
-              );
-            } else if (status === 404) {
-              setSnackbarMessage('App not found (404).');
-            } else if (status === 500) {
-              setSnackbarMessage('Internal server error (500).');
-            } else {
-              setSnackbarMessage('An unknown server error occurred.');
-            }
-          } else {
-            setSnackbarMessage('An unknown error occurred.');
-          }
-          setSnackbarSeverity('error');
-          setSnackbarOpen(true);
+          const status = isErrorWithResponse(error)
+            ? error.response?.status
+            : undefined;
+          toast.error(messageFromStatus(status, 'stop'));
         },
       },
     );
@@ -284,45 +222,26 @@ export const Home = (): React.ReactElement => {
       return;
     }
 
-    // If default app, redirect to spawn URL
     if (isDefaultApp(currentApp.name)) {
       window.location.assign(getSpawnUrl(currentUser, currentApp));
       return;
     }
 
-    // Extract the creator's name from the full_name
     const creatorName = currentApp.full_name?.split('/')[0];
 
-    // Ensure the owner parameter is included in the request
     try {
       const response = await axios.post(`/server/${currentApp.id}`, {
         params: { owner: creatorName || '' },
       });
 
       if (response.status === 200) {
-        setSnackbarMessage('App started successfully');
-        setSnackbarSeverity('success');
-        setSnackbarOpen(true);
+        toast.success('App started successfully');
       }
     } catch (error) {
-      if (isErrorWithResponse(error)) {
-        const status = error.response?.status;
-        if (status === 403) {
-          setSnackbarMessage(
-            "You don't have permission to start this app. Please ask the owner to start it.",
-          );
-        } else if (status === 404) {
-          setSnackbarMessage('App not found (404).');
-        } else if (status === 500) {
-          setSnackbarMessage('Internal server error (500).');
-        } else {
-          setSnackbarMessage('An unknown server error occurred.');
-        }
-      } else {
-        setSnackbarMessage('An unknown error occurred.');
-      }
-      setSnackbarSeverity('error');
-      setSnackbarOpen(true);
+      const status = isErrorWithResponse(error)
+        ? error.response?.status
+        : undefined;
+      toast.error(messageFromStatus(status, 'start'));
     } finally {
       setSubmitting(false);
     }
@@ -342,18 +261,16 @@ export const Home = (): React.ReactElement => {
         <Button
           id="cancel-btn"
           data-testid="cancel-btn"
-          variant="text"
-          color="primary"
+          variant="ghost"
           onClick={() => setIsStartOpen(false)}
-          sx={{ fontWeight: 700 }}
+          className="font-bold"
         >
           Cancel
         </Button>
         <Button
           id="start-btn"
           data-testid="start-btn"
-          variant="contained"
-          color="primary"
+          variant="default"
           onClick={handleStart}
           disabled={submitting}
         >
@@ -373,17 +290,15 @@ export const Home = (): React.ReactElement => {
       <ButtonGroup className="card-dialog-button-group">
         <Button
           id="cancel-btn"
-          variant="text"
-          color="primary"
+          variant="ghost"
           onClick={() => setIsStopOpen(false)}
-          sx={{ fontWeight: 700 }}
+          className="font-bold"
         >
           Cancel
         </Button>
         <Button
           id="stop-btn"
-          variant="contained"
-          color="primary"
+          variant="default"
           onClick={handleStop}
           disabled={submitting}
         >
@@ -407,10 +322,9 @@ export const Home = (): React.ReactElement => {
         <Button
           id="cancel-btn"
           data-testid="cancel-btn"
-          variant="text"
-          color="primary"
+          variant="ghost"
           onClick={() => setIsDeleteOpen(false)}
-          sx={{ fontWeight: 700 }}
+          className="font-bold"
         >
           Cancel
         </Button>
@@ -418,8 +332,7 @@ export const Home = (): React.ReactElement => {
         <Button
           id="delete-btn"
           data-testid="delete-btn"
-          variant="contained"
-          color="error"
+          variant="destructive"
           onClick={handleDelete}
           disabled={submitting}
         >
@@ -443,21 +356,19 @@ export const Home = (): React.ReactElement => {
         <Button
           id="cancel-btn"
           data-testid="cancel-btn"
-          variant="text"
-          color="primary"
+          variant="ghost"
           onClick={() => {
             clearAppToStart();
             setIsStartNotRunningOpen(false);
           }}
-          sx={{ fontWeight: 700 }}
+          className="font-bold"
         >
           Cancel
         </Button>
         <Button
           id="start-btn"
           data-testid="start-btn"
-          variant="contained"
-          color="primary"
+          variant="default"
           onClick={() => {
             clearAppToStart();
             if (isDefaultApp(currentApp?.name || '')) {
@@ -507,101 +418,53 @@ export const Home = (): React.ReactElement => {
   }, [setCurrentAppId]);
 
   return (
-    <Box sx={{ flexGrow: 1 }} className="container">
-      <Grid container spacing={2} paddingBottom="24px">
-        <Grid item xs={12} md={2}>
-          <Item>
-            <Typography component="h1" variant="h5">
-              Home
-            </Typography>
-          </Item>
-        </Grid>
-      </Grid>
+    <div className="container">
+      <div className="pb-6">
+        <h1>Home</h1>
+      </div>
       <ServicesSection />
       <AppsSection />
-      {isStartOpen && (
-        <Dialog
-          open={isStartOpen}
-          onClose={() => setIsStartOpen(false)}
-          data-testid="StartModal"
-          sx={{ '.MuiPaper-root': { width: '444px' } }}
-        >
-          <DialogTitle sx={{ fontWeight: 700 }}>Start App</DialogTitle>
-          <DialogContent sx={{ padding: '0px' }}>
-            {startModalBody}
-          </DialogContent>
-        </Dialog>
-      )}
-      {isStopOpen && (
-        <Dialog
-          open={isStopOpen}
-          onClose={() => setIsStopOpen(false)}
-          data-testid="StopModal"
-          sx={{ '.MuiPaper-root': { width: '444px' } }}
-        >
-          <DialogTitle sx={{ fontWeight: 700, pb: 1 }}>Stop App</DialogTitle>
-          <DialogContent sx={{ padding: '0px' }}>{stopModalBody}</DialogContent>
-        </Dialog>
-      )}
-      {isDeleteOpen && (
-        <Dialog
-          open={isDeleteOpen}
-          onClose={() => setIsDeleteOpen(false)}
+      <Dialog open={isStartOpen} onOpenChange={setIsStartOpen}>
+        <DialogContent data-testid="StartModal" className="w-[444px] gap-0 p-0">
+          <DialogHeader className="p-6 pb-4">
+            <DialogTitle className="font-bold">Start App</DialogTitle>
+          </DialogHeader>
+          {startModalBody}
+        </DialogContent>
+      </Dialog>
+      <Dialog open={isStopOpen} onOpenChange={setIsStopOpen}>
+        <DialogContent data-testid="StopModal" className="w-[444px] gap-0 p-0">
+          <DialogHeader className="p-6 pb-2">
+            <DialogTitle className="font-bold">Stop App</DialogTitle>
+          </DialogHeader>
+          {stopModalBody}
+        </DialogContent>
+      </Dialog>
+      <Dialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
+        <DialogContent
           data-testid="DeleteModal"
-          sx={{ '.MuiPaper-root': { width: '444px' } }}
+          className="w-[444px] gap-0 p-0"
         >
-          <DialogTitle sx={{ fontWeight: 700 }}>Delete App</DialogTitle>
-          <DialogContent sx={{ padding: '0px' }}>
-            {deleteModalBody}
-          </DialogContent>
-        </Dialog>
-      )}
-      {isStartNotRunningOpen && (
-        <Dialog
-          open={isStartNotRunningOpen}
-          onClose={() => setIsStartNotRunningOpen(false)}
-          data-testid="StartNotRunningModal"
-          sx={{ '.MuiPaper-root': { width: '444px' } }}
-        >
-          <DialogTitle sx={{ fontWeight: 700 }}>Server Not Running</DialogTitle>
-          <DialogContent sx={{ padding: '0px' }}>
-            {startNotRunningModalBody}
-          </DialogContent>
-        </Dialog>
-      )}
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={6000}
-        onClose={() => setSnackbarOpen(false)}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-        sx={{
-          top: '90px !important',
-        }}
+          <DialogHeader className="p-6 pb-4">
+            <DialogTitle className="font-bold">Delete App</DialogTitle>
+          </DialogHeader>
+          {deleteModalBody}
+        </DialogContent>
+      </Dialog>
+      <Dialog
+        open={isStartNotRunningOpen}
+        onOpenChange={setIsStartNotRunningOpen}
       >
-        <Alert
-          onClose={() => setSnackbarOpen(false)}
-          severity={snackbarSeverity}
-          // Conditionally render either the success or error icon based on severity
-          icon={
-            snackbarSeverity === 'success' ? (
-              <CustomCheckIcon />
-            ) : (
-              <ErrorRoundedIcon />
-            )
-          }
-          sx={{
-            width: '100%',
-            fontFamily: "var(--app-font-family, 'Inter', sans-serif)",
-            fontWeight: 600,
-            // Use background and text color based on severity
-            backgroundColor:
-              snackbarSeverity === 'success' ? '#D1FAE5' : '#FEE2E2', // Light green for success, light red for error
-            color: snackbarSeverity === 'success' ? '#065F46' : '#B91C1C', // Dark green for success, dark red for error
-          }}
+        <DialogContent
+          data-testid="StartNotRunningModal"
+          className="w-[444px] gap-0 p-0"
         >
-          {snackbarMessage}
-        </Alert>
-      </Snackbar>
-    </Box>
+          <DialogHeader className="p-6 pb-4">
+            <DialogTitle className="font-bold">Server Not Running</DialogTitle>
+          </DialogHeader>
+          {startNotRunningModalBody}
+        </DialogContent>
+      </Dialog>
+    </div>
   );
 };

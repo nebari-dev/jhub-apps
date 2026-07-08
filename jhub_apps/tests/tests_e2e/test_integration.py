@@ -148,22 +148,38 @@ def create_app(
 
 def select_share_options(page, users=None, groups=None):
     logger.info("Selecting share form")
-    share_locator = page.locator("id=share-permissions-autocomplete")
-    expect(share_locator).to_be_visible()
+    share_trigger = page.locator("id=share-permissions-autocomplete")
+    expect(share_trigger).to_be_visible()
 
     users = users or []
     groups = groups or []
+
+    def open_and_search(query):
+        # The shadcn Combobox trigger is a button; clicking it opens a popover
+        # containing the search input. Re-open per entry because selecting an
+        # option in multi-select mode keeps the popover open, but typing again
+        # requires the search field to be focused.
+        if share_trigger.get_attribute("aria-expanded") != "true":
+            share_trigger.click()
+        search_input = page.get_by_placeholder("Search…")
+        expect(search_input).to_be_visible()
+        search_input.fill(query)
+
     for user in users:
         logger.info(f"Fill user: {user} in share")
-        share_locator.fill(user)
+        open_and_search(user)
         logger.info(f"Select user: {user} in share")
         page.get_by_role("option", name=user).click()
 
     for group in groups:
         logger.info(f"Fill group: {group} in share")
-        share_locator.fill(group)
+        open_and_search(group)
         logger.info(f"Select group: {group} in share")
         page.get_by_role("option", name=f"{group} (Group)").click()
+
+    # Close the popover before clicking Share, in case it overlays the button.
+    if share_trigger.get_attribute("aria-expanded") == "true":
+        page.keyboard.press("Escape")
     page.get_by_role("button", name="Share").click()
 
 

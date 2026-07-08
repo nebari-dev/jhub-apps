@@ -1,10 +1,10 @@
-import { Box, CircularProgress } from '@mui/material';
 import type { AppQueryGetProps } from '@src/types/api';
 import type { UserState } from '@src/types/user';
 import axios from '@src/utils/axios';
 import { APP_BASE_URL } from '@src/utils/constants';
 import { getSpawnPendingUrl, storeAppToStart } from '@src/utils/jupyterhub';
 import { useQuery } from '@tanstack/react-query';
+import { Loader2 } from 'lucide-react';
 import React, { useEffect } from 'react';
 import { useRecoilState } from 'recoil';
 import { currentUser as defaultUser } from '../../store';
@@ -56,8 +56,11 @@ export const NotRunning = (): React.ReactElement => {
   }, [formData, id, currentUser]);
 
   return (
-    <Box sx={{ margin: 'auto auto' }}>
-      <CircularProgress />
-    </Box>
+    <div className="m-auto">
+      <Loader2
+        data-testid="not-running-spinner"
+        className="h-10 w-10 animate-spin text-primary"
+      />
+    </div>
   );
 };

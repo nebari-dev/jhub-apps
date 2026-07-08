@@ -98,7 +98,7 @@ describe('AppForm', () => {
     });
   });
 
-  test('handles getStyledText correctly', () => {
+  test('marks description as over-limit when more than 200 characters', () => {
     const { baseElement } = render(
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
@@ -115,40 +115,7 @@ describe('AppForm', () => {
 
     if (textArea) {
       fireEvent.change(textArea, { target: { value: 'a'.repeat(210) } });
-
-      const overlayText = baseElement.querySelector(
-        '.overlay-text',
-      ) as HTMLDivElement;
-      expect(overlayText).toHaveTextContent('a'.repeat(200));
-      const spanElement = overlayText.querySelector('span');
-      if (spanElement) {
-        const computedStyle = window.getComputedStyle(spanElement);
-        expect(['red', 'rgb(255, 0, 0)']).toContain(computedStyle.color);
-      }
-    }
-  });
-
-  test('handles handleFocus correctly', () => {
-    const { baseElement } = render(
-      <RecoilRoot>
-        <QueryClientProvider client={queryClient}>
-          <BrowserRouter>
-            <AppForm isEditMode={false} />
-          </BrowserRouter>
-        </QueryClientProvider>
-      </RecoilRoot>,
-    );
-
-    const textArea = baseElement.querySelector(
-      '#description',
-    ) as HTMLTextAreaElement;
-
-    if (textArea) {
-      fireEvent.focus(textArea);
-      expect(textArea.classList).toContain('description_text-field');
-
-      fireEvent.blur(textArea);
-      expect(textArea.classList).toContain('description_text-field');
+      expect(textArea.className).toContain('border-destructive');
     }
   });
 
@@ -189,8 +156,8 @@ describe('AppForm', () => {
       '#display_name',
     ) as HTMLInputElement;
     const frameworkField = baseElement.querySelector(
-      '[name="framework"]',
-    ) as HTMLSelectElement;
+      '#framework',
+    ) as HTMLButtonElement;
     const envVariableField = baseElement.querySelector(
       '#env',
     ) as HTMLInputElement;
@@ -272,39 +239,6 @@ describe('AppForm', () => {
     // If the function returns early, no further execution happens, so no assertions are needed
   });
 
-  test('synchronizes textarea scroll with overlay scroll', async () => {
-    const { baseElement } = render(
-      <RecoilRoot>
-        <QueryClientProvider client={queryClient}>
-          <BrowserRouter>
-            <AppForm isEditMode={false} />
-          </BrowserRouter>
-        </QueryClientProvider>
-      </RecoilRoot>,
-    );
-
-    const textArea = baseElement.querySelector(
-      '#description',
-    ) as HTMLTextAreaElement;
-    const overlay = baseElement.querySelector(
-      '.overlay-text',
-    ) as HTMLDivElement;
-
-    if (textArea && overlay) {
-      textArea.style.height = '100px';
-      overlay.style.height = '100px';
-      overlay.style.overflow = 'auto';
-
-      // Simulate scrolling the textarea
-      await act(async () => {
-        fireEvent.scroll(textArea, { target: { scrollTop: 50 } });
-      });
-
-      // Check if the overlay scroll position has been synchronized with the textarea scroll position
-      expect(overlay.scrollTop).toBe(textArea.scrollTop);
-    }
-  });
-
   test('simulates creating a standard app with thumbnail', async () => {
     mock.onGet(new RegExp('/frameworks')).reply(200, frameworks);
     mock.onPost(new RegExp('/server')).reply(200);
@@ -328,8 +262,8 @@ describe('AppForm', () => {
       '#thumbnail',
     ) as HTMLInputElement;
     const frameworkField = baseElement.querySelector(
-      '[name="framework"]',
-    ) as HTMLSelectElement;
+      '#framework',
+    ) as HTMLButtonElement;
     if (displayNameField && thumbnailField && frameworkField) {
       // Attempt submitting without filling in required fields
       const btn = baseElement.querySelector('#submit-btn') as HTMLButtonElement;
@@ -452,8 +386,8 @@ describe('AppForm', () => {
       '#description',
     ) as HTMLInputElement;
     const frameworkField = baseElement.querySelector(
-      '[name="framework"]',
-    ) as HTMLSelectElement;
+      '#framework',
+    ) as HTMLButtonElement;
     if (displayNameField && descriptionField && frameworkField) {
       await userEvent.type(displayNameField, 'App 1');
       await userEvent.type(descriptionField, 'Some App');
@@ -496,8 +430,8 @@ describe('AppForm', () => {
       '#description',
     ) as HTMLInputElement;
     const frameworkField = baseElement.querySelector(
-      '[name="framework"]',
-    ) as HTMLSelectElement;
+      '#framework',
+    ) as HTMLButtonElement;
     if (displayNameField && descriptionField && frameworkField) {
       await userEvent.type(displayNameField, 'App 1');
       await userEvent.type(descriptionField, 'Some App');
@@ -538,8 +472,8 @@ describe('AppForm', () => {
       '#description',
     ) as HTMLInputElement;
     const frameworkField = baseElement.querySelector(
-      '[name="framework"]',
-    ) as HTMLSelectElement;
+      '#framework',
+    ) as HTMLButtonElement;
     if (displayNameField && descriptionField && frameworkField) {
       await userEvent.type(displayNameField, 'App 1');
       await userEvent.type(descriptionField, 'Some App');
@@ -599,8 +533,8 @@ describe('AppForm', () => {
       '#display_name',
     ) as HTMLInputElement;
     const frameworkField = baseElement.querySelector(
-      '[name="framework"]',
-    ) as HTMLSelectElement;
+      '#framework',
+    ) as HTMLButtonElement;
     if (displayNameField && frameworkField) {
       await userEvent.type(displayNameField, 'App without profile');
       fireEvent.change(frameworkField, { target: { value: 'panel' } });
@@ -639,8 +573,8 @@ describe('AppForm', () => {
       '#display_name',
     ) as HTMLInputElement;
     const frameworkField = baseElement.querySelector(
-      '[name="framework"]',
-    ) as HTMLSelectElement;
+      '#framework',
+    ) as HTMLButtonElement;
     if (displayNameField && frameworkField) {
       await userEvent.type(displayNameField, 'Updated App');
       fireEvent.change(frameworkField, { target: { value: 'panel' } });
@@ -672,22 +606,22 @@ describe('AppForm', () => {
 
     const switchInput = baseElement.querySelector(
       '#keep_alive',
-    ) as HTMLInputElement;
+    ) as HTMLButtonElement;
 
     if (switchInput) {
-      expect(switchInput.checked).toBe(false);
+      expect(switchInput.getAttribute('aria-checked')).toBe('false');
 
       await act(async () => {
         fireEvent.click(switchInput);
       });
 
-      expect(switchInput.checked).toBe(true);
+      expect(switchInput.getAttribute('aria-checked')).toBe('true');
 
       await act(async () => {
         fireEvent.click(switchInput);
       });
 
-      expect(switchInput.checked).toBe(false);
+      expect(switchInput.getAttribute('aria-checked')).toBe('false');
     }
   });
 
@@ -765,8 +699,8 @@ describe('AppForm', () => {
       '#thumbnail',
     ) as HTMLInputElement;
     const frameworkField = baseElement.querySelector(
-      '[name="framework"]',
-    ) as HTMLSelectElement;
+      '#framework',
+    ) as HTMLButtonElement;
     if (displayNameField && thumbnailField && frameworkField) {
       await userEvent.type(displayNameField, 'App 1');
       const file = new File(['File contents'], 'image.png', {
@@ -808,8 +742,8 @@ describe('AppForm', () => {
       '#display_name',
     ) as HTMLInputElement;
     const frameworkField = baseElement.querySelector(
-      '[name="framework"]',
-    ) as HTMLSelectElement;
+      '#framework',
+    ) as HTMLButtonElement;
     if (displayNameField && frameworkField) {
       await userEvent.type(displayNameField, 'Updated App');
       fireEvent.change(frameworkField, { target: { value: 'panel' } });

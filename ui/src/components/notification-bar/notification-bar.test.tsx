@@ -1,46 +1,46 @@
-import { render } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { NotificationBar } from '..';
 
 describe('NotificationBar', () => {
   test('renders default notification bar successfully', () => {
-    const { baseElement } = render(<NotificationBar message="default" />);
-
-    expect(baseElement.querySelector('.MuiAlert-message')).toBeTruthy();
+    render(<NotificationBar message="default" />);
+    expect(screen.getByRole('alert')).toBeInTheDocument();
+    expect(screen.getByTestId('alert-message')).toHaveTextContent('default');
   });
 
   test('renders an error notification bar successfully', () => {
-    const { baseElement } = render(
-      <NotificationBar message="default" severity="error" />,
-    );
-
-    expect(baseElement.querySelector('.MuiAlert-message')).toBeTruthy();
-    expect(baseElement.querySelector('.MuiAlert-standardError')).toBeTruthy();
+    render(<NotificationBar message="default" severity="error" />);
+    const alert = screen.getByRole('alert');
+    expect(alert).toBeInTheDocument();
+    expect(alert).toHaveAttribute('data-severity', 'error');
   });
 
   test('renders an warning notification bar successfully', () => {
-    const { baseElement } = render(
-      <NotificationBar message="default" severity="warning" />,
-    );
-
-    expect(baseElement.querySelector('.MuiAlert-message')).toBeTruthy();
-    expect(baseElement.querySelector('.MuiAlert-standardWarning')).toBeTruthy();
+    render(<NotificationBar message="default" severity="warning" />);
+    const alert = screen.getByRole('alert');
+    expect(alert).toBeInTheDocument();
+    expect(alert).toHaveAttribute('data-severity', 'warning');
   });
 
   test('renders an info notification bar successfully', () => {
-    const { baseElement } = render(
-      <NotificationBar message="default" severity="info" />,
-    );
-
-    expect(baseElement.querySelector('.MuiAlert-message')).toBeTruthy();
-    expect(baseElement.querySelector('.MuiAlert-standardInfo')).toBeTruthy();
+    render(<NotificationBar message="default" severity="info" />);
+    const alert = screen.getByRole('alert');
+    expect(alert).toBeInTheDocument();
+    expect(alert).toHaveAttribute('data-severity', 'info');
   });
 
   test('renders an success notification bar successfully', () => {
-    const { baseElement } = render(
-      <NotificationBar message="default" severity="success" />,
-    );
+    render(<NotificationBar message="default" severity="success" />);
+    const alert = screen.getByRole('alert');
+    expect(alert).toBeInTheDocument();
+    expect(alert).toHaveAttribute('data-severity', 'success');
+  });
 
-    expect(baseElement.querySelector('.MuiAlert-message')).toBeTruthy();
-    expect(baseElement.querySelector('.MuiAlert-standardSuccess')).toBeTruthy();
+  test('renders a close button and calls onClose when clicked', () => {
+    const onClose = vi.fn();
+    render(<NotificationBar message="default" onClose={onClose} />);
+    const closeBtn = screen.getByRole('button', { name: /close/i });
+    fireEvent.click(closeBtn);
+    expect(onClose).toHaveBeenCalledTimes(1);
   });
 });

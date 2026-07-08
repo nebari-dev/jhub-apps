@@ -1,54 +1,36 @@
-// src/pages/stop-pending/StopPending.tsx
-import { Box, Button, CircularProgress, Typography } from '@mui/material';
+import { Button } from '@src/components/ui/button';
 import { APP_BASE_URL } from '@src/utils/constants';
 import { navigateToUrl } from '@src/utils/jupyterhub';
+import { Loader2 } from 'lucide-react';
 import type React from 'react';
 import './stop-pending.css';
 
 export const StopPending = (): React.ReactElement => {
   return (
-    <Box
+    <div
       id="stop-pending"
-      className="container"
-      display="flex"
-      flexDirection="column"
-      alignItems="center"
-      textAlign="center"
-      padding="20px"
+      className="container flex flex-col items-center p-5 text-center"
     >
-      <Box
-        display="flex"
-        flexDirection="column"
-        alignItems="center"
-        textAlign="center"
-      >
-        <Typography
-          variant="h5"
-          component="h1"
-          gutterBottom
-          sx={{ paddingBottom: '0 !important' }}
-        >
+      <div className="flex flex-col items-center text-center">
+        <h1 className="text-2xl font-normal">
           Thank you for your patience
           <br />
           We are stopping your application, you may start it again when we have
           finished
-        </Typography>
-        <CircularProgress style={{ color: '#a020f0', margin: '20px 0' }} />
-      </Box>
-      <Box sx={{ marginTop: '4rem' }}>
-        <Typography variant="body1" gutterBottom>
+        </h1>
+        <Loader2
+          role="progressbar"
+          className="my-5 h-10 w-10 animate-spin text-primary"
+        />
+      </div>
+      <div className="mt-16">
+        <p className="mb-2">
           You may return to the Application Screen at any time
-        </Typography>
-        <Button
-          id="back-btn"
-          variant="contained"
-          color="primary"
-          style={{ backgroundColor: '#a020f0' }}
-          onClick={() => navigateToUrl(`${APP_BASE_URL}`)}
-        >
+        </p>
+        <Button id="back-btn" onClick={() => navigateToUrl(`${APP_BASE_URL}`)}>
           Back To Home
         </Button>
-      </Box>
-    </Box>
+      </div>
+    </div>
   );
 };

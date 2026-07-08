@@ -55,6 +55,18 @@ jsurls %}
 <script type="text/javascript" src="{{ jsurl }}" defer></script>
 {% endfor %} {% endblock stylesheet %}
 
+{% block scripts %}
+{{ super() }}
+<script type="text/javascript">
+  // This app is light-only. JupyterHub's darkmode.js sets
+  // data-bs-theme based on the OS `prefers-color-scheme`, which flips
+  // Bootstrap into dark mode on the admin/token pages. Pin it to light
+  // and store the preference so it survives navigation and OS changes.
+  try { localStorage.setItem("jupyterhub-bs-theme", "light"); } catch (e) {}
+  document.documentElement.setAttribute("data-bs-theme", "light");
+</script>
+{% endblock scripts %}
+
 <!-- {# requires jupyerhub > 0.9.4 https://github.com/jupyterhub/jupyterhub/pull/2296 #}  -->
 {% block title %}{{ hub_title or 'JupyterHub'}}{% endblock %} {% block favicon
 %} <link rel="icon" href="{{ favicon or static_url("favicon.ico") }}"

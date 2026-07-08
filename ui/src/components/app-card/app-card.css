@@ -1,5 +1,5 @@
 .card {
-  height: 241px;
+  height: 246px;
   width: 286px;
   border-radius: 0.25rem;
   box-shadow: 0px 1px 2px rgba(210, 210, 207, 0.7);
@@ -70,7 +70,7 @@
 .card-content-content {
   position: relative;
   z-index: 111;
-  height: 110px;
+  height: 115px;
 }
 
 .menu-chip {
@@ -123,6 +123,7 @@
   text-overflow: ellipsis;
   display: block;
   text-wrap: nowrap;
+  transition: max-height 0.5s ease-in-out;
 }
 
 /* Hover effects */

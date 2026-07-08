@@ -1,7 +1,7 @@
 .align-vertical-center {
   vertical-align: middle;
   position: relative;
-  top: -6px; /* Adjust this value as needed */
+  top: -6px;
 }
 
 .icon-button {
@@ -48,10 +48,6 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-
-.MuiDataGrid-menuIcon.base-Popper-root.MuiDataGrid-menu {
-  display: none;
 }
 
 .app-header th {

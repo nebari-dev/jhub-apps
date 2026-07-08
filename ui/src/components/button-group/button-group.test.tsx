@@ -1,5 +1,5 @@
-import { Button } from '@mui/material';
 import { render } from '@testing-library/react';
+import { Button } from '@src/components/ui/button';
 import { ButtonGroup } from '..';
 
 describe('ButtonGroup', () => {
