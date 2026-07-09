@@ -1,5 +1,10 @@
 import { Separator } from '@src/components/ui/separator';
-import type { JhApp, JhServiceApp, JhServiceFull } from '@src/types/jupyterhub';
+import type {
+  JhApp,
+  JhServerData,
+  JhServiceApp,
+  JhServiceFull,
+} from '@src/types/jupyterhub';
 import type { UserState } from '@src/types/user';
 import axios from '@src/utils/axios';
 import { getPinnedApps, getPinnedServices } from '@src/utils/jupyterhub';
@@ -43,7 +48,7 @@ export const ServicesSection = (): React.ReactElement => {
     isLoading: appsLoading,
     error: appsError,
     data: appsData,
-  } = useQuery<UserState, { message: string }>({
+  } = useQuery<JhServerData, { message: string }>({
     queryKey: ['app-state'],
     queryFn: () =>
       axios

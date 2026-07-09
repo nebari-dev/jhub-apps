@@ -1,6 +1,9 @@
 import { JUPYTER_LOGO, VSCODE_LOGO } from '@src/data/logos';
+import type { EnvironmentVariablesMap } from '@src/types/api';
 import type {
   JhApp,
+  JhServer,
+  JhServerData,
   JhService,
   JhServiceApp,
   JhServiceFull,
@@ -22,15 +25,15 @@ export const getServices = (services: JhServiceFull[], user: string) => {
         const serviceInfo = service.info;
         if (serviceInfo.url) {
           let url = serviceInfo.url;
-          const name = serviceInfo.name;
+          const name = serviceInfo.name || '';
           if (name === 'VSCode' || name === 'JupyterLab') {
             url = getEncodedServerUrl(user, name);
           }
           jhServices.push({
-            name: name,
-            url: url,
-            external: serviceInfo.external,
-            pinned: serviceInfo.pinned,
+            name,
+            url,
+            external: serviceInfo.external || false,
+            pinned: serviceInfo.pinned || false,
             description: serviceInfo.description,
             thumbnail: serviceInfo.thumbnail
               ? serviceInfo.thumbnail
@@ -66,17 +69,16 @@ export const getPinnedServices = (
   return pinnedServices;
 };
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
 export const getApps = (
-  servers: any,
+  servers: JhServerData,
   ownershipType: string,
   username: string,
 ) => {
-  const serverApps = [];
+  const serverApps: JhServer[] = [];
   const filteredApps: JhApp[] = [];
   if (ownershipType === 'shared' || ownershipType === 'all') {
     serverApps.push(
-      ...servers.shared_apps.map((server: any) => ({
+      ...servers.shared_apps.map((server) => ({
         ...server,
         shared: true,
       })),
@@ -84,22 +86,25 @@ export const getApps = (
   }
   if (ownershipType === 'mine' || ownershipType === 'all') {
     serverApps.push(
-      ...servers.user_apps.map((server: any) => ({ ...server, shared: false })),
+      ...servers.user_apps.map((server) => ({ ...server, shared: false })),
     );
   }
 
-  serverApps.forEach((server: any) => {
+  serverApps.forEach((server) => {
     if (server.user_options?.jhub_app) {
       const app = server.user_options;
       const appStatus = getAppStatus(server);
       filteredApps.push({
         ...app,
         ...server,
-        id: app.name,
-        name: app.display_name,
-        url: server.url?.replace('/user/', '/hub/user/'),
-        framework: getFriendlyFrameworkName(app.framework),
+        id: app.name || server.name,
+        name: app.display_name || server.name,
+        url: server.url?.replace('/user/', '/hub/user/') || '',
+        framework: getFriendlyFrameworkName(app.framework || ''),
         username: server.username || username,
+        ready: server.ready || false,
+        public: app.public || false,
+        shared: server.shared || false,
         last_activity: server.last_activity,
         status: appStatus,
       });
@@ -109,10 +114,10 @@ export const getApps = (
   return filteredApps;
 };
 
-export const getPinnedApps = (servers: any, username: string) => {
+export const getPinnedApps = (servers: JhServerData, username: string) => {
   const pinnedApps: JhApp[] = [];
   const defaultApp = servers.user_apps.find(
-    (app: any) => app.name === '' && !app.user_options?.jhub_app,
+    (app) => app.name === '' && !app.user_options?.jhub_app,
   );
 
   if (defaultApp) {
@@ -126,7 +131,7 @@ export const getPinnedApps = (servers: any, username: string) => {
       url: getEncodedServerUrl(username, 'lab'),
       thumbnail: JUPYTER_LOGO,
       username: username,
-      ready: defaultApp.ready,
+      ready: defaultApp.ready || false,
       public: false,
       shared: false,
       last_activity: defaultApp.last_activity,
@@ -162,7 +167,7 @@ export const getFriendlyFrameworkName = (framework: string) => {
   return framework.charAt(0).toUpperCase() + framework.slice(1);
 };
 
-export const getFriendlyDateStr = (date: Date) => {
+export const getFriendlyDateStr = (date: Date | string) => {
   const currentDate = new Date();
   const targetDate = new Date(date);
 
@@ -173,18 +178,19 @@ export const getFriendlyDateStr = (date: Date) => {
   const days = Math.floor(hours / 24);
 
   if (days > 0) {
-    return days === 1 ? '1 day ago' : days + ' days ago';
+    return days === 1 ? '1 day ago' : `${days} days ago`;
   } else if (hours > 0) {
-    return hours === 1 ? '1 hour ago' : hours + ' hours ago';
+    return hours === 1 ? '1 hour ago' : `${hours} hours ago`;
   } else if (minutes > 0) {
-    return minutes === 1 ? '1 minute ago' : minutes + ' minutes ago';
+    return minutes === 1 ? '1 minute ago' : `${minutes} minutes ago`;
   } else {
     return 'Just now';
   }
 };
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
-export const getFriendlyEnvironmentVariables = (env: any) => {
+export const getFriendlyEnvironmentVariables = (
+  env: EnvironmentVariablesMap | null | undefined,
+) => {
   if (!env) {
     return null;
   }
@@ -240,7 +246,11 @@ export const navigateToUrl = (url: string) => {
   document.location.href = url;
 };
 
-export const getAppStatus = (app: JhApp): string => {
+export const getAppStatus = (app: {
+  stopped?: boolean;
+  pending?: boolean | null;
+  ready?: boolean;
+}): string => {
   if (app.stopped) {
     return 'Ready';
   } else if (app.pending) {
@@ -264,9 +274,8 @@ export const clearAppToStart = () => {
   window.sessionStorage.removeItem(APP_TO_START_KEY);
 };
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
 export const filterAndSortApps = (
-  data: any,
+  data: JhServerData,
   currentUser: UserState,
   searchValue: string,
   ownershipValue: string,
@@ -303,7 +312,7 @@ export const filterAndSortApps = (
       }
       return true;
     })
-    .filter((app: any) => {
+    .filter((app) => {
       if (groupValues.length > 0) {
         const appGroups = app.share_with?.groups || [];
         return groupValues.some((group) => appGroups.includes(group));

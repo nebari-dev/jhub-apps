@@ -1,4 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+import type { SharePermissions, UserOptions } from './api';
+
 export interface JhData {
   admin_access: boolean;
   base_url: string;
@@ -21,11 +22,12 @@ export interface JhApp {
   ready: boolean;
   public: boolean;
   shared: boolean;
-  last_activity: Date;
-  pending?: boolean;
+  last_activity: Date | string;
+  pending?: boolean | null;
   stopped?: boolean;
   status: string;
   full_name?: string;
+  share_with?: SharePermissions;
 }
 
 export interface JhServiceApp {
@@ -48,10 +50,19 @@ export interface JhService {
   thumbnail?: string;
 }
 
+export interface JhServiceInfo {
+  name?: string;
+  description?: string;
+  url?: string;
+  external?: boolean;
+  pinned?: boolean;
+  thumbnail?: string;
+}
+
 export interface JhServiceFull {
   prefix: string;
   kind: string;
-  info: any;
+  info: JhServiceInfo;
   admin: boolean;
   display: boolean;
   roles: string[];
@@ -59,4 +70,25 @@ export interface JhServiceFull {
   url: string;
   name: string;
   command: string[];
+}
+
+export interface JhServer {
+  name: string;
+  url?: string;
+  started?: string | null;
+  pending?: boolean | null;
+  ready?: boolean;
+  last_activity: Date | string;
+  stopped?: boolean;
+  shared?: boolean;
+  username?: string;
+  user_options?: Partial<UserOptions> & {
+    name?: string;
+    username?: string;
+  };
+}
+
+export interface JhServerData {
+  user_apps: JhServer[];
+  shared_apps: JhServer[];
 }

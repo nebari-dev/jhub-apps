@@ -28,6 +28,7 @@ import type {
   AppProfileProps,
   AppQueryGetProps,
   AppQueryUpdateProps,
+  EnvironmentVariablesMap,
 } from '@src/types/api';
 import type { AppFormInput, AppFormProps, RepoData } from '@src/types/form';
 import type { UserState } from '@src/types/user';
@@ -184,7 +185,38 @@ export const AppForm = ({
   const hasChanges =
     JSON.stringify(watchedFields) !== JSON.stringify(initialValues);
 
+  const [, setNotification] = useRecoilState<string | undefined>(
+    currentNotification,
+  );
+  const [currentFormInput, setCurrentFormInput] = useRecoilState<
+    AppFormInput | undefined
+  >(defaultFormInput);
+  const [currentServerName, setCurrentServerName] = useRecoilState<
+    string | undefined
+  >(defaultServerName);
+  const [currentFile, setCurrentFile] = useRecoilState<File | undefined>(
+    defaultFile,
+  );
+  const [currentImage, setCurrentImage] = useRecoilState<string | undefined>(
+    defaultImage,
+  );
+  const [isPublic, setIsPublic] = useState(false);
+  const [currentUserPermissions, setCurrentUserPermissions] = useState<
+    string[]
+  >([]);
+  const [currentGroupPermissions, setCurrentGroupPermissions] = useState<
+    string[]
+  >([]);
+  const [keepAlive, setKeepAlive] = useState(false);
+  const [variables, setVariables] = useState<EnvironmentVariablesMap | null>(
+    null,
+  );
+
   useEffect(() => {
+    if (deployOption === undefined) {
+      return;
+    }
+
     reset({
       display_name: '',
       description: '',
@@ -318,40 +350,15 @@ export const AppForm = ({
       setIsPublic(repoData.public || false);
       setCurrentImage(repoData.thumbnail || '');
     }
-  }, [isUrlValid, repoData, reset]);
+  }, [isUrlValid, repoData, reset, setCurrentImage]);
 
   const adjustTextareaHeight = (
     textarea: EventTarget & HTMLTextAreaElement,
   ) => {
     if (!textarea) return;
     textarea.style.height = 'auto';
-    textarea.style.height = textarea.scrollHeight + 'px';
+    textarea.style.height = `${textarea.scrollHeight}px`;
   };
-
-  const [, setNotification] = useRecoilState<string | undefined>(
-    currentNotification,
-  );
-  const [currentFormInput, setCurrentFormInput] = useRecoilState<
-    AppFormInput | undefined
-  >(defaultFormInput);
-  const [currentServerName, setCurrentServerName] = useRecoilState<
-    string | undefined
-  >(defaultServerName);
-  const [currentFile, setCurrentFile] = useRecoilState<File | undefined>(
-    defaultFile,
-  );
-  const [currentImage, setCurrentImage] = useRecoilState<string | undefined>(
-    defaultImage,
-  );
-  const [isPublic, setIsPublic] = useState(false);
-  const [currentUserPermissions, setCurrentUserPermissions] = useState<
-    string[]
-  >([]);
-  const [currentGroupPermissions, setCurrentGroupPermissions] = useState<
-    string[]
-  >([]);
-  const [keepAlive, setKeepAlive] = useState(false);
-  const [variables, setVariables] = useState<string | null>(null);
 
   const { data: formData, error: formError } = useQuery<
     AppQueryGetProps,
@@ -496,8 +503,7 @@ export const AppForm = ({
           onSuccess: async () => {
             window.location.assign(APP_BASE_URL);
           },
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          onError: async (error: any) => {
+          onError: async (error: Error) => {
             setSubmitting(false);
             setNotification(error.message);
           },
@@ -517,8 +523,7 @@ export const AppForm = ({
               }
             }
           },
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          onError: async (error: any) => {
+          onError: async (error: Error) => {
             setSubmitting(false);
             setNotification(error.message);
           },
@@ -622,7 +627,7 @@ export const AppForm = ({
       setCurrentUserPermissions(currentFormInput.share_with?.users);
       setCurrentGroupPermissions(currentFormInput.share_with?.groups);
     }
-  }, [currentFormInput, reset, setCurrentImage, setCurrentServerName]);
+  }, [currentFormInput, reset, setCurrentImage]);
 
   useEffect(() => {
     if (isUrlValid && repoData) {
@@ -633,7 +638,7 @@ export const AppForm = ({
         setCustomConfigDirectory(repoData.repository?.config_directory || '.');
       }
     }
-  }, [isUrlValid, repoData]);
+  }, [isUrlValid, repoData, customRef, customConfigDirectory]);
 
   useEffect(() => {
     if (formError) {
@@ -679,327 +684,403 @@ export const AppForm = ({
   }, [errors, scrollToFirstError]);
 
   return (
-    <>
-      <form
-        id="app-form"
-        onSubmit={(e) => {
-          e.preventDefault();
-          handleSubmit(onFormSubmit, scrollToFirstError)(e);
-        }}
-        className="form"
-        noValidate
-      >
-        <FormSection ref={appInfoRef}>
-          <SectionHeading>
-            {deployOption === 'git' ? 'App Info (Git Repository)' : 'App Info'}
-          </SectionHeading>
+    <form
+      id="app-form"
+      onSubmit={(e) => {
+        e.preventDefault();
+        handleSubmit(onFormSubmit, scrollToFirstError)(e);
+      }}
+      className="form"
+      noValidate
+    >
+      <FormSection ref={appInfoRef}>
+        <SectionHeading>
+          {deployOption === 'git' ? 'App Info (Git Repository)' : 'App Info'}
+        </SectionHeading>
 
-          {deployOption === 'git' ? (
-            <>
-              <Controller
-                name="repository.url"
-                control={control}
-                render={({ field }) => (
-                  <div className="mb-4">
-                    <label
-                      htmlFor="repository.url"
-                      className="mb-1 block text-sm font-medium"
-                    >
-                      Git Repository URL{' '}
-                      <span className="text-destructive">*</span>
-                    </label>
-                    <Input
-                      {...field}
-                      ref={repoUrlRef}
-                      id="repository.url"
-                      placeholder="https://github.com/nebari-dev/jhub-apps-from-git-repo-example.git"
-                      required
-                      data-testid="git-url-input"
-                      value={gitUrl}
-                      onChange={(e) => setGitUrl(e.target.value)}
-                      disabled={isFetching}
-                      className={cn(
-                        !!error && shouldValidate && 'border-destructive',
-                      )}
-                    />
-                    <FieldHelper
-                      className={cn(
-                        'mt-1 block',
-                        !!error && shouldValidate && 'text-destructive',
-                      )}
-                    >
-                      {error && shouldValidate
-                        ? error
-                        : 'Enter a valid GitHub URL'}
-                    </FieldHelper>
-                  </div>
-                )}
-              />
-
-              {isFetching && !isUrlValid && (
-                <p className="mb-12 whitespace-pre-wrap text-[color:#ba18da]">
-                  {displayedText || ' '.repeat(fullText.length)}
-                </p>
-              )}
-
-              <Controller
-                name="repository.ref"
-                control={control}
-                render={({ field }) => (
-                  <div className="mb-4">
-                    <label
-                      htmlFor="branch"
-                      className="mb-1 block text-sm font-medium"
-                    >
-                      Branch
-                    </label>
-                    <Input
-                      {...field}
-                      id="branch"
-                      placeholder="e.g., main"
-                      value={customRef}
-                      onChange={(e) => setCustomRef(e.target.value)}
-                    />
-                  </div>
-                )}
-              />
-
-              <Controller
-                name="repository.config_directory"
-                control={control}
-                render={({ field }) => (
-                  <div className="mb-4">
-                    <label
-                      htmlFor="conda_project_yml"
-                      className="mb-1 block text-sm font-medium"
-                    >
-                      Conda Project YAML Directory
-                    </label>
-                    <Input
-                      {...field}
-                      id="conda_project_yml"
-                      placeholder="Enter path to conda-project.yml"
-                      value={customConfigDirectory}
-                      onChange={(e) => setCustomConfigDirectory(e.target.value)}
-                    />
-                    <FieldHelper className="mt-1 block">
-                      Optional: if conda-project.yml is not present in root
-                      directory
-                    </FieldHelper>
-                  </div>
-                )}
-              />
-
-              <div className="mb-8">
-                <Button
-                  type="button"
-                  variant="default"
-                  onClick={validateGitUrl}
-                  disabled={isFetching}
-                >
-                  Fetch App Configuration
-                </Button>
-              </div>
-
-              <Controller
-                name="display_name"
-                control={control}
-                rules={{ required: true }}
-                render={({ field }) => (
-                  <div className="mb-4">
-                    <label
-                      htmlFor="display_name"
-                      className="mb-1 block text-sm font-medium"
-                    >
-                      Name <span className="text-destructive">*</span>
-                    </label>
-                    <Input
-                      {...field}
-                      id="display_name"
-                      placeholder="Add app name"
-                      value={repoData?.display_name || ''}
-                      onChange={(e) => setDescription(e.target.value)}
-                      required
-                      disabled={!isUrlValid}
-                      className={cn(
-                        errors.display_name && 'border-destructive',
-                      )}
-                    />
-                    <FieldHelper className="mt-1 block">*Required</FieldHelper>
-                  </div>
-                )}
-              />
-
-              <Controller
-                name="description"
-                control={control}
-                render={({ field }) => (
-                  <div className="mb-0">
-                    <label
-                      htmlFor="description"
-                      className="mb-1 block text-sm font-medium"
-                    >
-                      Description
-                    </label>
-                    <Textarea
-                      {...field}
-                      ref={textAreaRef}
-                      rows={5}
-                      id="description"
-                      value={description}
-                      disabled={!isUrlValid}
-                      onChange={(e) => {
-                        setDescription(e.target.value);
-                        field.onChange(e.target.value);
-                        adjustTextareaHeight(e.target);
-                      }}
-                      onBlur={field.onBlur}
-                      placeholder="Add app description (max. 200 characters)"
-                      className={cn(
-                        description.length > 200 && 'border-destructive',
-                      )}
-                    />
-                    <div className="mt-1 flex justify-end">
-                      <span
-                        className={cn(
-                          'text-xs',
-                          description.length > 200
-                            ? 'text-destructive'
-                            : 'text-muted-foreground',
-                        )}
-                      >
-                        {description.length}/200
-                      </span>
-                    </div>
-                  </div>
-                )}
-              />
-            </>
-          ) : (
-            <>
-              <Controller
-                name="display_name"
-                control={control}
-                rules={{ required: true }}
-                render={({ field: { ref, ...field } }) => (
-                  <div className="mb-4">
-                    {errors.display_name && (
-                      <FieldError message="Enter an app name" />
+        {deployOption === 'git' ? (
+          <>
+            <Controller
+              name="repository.url"
+              control={control}
+              render={({ field }) => (
+                <div className="mb-4">
+                  <label
+                    htmlFor="repository.url"
+                    className="mb-1 block text-sm font-medium"
+                  >
+                    Git Repository URL{' '}
+                    <span className="text-destructive">*</span>
+                  </label>
+                  <Input
+                    {...field}
+                    ref={repoUrlRef}
+                    id="repository.url"
+                    placeholder="https://github.com/nebari-dev/jhub-apps-from-git-repo-example.git"
+                    required
+                    data-testid="git-url-input"
+                    value={gitUrl}
+                    onChange={(e) => setGitUrl(e.target.value)}
+                    disabled={isFetching}
+                    className={cn(
+                      !!error && shouldValidate && 'border-destructive',
                     )}
-                    <label
-                      htmlFor="display_name"
-                      className="mb-1 block text-sm font-medium"
-                    >
-                      <CustomLabel label="Name" required={true} />
-                    </label>
-                    <Input
-                      {...field}
-                      id="display_name"
-                      placeholder="Add app name"
-                      ref={(e) => {
-                        ref(e);
-                        if (errors.display_name) {
-                          firstErrorRef.current = e;
-                        }
-                      }}
-                      autoFocus
-                      maxLength={255}
-                      className={cn(
-                        errors.display_name && 'border-destructive',
-                      )}
-                    />
-                    <FieldHelper
-                      className={cn(
-                        'mt-1 block',
-                        errors.display_name && 'text-destructive',
-                      )}
-                    >
-                      *Required
-                    </FieldHelper>
-                  </div>
-                )}
-              />
+                  />
+                  <FieldHelper
+                    className={cn(
+                      'mt-1 block',
+                      !!error && shouldValidate && 'text-destructive',
+                    )}
+                  >
+                    {error && shouldValidate
+                      ? error
+                      : 'Enter a valid GitHub URL'}
+                  </FieldHelper>
+                </div>
+              )}
+            />
 
-              <Controller
-                name="description"
-                control={control}
-                render={({ field }) => (
-                  <div className="mb-0">
-                    <label
-                      htmlFor="description"
-                      className="mb-1 block text-sm font-medium"
-                    >
-                      Description
-                    </label>
-                    <Textarea
-                      {...field}
-                      ref={textAreaRef}
-                      rows={5}
-                      id="description"
-                      value={description}
-                      onChange={(e) => {
-                        setDescription(e.target.value);
-                        field.onChange(e.target.value);
-                        adjustTextareaHeight(e.target);
-                      }}
-                      onBlur={field.onBlur}
-                      placeholder="Add app description (max. 200 characters)"
+            {isFetching && !isUrlValid && (
+              <p className="mb-12 whitespace-pre-wrap text-[color:#ba18da]">
+                {displayedText || ' '.repeat(fullText.length)}
+              </p>
+            )}
+
+            <Controller
+              name="repository.ref"
+              control={control}
+              render={({ field }) => (
+                <div className="mb-4">
+                  <label
+                    htmlFor="branch"
+                    className="mb-1 block text-sm font-medium"
+                  >
+                    Branch
+                  </label>
+                  <Input
+                    {...field}
+                    id="branch"
+                    placeholder="e.g., main"
+                    value={customRef}
+                    onChange={(e) => setCustomRef(e.target.value)}
+                  />
+                </div>
+              )}
+            />
+
+            <Controller
+              name="repository.config_directory"
+              control={control}
+              render={({ field }) => (
+                <div className="mb-4">
+                  <label
+                    htmlFor="conda_project_yml"
+                    className="mb-1 block text-sm font-medium"
+                  >
+                    Conda Project YAML Directory
+                  </label>
+                  <Input
+                    {...field}
+                    id="conda_project_yml"
+                    placeholder="Enter path to conda-project.yml"
+                    value={customConfigDirectory}
+                    onChange={(e) => setCustomConfigDirectory(e.target.value)}
+                  />
+                  <FieldHelper className="mt-1 block">
+                    Optional: if conda-project.yml is not present in root
+                    directory
+                  </FieldHelper>
+                </div>
+              )}
+            />
+
+            <div className="mb-8">
+              <Button
+                type="button"
+                variant="default"
+                onClick={validateGitUrl}
+                disabled={isFetching}
+              >
+                Fetch App Configuration
+              </Button>
+            </div>
+
+            <Controller
+              name="display_name"
+              control={control}
+              rules={{ required: true }}
+              render={({ field }) => (
+                <div className="mb-4">
+                  <label
+                    htmlFor="display_name"
+                    className="mb-1 block text-sm font-medium"
+                  >
+                    Name <span className="text-destructive">*</span>
+                  </label>
+                  <Input
+                    {...field}
+                    id="display_name"
+                    placeholder="Add app name"
+                    value={repoData?.display_name || ''}
+                    onChange={(e) => setDescription(e.target.value)}
+                    required
+                    disabled={!isUrlValid}
+                    className={cn(errors.display_name && 'border-destructive')}
+                  />
+                  <FieldHelper className="mt-1 block">*Required</FieldHelper>
+                </div>
+              )}
+            />
+
+            <Controller
+              name="description"
+              control={control}
+              render={({ field }) => (
+                <div className="mb-0">
+                  <label
+                    htmlFor="description"
+                    className="mb-1 block text-sm font-medium"
+                  >
+                    Description
+                  </label>
+                  <Textarea
+                    {...field}
+                    ref={textAreaRef}
+                    rows={5}
+                    id="description"
+                    value={description}
+                    disabled={!isUrlValid}
+                    onChange={(e) => {
+                      setDescription(e.target.value);
+                      field.onChange(e.target.value);
+                      adjustTextareaHeight(e.target);
+                    }}
+                    onBlur={field.onBlur}
+                    placeholder="Add app description (max. 200 characters)"
+                    className={cn(
+                      description.length > 200 && 'border-destructive',
+                    )}
+                  />
+                  <div className="mt-1 flex justify-end">
+                    <span
                       className={cn(
-                        description.length > 200 && 'border-destructive',
+                        'text-xs',
+                        description.length > 200
+                          ? 'text-destructive'
+                          : 'text-muted-foreground',
                       )}
-                    />
-                    <div className="mt-1 flex justify-end">
-                      <span
-                        className={cn(
-                          'text-xs',
-                          description.length > 200
-                            ? 'text-destructive'
-                            : 'text-muted-foreground',
-                        )}
-                      >
-                        {description.length}/200
-                      </span>
-                    </div>
+                    >
+                      {description.length}/200
+                    </span>
                   </div>
-                )}
-              />
-            </>
+                </div>
+              )}
+            />
+          </>
+        ) : (
+          <>
+            <Controller
+              name="display_name"
+              control={control}
+              rules={{ required: true }}
+              render={({ field: { ref, ...field } }) => (
+                <div className="mb-4">
+                  {errors.display_name && (
+                    <FieldError message="Enter an app name" />
+                  )}
+                  <label
+                    htmlFor="display_name"
+                    className="mb-1 block text-sm font-medium"
+                  >
+                    <CustomLabel label="Name" required={true} />
+                  </label>
+                  <Input
+                    {...field}
+                    id="display_name"
+                    placeholder="Add app name"
+                    ref={(e) => {
+                      ref(e);
+                      if (errors.display_name) {
+                        firstErrorRef.current = e;
+                      }
+                    }}
+                    autoFocus
+                    maxLength={255}
+                    className={cn(errors.display_name && 'border-destructive')}
+                  />
+                  <FieldHelper
+                    className={cn(
+                      'mt-1 block',
+                      errors.display_name && 'text-destructive',
+                    )}
+                  >
+                    *Required
+                  </FieldHelper>
+                </div>
+              )}
+            />
+
+            <Controller
+              name="description"
+              control={control}
+              render={({ field }) => (
+                <div className="mb-0">
+                  <label
+                    htmlFor="description"
+                    className="mb-1 block text-sm font-medium"
+                  >
+                    Description
+                  </label>
+                  <Textarea
+                    {...field}
+                    ref={textAreaRef}
+                    rows={5}
+                    id="description"
+                    value={description}
+                    onChange={(e) => {
+                      setDescription(e.target.value);
+                      field.onChange(e.target.value);
+                      adjustTextareaHeight(e.target);
+                    }}
+                    onBlur={field.onBlur}
+                    placeholder="Add app description (max. 200 characters)"
+                    className={cn(
+                      description.length > 200 && 'border-destructive',
+                    )}
+                  />
+                  <div className="mt-1 flex justify-end">
+                    <span
+                      className={cn(
+                        'text-xs',
+                        description.length > 200
+                          ? 'text-destructive'
+                          : 'text-muted-foreground',
+                      )}
+                    >
+                      {description.length}/200
+                    </span>
+                  </div>
+                </div>
+              )}
+            />
+          </>
+        )}
+      </FormSection>
+
+      <FormSection>
+        <SectionHeading>Configuration</SectionHeading>
+        <Controller
+          name="framework"
+          control={control}
+          rules={{ required: true }}
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          render={({ field: { ref, ...field } }) => (
+            <div className="mb-4">
+              {errors.framework && (
+                <FieldError message="Select a software framework" />
+              )}
+              <label
+                htmlFor="framework"
+                className="mb-1 block text-sm font-medium"
+              >
+                *Framework
+              </label>
+              <Select value={field.value || ''} onValueChange={field.onChange}>
+                <SelectTrigger
+                  id="framework"
+                  aria-label="Select framework"
+                  className={cn(errors.framework && 'border-destructive')}
+                >
+                  <SelectValue placeholder="Select framework" />
+                </SelectTrigger>
+                <SelectContent>
+                  {frameworks?.map((framework) => (
+                    <SelectItem key={framework.name} value={framework.name}>
+                      {framework.display_name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <FieldHelper className="mt-1 block">*Required</FieldHelper>
+            </div>
           )}
-        </FormSection>
+        />
 
-        <FormSection>
-          <SectionHeading>Configuration</SectionHeading>
+        {currentFramework === 'custom' ? (
           <Controller
-            name="framework"
+            name="custom_command"
+            control={control}
+            rules={{ required: true }}
+            render={({ field: { ref, ...field } }) => (
+              <div className="mb-6">
+                {errors.custom_command && (
+                  <FieldError message="Enter a custom command" />
+                )}
+                <label
+                  htmlFor="custom_command"
+                  className="mb-1 block text-sm font-medium"
+                >
+                  *Custom Command
+                </label>
+                <Input
+                  {...field}
+                  id="custom_command"
+                  placeholder="Enter custom command"
+                  ref={(e) => {
+                    ref(e);
+                    if (errors.custom_command) {
+                      firstErrorRef.current = e;
+                    }
+                  }}
+                  autoFocus={!!errors.custom_command}
+                  maxLength={255}
+                  className={cn(errors.custom_command && 'border-destructive')}
+                />
+                <FieldHelper
+                  className={cn(
+                    'mt-1 block',
+                    errors.custom_command && 'text-destructive',
+                  )}
+                >
+                  *Required
+                </FieldHelper>
+              </div>
+            )}
+          />
+        ) : null}
+
+        {environments && environments.length > 0 ? (
+          <Controller
+            name="conda_env"
             control={control}
             rules={{ required: true }}
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             render={({ field: { ref, ...field } }) => (
               <div className="mb-4">
-                {errors.framework && (
-                  <FieldError message="Select a software framework" />
+                {errors.conda_env && (
+                  <FieldError message="Select a software environment" />
                 )}
                 <label
-                  htmlFor="framework"
+                  htmlFor="conda_env"
                   className="mb-1 block text-sm font-medium"
                 >
-                  *Framework
+                  *Software Environment
                 </label>
                 <Select
                   value={field.value || ''}
                   onValueChange={field.onChange}
                 >
                   <SelectTrigger
-                    id="framework"
-                    aria-label="Select framework"
-                    className={cn(errors.framework && 'border-destructive')}
+                    id="conda_env"
+                    aria-label="Select software environment"
+                    className={cn(errors.conda_env && 'border-destructive')}
                   >
-                    <SelectValue placeholder="Select framework" />
+                    <SelectValue placeholder="Select software environment" />
                   </SelectTrigger>
                   <SelectContent>
-                    {frameworks?.map((framework) => (
-                      <SelectItem key={framework.name} value={framework.name}>
-                        {framework.display_name}
+                    {environments.map((env) => (
+                      <SelectItem key={env} value={env}>
+                        {env}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -1008,256 +1089,169 @@ export const AppForm = ({
               </div>
             )}
           />
+        ) : null}
 
-          {currentFramework === 'custom' ? (
-            <Controller
-              name="custom_command"
-              control={control}
-              rules={{ required: true }}
-              render={({ field: { ref, ...field } }) => (
-                <div className="mb-6">
-                  {errors.custom_command && (
-                    <FieldError message="Enter a custom command" />
-                  )}
-                  <label
-                    htmlFor="custom_command"
-                    className="mb-1 block text-sm font-medium"
-                  >
-                    *Custom Command
-                  </label>
-                  <Input
-                    {...field}
-                    id="custom_command"
-                    placeholder="Enter custom command"
-                    ref={(e) => {
-                      ref(e);
-                      if (errors.custom_command) {
-                        firstErrorRef.current = e;
-                      }
-                    }}
-                    autoFocus={!!errors.custom_command}
-                    maxLength={255}
-                    className={cn(
-                      errors.custom_command && 'border-destructive',
-                    )}
-                  />
-                  <FieldHelper
-                    className={cn(
-                      'mt-1 block',
-                      errors.custom_command && 'text-destructive',
-                    )}
-                  >
-                    *Required
-                  </FieldHelper>
-                </div>
-              )}
-            />
-          ) : null}
+        <Controller
+          name="filepath"
+          control={control}
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          render={({ field: { ref, ...field } }) => (
+            <div className="mb-4">
+              <label
+                htmlFor="filepath"
+                className="mb-1 block text-sm font-medium"
+              >
+                File path
+              </label>
+              <Input
+                {...field}
+                id="filepath"
+                placeholder='Enter the path to the file, e.g. "/shared/users/panel_basic.py"'
+                className={cn(errors.filepath && 'border-destructive')}
+              />
+            </div>
+          )}
+        />
 
-          {environments && environments.length > 0 ? (
-            <Controller
-              name="conda_env"
-              control={control}
-              rules={{ required: true }}
-              // eslint-disable-next-line @typescript-eslint/no-unused-vars
-              render={({ field: { ref, ...field } }) => (
-                <div className="mb-4">
-                  {errors.conda_env && (
-                    <FieldError message="Select a software environment" />
-                  )}
-                  <label
-                    htmlFor="conda_env"
-                    className="mb-1 block text-sm font-medium"
-                  >
-                    *Software Environment
-                  </label>
-                  <Select
-                    value={field.value || ''}
-                    onValueChange={field.onChange}
-                  >
-                    <SelectTrigger
-                      id="conda_env"
-                      aria-label="Select software environment"
-                      className={cn(errors.conda_env && 'border-destructive')}
-                    >
-                      <SelectValue placeholder="Select software environment" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {environments.map((env) => (
-                        <SelectItem key={env} value={env}>
-                          {env}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FieldHelper className="mt-1 block">*Required</FieldHelper>
-                </div>
-              )}
-            />
-          ) : null}
-
+        <div className="flex flex-row items-center">
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Info className="relative top-1 mr-1 h-4 w-4 text-[color:#0F10158F]" />
+              </TooltipTrigger>
+              <TooltipContent side="bottom" align="start">
+                <span className="text-[10px] font-semibold">
+                  Keep alive prevents the app from being suspended even when not
+                  in active use. Your app will be instantly available, but it
+                  will consume resources until manually stopped.
+                </span>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
           <Controller
-            name="filepath"
-            control={control}
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            render={({ field: { ref, ...field } }) => (
-              <div className="mb-4">
-                <label
-                  htmlFor="filepath"
-                  className="mb-1 block text-sm font-medium"
-                >
-                  File path
-                </label>
-                <Input
-                  {...field}
-                  id="filepath"
-                  placeholder='Enter the path to the file, e.g. "/shared/users/panel_basic.py"'
-                  className={cn(errors.filepath && 'border-destructive')}
-                />
-              </div>
-            )}
-          />
-
-          <div className="flex flex-row items-center">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Info className="relative top-1 mr-1 h-4 w-4 text-[color:#0F10158F]" />
-                </TooltipTrigger>
-                <TooltipContent side="bottom" align="start">
-                  <span className="text-[10px] font-semibold">
-                    Keep alive prevents the app from being suspended even when
-                    not in active use. Your app will be instantly available, but
-                    it will consume resources until manually stopped.
-                  </span>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-            <Controller
-              name="keep_alive"
-              control={control}
-              // eslint-disable-next-line @typescript-eslint/no-unused-vars
-              render={({ field: { ref, value, onChange, ...field } }) => (
-                <label
-                  htmlFor="keep_alive"
-                  className="ml-2 flex flex-row items-center gap-2 text-sm"
-                >
-                  <span>Keep app alive</span>
-                  <Switch
-                    {...field}
-                    id="keep_alive"
-                    checked={keepAlive}
-                    onCheckedChange={() => setKeepAlive(!keepAlive)}
-                  />
-                </label>
-              )}
-            />
-          </div>
-        </FormSection>
-
-        <FormSection>
-          <SectionHeading>Environment Variables</SectionHeading>
-          <EnvironmentVariables
-            variables={variables}
-            setVariables={setVariables}
-          />
-        </FormSection>
-
-        <FormSection>
-          <SectionHeading>Sharing</SectionHeading>
-          <AppSharing
-            url={formData?.url}
-            permissions={formData?.user_options?.share_with}
-            isPublic={isPublic}
-            setCurrentUserPermissions={setCurrentUserPermissions}
-            setCurrentGroupPermissions={setCurrentGroupPermissions}
-            setIsPublic={setIsPublic}
-          />
-        </FormSection>
-
-        <FormSection className="pb-9">
-          <SectionHeading>Custom Thumbnail</SectionHeading>
-          <Controller
-            name="thumbnail"
+            name="keep_alive"
             control={control}
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             render={({ field: { ref, value, onChange, ...field } }) => (
-              <div>
-                <Thumbnail
+              <label
+                htmlFor="keep_alive"
+                className="ml-2 flex flex-row items-center gap-2 text-sm"
+              >
+                <span>Keep app alive</span>
+                <Switch
                   {...field}
-                  id="thumbnail"
-                  currentImage={currentImage}
-                  setCurrentImage={setCurrentImage}
-                  currentFile={currentFile}
-                  setCurrentFile={setCurrentFile}
+                  id="keep_alive"
+                  checked={keepAlive}
+                  onCheckedChange={() => setKeepAlive(!keepAlive)}
                 />
-              </div>
+              </label>
             )}
           />
-        </FormSection>
-
-        <hr />
-        <div className="button-section">
-          <div className="prev" hidden={isHeadless}>
-            <Button
-              id="cancel-btn"
-              type="button"
-              variant="ghost"
-              onClick={() => navigateToUrl(`${APP_BASE_URL}`)}
-            >
-              Cancel
-            </Button>
-          </div>
-          <div className="next">
-            <Button
-              id="submit-btn"
-              type="submit"
-              variant="default"
-              disabled={
-                frameworksLoading ||
-                environmentsLoading ||
-                profilesLoading ||
-                submitting ||
-                isProcessing ||
-                description.length > 200 ||
-                (!isDirty && isEditMode && !hasChanges) ||
-                !isValid
-              }
-            >
-              {isProcessing ? (
-                <Loader2 className="h-6 w-6 animate-spin text-[color:#ba18da]" />
-              ) : profiles && profiles.length > 0 ? (
-                <>Next</>
-              ) : id ? (
-                <>Save</>
-              ) : (
-                <>Deploy App</>
-              )}
-            </Button>
-          </div>
         </div>
-        <Dialog open={openModal} onOpenChange={setOpenModal}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Error</DialogTitle>
-            </DialogHeader>
-            <p>
-              {error ||
-                "It looks like the URL provided isn't linked to a Git repository. Please double-check the URL and try again."}
-            </p>
-            <DialogFooter>
-              <Button
-                type="button"
-                variant="default"
-                onClick={() => setOpenModal(false)}
-              >
-                Close
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      </form>
-    </>
+      </FormSection>
+
+      <FormSection>
+        <SectionHeading>Environment Variables</SectionHeading>
+        <EnvironmentVariables
+          variables={variables}
+          setVariables={setVariables}
+        />
+      </FormSection>
+
+      <FormSection>
+        <SectionHeading>Sharing</SectionHeading>
+        <AppSharing
+          url={formData?.url}
+          permissions={formData?.user_options?.share_with}
+          isPublic={isPublic}
+          setCurrentUserPermissions={setCurrentUserPermissions}
+          setCurrentGroupPermissions={setCurrentGroupPermissions}
+          setIsPublic={setIsPublic}
+        />
+      </FormSection>
+
+      <FormSection className="pb-9">
+        <SectionHeading>Custom Thumbnail</SectionHeading>
+        <Controller
+          name="thumbnail"
+          control={control}
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          render={({ field: { ref, value, onChange, ...field } }) => (
+            <div>
+              <Thumbnail
+                {...field}
+                id="thumbnail"
+                currentImage={currentImage}
+                setCurrentImage={setCurrentImage}
+                currentFile={currentFile}
+                setCurrentFile={setCurrentFile}
+              />
+            </div>
+          )}
+        />
+      </FormSection>
+
+      <hr />
+      <div className="button-section">
+        <div className="prev" hidden={isHeadless}>
+          <Button
+            id="cancel-btn"
+            type="button"
+            variant="ghost"
+            onClick={() => navigateToUrl(`${APP_BASE_URL}`)}
+          >
+            Cancel
+          </Button>
+        </div>
+        <div className="next">
+          <Button
+            id="submit-btn"
+            type="submit"
+            variant="default"
+            disabled={
+              frameworksLoading ||
+              environmentsLoading ||
+              profilesLoading ||
+              submitting ||
+              isProcessing ||
+              description.length > 200 ||
+              (!isDirty && isEditMode && !hasChanges) ||
+              !isValid
+            }
+          >
+            {isProcessing ? (
+              <Loader2 className="h-6 w-6 animate-spin text-[color:#ba18da]" />
+            ) : profiles && profiles.length > 0 ? (
+              <>Next</>
+            ) : id ? (
+              <>Save</>
+            ) : (
+              <>Deploy App</>
+            )}
+          </Button>
+        </div>
+      </div>
+      <Dialog open={openModal} onOpenChange={setOpenModal}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Error</DialogTitle>
+          </DialogHeader>
+          <p>
+            {error ||
+              "It looks like the URL provided isn't linked to a Git repository. Please double-check the URL and try again."}
+          </p>
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="default"
+              onClick={() => setOpenModal(false)}
+            >
+              Close
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </form>
   );
 };
 

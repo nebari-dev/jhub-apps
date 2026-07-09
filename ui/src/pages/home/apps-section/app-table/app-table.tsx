@@ -25,7 +25,6 @@ import { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import {
   currentApp,
-  currentNotification,
   isDeleteOpen,
   isStartOpen,
   isStopOpen,
@@ -40,9 +39,6 @@ export const AppTable = ({ apps }: AppTableProps): React.ReactElement => {
   const [, setAppStatus] = useState('');
 
   const [updatedApps, setUpdatedApps] = useState<JhApp[]>(apps);
-  const [, setNotification] = useRecoilState<string | undefined>(
-    currentNotification,
-  );
   const [, setCurrentApp] = useRecoilState<JhApp | undefined>(currentApp);
   const [, setIsStartOpen] = useRecoilState<boolean>(isStartOpen);
   const [, setIsStopOpen] = useRecoilState<boolean>(isStopOpen);
@@ -52,7 +48,7 @@ export const AppTable = ({ apps }: AppTableProps): React.ReactElement => {
     if (serverStatus) {
       setAppStatus(serverStatus.join(', '));
     }
-  }, [serverStatus, setNotification]);
+  }, [serverStatus]);
 
   useEffect(() => {
     setUpdatedApps(apps);
@@ -130,7 +126,7 @@ export const AppTable = ({ apps }: AppTableProps): React.ReactElement => {
                       aria-label="Stop"
                       variant="ghost"
                       size="icon"
-                      className="action-button"
+                      className="action-button mx-4 min-w-0 rounded-full"
                       data-testid="stop-button"
                       disabled={app.shared}
                     >
@@ -145,7 +141,7 @@ export const AppTable = ({ apps }: AppTableProps): React.ReactElement => {
                       aria-label="Start"
                       variant="ghost"
                       size="icon"
-                      className="action-button"
+                      className="action-button mx-4 min-w-0 rounded-full"
                       data-testid="start-button"
                       disabled={
                         app.status === 'Pending' || app.status === 'Unknown'
@@ -161,7 +157,7 @@ export const AppTable = ({ apps }: AppTableProps): React.ReactElement => {
                     aria-label="Edit"
                     variant="ghost"
                     size="icon"
-                    className="action-button"
+                    className="action-button mx-4 min-w-0 rounded-full"
                     data-testid="edit-button"
                     disabled={app.shared}
                   >
@@ -175,7 +171,7 @@ export const AppTable = ({ apps }: AppTableProps): React.ReactElement => {
                     aria-label="Delete"
                     variant="ghost"
                     size="icon"
-                    className="action-button"
+                    className="action-button mx-4 min-w-0 rounded-full"
                     data-testid="delete-button"
                     disabled={app.shared}
                   >

@@ -122,8 +122,7 @@ export const Home = (): React.ReactElement => {
           queryClient.invalidateQueries({ queryKey: ['app-state'] });
           toast.success('App deleted successfully');
         },
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onError: async (error: any) => {
+        onError: async (error: Error) => {
           setSubmitting(false);
           setNotification(error.message);
         },
@@ -415,7 +414,7 @@ export const Home = (): React.ReactElement => {
     if (appId) {
       setCurrentAppId(appId);
     }
-  }, [setCurrentAppId]);
+  }, []);
 
   return (
     <div className="container">

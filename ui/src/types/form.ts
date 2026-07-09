@@ -1,4 +1,4 @@
-import type { SharePermissions } from './api';
+import type { EnvironmentVariablesMap, SharePermissions } from './api';
 
 export interface FormInput {
   username: string;
@@ -10,7 +10,7 @@ export interface AppFormInput {
   custom_command?: string;
   description?: string;
   display_name: string;
-  env?: string;
+  env?: EnvironmentVariablesMap | null;
   filepath?: string;
   framework: string;
   is_public: boolean;
@@ -46,7 +46,7 @@ export interface RepoData {
   framework: string;
   custom_command: string;
   conda_project_yml: string;
-  env: {
+  env: EnvironmentVariablesMap & {
     conda_env: string;
     SOMETHING_BAR: string;
     SOMETHING_FOO: string;

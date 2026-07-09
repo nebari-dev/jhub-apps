@@ -8,6 +8,8 @@ export interface KeyValuePair {
   value: string;
 }
 
+export type EnvironmentVariablesMap = Record<string, string>;
+
 export interface UserOptions {
   jhub_app: boolean;
   display_name: string;
@@ -22,7 +24,7 @@ export interface UserOptions {
   public: boolean;
   share_with: SharePermissions;
   keep_alive: boolean;
-  env: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+  env: EnvironmentVariablesMap | null;
   repository?: {
     url: string;
   };

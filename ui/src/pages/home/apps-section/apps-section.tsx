@@ -1,7 +1,7 @@
 import { Button } from '@src/components/ui/button';
 import { InputWithIcon } from '@src/components/ui/input-with-icon';
 import { Separator } from '@src/components/ui/separator';
-import type { JhApp } from '@src/types/jupyterhub';
+import type { JhApp, JhServerData } from '@src/types/jupyterhub';
 import type { UserState } from '@src/types/user';
 import axios from '@src/utils/axios';
 import { API_BASE_URL } from '@src/utils/constants';
@@ -42,9 +42,6 @@ export const AppsSection = (): React.ReactElement => {
   const [currentFrameworks] = useRecoilState<string[]>(defaultFrameworks);
   const [currentGroups] = useRecoilState<string[]>(defaultGroups);
   const [currentOwnershipValue] = useRecoilState<string>(defaultOwnershipValue);
-  const [, setNotification] = useRecoilState<string | undefined>(
-    currentNotification,
-  );
   const [currentSortValue] = useRecoilState<string>(defaultSortValue);
   const [currentServerStatuses] = useRecoilState<string[]>(
     defaultServerStatuses,
@@ -55,7 +52,7 @@ export const AppsSection = (): React.ReactElement => {
     isLoading,
     error,
     data: serverData,
-  } = useQuery<UserState, { message: string }>({
+  } = useQuery<JhServerData, { message: string }>({
     queryKey: ['app-state'],
     queryFn: () =>
       axios
@@ -93,7 +90,7 @@ export const AppsSection = (): React.ReactElement => {
     if (serverStatus) {
       setAppStatus(serverStatus.join(', '));
     }
-  }, [apps, setNotification, setAppStatus]);
+  }, [apps]);
 
   useEffect(() => {
     if (!isLoading && serverData) {

@@ -131,8 +131,7 @@ export const ServerTypes = (): React.ReactElement => {
           queryClient.invalidateQueries({ queryKey: ['app-state'] });
           window.location.assign(APP_BASE_URL);
         },
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onError: async (error: any) => {
+        onError: async (error: Error) => {
           setSubmitting(false);
           setNotification(error.message);
         },
@@ -153,8 +152,7 @@ export const ServerTypes = (): React.ReactElement => {
             }
           }
         },
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onError: async (error: any) => {
+        onError: async (error: Error) => {
           setSubmitting(false);
           setNotification(error.message);
         },
@@ -250,7 +248,7 @@ export const ServerTypes = (): React.ReactElement => {
         profile_image: images[defaultProfileSlug] || '',
       });
     }
-  }, [serverTypes]);
+  }, [serverTypes, currentFormInput, setCurrentFormInput]);
 
   // Effect 2: Populate custom profile image when coming from edit mode
   // This runs when the profile changes (e.g., when navigating to this page with edit data)
@@ -282,7 +280,7 @@ export const ServerTypes = (): React.ReactElement => {
         [currentFormInput.profile as string]: profileImage,
       }));
     }
-  }, [serverTypes, currentFormInput?.profile]);
+  }, [serverTypes, currentFormInput?.profile, currentFormInput?.profile_image]);
 
   return (
     <div className="container">

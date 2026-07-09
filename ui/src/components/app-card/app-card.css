@@ -9,10 +9,6 @@
   height: 224px;
 }
 
-.card.service .card-content-content {
-  height: 93px;
-}
-
 .card > a {
   text-decoration: none;
 }
@@ -61,8 +57,8 @@
   position: absolute;
   display: flex;
   align-items: center;
-  left: 8px !important;
-  top: 8px !important;
+  left: 8px;
+  top: 8px;
   z-index: 2;
 }
 
@@ -71,6 +67,10 @@
   position: relative;
   z-index: 111;
   height: 115px;
+}
+
+.card.service .card-content-content {
+  height: 93px;
 }
 
 .menu-chip {
@@ -185,15 +185,15 @@
 } */
 
 .card-content-content .card-inner-content .iconic {
-  font-size: 1rem !important;
+  font-size: 1rem;
   position: relative;
   top: 2px;
   margin-right: 8px;
 }
 
 .card-content-content .card-content-container .card-title {
-  font-size: 1rem !important;
-  font-weight: bold !important;
+  font-size: 1rem;
+  font-weight: 700;
   display: inline;
 }
 

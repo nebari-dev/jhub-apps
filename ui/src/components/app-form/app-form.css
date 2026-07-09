@@ -115,7 +115,7 @@
   position: absolute;
   left: 15px;
   top: 16px;
-  color: rgba(9, 10, 9, 0.57) !important; /* Placeholder color */
+  color: rgba(9, 10, 9, 0.57); /* Placeholder color */
   pointer-events: none;
   display: block; /* For IE */
 }
@@ -128,16 +128,16 @@
 .form-control {
   position: relative;
   width: 100%;
-  border: 1px solid #ccc !important;
+  border: 1px solid #ccc;
   border-radius: 4px;
   transition: border-color 0.3s;
 }
 .form-control:hover {
-  border-color: black !important;
+  border-color: black;
 }
 
 .form-control:focus-within {
-  border: 2px solid #ba18da !important;
+  border: 2px solid #ba18da;
 }
 
 .form-helper-text {
@@ -158,7 +158,7 @@
 }
 
 .form-control.outer-div {
-  height: 125px !important;
+  height: 125px;
   margin-bottom: 0;
 }
 
@@ -200,7 +200,7 @@
   line-height: 20px;
   background-color: transparent;
   resize: none;
-  height: 125px !important;
+  height: 125px;
 }
 
 .overlay-text {
@@ -236,7 +236,7 @@
 
 .description_text-field:not(:focus):not(:placeholder-shown)
   + .description-label {
-  color: lime !important;
+  color: rgba(0, 0, 0, 0.54);
 }
 .form-control:focus-within .form-helper-text {
   display: block;

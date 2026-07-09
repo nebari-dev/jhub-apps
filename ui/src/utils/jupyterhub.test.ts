@@ -38,13 +38,13 @@ describe('JupyterHub utils', () => {
   });
 
   test('returns empty object from no jhdata', () => {
-    window.jhdata = {};
+    window.jhdata = {} as typeof window.jhdata;
     const result = getJhData();
     expect(result).toEqual({});
   });
 
   test('returns empty jhdata from window object', () => {
-    const mockJhdata = {};
+    const mockJhdata = {} as typeof window.jhdata;
     window.jhdata = mockJhdata;
     const result = getJhData();
     expect(result).toEqual(mockJhdata);

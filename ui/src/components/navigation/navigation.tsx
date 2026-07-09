@@ -9,7 +9,12 @@ import {
 import { Sheet, SheetContent } from '@src/components/ui/sheet';
 import { useMediaQuery } from '@src/hooks/use-media-query';
 import { cn } from '@src/lib/utils';
-import type { JhApp, JhService, JhServiceFull } from '@src/types/jupyterhub';
+import type {
+  JhApp,
+  JhServerData,
+  JhService,
+  JhServiceFull,
+} from '@src/types/jupyterhub';
 import type { UserState } from '@src/types/user';
 import axios from '@src/utils/axios';
 import { APP_BASE_URL } from '@src/utils/constants';
@@ -47,7 +52,7 @@ export const TopNavigation = (): React.ReactElement => {
     isLoading: appsLoading,
     error: appsError,
     data: appsData,
-  } = useQuery<UserState, { message: string }>({
+  } = useQuery<JhServerData, { message: string }>({
     queryKey: ['app-state'],
     queryFn: () =>
       axios
@@ -136,8 +141,8 @@ export const TopNavigation = (): React.ReactElement => {
             Services
           </p>
         </li>
-        {pinnedApps.map((item, index) => (
-          <li key={`pinned-${index}`}>
+        {pinnedApps.map((item) => (
+          <li key={`pinned-${item.url}`}>
             <a
               href={item.url}
               className="block w-full rounded px-6 py-2 text-base text-[rgb(15_16_21_/_87%)] no-underline hover:bg-gray-50 hover:no-underline"
@@ -146,8 +151,8 @@ export const TopNavigation = (): React.ReactElement => {
             </a>
           </li>
         ))}
-        {services.map((item, index) => (
-          <li key={`service-${index}`}>
+        {services.map((item) => (
+          <li key={`service-${item.url}`}>
             <a
               href={item.url}
               className="block w-full rounded px-6 py-2 text-base text-[rgb(15_16_21_/_87%)] no-underline hover:bg-gray-50 hover:no-underline"

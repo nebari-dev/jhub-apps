@@ -44,7 +44,9 @@ describe('Success Page', () => {
     const spy = vi.spyOn(window, 'open');
     const { baseElement } = render(componentWrapper);
     await act(async () => {
-      const link = baseElement.querySelector('a');
+      const link = baseElement.querySelector(
+        'button.form-paragraph-link',
+      ) as HTMLButtonElement | null;
       expect(link).toBeTruthy();
       if (link) {
         link.click();

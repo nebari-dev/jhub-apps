@@ -11,8 +11,13 @@ import './index.css';
 
 const currentUrl = new URL(window.location.href);
 const queryClient = new QueryClient();
+const root = document.getElementById('root');
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
+if (!root) {
+  throw new Error('Root element not found');
+}
+
+ReactDOM.createRoot(root).render(
   <React.StrictMode>
     <BrowserRouter
       basename={

@@ -43,7 +43,7 @@ interface AppCardProps {
   isPublic?: boolean;
   isShared?: boolean;
   serverStatus: string;
-  lastModified?: Date;
+  lastModified?: Date | string;
   isAppCard?: boolean;
   app?: JhApp;
 }
@@ -77,7 +77,7 @@ export const AppCard = ({
     if (serverStatus) {
       setAppStatus(serverStatus);
     }
-  }, [serverStatus, setNotification]);
+  }, [serverStatus]);
 
   const { data: currentUserData } = useQuery<UserState>({
     queryKey: ['current-user'],
@@ -115,6 +115,24 @@ export const AppCard = ({
     );
   };
 
+  const getCurrentApp = (): JhApp => {
+    return (
+      app || {
+        id,
+        name: title,
+        description,
+        framework,
+        thumbnail,
+        url,
+        ready: serverStatus === 'Running',
+        public: isPublic,
+        shared: isShared || false,
+        last_activity: lastModified || new Date(),
+        status: serverStatus,
+      }
+    );
+  };
+
   const menuItems: ContextMenuItem[] = [
     {
       id: 'start',
@@ -127,7 +145,7 @@ export const AppCard = ({
           return;
         }
         setIsStartOpen(true);
-        setCurrentApp(app!);
+        setCurrentApp(getCurrentApp());
       },
       visible: true,
       disabled: serverStatus !== 'Ready',
@@ -143,7 +161,7 @@ export const AppCard = ({
           return;
         }
         setIsStopOpen(true);
-        setCurrentApp(app!);
+        setCurrentApp(getCurrentApp());
       },
       visible: true,
       disabled: serverStatus !== 'Running',
@@ -162,7 +180,7 @@ export const AppCard = ({
       title: 'Delete',
       onClick: () => {
         setIsDeleteOpen(true);
-        setCurrentApp(app!);
+        setCurrentApp(getCurrentApp());
       },
       visible: true,
       disabled: isShared || id === '' || !isAppCard,
@@ -203,7 +221,6 @@ export const AppCard = ({
     <div
       className={`card border-0 ${isAppCard ? '' : 'service'}`}
       id={`card-${id}`}
-      tabIndex={0}
     >
       <a
         href={url}
@@ -254,9 +271,7 @@ export const AppCard = ({
                   items={menuItems}
                 />
               </>
-            ) : (
-              <></>
-            )}
+            ) : null}
             <div>
               <div
                 className={
@@ -290,12 +305,10 @@ export const AppCard = ({
                         </Badge>
                       </div>
                     </div>
-                  ) : (
-                    <></>
-                  )}
+                  ) : null}
                   <div className="mt-2 flex items-center gap-2">
                     <span className="iconic flex-shrink-0">{getIcon()}</span>
-                    <div className="card-title text-xl font-bold leading-tight">
+                    <div className="card-title leading-tight">
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger asChild>
@@ -329,7 +342,7 @@ export const AppCard = ({
             ) : (
               <div className="card-content-container app-service no-hover">
                 <div className="card-inner-content px-4 pb-6">
-                  <div className="card-title relative -top-[3px] mb-2 text-xl font-bold">
+                  <div className="card-title relative -top-[3px] mb-2">
                     {title}
                   </div>
                   <div className="card-description-service mt-2 text-xs text-muted-foreground">

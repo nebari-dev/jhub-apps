@@ -17,13 +17,12 @@ export interface ContextMenuItem {
   disabled?: boolean;
   visible?: boolean;
   danger?: boolean;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onClick?: (event: React.MouseEvent<any, MouseEvent>) => void;
+  onClick?: (event: Event) => void;
 }
 
 export interface ContextMenuProps {
   id: string;
-  lastModified?: Date;
+  lastModified?: Date | string;
   items: ContextMenuItem[];
 }
 
@@ -48,7 +47,7 @@ export const ContextMenu = ({
   items,
 }: ContextMenuProps): React.ReactElement => {
   return (
-    <div className="context-menu" id={id} tabIndex={0}>
+    <div className="context-menu" id={id}>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <button
@@ -96,8 +95,7 @@ export const ContextMenu = ({
                 }}
                 onSelect={(event) => {
                   if (!item.disabled && item.onClick) {
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    item.onClick(event as any);
+                    item.onClick(event);
                   }
                 }}
                 className={cn(

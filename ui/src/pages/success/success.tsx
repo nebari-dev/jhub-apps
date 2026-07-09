@@ -1,7 +1,7 @@
 import type { UserState } from '@src/types/user';
 import { APP_BASE_URL } from '@src/utils/constants';
 import type React from 'react';
-import { type SyntheticEvent, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import { currentUser as defaultUser } from '../../store';
@@ -12,8 +12,7 @@ export const Success = (): React.ReactElement => {
   const username = currentUser?.name;
   const server = searchParams.get('id') || '';
 
-  const handleNavigate = (event: SyntheticEvent) => {
-    event.preventDefault();
+  const handleNavigate = () => {
     // Assume this page is only used when headless and inside an iframe
     window.parent.open(
       `${APP_BASE_URL}/spawn-pending/${username}/${server}`,
@@ -32,13 +31,13 @@ export const Success = (): React.ReactElement => {
           <h1 className="text-2xl font-normal">App Submitted Successfully!</h1>
           <p className="max-w-[600px] pb-[30px]">
             To view the status of your app deployment, please{' '}
-            <a
-              href="#"
+            <button
+              type="button"
               onClick={handleNavigate}
-              className="form-paragraph-link"
+              className="form-paragraph-link border-0 bg-transparent p-0"
             >
               open the deployment status page
-            </a>
+            </button>
             .
           </p>
         </div>

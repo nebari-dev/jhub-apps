@@ -1,10 +1,11 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /// <reference types="vite/client" />
-export {};
+import type { JhData } from './types/jupyterhub';
 
 declare global {
   interface Window {
-    jhdata: any;
-    theme: any;
+    jhdata: JhData;
+    theme?: {
+      logo?: string;
+    };
   }
 }

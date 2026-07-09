@@ -26,14 +26,14 @@ instance.interceptors.response.use(
     ) {
       const url = response.config.url;
       // url data maps for basic endpoints
-      const urlPathResponseDataMap = {
+      const urlPathResponseDataMap: Record<string, unknown> = {
         '/user': currentUser,
         '/services/': services,
         '/server/': serverApps,
         '/frameworks/': frameworks,
         '/conda-environments/': environments,
         '/spawner-profiles/': profiles,
-      } as any; //eslint-disable-line
+      };
 
       const data = urlPathResponseDataMap[url];
       if (data) {

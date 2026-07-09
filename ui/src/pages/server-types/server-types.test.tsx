@@ -183,7 +183,7 @@ describe('ServerTypes', () => {
             framework: 'type1',
             is_public: false,
             keep_alive: false,
-            env: '{ "key": "value" }',
+            env: { key: 'value' },
             share_with: { users: [], groups: [] },
           });
         }}

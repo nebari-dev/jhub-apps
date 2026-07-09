@@ -5,7 +5,7 @@
 }
 
 .icon-button {
-  padding: 0 20px !important;
+  padding: 0 20px;
 }
 
 .icon-text {
@@ -16,6 +16,12 @@
 
 .actions {
   padding: 0;
+}
+
+.action-button {
+  min-width: 0px;
+  border-radius: 50%;
+  margin: 0 1rem;
 }
 
 .actions .action-button {
@@ -29,18 +35,12 @@
 }
 
 .actions button.button-icon {
-  min-width: 0px !important;
+  min-width: 0px;
 }
 
 .actions button.button-icon:hover {
   background-color: transparent;
   border-radius: 50%;
-}
-
-.action-button {
-  min-width: 0px !important;
-  border-radius: 50% !important;
-  margin: 0 1rem !important;
 }
 
 .truncate {
