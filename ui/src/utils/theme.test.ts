@@ -7,6 +7,9 @@ describe('runtime theme config', () => {
   beforeEach(() => {
     document.documentElement.removeAttribute('style');
     document.head.innerHTML = '';
+    // Reset any theme a prior test left on window (applyRuntimeTheme now seeds
+    // the merge from window.theme, so leaked state would cross-contaminate).
+    window.theme = undefined;
   });
 
   afterEach(() => {
@@ -68,5 +71,16 @@ describe('runtime theme config', () => {
     expect(
       document.documentElement.style.getPropertyValue('--primary-color'),
     ).toBe('#ba18da');
+  });
+
+  test('preserves an existing window.theme logo when config cannot be loaded', async () => {
+    // Mirrors local dev: env.js sets window.theme.logo before the app loads,
+    // and the /config.json fetch fails (no backend). The dev logo must survive.
+    window.theme = { logo: '/img/logo.svg' };
+    globalThis.fetch = vi.fn().mockRejectedValue(new Error('offline'));
+
+    await loadRuntimeConfig();
+
+    expect(window.theme.logo).toBe('/img/logo.svg');
   });
 });
