@@ -15,6 +15,7 @@ from jhub_apps.config_utils import JAppsConfig
 from jhub_apps.hub_client.hub_client import HubClient
 from jhub_apps.service.models import UserOptions
 from jhub_apps.spawner.types import FrameworkConf, FRAMEWORKS_MAPPING, FRAMEWORKS
+from jhub_apps import themes
 from slugify import slugify
 
 
@@ -163,9 +164,93 @@ async def get_thumbnail_data_url(framework_name, thumbnail):
 def get_theme(config):
     """This will extract theme variables from the JupyterHub config"""
     if isinstance(config.JupyterHub.template_vars, dict):
-        return config.JupyterHub.template_vars
-    else:
-        return None
+        return {**themes.DEFAULT_THEME, **config.JupyterHub.template_vars}
+    return themes.DEFAULT_THEME
+
+
+THEME_CSS_VARIABLES = {
+    "font_family": ["--app-font-family", "--base-font-family", "--headings-font-family"],
+    "h1_color": ["--heading-color"],
+    "h2_color": ["--h2-color"],
+    "text_color": ["--text-color", "--link-text-color"],
+    "primary_color": ["--primary-color"],
+    "primary_color_dark": ["--primary-color-dark"],
+    "primary_color_light": ["--primary-color-light", "--primary-light"],
+    "secondary_color": ["--secondary-color"],
+    "secondary_color_dark": ["--secondary-color-dark", "--secondary-dark"],
+    "accent_color": ["--accent-color", "--link-hover-color"],
+    "accent_color_dark": ["--accent-color-dark"],
+    "accent_text_color": ["--accent-text-color"],
+    "navbar_color": ["--navbar-background-color"],
+    "navbar_text_color": ["--navbar-text-color"],
+    "navbar_hover_color": ["--navbar-hover-color"],
+}
+
+DEFAULT_CSS_VARIABLES = {
+    "--font-size-base": "100%",
+    "--line-height-base": "1.65",
+    "--headings-line-height": "1.25",
+    "--h1-font-size": "2rem",
+    "--h2-font-size": "1.25rem",
+    "--h3-font-size": "1rem",
+    "--h4-font-size": "0.875rem",
+    "--h5-font-size": "0.85rem",
+    "--h6-font-size": "0.825rem",
+    "--light-text-color": "#f1f1f6",
+    "--danger-color": "#e60f66",
+    "--danger-color-dark": "#b81a53",
+    "--gray-color": "#EEEEEE",
+    "--gray-color-dark": "#E0E0E0",
+    "--blue-link-color": "#276BE9",
+    "--button-hover-shadow": "0 3px 0 var(--text-color)",
+    "--focus-width": "2px",
+    "--focus-shadow": "5px 5px 7px rgba(0, 0, 0, 0.1)",
+    "--outline-offset": "0.25rem",
+    "--outline-reset": "1px solid transparent",
+    "--text-decoration-thickness": "2px",
+}
+
+
+def get_theme_css_variables(theme):
+    css_variables = dict(DEFAULT_CSS_VARIABLES)
+    for theme_key, css_variable_names in THEME_CSS_VARIABLES.items():
+        value = theme.get(theme_key)
+        if value is None:
+            continue
+        for css_variable_name in css_variable_names:
+            css_variables[css_variable_name] = str(value)
+    return css_variables
+
+
+def get_runtime_config(config):
+    theme = get_theme(config)
+    return {
+        "theme": {
+            "logo": theme.get("logo"),
+            "favicon": theme.get("favicon"),
+            "font": {
+                "family": theme.get("font_family"),
+                "url": theme.get("font_url"),
+            },
+            "colors": {
+                "primary": theme.get("primary_color"),
+                "primaryLight": theme.get("primary_color_light"),
+                "primaryDark": theme.get("primary_color_dark"),
+                "secondary": theme.get("secondary_color"),
+                "secondaryDark": theme.get("secondary_color_dark"),
+                "accent": theme.get("accent_color"),
+                "accentDark": theme.get("accent_color_dark"),
+                "text": theme.get("text_color"),
+                "heading": theme.get("h1_color"),
+                "heading2": theme.get("h2_color"),
+                "navbar": theme.get("navbar_color"),
+                "navbarText": theme.get("navbar_text_color"),
+                "navbarHover": theme.get("navbar_hover_color"),
+            },
+            "cssVariables": get_theme_css_variables(theme),
+        },
+        "version": str(theme.get("version", "")),
+    }
 
 
 def get_shared_servers(current_hub_user):

@@ -193,3 +193,36 @@ will also appear in the quick access section for easy access.
         ),
     ])
     ```
+
+### Theme runtime configuration
+
+JHub Apps still reads theme values from `c.JupyterHub.template_vars`, but the
+values are now exposed to the UI as runtime JSON instead of templated CSS. The
+backend serves the resolved configuration from `/services/japps/config.json`
+and the React UI applies the returned `theme.cssVariables` to `:root` before it
+renders. Tailwind utilities reference those CSS custom properties, so updating a
+backend theme value does not require rebuilding the frontend bundle.
+
+- **Example**:
+  ```python
+  from jhub_apps import themes
+
+  c.JupyterHub.template_vars = {
+      **themes.DEFAULT_THEME,
+      "logo": "/services/japps/static/img/my-logo.svg",
+      "primary_color": "#005EA2",
+      "primary_color_light": "#005EA210",
+      "primary_color_dark": "#1A4480",
+      "navbar_color": "#ffffff",
+      "navbar_text_color": "#2E2F33",
+      "font_family": "'Inter', sans-serif",
+      "font_url": "https://fonts.googleapis.com/css2?family=Inter&display=swap",
+  }
+  ```
+- **Runtime flow**:
+  1. The service merges `themes.DEFAULT_THEME` with `c.JupyterHub.template_vars`.
+  2. `/services/japps/config.json` returns structured theme values plus
+     `theme.cssVariables`.
+  3. The UI sets those variables on `document.documentElement`.
+  4. Tailwind color/font tokens consume the variables (for example,
+     `bg-primary` resolves through `--primary-color`).

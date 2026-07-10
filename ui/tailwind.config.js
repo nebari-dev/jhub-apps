@@ -35,8 +35,8 @@ export default {
           foreground: 'hsl(var(--popover-foreground))',
         },
         primary: {
-          // Server-injected `--primary-color` (hex) wins; falls back to the
-          // shadcn HSL token so standalone dev mode and dark mode still work.
+          // Runtime config `--primary-color` (hex) wins; falls back to the
+          // shadcn HSL token so standalone dev mode still works.
           DEFAULT: 'var(--primary-color, hsl(var(--primary)))',
           foreground: 'hsl(var(--primary-foreground))',
           dark: 'var(--primary-color-dark, #9B00CE)',
@@ -52,7 +52,7 @@ export default {
         },
         accent: {
           // Hover/active tint of the primary color. Themed via the light
-          // primary variant; falls back to the shadcn HSL token in dev/dark.
+          // primary variant; falls back to the shadcn HSL token in dev.
           DEFAULT: 'var(--primary-color-light, hsl(var(--accent)))',
           foreground:
             'var(--primary-color-dark, hsl(var(--accent-foreground)))',
@@ -65,7 +65,7 @@ export default {
         input: 'hsl(var(--input))',
         // Focus ring follows the themed primary color.
         ring: 'var(--primary-color, hsl(var(--ring)))',
-        // Top header bar — server-injected navbar theme with sensible defaults.
+        // Top header bar — runtime navbar theme with sensible defaults.
         navbar: {
           DEFAULT: 'var(--navbar-background-color, #ffffff)',
           foreground: 'var(--navbar-text-color, #2E2F33)',

@@ -46,9 +46,6 @@
 <div class="version">{{ version or 'v0.0.1'}}</div>
 {% endif %} {% endblock footer%} {% block stylesheet %} <link rel="stylesheet"
 href="{{ static_url("css/style.min.css") }}" type="text/css"/>
-<style>
-  {% include 'style.css' %}
-</style>
 
 {% set jsurls = nebari_theme_extra_js_urls | default([]) %} {% for jsurl in
 jsurls %}

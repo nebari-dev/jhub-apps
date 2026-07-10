@@ -2,10 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
-/* App font: the server-rendered <style> from jhub_apps/templates/_font.css
-   sets `:root { --app-font-family: ... }` based on the theme. UI consumers
-   use `var(--app-font-family, 'Inter', sans-serif)` so standalone dev
-   mode (no server theme) falls back to Inter. */
+/* Runtime config from /services/japps/config.json sets theme variables such as
+   --app-font-family and --primary-color before React renders. */
 @layer base {
   :root {
     /* shadcn semantic tokens (HSL triples; consumed via hsl(var(--name))). */

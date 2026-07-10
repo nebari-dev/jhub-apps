@@ -38,6 +38,7 @@ from jhub_apps.service.utils import (
     get_spawner_profiles,
     get_thumbnail_data_url,
     get_shared_servers,
+    get_runtime_config,
     _check_if_framework_allowed,
     _get_allowed_frameworks,
 )
@@ -292,6 +293,17 @@ async def hub_services(user: User = Depends(get_current_user)):
     logger.info(f"Getting hub services for user: {user}")
     hub_client = HubClient(username=user.name)
     return hub_client.get_services()
+
+
+@router.get("/config.json", description="Get JHub Apps runtime configuration")
+async def runtime_config():
+    config = get_jupyterhub_config()
+    return get_runtime_config(config)
+
+
+@router.get("/theme", description="Get JHub Apps runtime theme configuration")
+async def theme_config():
+    return (await runtime_config())["theme"]
 
 
 @router.post("/app-config-from-git/",)

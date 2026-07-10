@@ -6,7 +6,7 @@ import pytest
 
 from jhub_apps.hub_client.hub_client import HubClient
 from jhub_apps.service.models import UserOptions, ServerCreation, Repository
-from jhub_apps.service.utils import get_shared_servers
+from jhub_apps.service.utils import get_runtime_config, get_shared_servers
 from jhub_apps.spawner.types import FRAMEWORKS, Framework
 from jhub_apps.tests.common.constants import MOCK_USER
 
@@ -237,6 +237,39 @@ def test_api_status(client):
     rjson = response.json()
     assert rjson["status"] == "ok"
     assert "version" in rjson
+
+
+def test_get_runtime_config_maps_theme_to_css_variables():
+    config = Mock(
+        JupyterHub=Mock(
+            template_vars={
+                "logo": "/custom-logo.svg",
+                "primary_color": "#123456",
+                "navbar_color": "#abcdef",
+                "font_family": "'Custom', sans-serif",
+            }
+        )
+    )
+
+    runtime_config = get_runtime_config(config)
+
+    assert runtime_config["theme"]["logo"] == "/custom-logo.svg"
+    assert runtime_config["theme"]["colors"]["primary"] == "#123456"
+    assert runtime_config["theme"]["cssVariables"]["--primary-color"] == "#123456"
+    assert runtime_config["theme"]["cssVariables"]["--navbar-background-color"] == "#abcdef"
+    assert runtime_config["theme"]["cssVariables"]["--app-font-family"] == "'Custom', sans-serif"
+
+
+@patch("jhub_apps.service.routes.get_jupyterhub_config")
+def test_api_runtime_config(get_jupyterhub_config, client):
+    get_jupyterhub_config.return_value = Mock(
+        JupyterHub=Mock(template_vars={"primary_color": "#123456"})
+    )
+
+    response = client.get("/config.json")
+
+    assert response.status_code == 200
+    assert response.json()["theme"]["cssVariables"]["--primary-color"] == "#123456"
 
 
 def test_open_api_docs(client):
