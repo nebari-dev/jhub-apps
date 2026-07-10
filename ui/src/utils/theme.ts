@@ -43,15 +43,22 @@ const CONFIG_PATH = `${API_BASE_URL.replace(/\/$/, '')}/config.json`;
 const FONT_LINK_ID = 'jhub-apps-theme-font';
 
 export const applyRuntimeTheme = (theme?: RuntimeThemeConfig) => {
+  // Layer sources by precedence: DEFAULT_THEME is the base, any theme already
+  // on window.theme (e.g. env.js in local dev, which sets a dev-served logo)
+  // overrides it, and the runtime config from /config.json wins over both.
+  const existingTheme = (window.theme ?? {}) as RuntimeThemeConfig;
   const mergedTheme = {
     ...DEFAULT_THEME,
+    ...existingTheme,
     ...theme,
     font: {
       ...DEFAULT_THEME.font,
+      ...existingTheme.font,
       ...theme?.font,
     },
     cssVariables: {
       ...DEFAULT_THEME.cssVariables,
+      ...existingTheme.cssVariables,
       ...theme?.cssVariables,
     },
   };
