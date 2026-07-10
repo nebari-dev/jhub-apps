@@ -46,6 +46,10 @@
 <div class="version">{{ version or 'v0.0.1'}}</div>
 {% endif %} {% endblock footer%} {% block stylesheet %} <link rel="stylesheet"
 href="{{ static_url("css/style.min.css") }}" type="text/css"/>
+<!-- Theme for server-rendered (non-React) pages: theme.css sets the CSS
+     variables from the runtime theme config, hub.css consumes them. -->
+<link rel="stylesheet" href="/services/japps/theme.css" />
+<link rel="stylesheet" href="/services/japps/static/css/hub.css" />
 
 {% set jsurls = nebari_theme_extra_js_urls | default([]) %} {% for jsurl in
 jsurls %}

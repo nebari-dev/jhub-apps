@@ -253,6 +253,29 @@ def get_runtime_config(config):
     }
 
 
+def get_theme_css(config):
+    """Render the runtime theme as a CSS stylesheet for server-rendered pages.
+
+    The React app applies theme variables at runtime (ui/src/utils/theme.ts),
+    but JupyterHub's server-rendered pages (admin, tokens, spawn, login) never
+    load React. This emits the same theme as a plain stylesheet — a font
+    @import plus a :root block of CSS custom properties — served at
+    /services/japps/theme.css and consumed by jhub_apps/static/css/hub.css.
+    """
+    theme = get_theme(config)
+    css_variables = get_theme_css_variables(theme)
+    lines = []
+    font_url = theme.get("font_url")
+    if font_url:
+        # @import must precede all other rules in a stylesheet.
+        lines.append(f"@import url('{font_url}');")
+    lines.append(":root {")
+    for name, value in css_variables.items():
+        lines.append(f"    {name}: {value};")
+    lines.append("}")
+    return "\n".join(lines) + "\n"
+
+
 def get_shared_servers(current_hub_user):
     # Filter servers shared with the user
     hub_client_service = HubClient()

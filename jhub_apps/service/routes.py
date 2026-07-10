@@ -18,7 +18,7 @@ from fastapi import (
 from fastapi.encoders import jsonable_encoder
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel, ValidationError
-from starlette.responses import RedirectResponse
+from starlette.responses import RedirectResponse, Response
 
 from jhub_apps.hub_client.hub_client import HubClient
 from jhub_apps.service.auth import _create_access_token
@@ -39,6 +39,7 @@ from jhub_apps.service.utils import (
     get_thumbnail_data_url,
     get_shared_servers,
     get_runtime_config,
+    get_theme_css,
     _check_if_framework_allowed,
     _get_allowed_frameworks,
 )
@@ -304,6 +305,15 @@ async def runtime_config():
 @router.get("/theme", description="Get JHub Apps runtime theme configuration")
 async def theme_config():
     return (await runtime_config())["theme"]
+
+
+@router.get(
+    "/theme.css",
+    description="Get JHub Apps theme as a CSS stylesheet for server-rendered pages",
+)
+async def theme_css():
+    config = get_jupyterhub_config()
+    return Response(content=get_theme_css(config), media_type="text/css")
 
 
 @router.post("/app-config-from-git/",)
