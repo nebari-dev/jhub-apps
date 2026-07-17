@@ -19,6 +19,7 @@ window.jhdata = {
 
 window.theme = {
   logo: '/img/logo.png',
+  cssVariables: {},
 };
 
 // Polyfills for browser APIs not provided by jsdom but required by Radix/cmdk.

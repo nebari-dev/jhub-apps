@@ -1,0 +1,394 @@
+/* Copyright (c) Nebari Development Team. */
+/* Distributed under the terms of the Modified BSD License. */
+
+/* Theme for JupyterHub's server-rendered (non-React) pages: admin, tokens,
+   spawn form, login, oauth. These pages extend jhub_apps/templates/page.html
+   and never load the React app, so they don't get the runtime theming applied
+   by ui/src/utils/theme.ts. The CSS custom properties consumed below
+   (--primary-color, --base-font-family, ...) are provided by the companion
+   stylesheet served at /services/japps/theme.css. */
+
+/* Global text styling */
+html {
+    color: var(--text-color);
+    font-family: var(--base-font-family);
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-base);
+}
+
+h1,
+h2,
+h3,
+h4 {
+    color: var(--heading-color);
+    font-family: var(--headings-font-family);
+    line-height: var(--headings-line-height);
+}
+
+h1 {
+    font-size: var(--h1-font-size);
+}
+
+h2 {
+    font-size: var(--h2-font-size);
+    color: var(--h2-color);
+}
+
+h3 {
+    font-size: var(--h3-font-size) !important;
+}
+
+h4 {
+    font-size: var(--h4-font-size) !important;
+}
+
+h5 {
+    font-size: var(--h5-font-size) !important;
+}
+
+h6 {
+    font-size: var(--h6-font-size) !important;
+}
+
+.container {
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 30px;
+    width: 100%;
+}
+
+.feedback-container {
+    margin-bottom: 40px;
+}
+
+.center-content-text {
+    text-align: center;
+    margin: 0 auto;
+}
+
+.m-b-0 {
+    margin-bottom: 0;
+}
+
+label {
+    font-family: var(--base-font-family);
+}
+
+.toggle-body-on {
+    background-color: var(--primary-color) !important;
+}
+
+a {
+    color: var(--link-text-color);
+    text-decoration: underline;
+    text-decoration-color: CurrentColor;
+    text-underline-offset: 1px;
+}
+
+a:hover {
+    color: var(--link-text-color);
+    text-decoration: underline;
+    text-decoration-thickness: var(--text-decoration-thickness);
+}
+
+a:focus {
+    background-color: unset;
+    box-shadow: none;
+}
+
+.form-breadcrumb {
+    background-color: unset !important;
+    padding: 0 !important;
+}
+
+.form-paragraph-link {
+    color: var(--blue-link-color);
+    text-decoration: underline;
+}
+
+/* Buttons */
+.btn {
+    font-family: var(--base-font-family) !important;
+    font-weight: 400 !important;
+    border-radius: 4px !important;
+    padding: 6px 16px;
+    font-size: 1rem;
+    text-decoration: none;
+}
+
+.btn-xs {
+    font-size: 0.8rem;
+}
+
+.btn-lg {
+    font-size: 1.25rem;
+}
+
+.btn-primary {
+    color: var(--light-text-color);
+    background-color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-color-dark) !important;
+    border-color: var(--primary-color-dark) !important;
+}
+
+.btn-primary:focus {
+    outline-color: var(--primary-color) !important;
+}
+
+.btn-primary:disabled {
+    color: var(--light-text-color);
+    background-color: var(--gray-color) !important;
+    border-color: var(--gray-color) !important;
+}
+
+.btn-secondary {
+    color: var(--secondary-color) !important;
+    background-color: #ffffff !important;
+    border-color: var(--secondary-color) !important;
+}
+
+.btn-secondary:hover {
+    color: var(--secondary-color-dark) !important;
+    background-color: #ffffff !important;
+    border-color: var(--secondary-color-dark) !important;
+}
+
+.btn-secondary:focus {
+    outline-color: var(--secondary-color) !important;
+}
+
+.btn-success {
+    color: var(--text-color);
+    background-color: var(--secondary-color) !important;
+    border-color: var(--secondary-color) !important;
+}
+
+.btn-success:hover {
+    color: var(--text-color);
+    background-color: var(--secondary-color-dark) !important;
+    border-color: var(--secondary-color-dark) !important;
+}
+
+.btn-danger {
+    color: var(--light-text-color);
+    background-color: var(--danger-color) !important;
+    border-color: var(--danger-color) !important;
+}
+
+.btn-danger:hover {
+    background-color: var(--danger-color-dark) !important;
+    border-color: var(--danger-color-dark) !important;
+}
+
+.btn-jupyter {
+    color: var(--light-text-color);
+    background-color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+}
+
+.btn-jupyter:hover {
+    background-color: var(--primary-color-dark) !important;
+    border-color: var(--primary-color-dark) !important;
+}
+
+.btn-jupyter:focus {
+    outline-color: var(--primary-color) !important;
+}
+
+#help-floater:hover {
+    background-color: var(--primary-color-dark) !important;
+    border-color: var(--primary-color-dark) !important;
+}
+
+/* Navbar */
+.nav {
+    margin-left: 10px;
+}
+
+.navbar {
+    height: 64px;
+    padding-top: 10px;
+}
+
+.navbar.navbar-default {
+    background: var(--navbar-background-color);
+    box-shadow: 0px 1.5px 3px 0px rgba(72, 74, 94, 0.16);
+    border: None;
+}
+
+.navbar.navbar-default .navbar-nav > li > a,
+.navbar.navbar-default .navbar-text {
+    color: var(--navbar-text-color);
+    text-decoration: none;
+}
+
+.navbar.navbar-default .navbar-nav > li > a:hover {
+    color: var(--text-color);
+    background-color: var(--navbar-hover-color);
+    text-decoration: underline;
+}
+
+.navbar.navbar-default .navbar-nav > .open > a,
+.navbar.navbar-default .navbar-nav > .open > a:hover {
+    background-color: var(--navbar-hover-color);
+}
+
+.progress-bar {
+    background-color: var(--primary-color) !important;
+}
+
+/* Authenticator form */
+#login-main input[type="submit"]:focus {
+    border-color: var(--text-color);
+    color: var(--text-color);
+}
+
+#login-main .auth-form-header {
+    background: var(--accent-color) !important;
+    color: var(--accent-text-color, #1c1d26);
+    font-family: var(--base-font-family);
+}
+
+#login-main .service-login {
+    vertical-align: top !important;
+    padding-top: 60px;
+}
+
+#login-main .login_error,
+.error {
+    color: var(--danger-color-dark);
+}
+
+#login-main .form-control:focus,
+#login-main .form-control:active {
+    box-shadow: unset;
+    border-color: var(--text-color);
+}
+
+/* Profile menu (page.html navbar dropdown) */
+.profile-menu {
+    display: inline-block;
+    position: relative;
+    color: var(--navbar-text-color);
+}
+
+.profile {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    padding: 10px;
+}
+
+.profile:hover {
+    background-color: var(--navbar-hover-color) !important;
+}
+
+.profile img {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.username {
+    font-weight: bold;
+}
+
+.menu {
+    list-style: none;
+    position: absolute;
+    top: 41px;
+    right: -15px;
+    background-color: #fff;
+    border: 1px solid #f0f0f0;
+    border-radius: 4px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 8px 0;
+    min-width: 180px;
+    display: none;
+}
+
+.menu li {
+    padding: 8px 16px;
+}
+
+.menu li:hover {
+    background-color: #f0f0f0;
+}
+
+.menu li a {
+    text-decoration: none;
+    color: #333;
+    display: block;
+}
+
+/* Show menu on hover */
+.profile-menu:hover .menu {
+    display: block;
+    z-index: 1001;
+}
+
+/* Custom styling */
+.modal-footer .btn + .btn {
+    margin-left: 8px;
+}
+
+.thumbnail-icon-container {
+    outline-color: var(--primary-color) !important;
+}
+
+.form-section .thumbnail,
+.form-section .thumbnail-body.selected {
+    background-color: transparent !important;
+}
+
+/* Misc */
+.version {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    z-index: 10001; /* Make sure it does not overlap */
+    width: 100%;
+    padding: 5px 20px;
+    background-color: #fff;
+    color: var(--primary-color);
+    text-align: start;
+    font-size: 1rem;
+    font-family: var(--base-font-family);
+    word-wrap: break-word;
+    border-top: 1px solid #e6e6e6;
+}
+
+/* Ensures admin dashboard server thumbnails with base64 encoded image text do not blow up the page width */
+.server-dashboard-container .table.table-bordered table.table-bordered table.table-bordered > tbody > tr > td {
+    max-width: 400px;
+    text-overflow: clip;
+    overflow: hidden;
+}
+
+@media only screen and (max-width: 480px) {
+    .navbar-nav {
+        margin: 0;
+    }
+    .navbar-right {
+        float: right !important;
+    }
+    .collapse {
+        display: block !important;
+    }
+    .navbar-default .navbar-collapse,
+    .navbar-default .navbar-form {
+        position: absolute;
+        top: 0;
+        right: 10px;
+        border-color: unset;
+        border: 0;
+    }
+    .modal-body > .form {
+        min-width: 300px;
+    }
+}

@@ -8,25 +8,30 @@ import { App } from './App.tsx';
 import { Toaster } from './components/ui/sonner';
 import { TooltipProvider } from './components/ui/tooltip';
 import './index.css';
+import { loadRuntimeConfig } from './utils/theme.ts';
 
 const currentUrl = new URL(window.location.href);
 const queryClient = new QueryClient();
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <BrowserRouter
-      basename={
-        currentUrl.pathname.indexOf('hub') === -1 ? API_BASE_URL : APP_BASE_URL
-      }
-    >
-      <RecoilRoot>
-        <QueryClientProvider client={queryClient}>
-          <TooltipProvider>
-            <App />
-            <Toaster />
-          </TooltipProvider>
-        </QueryClientProvider>
-      </RecoilRoot>
-    </BrowserRouter>
-  </React.StrictMode>,
-);
+loadRuntimeConfig().finally(() => {
+  ReactDOM.createRoot(document.getElementById('root')!).render(
+    <React.StrictMode>
+      <BrowserRouter
+        basename={
+          currentUrl.pathname.indexOf('hub') === -1
+            ? API_BASE_URL
+            : APP_BASE_URL
+        }
+      >
+        <RecoilRoot>
+          <QueryClientProvider client={queryClient}>
+            <TooltipProvider>
+              <App />
+              <Toaster />
+            </TooltipProvider>
+          </QueryClientProvider>
+        </RecoilRoot>
+      </BrowserRouter>
+    </React.StrictMode>,
+  );
+});
