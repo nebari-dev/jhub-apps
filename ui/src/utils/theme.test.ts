@@ -34,7 +34,7 @@ describe('runtime theme config', () => {
         '--navbar-background-color',
       ),
     ).toBe('#abcdef');
-    expect(window.theme.logo).toBe('/custom-logo.svg');
+    expect(window.theme?.logo).toBe('/custom-logo.svg');
   });
 
   test('loads runtime config and injects configured font stylesheet', async () => {

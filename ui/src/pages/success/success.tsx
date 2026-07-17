@@ -32,13 +32,13 @@ export const Success = (): React.ReactElement => {
           <h1 className="text-2xl font-normal">App Submitted Successfully!</h1>
           <p className="max-w-[600px] pb-[30px]">
             To view the status of your app deployment, please{' '}
-            <a
-              href="#"
+            <button
+              type="button"
               onClick={handleNavigate}
-              className="form-paragraph-link"
+              className="form-paragraph-link cursor-pointer border-0 bg-transparent p-0"
             >
               open the deployment status page
-            </a>
+            </button>
             .
           </p>
         </div>

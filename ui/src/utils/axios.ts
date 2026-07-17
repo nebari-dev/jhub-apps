@@ -33,7 +33,7 @@ instance.interceptors.response.use(
         '/frameworks/': frameworks,
         '/conda-environments/': environments,
         '/spawner-profiles/': profiles,
-      } as any; //eslint-disable-line
+      } as Record<string, unknown>;
 
       const data = urlPathResponseDataMap[url];
       if (data) {

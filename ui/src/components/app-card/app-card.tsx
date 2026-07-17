@@ -127,7 +127,7 @@ export const AppCard = ({
           return;
         }
         setIsStartOpen(true);
-        setCurrentApp(app!);
+        setCurrentApp(app);
       },
       visible: true,
       disabled: serverStatus !== 'Ready',
@@ -143,7 +143,7 @@ export const AppCard = ({
           return;
         }
         setIsStopOpen(true);
-        setCurrentApp(app!);
+        setCurrentApp(app);
       },
       visible: true,
       disabled: serverStatus !== 'Running',
@@ -162,7 +162,7 @@ export const AppCard = ({
       title: 'Delete',
       onClick: () => {
         setIsDeleteOpen(true);
-        setCurrentApp(app!);
+        setCurrentApp(app);
       },
       visible: true,
       disabled: isShared || id === '' || !isAppCard,
@@ -203,7 +203,6 @@ export const AppCard = ({
     <div
       className={`card border-0 ${isAppCard ? '' : 'service'}`}
       id={`card-${id}`}
-      tabIndex={0}
     >
       <a
         href={url}
@@ -254,9 +253,7 @@ export const AppCard = ({
                   items={menuItems}
                 />
               </>
-            ) : (
-              <></>
-            )}
+            ) : null}
             <div>
               <div
                 className={
@@ -290,9 +287,7 @@ export const AppCard = ({
                         </Badge>
                       </div>
                     </div>
-                  ) : (
-                    <></>
-                  )}
+                  ) : null}
                   <div className="mt-2 flex items-center gap-2">
                     <span className="iconic flex-shrink-0">{getIcon()}</span>
                     <div className="card-title text-xl font-bold leading-tight">

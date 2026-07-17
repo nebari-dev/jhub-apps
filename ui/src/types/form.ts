@@ -10,7 +10,7 @@ export interface AppFormInput {
   custom_command?: string;
   description?: string;
   display_name: string;
-  env?: string;
+  env?: Record<string, string> | null;
   filepath?: string;
   framework: string;
   is_public: boolean;

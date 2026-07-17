@@ -1,28 +1,41 @@
 import { Button } from '@src/components/ui/button';
 import { Input } from '@src/components/ui/input';
 import { Label } from '@src/components/ui/label';
-import type { KeyValuePair } from '@src/types/api';
 import { Plus, X } from 'lucide-react';
 import type React from 'react';
-import { type ChangeEvent, useEffect, useState } from 'react';
+import { type ChangeEvent, useEffect, useRef, useState } from 'react';
+
+interface EnvironmentVariableRow {
+  id: string;
+  key: string;
+  value: string;
+}
 
 export interface EnvironmentVariablesProps {
-  variables: string | null;
-  setVariables: React.Dispatch<React.SetStateAction<string | null>>;
+  variables: Record<string, string> | null;
+  setVariables: React.Dispatch<
+    React.SetStateAction<Record<string, string> | null>
+  >;
 }
 
 export const EnvironmentVariables = ({
   variables,
   setVariables,
 }: EnvironmentVariablesProps): React.ReactElement => {
-  const [rows, setRows] = useState<KeyValuePair[]>([]);
-  const getVariables = (values: KeyValuePair[]) => {
+  const [rows, setRows] = useState<EnvironmentVariableRow[]>([]);
+  const nextRowId = useRef(0);
+  const createRow = (key = '', value = ''): EnvironmentVariableRow => ({
+    id: `environment-variable-${nextRowId.current++}`,
+    key,
+    value,
+  });
+
+  const getVariables = (values: EnvironmentVariableRow[]) => {
     if (!values || values.length === 0) {
       return null;
     }
 
-    /* eslint-disable @typescript-eslint/no-explicit-any */
-    const newVariables = {} as any;
+    const newVariables: Record<string, string> = {};
     values.forEach((row) => {
       if (row.key) {
         newVariables[row.key] = row.value;
@@ -46,7 +59,7 @@ export const EnvironmentVariables = ({
   };
 
   const handleAddRow = () => {
-    setRows([...rows, { key: '', value: '' }]);
+    setRows([...rows, createRow()]);
   };
 
   const handleRemoveRow = (index: number) => {
@@ -60,9 +73,9 @@ export const EnvironmentVariables = ({
   useEffect(() => {
     if (variables && rows.length === 0) {
       setRows(() => {
-        const newRows = [];
+        const newRows: EnvironmentVariableRow[] = [];
         for (const [key, value] of Object.entries(variables)) {
-          newRows.push({ key, value });
+          newRows.push(createRow(key, value));
         }
         return newRows;
       });
@@ -74,10 +87,7 @@ export const EnvironmentVariables = ({
       {rows.length > 0 ? (
         <div className="pb-4">
           {rows.map((row, index) => (
-            <div
-              key={`environment-variable-row-${index}`}
-              className="flex flex-row items-end gap-2 pb-4"
-            >
+            <div key={row.id} className="flex flex-row items-end gap-2 pb-4">
               <div className="flex w-full flex-col gap-1.5">
                 <Label htmlFor={`environment-variable-key-${index}`}>Key</Label>
                 <Input

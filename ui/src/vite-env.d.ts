@@ -1,10 +1,10 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /// <reference types="vite/client" />
-export {};
+import type { JhData } from '@src/types/jupyterhub';
+import type { RuntimeThemeConfig } from '@src/utils/theme';
 
 declare global {
   interface Window {
-    jhdata: any;
-    theme: any;
+    jhdata: JhData;
+    theme?: RuntimeThemeConfig;
   }
 }

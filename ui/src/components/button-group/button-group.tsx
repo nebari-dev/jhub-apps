@@ -1,6 +1,6 @@
 import { cn } from '@src/lib/utils';
 import type React from 'react';
-import { Children, type ReactNode } from 'react';
+import { Children, type ReactElement, type ReactNode } from 'react';
 
 export interface ButtonGroupProps {
   /**
@@ -27,9 +27,9 @@ export const ButtonGroup = ({
 }: ButtonGroupProps): React.ReactElement => {
   return (
     <ul id={id} className={cn('flex flex-row justify-end', className)}>
-      {Children.map(children, (child: ReactNode, index) => {
+      {Children.toArray(children).map((child) => {
         return (
-          <li key={index} className="m-1 list-none">
+          <li key={(child as ReactElement).key} className="m-1 list-none">
             {child}
           </li>
         );

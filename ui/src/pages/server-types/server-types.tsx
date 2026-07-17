@@ -131,8 +131,7 @@ export const ServerTypes = (): React.ReactElement => {
           queryClient.invalidateQueries({ queryKey: ['app-state'] });
           window.location.assign(APP_BASE_URL);
         },
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onError: async (error: any) => {
+        onError: async (error: Error) => {
           setSubmitting(false);
           setNotification(error.message);
         },
@@ -153,8 +152,7 @@ export const ServerTypes = (): React.ReactElement => {
             }
           }
         },
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onError: async (error: any) => {
+        onError: async (error: Error) => {
           setSubmitting(false);
           setNotification(error.message);
         },

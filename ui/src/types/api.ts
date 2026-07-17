@@ -9,23 +9,42 @@ export interface KeyValuePair {
 }
 
 export interface UserOptions {
+  name?: string;
   jhub_app: boolean;
   display_name: string;
   description: string;
   thumbnail: string;
   filepath: string;
   framework: string;
-  custom_command: string;
+  custom_command?: string;
   conda_env: string;
   profile: string;
   profile_image?: string;
   public: boolean;
   share_with: SharePermissions;
   keep_alive: boolean;
-  env: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+  env: Record<string, string> | null;
   repository?: {
     url: string;
   };
+}
+
+export interface ServerApp {
+  name: string;
+  url: string;
+  started?: string | null;
+  ready: boolean;
+  pending?: boolean | null;
+  stopped?: boolean;
+  last_activity: Date;
+  username?: string;
+  shared?: boolean;
+  user_options?: Partial<UserOptions>;
+}
+
+export interface ServersData {
+  user_apps: ServerApp[];
+  shared_apps: ServerApp[];
 }
 
 export interface AppQueryUpdateProps {

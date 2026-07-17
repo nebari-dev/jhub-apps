@@ -18,6 +18,12 @@
   padding: 0;
 }
 
+.action-button {
+  min-width: 0px !important;
+  border-radius: 50% !important;
+  margin: 0 1rem !important;
+}
+
 .actions .action-button {
   min-width: 0px;
   padding: 0px 24px;
@@ -35,12 +41,6 @@
 .actions button.button-icon:hover {
   background-color: transparent;
   border-radius: 50%;
-}
-
-.action-button {
-  min-width: 0px !important;
-  border-radius: 50% !important;
-  margin: 0 1rem !important;
 }
 
 .truncate {
