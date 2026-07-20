@@ -17,6 +17,24 @@
         /></a>
       </span>
       {% endblock logo%}
+      <script type="text/javascript">
+        // Match the React launcher's dark-mode logo. data-bs-theme is already
+        // set on <html> by the head script above. For the default Nebari lockup
+        // swap to its white-text asset; for a custom logo with no dark variant,
+        // flag it for the monochrome-white inversion fallback in hub.css.
+        (function () {
+          if (document.documentElement.getAttribute("data-bs-theme") !== "dark") {
+            return;
+          }
+          var img = document.querySelector("#jupyterhub-logo img");
+          if (!img) return;
+          if (img.src.indexOf("Black-text") !== -1) {
+            img.src = img.src.replace("Black-text", "White-text");
+          } else {
+            img.classList.add("logo-invert");
+          }
+        })();
+      </script>
     </div>
 
     <div class="collapse navbar-collapse" id="thenavbar">
@@ -51,22 +69,38 @@ href="{{ static_url("css/style.min.css") }}" type="text/css"/>
 <link rel="stylesheet" href="/services/japps/theme.css" />
 <link rel="stylesheet" href="/services/japps/static/css/hub.css" />
 
+<script type="text/javascript">
+  // Mirror the React launcher's light/dark/system preference onto these
+  // server-rendered (non-React) pages. The launcher persists the choice in
+  // localStorage under "jhub-apps:color-mode"; we resolve it here and set
+  // data-bs-theme before paint (no flash) so both Bootstrap's stock chrome
+  // and the jhub-apps dark rules in hub.css apply. We also sync JupyterHub's
+  // own "jupyterhub-bs-theme" key so its darkmode.js agrees rather than
+  // flipping the theme back based on the OS preference.
+  (function () {
+    var mode = "system";
+    try {
+      var stored = localStorage.getItem("jhub-apps:color-mode");
+      if (stored === "dark" || stored === "light" || stored === "system") {
+        mode = stored;
+      }
+    } catch (e) {}
+    var prefersDark = false;
+    try {
+      prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    } catch (e) {}
+    var theme = mode === "dark" || (mode === "system" && prefersDark)
+      ? "dark"
+      : "light";
+    try { localStorage.setItem("jupyterhub-bs-theme", theme); } catch (e) {}
+    document.documentElement.setAttribute("data-bs-theme", theme);
+  })();
+</script>
+
 {% set jsurls = nebari_theme_extra_js_urls | default([]) %} {% for jsurl in
 jsurls %}
 <script type="text/javascript" src="{{ jsurl }}" defer></script>
 {% endfor %} {% endblock stylesheet %}
-
-{% block scripts %}
-{{ super() }}
-<script type="text/javascript">
-  // This app is light-only. JupyterHub's darkmode.js sets
-  // data-bs-theme based on the OS `prefers-color-scheme`, which flips
-  // Bootstrap into dark mode on the admin/token pages. Pin it to light
-  // and store the preference so it survives navigation and OS changes.
-  try { localStorage.setItem("jupyterhub-bs-theme", "light"); } catch (e) {}
-  document.documentElement.setAttribute("data-bs-theme", "light");
-</script>
-{% endblock scripts %}
 
 <!-- {# requires jupyerhub > 0.9.4 https://github.com/jupyterhub/jupyterhub/pull/2296 #}  -->
 {% block title %}{{ hub_title or 'JupyterHub'}}{% endblock %} {% block favicon
