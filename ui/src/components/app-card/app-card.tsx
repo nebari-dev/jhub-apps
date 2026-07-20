@@ -63,6 +63,18 @@ export const AppCard = ({
   app,
 }: AppCardProps): React.ReactElement => {
   const [appStatus, setAppStatus] = useState('');
+  // Default framework/server logos are meant to fill the header edge-to-edge
+  // (cover); user-uploaded thumbnails are arbitrary aspect ratios, so cover
+  // would crop them and they're fit within the header (contain) instead. We
+  // decide from the image's natural aspect ratio on load. App-library cards can
+  // carry user uploads, so only genuinely wide images (>= 2:1) fill there.
+  // Quick Access (service) cards only ever show bundled logos — including the
+  // 1.73:1 JupyterLab/VSCode logos — so a lower threshold lets those fill while
+  // squarer service logos (e.g. conda-store) still fit.
+  const coverThreshold = isAppCard ? 2 : 1.7;
+  const [thumbnailFit, setThumbnailFit] = useState<'cover' | 'contain'>(
+    'cover',
+  );
   const [currentProfiles] = useRecoilState<AppProfileProps[]>(defaultProfiles);
   const [, setCurrentApp] = useRecoilState<JhApp | undefined>(currentApp);
   const [, setNotification] = useRecoilState<string | undefined>(
@@ -231,7 +243,7 @@ export const AppCard = ({
         <Card
           id={`card-${id}`}
           tabIndex={0}
-          className="relative h-full rounded border-0 shadow-md overflow-hidden"
+          className="relative h-full rounded border-0 shadow-md overflow-hidden dark:border-2 dark:border-border dark:shadow-none"
         >
           <div
             className={`card-content-header ${isAppCard ? '' : 'card-content-header-service'}`}
@@ -254,14 +266,28 @@ export const AppCard = ({
                 />
               </>
             ) : null}
-            <div>
+            <div className="h-full w-full">
               <div
                 className={
                   isAppCard && thumbnail ? 'img-overlay' : 'img-overlay-service'
                 }
               >
                 {thumbnail ? (
-                  <img src={thumbnail} alt={`${title} logo`} />
+                  <img
+                    src={thumbnail}
+                    alt={`${title} logo`}
+                    style={{ objectFit: thumbnailFit }}
+                    onLoad={(event) => {
+                      const { naturalWidth, naturalHeight } =
+                        event.currentTarget;
+                      setThumbnailFit(
+                        naturalHeight > 0 &&
+                          naturalWidth / naturalHeight >= coverThreshold
+                          ? 'cover'
+                          : 'contain',
+                      );
+                    }}
+                  />
                 ) : (
                   <span style={{ fontWeight: 'bold' }}>{title}</span>
                 )}

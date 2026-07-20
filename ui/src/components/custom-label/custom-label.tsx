@@ -11,7 +11,7 @@ export const CustomLabel = ({
 }: CustomLabelProps): React.ReactElement => {
   const { requiredColor, ...restStyle } = style ?? {};
   return (
-    <span className="bg-[#fafafa] px-0.5" style={restStyle}>
+    <span className="bg-background px-0.5" style={restStyle}>
       {required && <span style={{ color: requiredColor || 'inherit' }}>*</span>}
       {label}
     </span>

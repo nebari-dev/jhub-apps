@@ -107,8 +107,8 @@ export const App = (): React.ReactElement => {
         data-headless={isHeadless ? 'true' : undefined}
         className={
           isHeadless
-            ? 'flex-grow bg-[#fafbfc] pl-1 pr-1 pt-1'
-            : 'flex-grow bg-[#fafbfc] pl-1 pr-1 pt-[72px] sm:pl-[264px]'
+            ? 'flex-grow bg-background pl-1 pr-1 pt-1'
+            : 'flex-grow bg-background pl-1 pr-1 pt-[72px] sm:pl-[264px]'
         }
       >
         {notification ? (
