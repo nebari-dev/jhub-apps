@@ -139,7 +139,7 @@ export const TopNavigation = (): React.ReactElement => {
             className="relative mx-2 flex w-[calc(100%-1rem)] cursor-pointer items-center rounded-lg border-0 bg-[var(--primary-color-light,#BA18DA10)] px-6 py-2 text-left before:absolute before:bottom-0 before:left-0 before:top-0 before:w-2 before:rounded-l-lg before:bg-[var(--primary-color,#BA18DA)] before:content-[''] hover:bg-muted"
           >
             <HomeIcon className="mr-2 h-6 w-6 text-foreground" />
-            <span className="relative top-[2px] text-sm font-medium leading-tight">
+            <span className="relative top-[2px] text-base font-medium leading-tight">
               Home
             </span>
           </button>
@@ -155,7 +155,7 @@ export const TopNavigation = (): React.ReactElement => {
           <li key={`pinned-${item.name}`}>
             <a
               href={item.url}
-              className="block w-full rounded px-6 py-2 text-sm text-foreground no-underline hover:bg-muted hover:no-underline"
+              className="block w-full rounded px-6 py-2 text-base text-foreground no-underline hover:bg-muted hover:no-underline"
             >
               {item.name}
             </a>
@@ -165,7 +165,7 @@ export const TopNavigation = (): React.ReactElement => {
           <li key={`service-${item.name}`}>
             <a
               href={item.url}
-              className="block w-full rounded px-6 py-2 text-sm text-foreground no-underline hover:bg-muted hover:no-underline"
+              className="block w-full rounded px-6 py-2 text-base text-foreground no-underline hover:bg-muted hover:no-underline"
             >
               {item.name}
             </a>

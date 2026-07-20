@@ -94,9 +94,13 @@ html.dark {
   background: hsl(225 17% 7%);
 }
 /* Base text color follows the theme token so default-colored text (headings,
-   labels, table cells) is legible in both light and dark modes. */
+   labels, table cells) is legible in both light and dark modes. The 15px base
+   (down from the browser default 16px) reduces inherited text sizes across the
+   board for a slightly more compact feel; the Tailwind text-* scale is reduced
+   in step (see tailwind.config.js). */
 body {
   color: hsl(var(--foreground));
+  font-size: 15px;
 }
 main {
   margin: 24px 0;
@@ -119,13 +123,13 @@ pre {
 }
 
 h1 {
-  font-size: 30px;
+  font-size: 27px;
   font-weight: 700;
   padding: 0 0 8px 0;
 }
 
 h2 {
-  font-size: 20px;
+  font-size: 19px;
 }
 
 hr {
@@ -133,7 +137,7 @@ hr {
 }
 
 p {
-  font-size: 16px;
+  font-size: 15px;
 }
 
 a {

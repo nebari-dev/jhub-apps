@@ -22,6 +22,22 @@ export default {
       fontFamily: {
         sans: ['var(--app-font-family, Inter, sans-serif)'],
       },
+      // Type scale nudged down ~6% from Tailwind's defaults for a slightly more
+      // compact, MUI-like feel without shrinking body text too far. Applies
+      // across every text-* utility; paired line-heights are scaled
+      // proportionally. The inherited default (non-utility text) is reduced to
+      // match in index.css.
+      fontSize: {
+        xs: ['0.6875rem', { lineHeight: '1rem' }], // 12 -> 11
+        sm: ['0.8125rem', { lineHeight: '1.25rem' }], // 14 -> 13
+        base: ['0.9375rem', { lineHeight: '1.5rem' }], // 16 -> 15
+        lg: ['1.0625rem', { lineHeight: '1.75rem' }], // 18 -> 17
+        xl: ['1.1875rem', { lineHeight: '1.75rem' }], // 20 -> 19
+        '2xl': ['1.375rem', { lineHeight: '2rem' }], // 24 -> 22
+        '3xl': ['1.6875rem', { lineHeight: '2.25rem' }], // 30 -> 27
+        '4xl': ['2.0625rem', { lineHeight: '2.5rem' }], // 36 -> 33
+        '5xl': ['2.75rem', { lineHeight: '1' }], // 48 -> 44
+      },
       colors: {
         // shadcn semantic tokens, HSL triples sourced from CSS variables.
         background: 'hsl(var(--background))',
