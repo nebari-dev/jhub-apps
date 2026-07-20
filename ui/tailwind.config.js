@@ -67,11 +67,13 @@ export default {
           foreground: 'hsl(var(--muted-foreground))',
         },
         accent: {
-          // Hover/active tint of the primary color. Themed via the light
-          // primary variant; falls back to the shadcn HSL token in dev.
-          DEFAULT: 'var(--primary-color-light, hsl(var(--accent)))',
-          foreground:
-            'var(--primary-color-dark, hsl(var(--accent-foreground)))',
+          // Neutral hover/focus highlight for menu, select, and command items.
+          // Driven by the semantic --accent tokens (a pale brand tint in light
+          // mode, a neutral slate in dark) rather than the brand primary vars,
+          // which theme.ts sets as inline styles on <html> and would otherwise
+          // force a purple hover regardless of color mode.
+          DEFAULT: 'hsl(var(--accent))',
+          foreground: 'hsl(var(--accent-foreground))',
         },
         destructive: {
           DEFAULT: 'hsl(var(--destructive))',

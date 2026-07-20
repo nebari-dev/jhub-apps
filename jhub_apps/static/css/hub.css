@@ -405,19 +405,19 @@ a:focus {
    (html[data-bs-theme="dark"]) outrank theme.css's :root block, so the
    var() consumers throughout this file flip automatically. */
 html[data-bs-theme="dark"] {
-    --text-color: hsl(0 0% 98%);
-    --heading-color: hsl(0 0% 98%);
-    --h2-color: hsl(0 0% 98%);
+    --text-color: hsl(200 14% 96%);
+    --heading-color: hsl(200 14% 96%);
+    --h2-color: hsl(200 14% 96%);
     --link-text-color: hsl(210 90% 72%);
-    --navbar-background-color: hsl(225 12% 16%);
-    --navbar-text-color: hsl(0 0% 90%);
+    --navbar-background-color: hsl(240 3% 21.4%);
+    --navbar-text-color: hsl(200 14% 96%);
     --navbar-hover-color: rgba(255, 255, 255, 0.08);
 }
 
 /* Safety net for the page background: guarantees the dark surface even if
    JupyterHub's base stylesheet hardcodes a light body background. */
 [data-bs-theme="dark"] body {
-    background-color: hsl(225 17% 7%);
+    background-color: hsl(240 3% 15.3%);
     color: var(--text-color);
 }
 
@@ -425,13 +425,13 @@ html[data-bs-theme="dark"] {
    border instead of the drop shadow). */
 [data-bs-theme="dark"] .navbar.navbar-default {
     box-shadow: none;
-    border-bottom: 1px solid hsl(225 10% 20%);
+    border-bottom: 1px solid hsl(240 4% 37%);
 }
 
 /* Surfaces that were hardcoded light in the rules above. */
 [data-bs-theme="dark"] .btn-secondary,
 [data-bs-theme="dark"] .btn-secondary:hover {
-    background-color: hsl(225 12% 16%) !important;
+    background-color: hsl(240 3% 21.4%) !important;
 }
 
 [data-bs-theme="dark"] .btn-secondary:hover {
@@ -439,12 +439,12 @@ html[data-bs-theme="dark"] {
 }
 
 [data-bs-theme="dark"] .menu {
-    background-color: hsl(225 12% 16%);
-    border-color: hsl(225 10% 20%);
+    background-color: hsl(240 3% 15.3%);
+    border-color: hsl(240 4% 37%);
 }
 
 [data-bs-theme="dark"] .menu li a {
-    color: hsl(0 0% 90%);
+    color: hsl(200 14% 96%);
 }
 
 [data-bs-theme="dark"] .menu li:hover {
@@ -452,8 +452,8 @@ html[data-bs-theme="dark"] {
 }
 
 [data-bs-theme="dark"] .version {
-    background-color: hsl(225 12% 16%);
-    border-top-color: hsl(225 10% 20%);
+    background-color: hsl(240 3% 21.4%);
+    border-top-color: hsl(240 4% 37%);
 }
 
 /* Logo: mirror the React header. The default Nebari lockup swaps to its

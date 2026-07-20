@@ -71,7 +71,7 @@ export const ContextMenu = ({
           align="end"
           sideOffset={4}
           aria-labelledby={`context-menu-button-${id}`}
-          className="z-[9999] w-[180px] dark:bg-card"
+          className="z-[9999] w-[180px]"
         >
           {lastModified && (
             <>

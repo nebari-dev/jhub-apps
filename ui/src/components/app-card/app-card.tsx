@@ -243,7 +243,7 @@ export const AppCard = ({
         <Card
           id={`card-${id}`}
           tabIndex={0}
-          className="relative h-full rounded border-0 shadow-md overflow-hidden dark:border-2 dark:border-border dark:shadow-none"
+          className="relative h-full rounded border-0 shadow-md overflow-hidden dark:border dark:border-border dark:shadow-none"
         >
           <div
             className={`card-content-header ${isAppCard ? '' : 'card-content-header-service'}`}

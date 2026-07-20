@@ -217,7 +217,7 @@ export const Thumbnail = ({
               </Button>
             ) : null}
           </div>
-          <p className="hidden w-[340px] text-base text-[#0F101599] md:block">
+          <p className="hidden w-[340px] text-base text-muted-foreground md:block">
             Recommended size: 225x130 | JPG, PNG, Max size: 5MB
           </p>
         </div>

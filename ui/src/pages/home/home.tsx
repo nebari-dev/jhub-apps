@@ -424,7 +424,11 @@ export const Home = (): React.ReactElement => {
       <ServicesSection />
       <AppsSection />
       <Dialog open={isStartOpen} onOpenChange={setIsStartOpen}>
-        <DialogContent data-testid="StartModal" className="w-[444px] gap-0 p-0">
+        <DialogContent
+          data-testid="StartModal"
+          className="w-[444px] gap-0 p-0"
+          onOpenAutoFocus={(event) => event.preventDefault()}
+        >
           <DialogHeader className="p-6 pb-4">
             <DialogTitle className="font-bold">Start App</DialogTitle>
           </DialogHeader>
@@ -432,7 +436,11 @@ export const Home = (): React.ReactElement => {
         </DialogContent>
       </Dialog>
       <Dialog open={isStopOpen} onOpenChange={setIsStopOpen}>
-        <DialogContent data-testid="StopModal" className="w-[444px] gap-0 p-0">
+        <DialogContent
+          data-testid="StopModal"
+          className="w-[444px] gap-0 p-0"
+          onOpenAutoFocus={(event) => event.preventDefault()}
+        >
           <DialogHeader className="p-6 pb-2">
             <DialogTitle className="font-bold">Stop App</DialogTitle>
           </DialogHeader>
@@ -443,6 +451,7 @@ export const Home = (): React.ReactElement => {
         <DialogContent
           data-testid="DeleteModal"
           className="w-[444px] gap-0 p-0"
+          onOpenAutoFocus={(event) => event.preventDefault()}
         >
           <DialogHeader className="p-6 pb-4">
             <DialogTitle className="font-bold">Delete App</DialogTitle>
@@ -457,6 +466,7 @@ export const Home = (): React.ReactElement => {
         <DialogContent
           data-testid="StartNotRunningModal"
           className="w-[444px] gap-0 p-0"
+          onOpenAutoFocus={(event) => event.preventDefault()}
         >
           <DialogHeader className="p-6 pb-4">
             <DialogTitle className="font-bold">Server Not Running</DialogTitle>

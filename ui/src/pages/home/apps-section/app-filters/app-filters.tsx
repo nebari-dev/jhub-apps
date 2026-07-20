@@ -183,9 +183,9 @@ export const AppFilters = ({
           <PopoverTrigger asChild>
             <Button
               id="filters-btn"
-              variant="ghost-secondary"
+              variant="secondary"
               disabled={frameworksLoading || false}
-              className="text-base font-semibold"
+              className="border-0 bg-transparent text-base font-semibold dark:border dark:bg-secondary"
             >
               <Filter className="h-4 w-4" />
               Filters
@@ -354,8 +354,8 @@ export const AppFilters = ({
           <PopoverTrigger asChild>
             <Button
               id="sort-by-btn"
-              variant="ghost-secondary"
-              className="text-base font-semibold"
+              variant="secondary"
+              className="border-0 bg-transparent text-base font-semibold dark:border dark:bg-secondary"
             >
               <SortAsc className="h-4 w-4" />
               {currentSortValue}
@@ -404,7 +404,7 @@ export const AppFilters = ({
             variant="ghost"
             size="icon"
             className={`h-9 w-9 rounded-r-none border-r border-border ${
-              isGridViewActive ? 'bg-muted' : 'bg-transparent'
+              isGridViewActive ? 'bg-muted dark:bg-card' : 'bg-transparent'
             }`}
           >
             <LayoutGrid
@@ -420,7 +420,7 @@ export const AppFilters = ({
             variant="ghost"
             size="icon"
             className={`h-9 w-9 rounded-l-none ${
-              !isGridViewActive ? 'bg-muted' : 'bg-transparent'
+              !isGridViewActive ? 'bg-muted dark:bg-card' : 'bg-transparent'
             }`}
           >
             <Rows3
