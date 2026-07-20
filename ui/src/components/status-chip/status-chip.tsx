@@ -32,7 +32,9 @@ interface StatusChipProps {
 const getStatusClasses = (status: string): string => {
   switch (status) {
     case 'Ready':
-      return 'bg-white text-[rgb(46,125,50)] border-[rgb(46,125,50)] hover:bg-white';
+      // Green outline in light mode; in dark mode a neutral light-gray outline
+      // pill with light text reads more cleanly on the dark card background.
+      return 'bg-card text-[rgb(46,125,50)] border-[rgb(46,125,50)] hover:bg-card dark:bg-card dark:text-foreground dark:border-muted-foreground';
     case 'Pending':
       return 'bg-[rgb(234,181,78)] text-black border-transparent hover:bg-[rgb(234,181,78)]';
     case 'Running':

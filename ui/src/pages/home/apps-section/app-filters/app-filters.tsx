@@ -183,9 +183,9 @@ export const AppFilters = ({
           <PopoverTrigger asChild>
             <Button
               id="filters-btn"
-              variant="ghost-secondary"
+              variant="secondary"
               disabled={frameworksLoading || false}
-              className="text-base font-semibold"
+              className="border-0 bg-transparent text-base font-semibold dark:border dark:bg-secondary"
             >
               <Filter className="h-4 w-4" />
               Filters
@@ -323,7 +323,7 @@ export const AppFilters = ({
                   );
                 })}
               </RadioGroup>
-              <div className="mt-4 -mx-4 bg-[#EEE] px-2 py-2">
+              <div className="mt-4 -mx-4 bg-muted px-2 py-2">
                 <ButtonGroup>
                   <Button
                     id="clear-filters-btn"
@@ -354,8 +354,8 @@ export const AppFilters = ({
           <PopoverTrigger asChild>
             <Button
               id="sort-by-btn"
-              variant="ghost-secondary"
-              className="text-base font-semibold"
+              variant="secondary"
+              className="border-0 bg-transparent text-base font-semibold dark:border dark:bg-secondary"
             >
               <SortAsc className="h-4 w-4" />
               {currentSortValue}
@@ -404,12 +404,12 @@ export const AppFilters = ({
             variant="ghost"
             size="icon"
             className={`h-9 w-9 rounded-r-none border-r border-border ${
-              isGridViewActive ? 'bg-[#E8E8EA]' : 'bg-transparent'
+              isGridViewActive ? 'bg-muted dark:bg-card' : 'bg-transparent'
             }`}
           >
             <LayoutGrid
               className={`h-4 w-4 ${
-                isGridViewActive ? 'text-[#2E2F33]' : 'text-[#76777B]'
+                isGridViewActive ? 'text-foreground' : 'text-muted-foreground'
               }`}
             />
           </Button>
@@ -420,12 +420,12 @@ export const AppFilters = ({
             variant="ghost"
             size="icon"
             className={`h-9 w-9 rounded-l-none ${
-              !isGridViewActive ? 'bg-[#E8E8EA]' : 'bg-transparent'
+              !isGridViewActive ? 'bg-muted dark:bg-card' : 'bg-transparent'
             }`}
           >
             <Rows3
               className={`h-4 w-4 ${
-                !isGridViewActive ? 'text-[#2E2F33]' : 'text-[#76777B]'
+                !isGridViewActive ? 'text-foreground' : 'text-muted-foreground'
               }`}
             />
           </Button>

@@ -44,7 +44,7 @@
   position: absolute;
   top: 10px;
   left: 10px;
-  color: rgba(0, 0, 0, 0.87);
+  color: hsl(var(--foreground));
   transition: all 0.2s;
   pointer-events: none;
 }
@@ -58,7 +58,7 @@
 .description-container:focus-within .placeholder-text {
   top: -10px;
   left: 10px;
-  background: white;
+  background: hsl(var(--background));
   padding: 0 5px;
   font-size: 0.8em;
   color: purple;
@@ -71,7 +71,7 @@
 
 .description_text-field:empty:before {
   content: attr(data-placeholder);
-  color: rgba(0, 0, 0, 0.57);
+  color: hsl(var(--muted-foreground));
   pointer-events: none;
   display: block; /* For IE */
 }
@@ -81,7 +81,7 @@
 }
 
 .description_text-field--not-empty + label {
-  color: #000;
+  color: hsl(var(--foreground));
 }
 
 .description-label {
@@ -90,9 +90,9 @@
   top: 16px;
   font-size: 12px;
   transition: all 0.2s ease-in-out;
-  background: #fff;
+  background: hsl(var(--background));
   padding: 0 5px;
-  color: rgba(0, 0, 0, 0.57);
+  color: hsl(var(--muted-foreground));
   pointer-events: none;
 }
 
@@ -115,7 +115,7 @@
   position: absolute;
   left: 15px;
   top: 16px;
-  color: rgba(9, 10, 9, 0.57) !important; /* Placeholder color */
+  color: hsl(var(--muted-foreground)) !important; /* Placeholder color */
   pointer-events: none;
   display: block; /* For IE */
 }
@@ -128,12 +128,12 @@
 .form-control {
   position: relative;
   width: 100%;
-  border: 1px solid #ccc !important;
+  border: 1px solid hsl(var(--border)) !important;
   border-radius: 4px;
   transition: border-color 0.3s;
 }
 .form-control:hover {
-  border-color: black !important;
+  border-color: hsl(var(--foreground)) !important;
 }
 
 .form-control:focus-within {
@@ -168,7 +168,7 @@
   width: 100%;
   padding: 20px 10px 10px;
   box-sizing: border-box;
-  border: 1px solid #ccc;
+  border: 1px solid hsl(var(--border));
   font-family: var(--app-font-family, "Inter", sans-serif);
   font-size: 16px;
   line-height: 20px;
@@ -221,7 +221,7 @@
   top: -15px;
   left: 8px;
   transform: translateY(50%);
-  color: rgba(0, 0, 0, 0.57);
+  color: hsl(var(--muted-foreground));
   background-color: transparent;
   transition: all 0.2s ease;
   pointer-events: none;
@@ -249,7 +249,7 @@
     transform 0.3s ease,
     color 0.3s ease;
   transform-origin: left top;
-  color: rgba(0, 0, 0, 0.54);
+  color: hsl(var(--muted-foreground));
   pointer-events: none;
 }
 

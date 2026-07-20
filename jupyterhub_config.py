@@ -34,7 +34,7 @@ c.JAppsConfig.additional_services = [
     {
         "name": "Environments",
         "url": "/conda-store",
-        "description": "This is conda-store, your environments manager.",
+        "description": "This is your environments manager.",
         "pinned": True,
         "thumbnail": "https://raw.githubusercontent.com/conda-incubator/conda-store/main/docusaurus-docs/community/assets/logos/conda-store-logo-vertical-lockup.svg",
     },

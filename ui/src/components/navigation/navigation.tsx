@@ -1,18 +1,23 @@
+import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
 import { Badge } from '@src/components/ui/badge';
 import { Button } from '@src/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuRadioGroup,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@src/components/ui/dropdown-menu';
 import { Sheet, SheetContent } from '@src/components/ui/sheet';
+import { useColorMode } from '@src/hooks/use-color-mode';
 import { useMediaQuery } from '@src/hooks/use-media-query';
 import { cn } from '@src/lib/utils';
 import type { ServersData } from '@src/types/api';
 import type { JhApp, JhService, JhServiceFull } from '@src/types/jupyterhub';
 import type { UserState } from '@src/types/user';
 import axios from '@src/utils/axios';
+import { type ColorMode, isColorMode } from '@src/utils/color-mode';
 import { APP_BASE_URL } from '@src/utils/constants';
 import {
   getAppLogoUrl,
@@ -21,7 +26,15 @@ import {
   navigateToUrl,
 } from '@src/utils/jupyterhub';
 import { useQuery } from '@tanstack/react-query';
-import { ChevronDown, ChevronUp, Home as HomeIcon, Menu } from 'lucide-react';
+import {
+  ChevronDown,
+  ChevronUp,
+  Home as HomeIcon,
+  Menu,
+  Monitor,
+  Moon,
+  Sun,
+} from 'lucide-react';
 import type React from 'react';
 import { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
@@ -43,6 +56,7 @@ export const TopNavigation = (): React.ReactElement => {
   const [services, setServices] = useState<JhService[]>([]);
   const [pinnedApps, setPinnedApps] = useState<JhApp[]>([]);
   const [isHeadless] = useRecoilState<boolean>(defaultIsHeadless);
+  const { colorMode, isDark, setColorMode } = useColorMode();
 
   const {
     isLoading: appsLoading,
@@ -122,10 +136,10 @@ export const TopNavigation = (): React.ReactElement => {
           <button
             type="button"
             onClick={() => navigateToUrl(`${APP_BASE_URL}`)}
-            className="relative mx-2 flex w-[calc(100%-1rem)] cursor-pointer items-center rounded-lg border-0 bg-[var(--primary-color-light,#BA18DA10)] px-6 py-2 text-left before:absolute before:bottom-0 before:left-0 before:top-0 before:w-2 before:rounded-l-lg before:bg-[var(--primary-color,#BA18DA)] before:content-[''] hover:bg-gray-50"
+            className="relative mx-2 flex w-[calc(100%-1rem)] cursor-pointer items-center rounded-lg border-0 bg-[var(--primary-color-light,#BA18DA10)] px-6 py-2 text-left before:absolute before:bottom-0 before:left-0 before:top-0 before:w-2 before:rounded-l-lg before:bg-[var(--primary-color,#BA18DA)] before:content-[''] hover:bg-muted dark:hover:bg-accent"
           >
-            <HomeIcon className="mr-2 h-6 w-6 text-brand-black" />
-            <span className="relative top-[2px] text-base font-semibold leading-tight">
+            <HomeIcon className="mr-2 h-6 w-6 text-foreground" />
+            <span className="relative top-[2px] text-sm font-medium leading-tight">
               Home
             </span>
           </button>
@@ -133,7 +147,7 @@ export const TopNavigation = (): React.ReactElement => {
       </ul>
       <ul className="m-0 list-none px-1 py-0">
         <li>
-          <p className="m-0 px-6 py-1 text-sm font-semibold uppercase text-[rgb(15_16_21_/_60%)]">
+          <p className="m-0 px-6 py-1 text-sm font-semibold uppercase text-muted-foreground">
             Services
           </p>
         </li>
@@ -141,7 +155,7 @@ export const TopNavigation = (): React.ReactElement => {
           <li key={`pinned-${item.name}`}>
             <a
               href={item.url}
-              className="block w-full rounded px-6 py-2 text-base text-[rgb(15_16_21_/_87%)] no-underline hover:bg-gray-50 hover:no-underline"
+              className="block w-full rounded px-6 py-2 text-sm text-foreground no-underline hover:bg-muted hover:no-underline dark:hover:bg-accent"
             >
               {item.name}
             </a>
@@ -151,7 +165,7 @@ export const TopNavigation = (): React.ReactElement => {
           <li key={`service-${item.name}`}>
             <a
               href={item.url}
-              className="block w-full rounded px-6 py-2 text-base text-[rgb(15_16_21_/_87%)] no-underline hover:bg-gray-50 hover:no-underline"
+              className="block w-full rounded px-6 py-2 text-sm text-foreground no-underline hover:bg-muted hover:no-underline dark:hover:bg-accent"
             >
               {item.name}
             </a>
@@ -165,7 +179,7 @@ export const TopNavigation = (): React.ReactElement => {
     <div hidden={isHeadless}>
       <header
         id="app-bar"
-        className="fixed inset-x-0 top-0 z-[1201] bg-navbar shadow-md"
+        className="fixed inset-x-0 top-0 z-[1201] border-b border-border bg-navbar shadow-md dark:bg-card dark:shadow-none"
       >
         <div
           id="toolbar"
@@ -175,7 +189,7 @@ export const TopNavigation = (): React.ReactElement => {
             type="button"
             aria-label="open drawer"
             onClick={() => setMobileSheetOpen((prev) => !prev)}
-            className="mr-2 inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border-0 bg-transparent text-navbar-foreground hover:bg-gray-50 sm:!hidden"
+            className="mr-2 inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border-0 bg-transparent text-navbar-foreground hover:bg-muted dark:text-foreground sm:!hidden"
           >
             <Menu className="h-6 w-6" />
           </button>
@@ -183,9 +197,18 @@ export const TopNavigation = (): React.ReactElement => {
             <a href={APP_BASE_URL}>
               <img
                 id="app-logo"
-                src={getAppLogoUrl()}
+                src={getAppLogoUrl(isDark)}
                 alt="logo"
-                className="h-7 w-auto"
+                // In dark mode the default logo swaps to its white-text variant
+                // (like the landing page). If a custom/branded logo has no such
+                // variant, the URL is unchanged — fall back to monochrome-white
+                // so it stays legible on the dark navbar.
+                className={cn(
+                  'h-7 w-auto',
+                  isDark &&
+                    getAppLogoUrl(isDark) === getAppLogoUrl(false) &&
+                    'brightness-0 invert',
+                )}
               />
             </a>
           </div>
@@ -198,14 +221,14 @@ export const TopNavigation = (): React.ReactElement => {
                 <Button
                   id="profile-menu-btn"
                   variant="ghost"
-                  className="button-menu bg-transparent font-bold text-navbar-foreground hover:bg-gray-50 focus:bg-transparent focus-visible:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
+                  className="button-menu bg-transparent font-bold text-navbar-foreground hover:bg-muted focus:bg-transparent focus-visible:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 dark:text-foreground"
                   aria-haspopup="true"
                 >
                   {currentUser?.name}{' '}
                   {currentUser?.admin && (
                     <Badge
                       variant="secondary"
-                      className="chip ml-2 bg-gray-300 text-navbar-foreground"
+                      className="chip ml-2 bg-secondary text-secondary-foreground dark:border-border"
                     >
                       admin
                     </Badge>
@@ -221,8 +244,35 @@ export const TopNavigation = (): React.ReactElement => {
                 id="profile-menu-list"
                 align="end"
                 sideOffset={12}
-                className="w-[180px]"
+                className="w-72"
               >
+                <div className="px-2 py-1.5">
+                  <DropdownMenuRadioGroup
+                    aria-label="Theme"
+                    value={colorMode}
+                    onValueChange={(value) => {
+                      if (isColorMode(value)) {
+                        setColorMode(value);
+                      }
+                    }}
+                    className="flex items-center gap-1 rounded-lg bg-muted p-1 dark:bg-card"
+                  >
+                    <ThemeOption value="light" label="Light mode" text="Light">
+                      <Sun className="h-4 w-4" />
+                    </ThemeOption>
+                    <ThemeOption value="dark" label="Dark mode" text="Dark">
+                      <Moon className="h-4 w-4" />
+                    </ThemeOption>
+                    <ThemeOption
+                      value="system"
+                      label="System theme"
+                      text="System"
+                    >
+                      <Monitor className="h-4 w-4" />
+                    </ThemeOption>
+                  </DropdownMenuRadioGroup>
+                </div>
+                <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onSelect={() => navigateToUrl(`${APP_BASE_URL}/token`)}
                 >
@@ -267,5 +317,36 @@ export const TopNavigation = (): React.ReactElement => {
     </div>
   );
 };
+
+// A single segment of the light/dark/system control. Uses the raw Radix radio
+// item so the group renders as a compact segmented toggle (matching the Nebari
+// landing page) rather than the standard checkmark-style menu radio item.
+const ThemeOption = ({
+  value,
+  label,
+  text,
+  children,
+}: {
+  value: ColorMode;
+  label: string;
+  text: string;
+  children: React.ReactNode;
+}): React.ReactElement => (
+  <DropdownMenuPrimitive.RadioItem
+    value={value}
+    aria-label={label}
+    title={label}
+    // Keep the menu open after switching so the change is immediately visible.
+    onSelect={(event) => event.preventDefault()}
+    className={cn(
+      'flex min-w-0 flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-md px-2 py-1.5 text-sm outline-none transition-colors focus-visible:ring-[3px] focus-visible:ring-ring/50',
+      'text-muted-foreground hover:text-foreground',
+      'data-[state=checked]:bg-background data-[state=checked]:text-foreground data-[state=checked]:shadow-sm',
+    )}
+  >
+    {children}
+    <span>{text}</span>
+  </DropdownMenuPrimitive.RadioItem>
+);
 
 export default TopNavigation;

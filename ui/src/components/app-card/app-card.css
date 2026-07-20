@@ -2,7 +2,6 @@
   height: 246px;
   width: 286px;
   border-radius: 0.25rem;
-  box-shadow: 0px 1px 2px rgba(210, 210, 207, 0.7);
 }
 
 .card.service {
@@ -34,34 +33,31 @@
   justify-content: center;
   align-items: center;
   height: 130px;
-  padding: 33px 0;
   overflow: hidden;
-  background: linear-gradient(90deg, #fff 0%, #ece9e6 95.83%);
+  /* Header backdrop (same in light and dark): full-bleed logos cover it,
+     letterboxed thumbnails sit on it, and transparent icons show it directly.
+     Fixed light values so the backdrop stays light in dark mode too. */
+  background: linear-gradient(90deg, #ffffff 0%, #f5f5f5 100%);
 }
 
 .card-content-header img {
   width: 100%;
   height: 100%;
   max-height: 130px;
-  object-fit: contain;
+  /* cover (not contain) so the image spans the full header width edge-to-edge
+     even when the card is slightly wider than the logo's native aspect ratio.
+     The default framework logos are 2.2:1 (matching the header), so this fills
+     with effectively no crop; wider/taller custom thumbnails are center-cropped. */
+  object-fit: cover;
+  object-position: center;
 }
 
 .card-content-header .img-overlay,
 .card-content-header .img-overlay-service {
   position: relative;
-  display: inline-block;
-}
-
-.card-content-header .img-overlay::after {
-  content: "";
-  object-fit: contain;
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(255, 255, 255, 0.25); /* White overlay with 50% opacity */
-  pointer-events: none; /* Allows click events to pass through to the underlying elements */
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
 .card-content-header .chip-container {
@@ -79,13 +75,13 @@
 
 /* Card content Hovering effect */
 .card-content-container:not(.no-hover) {
-  background: #fff;
+  background: hsl(var(--card));
   position: relative;
   overflow: hidden;
 }
 
 .card-content-container {
-  background: #fff;
+  background: hsl(var(--card));
   position: relative;
   overflow: hidden;
   transition: all 0.5s ease-in-out;

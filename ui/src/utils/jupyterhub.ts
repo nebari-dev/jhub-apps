@@ -198,10 +198,19 @@ export const getFriendlyEnvironmentVariables = (
   }
 };
 
-export const getAppLogoUrl = () => {
-  if (window.theme?.logo) {
-    return window.theme.logo;
+export const getAppLogoUrl = (isDark = false) => {
+  const logo = window.theme?.logo;
+  if (!logo) {
+    return undefined;
   }
+  // The default Nebari logo ships as a black-text and a white-text lockup. In
+  // dark mode, swap to the white-text asset (as the landing page does) rather
+  // than CSS-inverting the black-text one. Custom/branded logos are returned
+  // as-is and handled by the navbar's fallback styling.
+  if (isDark) {
+    return logo.replace('Black-text', 'White-text');
+  }
+  return logo;
 };
 
 export const getFullAppUrl = (url: string) => {

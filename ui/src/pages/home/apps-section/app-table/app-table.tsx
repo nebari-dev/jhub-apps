@@ -85,7 +85,7 @@ export const AppTable = ({ apps }: AppTableProps): React.ReactElement => {
 
   return (
     <div className="h-full w-full">
-      <div className="rounded-md border border-border bg-background shadow-lg">
+      <div className="rounded-md border border-border bg-background shadow-lg dark:bg-card">
         <Table aria-label="App table" className="min-w-[650px]">
           <TableHeader>
             <TableRow className="app-header">
@@ -114,7 +114,7 @@ export const AppTable = ({ apps }: AppTableProps): React.ReactElement => {
                   <span className="icon-text inline relative">{app.name}</span>
                 </TableCell>
                 <TableCell>
-                  <StatusChip status={app.status} size="medium" />
+                  <StatusChip status={app.status} />
                 </TableCell>
                 <TableCell>{app.username}</TableCell>
                 <TableCell>

@@ -220,6 +220,27 @@ a:focus {
     border: None;
 }
 
+/* Align the logo (and profile menu) with the React launcher header, which pads
+   its toolbar by 24px (px-6), 16px on narrow viewports. Bootstrap's
+   .container-fluid defaults to ~12px, leaving the logo too far left. */
+.navbar.navbar-default .container-fluid {
+    padding-left: 24px;
+    padding-right: 24px;
+}
+
+@media only screen and (max-width: 640px) {
+    .navbar.navbar-default .container-fluid {
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+}
+
+/* Remove the inline image's baseline gap, which left the logo sitting a pixel
+   or two lower than the flex-centered logo on the React launcher header. */
+.navbar.navbar-default #jupyterhub-logo img {
+    display: block;
+}
+
 .navbar.navbar-default .navbar-nav > li > a,
 .navbar.navbar-default .navbar-text {
     color: var(--navbar-text-color);
@@ -368,6 +389,78 @@ a:focus {
     max-width: 400px;
     text-overflow: clip;
     overflow: hidden;
+}
+
+/* ---------------------------------------------------------------------------
+   Dark mode. page.html sets data-bs-theme="dark" on <html> before paint,
+   mirroring the React launcher's light/dark/system preference (stored in
+   localStorage under "jhub-apps:color-mode"). Bootstrap 5 themes most of the
+   stock chrome (body, tables, forms, modals, dropdowns) from data-bs-theme;
+   the rules below cover the jhub-apps-specific styling layered on top.
+
+   Brand colors (--primary-color, --secondary-color, --accent-color) come from
+   the runtime theme and read well on dark, so they're reused as-is. Only the
+   neutral surface and text tokens are overridden, matching the values in
+   ui/src/index.css so the launcher and these pages agree. These selectors
+   (html[data-bs-theme="dark"]) outrank theme.css's :root block, so the
+   var() consumers throughout this file flip automatically. */
+html[data-bs-theme="dark"] {
+    --text-color: hsl(200 14% 96%);
+    --heading-color: hsl(200 14% 96%);
+    --h2-color: hsl(200 14% 96%);
+    --link-text-color: hsl(210 90% 72%);
+    --navbar-background-color: hsl(240 3% 21.4%);
+    --navbar-text-color: hsl(200 14% 96%);
+    --navbar-hover-color: rgba(255, 255, 255, 0.08);
+}
+
+/* Safety net for the page background: guarantees the dark surface even if
+   JupyterHub's base stylesheet hardcodes a light body background. */
+[data-bs-theme="dark"] body {
+    background-color: hsl(240 3% 15.3%);
+    color: var(--text-color);
+}
+
+/* Header: match the React launcher's dark navbar (card surface, a bottom
+   border instead of the drop shadow). */
+[data-bs-theme="dark"] .navbar.navbar-default {
+    box-shadow: none;
+    border-bottom: 1px solid hsl(240 4% 37%);
+}
+
+/* Surfaces that were hardcoded light in the rules above. */
+[data-bs-theme="dark"] .btn-secondary,
+[data-bs-theme="dark"] .btn-secondary:hover {
+    background-color: hsl(240 3% 21.4%) !important;
+}
+
+[data-bs-theme="dark"] .btn-secondary:hover {
+    color: var(--secondary-color) !important;
+}
+
+[data-bs-theme="dark"] .menu {
+    background-color: hsl(240 3% 15.3%);
+    border-color: hsl(240 4% 37%);
+}
+
+[data-bs-theme="dark"] .menu li a {
+    color: hsl(200 14% 96%);
+}
+
+[data-bs-theme="dark"] .menu li:hover {
+    background-color: rgba(255, 255, 255, 0.06);
+}
+
+[data-bs-theme="dark"] .version {
+    background-color: hsl(240 3% 21.4%);
+    border-top-color: hsl(240 4% 37%);
+}
+
+/* Logo: mirror the React header. The default Nebari lockup swaps to its
+   white-text asset (handled in page.html); any custom logo with no dark
+   variant falls back to a monochrome-white inversion so it stays legible. */
+[data-bs-theme="dark"] #jupyterhub-logo img.logo-invert {
+    filter: brightness(0) invert(1);
 }
 
 @media only screen and (max-width: 480px) {

@@ -1,12 +1,12 @@
 .card-dialog-body-wrapper {
-  padding: 0px 24px 8px 24px;
+  padding: 0px 24px 24px 24px;
 }
 
 .card-dialog-body {
   padding-bottom: 8px;
 }
 .card-dialog-note {
-  color: var(--text-secondary, rgba(15, 16, 21, 0.6));
+  color: hsl(var(--muted-foreground));
   font-family: var(--app-font-family, "Inter", sans-serif);
   font-size: 14px;
   font-style: normal;
@@ -20,6 +20,6 @@
   align-items: center;
   gap: 8px;
   align-self: stretch;
-  background: rgba(238, 238, 238, 1);
+  background: hsl(var(--muted));
   margin-bottom: 0px;
 }

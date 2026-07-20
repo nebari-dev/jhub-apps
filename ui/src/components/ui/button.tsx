@@ -15,7 +15,7 @@ const buttonVariants = cva(
           'bg-primary text-primary-foreground font-bold hover:bg-primary-dark',
         // contained × secondary
         secondary:
-          'bg-secondary text-secondary-foreground font-semibold border border-secondary hover:bg-gray-300 hover:border-gray-300',
+          'bg-secondary text-secondary-foreground font-semibold border border-secondary hover:bg-gray-300 hover:border-gray-300 dark:border-border dark:hover:bg-gray-700 dark:hover:border-gray-700',
         // contained × destructive (error)
         destructive:
           'bg-destructive text-destructive-foreground font-semibold hover:bg-destructive/90',
@@ -28,7 +28,7 @@ const buttonVariants = cva(
         // text × primary
         ghost: 'text-primary hover:bg-accent focus:bg-accent',
         // text × secondary (neutral)
-        'ghost-secondary': 'text-brand-black hover:bg-gray-50 focus:bg-gray-50',
+        'ghost-secondary': 'text-foreground hover:bg-muted focus:bg-muted',
         link: 'text-primary underline-offset-4 hover:underline',
       },
       size: {

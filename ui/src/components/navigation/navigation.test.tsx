@@ -146,4 +146,41 @@ describe('Navigation', () => {
 
     expect(window.location.pathname).toBe('/');
   });
+
+  test('toggles color mode from the profile menu', async () => {
+    window.localStorage.clear();
+    document.documentElement.classList.remove('dark');
+    const user = userEvent.setup();
+    const { baseElement } = render(
+      <RecoilRoot initializeState={({ set }) => set(defaultUser, currentUser)}>
+        <QueryClientProvider client={queryClient}>
+          <Navigation />
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+
+    await user.click(
+      baseElement.querySelector('#profile-menu-btn') as HTMLButtonElement,
+    );
+
+    const darkOption = await waitFor(() => {
+      const option = baseElement.querySelector(
+        '[aria-label="Dark mode"]',
+      ) as HTMLElement;
+      expect(option).toBeTruthy();
+      return option;
+    });
+
+    await user.click(darkOption);
+
+    await waitFor(() => {
+      expect(document.documentElement.classList.contains('dark')).toBe(true);
+    });
+    expect(window.localStorage.getItem('jhub-apps:color-mode')).toBe('dark');
+
+    // The profile menu items remain unchanged aside from the added toggle.
+    expect(
+      baseElement.querySelectorAll('#profile-menu-list [role="menuitem"]'),
+    ).toHaveLength(3);
+  });
 });
