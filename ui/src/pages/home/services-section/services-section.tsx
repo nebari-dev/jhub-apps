@@ -1,4 +1,5 @@
 import { Separator } from '@src/components/ui/separator';
+import type { ServersData } from '@src/types/api';
 import type { JhApp, JhServiceApp, JhServiceFull } from '@src/types/jupyterhub';
 import type { UserState } from '@src/types/user';
 import axios from '@src/utils/axios';
@@ -43,7 +44,7 @@ export const ServicesSection = (): React.ReactElement => {
     isLoading: appsLoading,
     error: appsError,
     data: appsData,
-  } = useQuery<UserState, { message: string }>({
+  } = useQuery<ServersData, { message: string }>({
     queryKey: ['app-state'],
     queryFn: () =>
       axios

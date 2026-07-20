@@ -104,7 +104,7 @@ export const Thumbnail = ({
 
   useEffect(() => {
     const elem = inputRef.current;
-    if (elem && elem.files && elem.files.length > 0) {
+    if (elem?.files && elem.files.length > 0) {
       const droppedFile = elem.files[0];
       setCurrentFile(droppedFile);
     }
@@ -152,15 +152,23 @@ export const Thumbnail = ({
         <div className="h-[130px] rounded bg-[#90969c]">
           {hasSelection ? (
             <div className="m-auto">
-              <img
-                src={
-                  currentFile ? URL.createObjectURL(currentFile) : currentImage
-                }
-                alt="App thumbnail"
+              <button
+                type="button"
                 title="Click to view image"
-                className="max-h-[130px] max-w-[225px] cursor-pointer rounded"
+                aria-label="View app thumbnail"
+                className="cursor-pointer border-0 bg-transparent p-0 focus:outline focus:outline-2 focus:outline-primary"
                 onClick={handleViewThumbnail}
-              />
+              >
+                <img
+                  src={
+                    currentFile
+                      ? URL.createObjectURL(currentFile)
+                      : currentImage
+                  }
+                  alt="App thumbnail"
+                  className="max-h-[130px] max-w-[225px] rounded"
+                />
+              </button>
             </div>
           ) : (
             <button

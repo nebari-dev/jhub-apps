@@ -13,7 +13,7 @@ describe('EnvironmentVariables', () => {
   test('renders with mock data', async () => {
     const { baseElement } = render(
       <EnvironmentVariables
-        variables="{'key':'value'}"
+        variables={{ key: 'value' }}
         setVariables={vi.fn()}
       />,
     );
@@ -43,7 +43,7 @@ describe('EnvironmentVariables', () => {
   test('Removes a row', async () => {
     const { baseElement, getAllByTestId } = render(
       <EnvironmentVariables
-        variables="{'key':'value'}"
+        variables={{ key: 'value' }}
         setVariables={vi.fn()}
       />,
     );
@@ -64,7 +64,7 @@ describe('EnvironmentVariables', () => {
   test('Updates a row', async () => {
     const { baseElement } = render(
       <EnvironmentVariables
-        variables="{'key':'value'}"
+        variables={{ key: 'value' }}
         setVariables={vi.fn()}
       />,
     );

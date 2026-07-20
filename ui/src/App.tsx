@@ -116,9 +116,7 @@ export const App = (): React.ReactElement => {
             message={notification}
             onClose={() => setNotification(undefined)}
           />
-        ) : (
-          <></>
-        )}
+        ) : null}
         <Routes>
           <Route path="/home" element={<Home />} />
           <Route path="/user/:id/*" element={<NotRunning />} />

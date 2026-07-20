@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.4.16/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.5.2/schema.json",
   "vcs": {
     "enabled": true,
     "clientKind": "git",
@@ -24,31 +24,14 @@
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true,
-      "a11y": {
-        "noNoninteractiveTabindex": "off",
-        "useValidAnchor": "off",
-        "useKeyWithClickEvents": "off"
-      },
+      "preset": "recommended",
       "complexity": {
-        "noImportantStyles": "off",
-        "noUselessFragments": "off",
-        "noUselessSwitchCase": "off",
-        "noUselessTernary": "off",
-        "useOptionalChain": "off"
+        "noImportantStyles": "off"
       },
       "correctness": {
         "useExhaustiveDependencies": "off"
       },
-      "style": {
-        "noDescendingSpecificity": "off",
-        "noNonNullAssertion": "off",
-        "useTemplate": "off"
-      },
       "suspicious": {
-        "noArrayIndexKey": "off",
-        "noExplicitAny": "off",
-        "noImplicitAnyLet": "off",
         "noUnknownAtRules": "off"
       }
     }

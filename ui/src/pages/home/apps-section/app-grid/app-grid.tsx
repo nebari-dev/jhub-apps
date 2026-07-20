@@ -9,10 +9,10 @@ interface AppsGridProps {
 export const AppGrid = ({ apps }: AppsGridProps): React.ReactElement => {
   return (
     <>
-      {apps.map((app: JhApp, index: number) => (
+      {apps.map((app: JhApp) => (
         <AppCard
           {...app}
-          key={`app-${app.id}-${index}`}
+          key={`app-${app.id}`}
           title={app.name}
           serverStatus={app.status}
           lastModified={app.last_activity}

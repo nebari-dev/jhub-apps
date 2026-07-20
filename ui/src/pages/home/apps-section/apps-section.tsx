@@ -1,6 +1,7 @@
 import { Button } from '@src/components/ui/button';
 import { InputWithIcon } from '@src/components/ui/input-with-icon';
 import { Separator } from '@src/components/ui/separator';
+import type { ServersData } from '@src/types/api';
 import type { JhApp } from '@src/types/jupyterhub';
 import type { UserState } from '@src/types/user';
 import axios from '@src/utils/axios';
@@ -55,7 +56,7 @@ export const AppsSection = (): React.ReactElement => {
     isLoading,
     error,
     data: serverData,
-  } = useQuery<UserState, { message: string }>({
+  } = useQuery<ServersData, { message: string }>({
     queryKey: ['app-state'],
     queryFn: () =>
       axios

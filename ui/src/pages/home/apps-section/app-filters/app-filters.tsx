@@ -8,7 +8,7 @@ import {
 } from '@src/components/ui/popover';
 import { RadioGroup, RadioGroupItem } from '@src/components/ui/radio-group';
 import { Separator } from '@src/components/ui/separator';
-import type { AppFrameworkProps } from '@src/types/api';
+import type { AppFrameworkProps, ServersData } from '@src/types/api';
 import type { JhApp } from '@src/types/jupyterhub';
 import type { UserState } from '@src/types/user';
 import axios from '@src/utils/axios';
@@ -40,9 +40,8 @@ import {
 } from '../../../../store';
 import './app-filters.css';
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
 interface AppFiltersProps {
-  data: any;
+  data: ServersData;
   currentUser: UserState;
   setApps: React.Dispatch<React.SetStateAction<JhApp[]>>;
   isGridViewActive: boolean;
@@ -162,7 +161,7 @@ export const AppFilters = ({
     if (data) {
       const allGroups = new Set<string>();
       const allApps = [...(data.user_apps || []), ...(data.shared_apps || [])];
-      allApps.forEach((app: any) => {
+      allApps.forEach((app) => {
         if (app.user_options?.share_with?.groups) {
           app.user_options.share_with.groups.forEach((group: string) => {
             allGroups.add(group);

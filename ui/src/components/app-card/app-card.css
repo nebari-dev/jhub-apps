@@ -9,6 +9,13 @@
   height: 224px;
 }
 
+/* Card Content Section */
+.card-content-content {
+  position: relative;
+  z-index: 111;
+  height: 115px;
+}
+
 .card.service .card-content-content {
   height: 93px;
 }
@@ -64,13 +71,6 @@
   left: 8px !important;
   top: 8px !important;
   z-index: 2;
-}
-
-/* Card Content Section */
-.card-content-content {
-  position: relative;
-  z-index: 111;
-  height: 115px;
 }
 
 .menu-chip {
