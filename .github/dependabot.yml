@@ -40,5 +40,12 @@ updates:
         versions:
           - ">=7.0.0"
       - dependency-name: "@mui/lab"
+      # v4 is a rewrite: the PostCSS plugin moved packages, the JS config is no
+      # longer auto-discovered, and `important: true` (which exists to beat
+      # JupyterHub's bundled Bootstrap 5) changes shape. Needs a deliberate
+      # migration, not a version bump.
+      - dependency-name: "tailwindcss"
+        versions:
+          - ">=4.0.0"
       - dependency-name: "@rollup/rollup-linux-x64-gnu"
       - dependency-name: "@esbuild/linux-x64"
