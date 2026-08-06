@@ -283,4 +283,49 @@ describe('JupyterHub utils', () => {
     );
     expect(apps[0].name).toBe('TEST App 3');
   });
+
+  test('filters apps by framework', () => {
+    const apps = filterAndSortApps(
+      serverApps,
+      currentUser,
+      '',
+      'all',
+      ['streamlit'],
+      'Recently modified',
+      [],
+      [],
+    );
+    expect(apps.length).toBeGreaterThan(0);
+    expect(apps.every((app) => app.framework === 'Streamlit')).toBe(true);
+  });
+
+  test('filters apps by a framework whose display name is cased differently', () => {
+    // 'jupyterlab' prettifies to 'Jupyterlab', not the API's 'JupyterLab'
+    const apps = filterAndSortApps(
+      serverApps,
+      currentUser,
+      '',
+      'all',
+      ['jupyterlab'],
+      'Recently modified',
+      [],
+      [],
+    );
+    expect(apps.length).toBeGreaterThan(0);
+    expect(apps.every((app) => app.framework === 'Jupyterlab')).toBe(true);
+  });
+
+  test('returns no apps for a framework that no app uses', () => {
+    const apps = filterAndSortApps(
+      serverApps,
+      currentUser,
+      '',
+      'all',
+      ['bokeh'],
+      'Recently modified',
+      [],
+      [],
+    );
+    expect(apps).toHaveLength(0);
+  });
 });
