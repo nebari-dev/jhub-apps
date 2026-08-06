@@ -156,7 +156,7 @@ export const Thumbnail = ({
                 type="button"
                 title="Click to view image"
                 aria-label="View app thumbnail"
-                className="cursor-pointer border-0 bg-transparent p-0 focus:outline focus:outline-2 focus:outline-primary"
+                className="cursor-pointer border-0 bg-transparent p-0 focus:outline-solid focus:outline-2 focus:outline-primary"
                 onClick={handleViewThumbnail}
               >
                 <img
@@ -175,10 +175,10 @@ export const Thumbnail = ({
               type="button"
               title="Select an image"
               aria-label="Select an image"
-              className="flex h-[130px] w-[225px] cursor-pointer flex-col items-center justify-center border-0 bg-transparent p-0 text-current focus:outline focus:outline-2 focus:outline-primary"
+              className="flex h-[130px] w-[225px] cursor-pointer flex-col items-center justify-center border-0 bg-transparent p-0 text-current focus:outline-solid focus:outline-2 focus:outline-primary"
               onClick={handleBrowseThumbnails}
             >
-              <ImageIcon className="!h-16 !w-16 text-white" />
+              <ImageIcon className="h-16! w-16! text-white" />
             </button>
           )}
           <input

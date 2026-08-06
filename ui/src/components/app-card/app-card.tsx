@@ -315,8 +315,8 @@ export const AppCard = ({
                     </div>
                   ) : null}
                   <div className="mt-2 flex items-center gap-2">
-                    <span className="iconic flex-shrink-0">{getIcon()}</span>
-                    <div className="card-title text-xl font-bold leading-tight">
+                    <span className="iconic shrink-0">{getIcon()}</span>
+                    <div className="card-title text-[1rem] font-bold leading-tight">
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger asChild>
@@ -350,7 +350,7 @@ export const AppCard = ({
             ) : (
               <div className="card-content-container app-service no-hover">
                 <div className="card-inner-content px-4 pb-6">
-                  <div className="card-title relative -top-[3px] mb-2 text-xl font-bold">
+                  <div className="card-title relative top-[-3px] mb-2 text-[1rem] leading-7 font-bold">
                     {title}
                   </div>
                   <div className="card-description-service mt-2 text-xs text-muted-foreground">

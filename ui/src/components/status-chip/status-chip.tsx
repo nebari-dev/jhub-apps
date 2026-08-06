@@ -86,7 +86,7 @@ export const StatusChip = ({
               }}
               aria-label="Stop"
               data-testid="status-chip-stop"
-              className="ml-1.5 inline-flex h-5 w-5 cursor-pointer items-center justify-center rounded-full border-0 bg-transparent p-0 text-current hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50"
+              className="ml-1.5 inline-flex h-5 w-5 cursor-pointer items-center justify-center rounded-full border-0 bg-transparent p-0 text-current hover:opacity-80 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50"
               disabled={app.shared}
             >
               <StopCircleFilled className="h-4 w-4" />

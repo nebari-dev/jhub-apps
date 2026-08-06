@@ -130,7 +130,7 @@ export const AppTable = ({ apps }: AppTableProps): React.ReactElement => {
                       aria-label="Stop"
                       variant="ghost"
                       size="icon"
-                      className="action-button"
+                      className="action-button rounded-full"
                       data-testid="stop-button"
                       disabled={app.shared}
                     >
@@ -145,7 +145,7 @@ export const AppTable = ({ apps }: AppTableProps): React.ReactElement => {
                       aria-label="Start"
                       variant="ghost"
                       size="icon"
-                      className="action-button"
+                      className="action-button rounded-full"
                       data-testid="start-button"
                       disabled={
                         app.status === 'Pending' || app.status === 'Unknown'
@@ -161,7 +161,7 @@ export const AppTable = ({ apps }: AppTableProps): React.ReactElement => {
                     aria-label="Edit"
                     variant="ghost"
                     size="icon"
-                    className="action-button"
+                    className="action-button rounded-full"
                     data-testid="edit-button"
                     disabled={app.shared}
                   >
@@ -175,7 +175,7 @@ export const AppTable = ({ apps }: AppTableProps): React.ReactElement => {
                     aria-label="Delete"
                     variant="ghost"
                     size="icon"
-                    className="action-button"
+                    className="action-button rounded-full"
                     data-testid="delete-button"
                     disabled={app.shared}
                   >
