@@ -42,8 +42,6 @@
   --breakpoint-lg: 1200px;
   --breakpoint-xl: 1536px;
 
-  --font-sans: var(--app-font-family, Inter, sans-serif);
-
   /* Type scale nudged down ~6% from Tailwind's defaults for a slightly more
      compact, MUI-like feel without shrinking body text too far. Applies across
      every text-* utility; paired line-heights are scaled proportionally. The
@@ -67,41 +65,6 @@
   --text-4xl--line-height: 2.5rem;
   --text-5xl: 2.75rem; /* 48 -> 44 */
   --text-5xl--line-height: 1;
-
-  /* shadcn semantic tokens. Kept as hsl(var(--x)) indirection so the
-     :root / .dark blocks below remain the single source of truth. */
-  --color-background: hsl(var(--background));
-  --color-foreground: hsl(var(--foreground));
-  --color-card: hsl(var(--card));
-  --color-card-foreground: hsl(var(--card-foreground));
-  --color-popover: hsl(var(--popover));
-  --color-popover-foreground: hsl(var(--popover-foreground));
-  /* Runtime config `--primary-color` (hex) wins; falls back to the shadcn HSL
-     token so standalone dev mode still works. */
-  --color-primary: var(--primary-color, hsl(var(--primary)));
-  --color-primary-foreground: hsl(var(--primary-foreground));
-  --color-primary-dark: var(--primary-color-dark, #9b00ce);
-  --color-primary-light: var(--primary-color-light, #ba18da10);
-  --color-secondary: hsl(var(--secondary));
-  --color-secondary-foreground: hsl(var(--secondary-foreground));
-  --color-muted: hsl(var(--muted));
-  --color-muted-foreground: hsl(var(--muted-foreground));
-  /* Neutral hover/focus highlight for menu, select, and command items. Driven
-     by the semantic --accent tokens (a pale brand tint in light mode, a neutral
-     slate in dark) rather than the brand primary vars, which theme.ts sets as
-     inline styles on <html> and would otherwise force a purple hover
-     regardless of color mode. */
-  --color-accent: hsl(var(--accent));
-  --color-accent-foreground: hsl(var(--accent-foreground));
-  --color-destructive: hsl(var(--destructive));
-  --color-destructive-foreground: hsl(var(--destructive-foreground));
-  --color-border: hsl(var(--border));
-  --color-input: hsl(var(--input));
-  /* Focus ring follows the themed primary color. */
-  --color-ring: var(--primary-color, hsl(var(--ring)));
-  /* Top header bar — runtime navbar theme with sensible defaults. */
-  --color-navbar: var(--navbar-background-color, #ffffff);
-  --color-navbar-foreground: var(--navbar-text-color, #2e2f33);
 
   /* Raw brand palette mirrors src/theme/colors.tsx so Tailwind classes can
      render exact MUI palette values during coexistence. */
@@ -142,10 +105,6 @@
   --color-blue-800: #1a4480;
   --color-blue-900: #162e51;
 
-  --radius-lg: var(--radius);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-sm: calc(var(--radius) - 4px);
-
   --animate-accordion-down: accordion-down 0.2s ease-out;
   --animate-accordion-up: accordion-up 0.2s ease-out;
 
@@ -165,6 +124,59 @@
       height: 0;
     }
   }
+}
+
+/* Everything whose value resolves through *another* CSS variable belongs in an
+   `inline` block. Without `inline`, v4 emits e.g. `--color-background:
+   hsl(var(--background))` into :root, so the substitution happens once at :root
+   and every element inherits that one computed colour. A `.dark` class on a
+   nested element then cannot re-resolve it — only the class on <html> works,
+   because <html> is :root. `inline` instead inlines the value into each utility
+   (`background-color: hsl(var(--background))`), so it resolves per element, the
+   way v3's generated utilities did. Same reason the runtime-config vars and
+   --radius live here. Tokens with literal values are unaffected either way and
+   stay in the plain @theme block above. */
+@theme inline {
+  --font-sans: var(--app-font-family, Inter, sans-serif);
+
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+
+  /* shadcn semantic tokens. Kept as hsl(var(--x)) indirection so the
+     :root / .dark blocks below remain the single source of truth. */
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  /* Runtime config `--primary-color` (hex) wins; falls back to the shadcn HSL
+     token so standalone dev mode still works. */
+  --color-primary: var(--primary-color, hsl(var(--primary)));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-primary-dark: var(--primary-color-dark, #9b00ce);
+  --color-primary-light: var(--primary-color-light, #ba18da10);
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  /* Neutral hover/focus highlight for menu, select, and command items. Driven
+     by the semantic --accent tokens (a pale brand tint in light mode, a neutral
+     slate in dark) rather than the brand primary vars, which theme.ts sets as
+     inline styles on <html> and would otherwise force a purple hover
+     regardless of color mode. */
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  /* Focus ring follows the themed primary color. */
+  --color-ring: var(--primary-color, hsl(var(--ring)));
+  /* Top header bar — runtime navbar theme with sensible defaults. */
+  --color-navbar: var(--navbar-background-color, #ffffff);
+  --color-navbar-foreground: var(--navbar-text-color, #2e2f33);
 }
 
 /* Runtime config from /services/japps/config.json sets theme variables such as
