@@ -47,14 +47,39 @@ async def get_current_user(
     auth_cookie: str = Security(auth_by_cookie),
     # auth_cookie_deprecated: str = Security(auth_by_cookie_deprecated),
 ):
-    token = auth_param or auth_header or auth_cookie or auth_by_cookie_deprecated
+    # Try each credential source in priority order and accept the first one
+    # that is a valid jhub-apps HS256 wrapper JWT.  This lets us tolerate the
+    # presence of a Keycloak RS256 access token in the Authorization Bearer
+    # header (injected by Envoy Gateway when SecurityPolicy.oidc.forwardAccessToken
+    # is enabled): such a token is "not ours" and we transparently fall through
+    # to the jhub-apps cookie that the browser still carries.
+    token = None
+    for candidate in (auth_param, auth_header, auth_cookie):
+        if not candidate:
+            continue
+        inner = _get_jhub_token_from_jwt_token(candidate)
+        if inner is not None:
+            token = inner
+            break
     if token is None:
         raise HTTPException(
             status.HTTP_401_UNAUTHORIZED,
             detail="Must login with token parameter or Authorization bearer header",
         )
 
-    token = _get_jhub_token_from_jwt_token(token)
+    # Capture an upstream-OIDC access token (RS256, signed by the IdP) when
+    # one is present in the Authorization header but isn't our wrapper JWT.
+    # Downstream code (e.g. JAppsConfig.conda_envs callables that need to
+    # drive token exchange) can then read it from User.access_token to act
+    # on behalf of the user with a *fresh* token, without depending on the
+    # hub's stored auth_state.  The token is treated opaquely here — no
+    # signature/claim validation; consumers are responsible for validating
+    # against their IdP if they care.
+    upstream_access_token = (
+        auth_header
+        if auth_header and _get_jhub_token_from_jwt_token(auth_header) is None
+        else None
+    )
 
     async with get_client() as client:
         endpoint = "/user"
@@ -74,6 +99,7 @@ async def get_current_user(
                 },
             )
     user = User(**resp.json())
+    user.access_token = upstream_access_token
     if is_jupyterhub_5():
         user.share_permissions = get_users_and_group_allowed_to_share_with(user)
     if any(scope in user.scopes for scope in access_scopes):

@@ -4,7 +4,6 @@ import typing
 from datetime import timedelta, datetime
 
 import jwt
-from fastapi import HTTPException, status
 
 logger = structlog.get_logger(__name__)
 
@@ -23,22 +22,23 @@ def _create_access_token(data: dict, expires_delta: typing.Optional[timedelta] =
 
 
 def _get_jhub_token_from_jwt_token(token):
+    """Unwrap a jhub-apps HS256 wrapper JWT and return the inner Hub OAuth token.
+
+    Returns None when ``token`` is not a jhub-apps wrapper — for example when
+    Envoy Gateway forwards a Keycloak RS256 access token via
+    ``forwardAccessToken: true`` and that token lands in the same
+    ``Authorization: Bearer …`` header.  Returning None lets callers fall
+    through to the next credential source instead of failing the request.
+    """
     logger.info("Trying to get JHub Apps token from JWT Token")
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail={
-            "msg": "Could not validate credentials"
-        },
-        headers={"WWW-Authenticate": "Bearer"},
-    )
     try:
         payload = jwt.decode(token, os.environ["JHUB_APP_JWT_SECRET_KEY"], algorithms=["HS256"])
-        access_token_data: dict = payload.get("access_token_data")
-        if access_token_data is None:
-            raise credentials_exception
     except jwt.PyJWTError as e:
-        logger.warning("Authentication failed for token")
-        logger.exception(e)
-        raise credentials_exception
+        logger.debug("Token is not a jhub-apps HS256 wrapper: %s", e)
+        return None
+    access_token_data = payload.get("access_token_data")
+    if not isinstance(access_token_data, dict) or "access_token" not in access_token_data:
+        logger.debug("HS256-decoded payload missing access_token_data.access_token")
+        return None
     logger.info("Fetched access token from JWT Token")
     return access_token_data["access_token"]
