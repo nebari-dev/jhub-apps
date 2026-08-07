@@ -136,7 +136,7 @@ export const TopNavigation = (): React.ReactElement => {
           <button
             type="button"
             onClick={() => navigateToUrl(`${APP_BASE_URL}`)}
-            className="relative mx-2 flex w-[calc(100%-1rem)] cursor-pointer items-center rounded-lg border-0 bg-[var(--primary-color-light,#BA18DA10)] px-6 py-2 text-left before:absolute before:bottom-0 before:left-0 before:top-0 before:w-2 before:rounded-l-lg before:bg-[var(--primary-color,#BA18DA)] before:content-[''] hover:bg-muted dark:hover:bg-accent"
+            className="relative mx-2 flex w-[calc(100%-1rem)] cursor-pointer items-center rounded-lg border-0 bg-(--primary-color-light,#BA18DA10) px-6 py-2 text-left before:absolute before:bottom-0 before:left-0 before:top-0 before:w-2 before:rounded-l-lg before:bg-(--primary-color,#BA18DA) before:content-[''] hover:bg-muted dark:hover:bg-accent"
           >
             <HomeIcon className="mr-2 h-6 w-6 text-foreground" />
             <span className="relative top-[2px] text-sm font-medium leading-tight">
@@ -179,7 +179,7 @@ export const TopNavigation = (): React.ReactElement => {
     <div hidden={isHeadless}>
       <header
         id="app-bar"
-        className="fixed inset-x-0 top-0 z-[1201] border-b border-border bg-navbar shadow-md dark:bg-card dark:shadow-none"
+        className="fixed inset-x-0 top-0 z-1201 border-b border-border bg-navbar shadow-md dark:bg-card dark:shadow-none"
       >
         <div
           id="toolbar"
@@ -189,11 +189,11 @@ export const TopNavigation = (): React.ReactElement => {
             type="button"
             aria-label="open drawer"
             onClick={() => setMobileSheetOpen((prev) => !prev)}
-            className="mr-2 inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border-0 bg-transparent text-navbar-foreground hover:bg-muted dark:text-foreground sm:!hidden"
+            className="mr-2 inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border-0 bg-transparent text-navbar-foreground hover:bg-muted dark:text-foreground sm:hidden!"
           >
             <Menu className="h-6 w-6" />
           </button>
-          <div className="max-sm:hidden flex-grow">
+          <div className="max-sm:hidden grow">
             <a href={APP_BASE_URL}>
               <img
                 id="app-logo"
@@ -299,7 +299,7 @@ export const TopNavigation = (): React.ReactElement => {
         <aside
           data-testid="nav-drawer"
           className={cn(
-            'fixed left-0 top-16 z-[1200] h-[calc(100%-4rem)] w-56 border-r border-border bg-background shadow max-sm:hidden',
+            'fixed left-0 top-16 z-1200 h-[calc(100%-4rem)] w-56 border-r border-border bg-background shadow-sm max-sm:hidden',
           )}
         >
           {drawerContent}
@@ -307,7 +307,7 @@ export const TopNavigation = (): React.ReactElement => {
         <Sheet open={mobileSheetOpen} onOpenChange={setMobileSheetOpen}>
           <SheetContent
             side="left"
-            className="w-56 p-0 sm:!hidden"
+            className="w-56 p-0 sm:hidden!"
             data-testid="nav-drawer-mobile"
           >
             {drawerContent}
@@ -339,9 +339,9 @@ const ThemeOption = ({
     // Keep the menu open after switching so the change is immediately visible.
     onSelect={(event) => event.preventDefault()}
     className={cn(
-      'flex min-w-0 flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-md px-2 py-1.5 text-sm outline-none transition-colors focus-visible:ring-[3px] focus-visible:ring-ring/50',
+      'flex min-w-0 flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-md px-2 py-1.5 text-sm outline-hidden transition-colors focus-visible:ring-[3px] focus-visible:ring-ring/50',
       'text-muted-foreground hover:text-foreground',
-      'data-[state=checked]:bg-background data-[state=checked]:text-foreground data-[state=checked]:shadow-sm',
+      'data-[state=checked]:bg-background data-[state=checked]:text-foreground data-[state=checked]:shadow-xs',
     )}
   >
     {children}

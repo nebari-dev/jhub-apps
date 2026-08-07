@@ -1,4 +1,5 @@
 import { exec } from 'node:child_process';
+import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
 import EnvironmentPlugin from 'vite-plugin-environment';
@@ -8,6 +9,10 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 export default defineConfig(({ command }) => ({
   plugins: [
     react(),
+    // Tailwind v4 runs as a Vite plugin rather than a PostCSS one, which drops
+    // postcss.config.js, `postcss`, and `autoprefixer` from the project
+    // entirely (v4 handles vendor prefixing itself).
+    tailwindcss(),
     tsconfigPaths(),
     EnvironmentPlugin('all'),
     {

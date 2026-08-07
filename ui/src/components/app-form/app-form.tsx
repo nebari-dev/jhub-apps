@@ -736,7 +736,7 @@ export const AppForm = ({
             />
 
             {isFetching && !isUrlValid && (
-              <p className="mb-12 whitespace-pre-wrap text-[color:#ba18da]">
+              <p className="mb-12 whitespace-pre-wrap text-[#ba18da]">
                 {displayedText || ' '.repeat(fullText.length)}
               </p>
             )}
@@ -1112,7 +1112,7 @@ export const AppForm = ({
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Info className="relative top-1 mr-1 h-4 w-4 text-[color:#0F10158F]" />
+                <Info className="relative top-1 mr-1 h-4 w-4 text-[#0F10158F]" />
               </TooltipTrigger>
               <TooltipContent side="bottom" align="start">
                 <span className="text-[10px] font-semibold">
@@ -1215,7 +1215,7 @@ export const AppForm = ({
             }
           >
             {isProcessing ? (
-              <Loader2 className="h-6 w-6 animate-spin text-[color:#ba18da]" />
+              <Loader2 className="h-6 w-6 animate-spin text-[#ba18da]" />
             ) : profiles && profiles.length > 0 ? (
               <>Next</>
             ) : id ? (

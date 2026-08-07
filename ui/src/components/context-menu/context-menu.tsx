@@ -60,7 +60,7 @@ export const ContextMenu = ({
               event.preventDefault();
               event.stopPropagation();
             }}
-            className="inline-flex h-6 w-6 cursor-pointer items-center justify-center rounded-full border-0 bg-transparent p-0 text-foreground hover:bg-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="inline-flex h-6 w-6 cursor-pointer items-center justify-center rounded-full border-0 bg-transparent p-0 text-foreground hover:bg-transparent focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring"
           >
             <MoreHorizontal className="h-5 w-5" />
           </button>
@@ -71,13 +71,13 @@ export const ContextMenu = ({
           align="end"
           sideOffset={4}
           aria-labelledby={`context-menu-button-${id}`}
-          className="z-[9999] w-[180px]"
+          className="z-9999 w-[180px]"
         >
           {lastModified && (
             <>
               <DropdownMenuItem
                 disabled
-                className="text-xs text-muted-foreground data-[disabled]:opacity-100"
+                className="text-xs text-muted-foreground data-disabled:opacity-100"
               >
                 {`Modified ${getFriendlyDateStr(lastModified)}`}
               </DropdownMenuItem>

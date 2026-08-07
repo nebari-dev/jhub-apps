@@ -1,6 +1,183 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* JupyterHub's wrapper template bundles Bootstrap 5, whose utilities
+   (.bg-primary, .text-primary, .border-primary, etc.) collide with Tailwind's
+   and are declared `!important`. The `important` flag marks Tailwind utilities
+   `!important` too, so the later-loaded index.css wins the tie on source order
+   and theming (along with every other utility) applies over Bootstrap. */
+@import "tailwindcss" important;
+
+/* v4-native replacement for the tailwindcss-animate plugin: supplies the
+   animate-in / animate-out / fade-* / zoom-* / slide-* utilities that the
+   shadcn overlay components (dialog, sheet, popover, select, dropdown) use. */
+@import "tw-animate-css";
+
+@layer base {
+  /* `animate-out` runs the `exit` keyframes with animation-fill-mode: none, and
+     `exit` declares only a `to` state. So the moment the animation finishes the
+     animated values are dropped and the element repaints at full opacity — one
+     visible flash before Radix unmounts it on animationend. Measured on a
+     closing dropdown: opacity 0.001 at 141ms, then 1 at 150ms, then removed at
+     158ms. Holding the last frame removes the flash.
+
+     Applied here rather than as a `fill-mode-forwards` utility on each overlay
+     so components re-added via `npx shadcn add` are covered too. Scoped to the
+     closed state, so entrances are untouched, and inert on the many elements
+     that carry data-state without an exit animation (triggers, checked items).
+     Kept in `base` so an explicit fill-mode-* utility still wins. */
+  [data-state="closed"] {
+    --tw-animation-fill-mode: forwards;
+  }
+}
+
+/* Dark mode is toggled by a `.dark` class on <html> (see src/theme), not by
+   the OS preference, so replace v4's default prefers-color-scheme variant. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  /* Match the MUI default breakpoints currently in use. v4 ships its own
+     defaults additively, so clear them first — otherwise `2xl` (and any future
+     built-in) would leak in on top of this list. */
+  --breakpoint-*: initial;
+  --breakpoint-sm: 600px;
+  --breakpoint-md: 900px;
+  --breakpoint-lg: 1200px;
+  --breakpoint-xl: 1536px;
+
+  /* Type scale nudged down ~6% from Tailwind's defaults for a slightly more
+     compact, MUI-like feel without shrinking body text too far. Applies across
+     every text-* utility; paired line-heights are scaled proportionally. The
+     inherited default (non-utility text) is reduced to match further down.
+     Overrides only xs–5xl; 6xl and up keep Tailwind's defaults. */
+  --text-xs: 0.6875rem; /* 12 -> 11 */
+  --text-xs--line-height: 1rem;
+  --text-sm: 0.8125rem; /* 14 -> 13 */
+  --text-sm--line-height: 1.25rem;
+  --text-base: 0.9375rem; /* 16 -> 15 */
+  --text-base--line-height: 1.5rem;
+  --text-lg: 1.0625rem; /* 18 -> 17 */
+  --text-lg--line-height: 1.75rem;
+  --text-xl: 1.1875rem; /* 20 -> 19 */
+  --text-xl--line-height: 1.75rem;
+  --text-2xl: 1.375rem; /* 24 -> 22 */
+  --text-2xl--line-height: 2rem;
+  --text-3xl: 1.6875rem; /* 30 -> 27 */
+  --text-3xl--line-height: 2.25rem;
+  --text-4xl: 2.0625rem; /* 36 -> 33 */
+  --text-4xl--line-height: 2.5rem;
+  --text-5xl: 2.75rem; /* 48 -> 44 */
+  --text-5xl--line-height: 1;
+
+  /* Raw brand palette mirrors src/theme/colors.tsx so Tailwind classes can
+     render exact MUI palette values during coexistence. */
+  --color-brand-purple: #ba18da;
+  --color-brand-purple-light: #ba18da10;
+  --color-brand-purple-dark: #9b00ce;
+  --color-brand-green: #18817a;
+  --color-brand-green-light: #18817a10;
+  --color-brand-green-dark: #12635e;
+  --color-brand-red: #d72d47;
+  --color-brand-orange: #f66a0a;
+  --color-brand-black: #0f1015;
+  --color-brand-disabled: #0f101561;
+
+  /* `initial` clears v4's built-in gray/blue ramps so undefined keys (950, and
+     the OKLCH values at every shade) can't bleed through this palette. */
+  --color-gray-*: initial;
+  --color-gray-50: rgba(0, 0, 0, 0.08);
+  --color-gray-100: #e1e3e4;
+  --color-gray-200: #eeeeee;
+  --color-gray-300: #e0e0e0;
+  --color-gray-400: #90969c;
+  --color-gray-500: #5b5f63;
+  --color-gray-600: #44474a;
+  --color-gray-700: #3c3c3b;
+  --color-gray-800: #242628;
+  --color-gray-900: #1a1c1d;
+
+  --color-blue-*: initial;
+  --color-blue-50: #fafbfc;
+  --color-blue-100: #2491ff;
+  --color-blue-200: #2491ff;
+  --color-blue-300: #2491ff;
+  --color-blue-400: #2491ff;
+  --color-blue-500: #005ea2;
+  --color-blue-600: #1a4480;
+  --color-blue-700: #1a4480;
+  --color-blue-800: #1a4480;
+  --color-blue-900: #162e51;
+
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+
+  @keyframes accordion-down {
+    from {
+      height: 0;
+    }
+    to {
+      height: var(--radix-accordion-content-height);
+    }
+  }
+  @keyframes accordion-up {
+    from {
+      height: var(--radix-accordion-content-height);
+    }
+    to {
+      height: 0;
+    }
+  }
+}
+
+/* Everything whose value resolves through *another* CSS variable belongs in an
+   `inline` block. Without `inline`, v4 emits e.g. `--color-background:
+   hsl(var(--background))` into :root, so the substitution happens once at :root
+   and every element inherits that one computed colour. A `.dark` class on a
+   nested element then cannot re-resolve it — only the class on <html> works,
+   because <html> is :root. `inline` instead inlines the value into each utility
+   (`background-color: hsl(var(--background))`), so it resolves per element, the
+   way v3's generated utilities did. Same reason the runtime-config vars and
+   --radius live here. Tokens with literal values are unaffected either way and
+   stay in the plain @theme block above. */
+@theme inline {
+  --font-sans: var(--app-font-family, Inter, sans-serif);
+
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+
+  /* shadcn semantic tokens. Kept as hsl(var(--x)) indirection so the
+     :root / .dark blocks below remain the single source of truth. */
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  /* Runtime config `--primary-color` (hex) wins; falls back to the shadcn HSL
+     token so standalone dev mode still works. */
+  --color-primary: var(--primary-color, hsl(var(--primary)));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-primary-dark: var(--primary-color-dark, #9b00ce);
+  --color-primary-light: var(--primary-color-light, #ba18da10);
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  /* Neutral hover/focus highlight for menu, select, and command items. Driven
+     by the semantic --accent tokens (a pale brand tint in light mode, a neutral
+     slate in dark) rather than the brand primary vars, which theme.ts sets as
+     inline styles on <html> and would otherwise force a purple hover
+     regardless of color mode. */
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  /* Focus ring follows the themed primary color. */
+  --color-ring: var(--primary-color, hsl(var(--ring)));
+  /* Top header bar — runtime navbar theme with sensible defaults. */
+  --color-navbar: var(--navbar-background-color, #ffffff);
+  --color-navbar-foreground: var(--navbar-text-color, #2e2f33);
+}
 
 /* Runtime config from /services/japps/config.json sets theme variables such as
    --app-font-family and --primary-color before React renders. */
@@ -104,7 +281,7 @@ html.dark {
    labels, table cells) is legible in both light and dark modes. The 15px base
    (down from the browser default 16px) reduces inherited text sizes across the
    board for a slightly more compact feel; the Tailwind text-* scale is reduced
-   in step (see tailwind.config.js). */
+   in step (see the --text-* overrides in the @theme block above). */
 body {
   color: hsl(var(--foreground));
   font-size: 15px;
