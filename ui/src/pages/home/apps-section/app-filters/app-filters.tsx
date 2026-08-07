@@ -70,6 +70,17 @@ export const AppFilters = ({
   >(defaultServerStatuses);
   const [currentGroups, setCurrentGroups] =
     useRecoilState<string[]>(defaultGroups);
+  // The popover edits a draft; the atoms only hold what the user has applied,
+  // so a background refetch of the server data can safely re-apply them.
+  const [draftFrameworks, setDraftFrameworks] =
+    useState<string[]>(currentFrameworks);
+  const [draftOwnershipValue, setDraftOwnershipValue] = useState(
+    currentOwnershipValue,
+  );
+  const [draftServerStatuses, setDraftServerStatuses] = useState<string[]>(
+    currentServerStatuses,
+  );
+  const [draftGroups, setDraftGroups] = useState<string[]>(currentGroups);
   const [availableGroups, setAvailableGroups] = useState<string[]>([]);
   const [filteredCount, setFilteredCount] = useState(0);
   const { data: frameworks, isLoading: frameworksLoading } = useQuery<
@@ -112,26 +123,42 @@ export const AppFilters = ({
     setSortByOpen(false);
   };
 
+  // Re-sync the draft with what is actually applied each time the popover
+  // opens, so an abandoned edit doesn't linger.
+  const handleFiltersOpenChange = (open: boolean) => {
+    if (open) {
+      setDraftFrameworks(currentFrameworks);
+      setDraftOwnershipValue(currentOwnershipValue);
+      setDraftServerStatuses(currentServerStatuses);
+      setDraftGroups(currentGroups);
+    }
+    setFiltersOpen(open);
+  };
+
   const handleApplyFilters = () => {
     setFiltersOpen(false);
+    setCurrentFrameworks(draftFrameworks);
+    setCurrentOwnershipValue(draftOwnershipValue);
+    setCurrentServerStatuses(draftServerStatuses);
+    setCurrentGroups(draftGroups);
     setApps(
       filterAndSortApps(
         data,
         currentUser,
         currentSearchValue,
-        currentOwnershipValue,
-        currentFrameworks,
+        draftOwnershipValue,
+        draftFrameworks,
         currentSortValue,
-        currentServerStatuses,
-        currentGroups,
+        draftServerStatuses,
+        draftGroups,
       ),
     );
   };
   const handleClearFilters = () => {
-    setCurrentFrameworks([]);
-    setCurrentOwnershipValue('Any');
-    setCurrentServerStatuses([]);
-    setCurrentGroups([]);
+    setDraftFrameworks([]);
+    setDraftOwnershipValue('Any');
+    setDraftServerStatuses([]);
+    setDraftGroups([]);
   };
 
   const calculateFilteredCount = useCallback(() => {
@@ -139,22 +166,22 @@ export const AppFilters = ({
       data,
       currentUser,
       currentSearchValue,
-      currentOwnershipValue,
-      currentFrameworks,
+      draftOwnershipValue,
+      draftFrameworks,
       currentSortValue,
-      currentServerStatuses,
-      currentGroups,
+      draftServerStatuses,
+      draftGroups,
     );
     return filteredApps.length;
   }, [
     data,
     currentUser,
     currentSearchValue,
-    currentOwnershipValue,
-    currentFrameworks,
+    draftOwnershipValue,
+    draftFrameworks,
     currentSortValue,
-    currentServerStatuses,
-    currentGroups,
+    draftServerStatuses,
+    draftGroups,
   ]);
 
   useEffect(() => {
@@ -179,7 +206,7 @@ export const AppFilters = ({
   return (
     <div className="flex flex-wrap items-center gap-4 pb-8">
       <div className="flex-1 min-w-[200px]">
-        <Popover open={filtersOpen} onOpenChange={setFiltersOpen}>
+        <Popover open={filtersOpen} onOpenChange={handleFiltersOpenChange}>
           <PopoverTrigger asChild>
             <Button
               id="filters-btn"
@@ -212,9 +239,7 @@ export const AppFilters = ({
               <div className="flex flex-wrap">
                 {frameworks?.map((framework) => {
                   const id = `framework-${framework.name}`;
-                  const checked = currentFrameworks.includes(
-                    framework.display_name,
-                  );
+                  const checked = draftFrameworks.includes(framework.name);
                   return (
                     <label
                       key={framework.name}
@@ -226,9 +251,9 @@ export const AppFilters = ({
                         checked={checked}
                         onCheckedChange={() =>
                           toggleInList(
-                            currentFrameworks,
-                            framework.display_name,
-                            setCurrentFrameworks,
+                            draftFrameworks,
+                            framework.name,
+                            setDraftFrameworks,
                           )
                         }
                       />
@@ -244,7 +269,7 @@ export const AppFilters = ({
               <div className="flex flex-wrap">
                 {SERVER_STATUSES.map((status) => {
                   const id = `status-${status}`;
-                  const checked = currentServerStatuses.includes(status);
+                  const checked = draftServerStatuses.includes(status);
                   return (
                     <label
                       key={status}
@@ -256,9 +281,9 @@ export const AppFilters = ({
                         checked={checked}
                         onCheckedChange={() =>
                           toggleInList(
-                            currentServerStatuses,
+                            draftServerStatuses,
                             status,
-                            setCurrentServerStatuses,
+                            setDraftServerStatuses,
                           )
                         }
                       />
@@ -275,7 +300,7 @@ export const AppFilters = ({
                 {availableGroups.length > 0 ? (
                   availableGroups.map((group) => {
                     const id = `group-${group}`;
-                    const checked = currentGroups.includes(group);
+                    const checked = draftGroups.includes(group);
                     return (
                       <label
                         key={group}
@@ -286,7 +311,7 @@ export const AppFilters = ({
                           id={id}
                           checked={checked}
                           onCheckedChange={() =>
-                            toggleInList(currentGroups, group, setCurrentGroups)
+                            toggleInList(draftGroups, group, setDraftGroups)
                           }
                         />
                         {group}
@@ -305,8 +330,8 @@ export const AppFilters = ({
               </p>
               <RadioGroup
                 aria-label="Ownership"
-                value={currentOwnershipValue}
-                onValueChange={setCurrentOwnershipValue}
+                value={draftOwnershipValue}
+                onValueChange={setDraftOwnershipValue}
                 className="flex flex-row gap-4"
               >
                 {OWNERSHIP_TYPES.map((value) => {
@@ -328,6 +353,7 @@ export const AppFilters = ({
                   <Button
                     id="clear-filters-btn"
                     data-testid="clear-filters-btn"
+                    type="button"
                     variant="ghost-secondary"
                     size="sm"
                     onClick={handleClearFilters}
@@ -336,6 +362,7 @@ export const AppFilters = ({
                   </Button>
                   <Button
                     id="apply-filters-btn"
+                    type="button"
                     variant="default"
                     size="sm"
                     onClick={handleApplyFilters}

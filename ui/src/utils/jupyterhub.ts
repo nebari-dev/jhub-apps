@@ -281,7 +281,7 @@ export const clearAppToStart = () => {
 
 export const filterAndSortApps = (
   data: ServersData,
-  currentUser: UserState,
+  currentUser: UserState | undefined,
   searchValue: string,
   ownershipValue: string,
   frameworkValues: string[],
@@ -298,7 +298,7 @@ export const filterAndSortApps = (
         : 'all';
 
   // Get Apps based on ownership type and search value
-  const apps = getApps(data, ownershipType, currentUser.name)
+  const apps = getApps(data, ownershipType, currentUser?.name ?? '')
     .filter(
       (app) =>
         app.name.toLowerCase().includes(searchToLower) ||
@@ -307,7 +307,9 @@ export const filterAndSortApps = (
     )
     .filter((app) => {
       if (frameworkValues.length > 0) {
-        return frameworkValues.includes(app.framework);
+        // frameworkValues holds raw framework names (e.g. "plotlydash"), while
+        // app.framework has been prettified by getFriendlyFrameworkName.
+        return frameworkValues.includes(app.framework?.toLowerCase());
       }
       return true;
     })
