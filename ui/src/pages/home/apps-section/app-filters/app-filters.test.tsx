@@ -1,5 +1,6 @@
 import { frameworks, serverApps, userState } from '@src/data/api';
 import { currentUser } from '@src/data/user';
+import type { JhApp } from '@src/types/jupyterhub';
 import axios from '@src/utils/axios';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, render, waitFor } from '@testing-library/react';
@@ -407,6 +408,61 @@ describe('AppFilters', () => {
       }
       expect(spy).not.toHaveBeenCalled();
     });
+  });
+
+  test('should apply the selected framework filter without submitting the form', async () => {
+    const spy = vi.fn();
+    const submitSpy = vi.fn();
+    mock.onGet(new RegExp('/frameworks')).reply(200, frameworks);
+    queryClient.setQueryData(['app-frameworks'], frameworks);
+    const { baseElement } = render(
+      <RecoilRoot initializeState={({ set }) => set(defaultUser, currentUser)}>
+        <QueryClientProvider client={queryClient}>
+          <AppFilters
+            data={serverApps}
+            currentUser={userState}
+            setApps={spy}
+            isGridViewActive={false}
+            toggleView={function (): void {
+              throw new Error('Function not implemented.');
+            }}
+          />
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+
+    const btn = baseElement.querySelector('#filters-btn') as HTMLButtonElement;
+    await act(async () => {
+      btn.click();
+    });
+
+    const form = await waitFor(
+      () => document.querySelector('#filters-form') as HTMLFormElement,
+    );
+    // A submit here would reload the page and drop every filter.
+    form.addEventListener('submit', submitSpy);
+
+    const streamlit = document.querySelector(
+      '#framework-streamlit',
+    ) as HTMLButtonElement;
+    await act(async () => {
+      streamlit.click();
+    });
+
+    const applyButton = document.querySelector(
+      '#apply-filters-btn',
+    ) as HTMLButtonElement;
+    await act(async () => {
+      applyButton.click();
+    });
+
+    expect(submitSpy).not.toHaveBeenCalled();
+    expect(spy).toHaveBeenCalled();
+    const filteredApps = spy.mock.calls[spy.mock.calls.length - 1][0];
+    expect(filteredApps.length).toBeGreaterThan(0);
+    expect(
+      filteredApps.every((app: JhApp) => app.framework === 'Streamlit'),
+    ).toBe(true);
   });
 
   test('should calculate filtered count', async () => {
