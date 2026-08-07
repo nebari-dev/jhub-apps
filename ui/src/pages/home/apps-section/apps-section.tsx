@@ -6,15 +6,11 @@ import type { JhApp } from '@src/types/jupyterhub';
 import type { UserState } from '@src/types/user';
 import axios from '@src/utils/axios';
 import { API_BASE_URL } from '@src/utils/constants';
-import {
-  filterAndSortApps,
-  getAppStatus,
-  getApps,
-} from '@src/utils/jupyterhub';
+import { filterAndSortApps } from '@src/utils/jupyterhub';
 import { useQuery } from '@tanstack/react-query';
 import { Plus, Search } from 'lucide-react';
 import type React from 'react';
-import { type SyntheticEvent, useEffect, useState } from 'react';
+import { type SyntheticEvent, useEffect, useRef, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import {
   currentNotification,
@@ -39,7 +35,8 @@ export const AppsSection = (): React.ReactElement => {
   );
 
   const [isGridViewActive, setIsGridViewActive] = useState<boolean>(true);
-  const [, setCurrentSearchValue] = useRecoilState<string>(currentSearchValue);
+  const [searchValue, setCurrentSearchValue] =
+    useRecoilState<string>(currentSearchValue);
   const [currentFrameworks] = useRecoilState<string[]>(defaultFrameworks);
   const [currentGroups] = useRecoilState<string[]>(defaultGroups);
   const [currentOwnershipValue] = useRecoilState<string>(defaultOwnershipValue);
@@ -51,6 +48,26 @@ export const AppsSection = (): React.ReactElement => {
     defaultServerStatuses,
   );
   const toggleView = () => setIsGridViewActive((prev) => !prev);
+
+  // Held in a ref so that refreshing the server data re-applies whatever the
+  // user has already applied, without the filter state itself re-triggering
+  // the effect below (filters are applied on demand, not on every change).
+  const appliedFilters = useRef({
+    searchValue,
+    currentOwnershipValue,
+    currentFrameworks,
+    currentSortValue,
+    currentServerStatuses,
+    currentGroups,
+  });
+  appliedFilters.current = {
+    searchValue,
+    currentOwnershipValue,
+    currentFrameworks,
+    currentSortValue,
+    currentServerStatuses,
+    currentGroups,
+  };
 
   const {
     isLoading,
@@ -98,15 +115,18 @@ export const AppsSection = (): React.ReactElement => {
 
   useEffect(() => {
     if (!isLoading && serverData) {
-      const appsWithStatus = getApps(serverData, 'all', currentUser?.name ?? '')
-        .map((app) => ({
-          ...app,
-          status: getAppStatus(app),
-        }))
-        .sort((a, b) => {
-          return a.last_activity > b.last_activity ? -1 : 1;
-        });
-      setApps(appsWithStatus);
+      setApps(
+        filterAndSortApps(
+          serverData,
+          currentUser,
+          appliedFilters.current.searchValue,
+          appliedFilters.current.currentOwnershipValue,
+          appliedFilters.current.currentFrameworks,
+          appliedFilters.current.currentSortValue,
+          appliedFilters.current.currentServerStatuses,
+          appliedFilters.current.currentGroups,
+        ),
+      );
     }
   }, [isLoading, serverData, currentUser]);
 
