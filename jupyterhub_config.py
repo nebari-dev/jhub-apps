@@ -22,14 +22,14 @@ c.JAppsConfig.service_workers = 1
 c.JAppsConfig.python_exec = sys.executable
 
 # Full-width text banners above/below the UI. Disabled while text is empty.
-c.JAppsConfig.banners = {
-    "top": {
-        "text": "This platform will be down for maintenance on Saturday",
-        # "background": "#502b85",
-        # "foreground": "#ffffff",
-    },
-    "bottom": {"text": "CUI"},
-}
+# c.JAppsConfig.banners = {
+#     "top": {
+#         "text": "This platform will be down for maintenance on Saturday",
+#         "background": "#502b85",
+#         "foreground": "#ffffff",
+#     },
+#     "bottom": {"text": "CUI"},
+# }
 
 # Configure additional services via JAppsConfig
 c.JAppsConfig.additional_services = [
