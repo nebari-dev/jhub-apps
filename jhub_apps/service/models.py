@@ -103,6 +103,24 @@ class StartupApp(ServerCreation):
     user_options: JHubAppUserOptions
 
 
+class BannerConfig(BaseModel):
+    """A single full-width text banner (e.g. CUI classification markings).
+
+    The banner is disabled while text is empty. The text is always rendered
+    as plain text (never HTML). background/foreground accept CSS color
+    values; when omitted the banner uses the theme's inverted colors.
+    """
+    text: str = ""
+    background: Optional[str] = None
+    foreground: Optional[str] = None
+
+
+class BannersConfig(BaseModel):
+    """Banners pinned above (top) and below (bottom) the JHub Apps UI."""
+    top: BannerConfig = BannerConfig()
+    bottom: BannerConfig = BannerConfig()
+
+
 class AdditionalService(BaseModel):
     """Configuration for an additional external service in JupyterHub.
 

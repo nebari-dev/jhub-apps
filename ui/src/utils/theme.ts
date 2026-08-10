@@ -10,8 +10,23 @@ export interface RuntimeThemeConfig {
   cssVariables?: Record<string, string>;
 }
 
+export interface RuntimeBannerConfig {
+  /** Banner text, rendered as plain text (never HTML). Empty disables it. */
+  text?: string;
+  /** Optional CSS background color. Falls back to the theme foreground color. */
+  background?: string;
+  /** Optional CSS text color. Falls back to the theme background color. */
+  foreground?: string;
+}
+
+export interface RuntimeBannersConfig {
+  top?: RuntimeBannerConfig;
+  bottom?: RuntimeBannerConfig;
+}
+
 export interface RuntimeConfig {
   theme?: RuntimeThemeConfig;
+  banners?: RuntimeBannersConfig;
 }
 
 const DEFAULT_THEME: RuntimeThemeConfig = {
@@ -90,8 +105,14 @@ export const loadRuntimeConfig = async () => {
       throw new Error(`Failed to load runtime config: ${response.status}`);
     }
     const config = (await response.json()) as RuntimeConfig;
+    // The server is the source of truth for banners; on fetch failure any
+    // window.banners set by env.js in local dev survives.
+    window.banners = config.banners;
     applyRuntimeTheme(config.theme);
   } catch {
     applyRuntimeTheme();
   }
 };
+
+export const getRuntimeBanners = (): RuntimeBannersConfig | undefined =>
+  window.banners;

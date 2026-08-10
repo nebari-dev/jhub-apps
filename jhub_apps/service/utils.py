@@ -11,9 +11,11 @@ from fastapi import HTTPException, status
 from jupyterhub.app import JupyterHub
 from traitlets.config import LazyConfigValue
 
+from pydantic import ValidationError
+
 from jhub_apps.config_utils import JAppsConfig
 from jhub_apps.hub_client.hub_client import HubClient
-from jhub_apps.service.models import UserOptions
+from jhub_apps.service.models import BannersConfig, UserOptions
 from jhub_apps.spawner.types import FrameworkConf, FRAMEWORKS_MAPPING, FRAMEWORKS
 from jhub_apps import themes
 from slugify import slugify
@@ -222,9 +224,28 @@ def get_theme_css_variables(theme):
     return css_variables
 
 
+def get_banners(config):
+    """Extract banner configuration from the JupyterHub config.
+
+    The validated config holds a BannersConfig instance, but tolerate raw
+    dicts (or anything else, e.g. an unset LazyConfigValue) so a malformed
+    value degrades to no banners instead of breaking /config.json.
+    """
+    banners = config.JAppsConfig.banners
+    if isinstance(banners, BannersConfig):
+        return banners.model_dump()
+    if isinstance(banners, dict):
+        try:
+            return BannersConfig(**banners).model_dump()
+        except ValidationError:
+            logger.exception("Invalid c.JAppsConfig.banners value, ignoring")
+    return BannersConfig().model_dump()
+
+
 def get_runtime_config(config):
     theme = get_theme(config)
     return {
+        "banners": get_banners(config),
         "theme": {
             "logo": theme.get("logo"),
             "favicon": theme.get("favicon"),

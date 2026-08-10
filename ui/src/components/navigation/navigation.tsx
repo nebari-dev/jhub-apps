@@ -179,7 +179,7 @@ export const TopNavigation = (): React.ReactElement => {
     <div hidden={isHeadless}>
       <header
         id="app-bar"
-        className="fixed inset-x-0 top-0 z-1201 border-b border-border bg-navbar shadow-md dark:bg-card dark:shadow-none"
+        className="fixed inset-x-0 top-(--top-banner-height,0px) z-1201 border-b border-border bg-navbar shadow-md dark:bg-card dark:shadow-none"
       >
         <div
           id="toolbar"
@@ -299,7 +299,7 @@ export const TopNavigation = (): React.ReactElement => {
         <aside
           data-testid="nav-drawer"
           className={cn(
-            'fixed left-0 top-16 z-1200 h-[calc(100%-4rem)] w-56 border-r border-border bg-background shadow-sm max-sm:hidden',
+            'fixed left-0 top-[calc(4rem_+_var(--top-banner-height,0px))] z-1200 h-[calc(100%_-_4rem_-_var(--top-banner-height,0px)_-_var(--bottom-banner-height,0px))] w-56 border-r border-border bg-background shadow-sm max-sm:hidden',
           )}
         >
           {drawerContent}

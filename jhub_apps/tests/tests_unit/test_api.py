@@ -5,7 +5,7 @@ from unittest.mock import patch, Mock
 import pytest
 
 from jhub_apps.hub_client.hub_client import HubClient
-from jhub_apps.service.models import UserOptions, ServerCreation, Repository
+from jhub_apps.service.models import BannersConfig, UserOptions, ServerCreation, Repository
 from jhub_apps.service.utils import get_runtime_config, get_shared_servers, get_theme_css
 from jhub_apps.spawner.types import FRAMEWORKS, Framework
 from jhub_apps.tests.common.constants import MOCK_USER
@@ -270,6 +270,70 @@ def test_api_runtime_config(get_jupyterhub_config, client):
 
     assert response.status_code == 200
     assert response.json()["theme"]["cssVariables"]["--primary-color"] == "#123456"
+
+
+def test_get_runtime_config_includes_banners():
+    config = Mock(
+        JupyterHub=Mock(template_vars={}),
+        JAppsConfig=Mock(
+            banners=BannersConfig(
+                top={
+                    "text": "CUI",
+                    "background": "#502b85",
+                    "foreground": "#ffffff",
+                },
+            )
+        ),
+    )
+
+    runtime_config = get_runtime_config(config)
+
+    assert runtime_config["banners"]["top"] == {
+        "text": "CUI",
+        "background": "#502b85",
+        "foreground": "#ffffff",
+    }
+    assert runtime_config["banners"]["bottom"] == {
+        "text": "",
+        "background": None,
+        "foreground": None,
+    }
+
+
+def test_get_runtime_config_banners_accepts_raw_dict():
+    config = Mock(
+        JupyterHub=Mock(template_vars={}),
+        JAppsConfig=Mock(banners={"top": {"text": "Maintenance on Saturday"}}),
+    )
+
+    runtime_config = get_runtime_config(config)
+
+    assert runtime_config["banners"]["top"]["text"] == "Maintenance on Saturday"
+
+
+def test_get_runtime_config_banners_default_when_unset_or_invalid():
+    for banners in (None, {"top": {"text": ["not", "a", "string"]}}):
+        config = Mock(
+            JupyterHub=Mock(template_vars={}),
+            JAppsConfig=Mock(banners=banners),
+        )
+
+        runtime_config = get_runtime_config(config)
+
+        assert runtime_config["banners"] == BannersConfig().model_dump()
+
+
+@patch("jhub_apps.service.routes.get_jupyterhub_config")
+def test_api_runtime_config_banners(get_jupyterhub_config, client):
+    get_jupyterhub_config.return_value = Mock(
+        JupyterHub=Mock(template_vars={}),
+        JAppsConfig=Mock(banners=BannersConfig(top={"text": "Hello"})),
+    )
+
+    response = client.get("/config.json")
+
+    assert response.status_code == 200
+    assert response.json()["banners"]["top"]["text"] == "Hello"
 
 
 def test_get_theme_css_renders_variables_and_font_import():

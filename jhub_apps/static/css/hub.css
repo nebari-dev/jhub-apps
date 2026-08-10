@@ -485,3 +485,34 @@ html[data-bs-theme="dark"] {
         min-width: 300px;
     }
 }
+
+/* ----------------------------------------------------------------------------
+   Full-width text banners (c.JAppsConfig.banners). The React launcher renders
+   these itself (ui/src/components/banner); on these server-rendered pages the
+   inline script in page.html fetches the same runtime config from
+   /services/japps/config.json and injects them. Default colors invert the
+   theme (and flip with dark mode); configured colors are applied inline. */
+.jhub-banner {
+    width: 100%;
+    padding: 4px 8px;
+    text-align: center;
+    /* Match the React launcher's banner exactly (text-sm is 13px there,
+       line-height 20px): 4px + 20px + 4px = the same 28px strip. */
+    font-size: 13px;
+    line-height: 20px;
+    font-weight: 600;
+    background-color: var(--text-color, #1c1d26);
+    color: #ffffff;
+}
+
+[data-bs-theme="dark"] .jhub-banner {
+    color: hsl(240 3% 15.3%);
+}
+
+.jhub-banner-bottom {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1300;
+}

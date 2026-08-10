@@ -5,7 +5,7 @@ from traitlets import Unicode, Union, List, Callable, Integer, TraitType, TraitE
 
 from traitlets.config import SingletonConfigurable, Enum
 
-from jhub_apps.service.models import StartupApp, AdditionalService
+from jhub_apps.service.models import StartupApp, AdditionalService, BannersConfig
 
 
 # jhub-app-proxy configuration constants
@@ -136,6 +136,28 @@ class JAppsConfig(SingletonConfigurable):
     jhub_app_proxy_version = Unicode(
         DEFAULT_JHUB_APP_PROXY_VERSION,
         help="Version of jhub-app-proxy to install. Can be overridden by JHUB_APP_PROXY_VERSION environment variable.",
+    ).tag(config=True)
+
+    banners = PydanticModelTrait(
+        BannersConfig,
+        default_value=BannersConfig(),
+        help="""
+        Full-width text banners displayed above (top) and below (bottom) the
+        JHub Apps UI, e.g. for platform notices or classification markings.
+        A banner is disabled while its text is empty. Text is rendered as
+        plain text (never HTML). background/foreground accept CSS color
+        values; when omitted the banner uses the theme's inverted colors.
+
+        Example:
+            c.JAppsConfig.banners = {
+                "top": {
+                    "text": "This platform will be down for maintenance on Saturday",
+                    "background": "#502b85",
+                    "foreground": "#ffffff",
+                },
+                "bottom": {"text": "CUI"},
+            }
+        """,
     ).tag(config=True)
 
     additional_services = List(

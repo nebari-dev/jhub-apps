@@ -194,6 +194,51 @@ will also appear in the quick access section for easy access.
     ])
     ```
 
+### `banners`
+
+Full-width text banners displayed above (top) and below (bottom) the JHub Apps UI,
+e.g. for platform notices or classification markings (like on the Nebari landing
+page). A banner is disabled while its `text` is empty, so no banners are shown by
+default.
+
+- **Example**:
+  ```python
+  c.JAppsConfig.banners = {
+      "top": {
+          "text": "This platform will be down for maintenance on Saturday",
+          "background": "#502b85",
+          "foreground": "#ffffff",
+      },
+      "bottom": {
+          "text": "CUI",
+      },
+  }
+  ```
+- **Fields** (for each of `top` and `bottom`, both optional):
+  - `text` (required to enable the banner): Banner text, always rendered as plain text (never HTML)
+  - `background` (optional): CSS background color; falls back to the theme's foreground color
+  - `foreground` (optional): CSS text color; falls back to the theme's background color
+- **Notes**:
+  - Banners appear on the React launcher pages **and** on JupyterHub's
+    server-rendered pages (login, admin, token, spawn) — both read the same
+    runtime config.
+  - The values are served to the UI at runtime via `/services/japps/config.json`,
+    so changing them only requires restarting the hub — no frontend rebuild.
+  - When omitted, `background`/`foreground` use the theme's inverted colors, which
+    follow the user's light/dark mode. Values containing CSS injection vectors
+    (`;`, braces, quotes, `url(`, etc.) are ignored and fall back to the defaults.
+  - When deploying with a Helm chart (e.g. Zero to JupyterHub or the Nebari data
+    science pack), set the option from your values via `hub.extraConfig` like any
+    other `JAppsConfig` option:
+    ```yaml
+    hub:
+      extraConfig:
+        01-banners: |
+          c.JAppsConfig.banners = {
+              "top": {"text": "This platform will be down for maintenance on Saturday"},
+          }
+    ```
+
 ### Theme runtime configuration
 
 JHub Apps still reads theme values from `c.JupyterHub.template_vars`, but the

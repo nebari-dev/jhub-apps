@@ -5,7 +5,7 @@ import { Route, Routes } from 'react-router';
 
 import { useSearchParams } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
-import { Navigation, NotificationBar } from './components';
+import { Banner, Navigation, NotificationBar } from './components';
 import { CreateApp } from './pages/create-app/create-app';
 import { EditApp } from './pages/edit-app/edit-app';
 import { Home } from './pages/home/home';
@@ -25,6 +25,7 @@ import type { JhData } from './types/jupyterhub';
 import type { UserState } from './types/user';
 import axios from './utils/axios';
 import { getJhData } from './utils/jupyterhub';
+import { getRuntimeBanners } from './utils/theme';
 
 export const App = (): React.ReactElement => {
   const [searchParams] = useSearchParams();
@@ -100,15 +101,18 @@ export const App = (): React.ReactElement => {
     }
   }, [searchParams]);
 
+  const banners = getRuntimeBanners();
+
   return (
     <div>
+      {!isHeadless && <Banner position="top" config={banners?.top} />}
       <Navigation />
       <main
         data-headless={isHeadless ? 'true' : undefined}
         className={
           isHeadless
             ? 'grow bg-background pl-1 pr-1 pt-1'
-            : 'grow bg-background pl-1 pr-1 pt-[72px] sm:pl-[264px]'
+            : 'grow bg-background pl-1 pr-1 pt-[calc(72px_+_var(--top-banner-height,0px))] pb-(--bottom-banner-height,0px) sm:pl-[264px]'
         }
       >
         {notification ? (
@@ -128,6 +132,7 @@ export const App = (): React.ReactElement => {
           <Route path="/" element={<Home />} />
         </Routes>
       </main>
+      {!isHeadless && <Banner position="bottom" config={banners?.bottom} />}
     </div>
   );
 };

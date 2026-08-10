@@ -97,6 +97,59 @@ href="{{ static_url("css/style.min.css") }}" type="text/css"/>
   })();
 </script>
 
+<script type="text/javascript">
+  // Full-width text banners (c.JAppsConfig.banners) on server-rendered
+  // (non-React) pages. The React launcher renders these itself from the same
+  // runtime config (japps_page.html replaces this block, so this never runs
+  // there). Text is always inserted as plain text, and color values are
+  // dropped unless they are safe CSS tokens (mirrors ui/src/components/banner).
+  (function () {
+    var UNSAFE_CSS = /[;<>{}"'\\]|url\s*\(|expression\s*\(|javascript:/i;
+    function safeCssValue(value) {
+      return value && !UNSAFE_CSS.test(value) ? value : "";
+    }
+    function insertBanners(banners) {
+      ["top", "bottom"].forEach(function (position) {
+        var banner = banners[position];
+        if (!banner || !banner.text) return;
+        var element = document.createElement("div");
+        element.className = "jhub-banner jhub-banner-" + position;
+        element.setAttribute("role", "note");
+        element.textContent = banner.text;
+        element.style.backgroundColor = safeCssValue(banner.background);
+        element.style.color = safeCssValue(banner.foreground);
+        if (position === "top") {
+          document.body.insertBefore(element, document.body.firstChild);
+        } else {
+          document.body.appendChild(element);
+          // The bottom banner is fixed; keep it from covering page content,
+          // and stack the fixed version footer above it instead of over it.
+          document.body.style.paddingBottom = element.offsetHeight + "px";
+          var version = document.querySelector(".version");
+          if (version) {
+            version.style.bottom = element.offsetHeight + "px";
+          }
+        }
+      });
+    }
+    fetch("/services/japps/config.json")
+      .then(function (response) {
+        return response.ok ? response.json() : null;
+      })
+      .then(function (config) {
+        var banners = (config && config.banners) || {};
+        if (document.readyState === "loading") {
+          document.addEventListener("DOMContentLoaded", function () {
+            insertBanners(banners);
+          });
+        } else {
+          insertBanners(banners);
+        }
+      })
+      .catch(function () {});
+  })();
+</script>
+
 {% set jsurls = nebari_theme_extra_js_urls | default([]) %} {% for jsurl in
 jsurls %}
 <script type="text/javascript" src="{{ jsurl }}" defer></script>
