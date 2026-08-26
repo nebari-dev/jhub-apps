@@ -1,0 +1,49 @@
+name: Docs
+on:
+  push:
+    branches: [main]
+    paths: ['docs/**', '.github/workflows/docs.yml']
+  pull_request:
+    paths: ['docs/**', '.github/workflows/docs.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+  pull-requests: write
+concurrency:
+  group: docs-${{ github.ref }}
+  cancel-in-progress: true
+env:
+  CF_PROJECT: jhub-apps
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install
+        run: cd docs && bun install --frozen-lockfile
+
+      - name: Test (builds the site)
+        run: cd docs && bun test test
+
+      # Fork PRs cannot read secrets; skip deploy there (build above still gates).
+      - name: Deploy to Cloudflare Pages
+        id: deploy
+        if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
+        uses: cloudflare/wrangler-action@v4
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy docs/dist --project-name=${{ env.CF_PROJECT }} --branch=${{ github.event_name == 'pull_request' && github.head_ref || 'main' }}
+
+      - name: Comment preview URL
+        if: ${{ github.event_name == 'pull_request' && steps.deploy.outcome == 'success' }}
+        uses: thollander/actions-comment-pull-request@v3
+        with:
+          comment-tag: docs-preview
+          message: |
+            📄 **Docs preview** for `${{ github.event.pull_request.head.ref }}`:
+            ${{ steps.deploy.outputs.pages-deployment-alias-url }}
