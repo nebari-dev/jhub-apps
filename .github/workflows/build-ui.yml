@@ -75,6 +75,14 @@ jobs:
           fi
           echo "ok=${OK}" >> "$GITHUB_OUTPUT"
 
+      # The Worker has no JupyterHub behind it, so deploy the development
+      # build: NODE_ENV=development activates the mocked API responses in
+      # src/utils/axios.ts. The production build above still gates the PR.
+      - name: Rebuild UI for preview (mocked API)
+        if: ${{ steps.candeploy.outputs.ok == 'true' }}
+        run: npm run build:dev
+        working-directory: ui
+
       - name: Upload preview version to the jhub-apps-ui Worker
         id: preview-deploy
         if: ${{ github.ref != 'refs/heads/main' && steps.candeploy.outputs.ok == 'true' }}
