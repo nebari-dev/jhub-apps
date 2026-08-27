@@ -47,16 +47,17 @@ bun test test
 - `src/content/docs/` — the documentation pages (Markdown/MDX). The sidebar is
   defined explicitly in `astro.config.mjs`.
 - `public/` — static assets served verbatim (`/img/...`, `favicon.ico`, and
-  the Cloudflare Pages `_redirects` file).
+  the `_redirects` file handled by Cloudflare's static-assets hosting).
 - `src/components/Head.astro` — wraps the theme head to add Google Analytics
   (consent denied by default) and the cookie-consent banner.
 
 ## Deployment
 
-The site deploys to Cloudflare Pages via GitHub Actions
+The site deploys as a Cloudflare Worker with static assets (`wrangler.jsonc`,
+Worker name `jhub-apps-docs`) via GitHub Actions
 ([`.github/workflows/docs.yml`](../.github/workflows/docs.yml)): every push to
-`main` that touches `docs/**` builds and deploys production at
-<https://jhub-apps.nebari.dev/>, and pull requests get a preview deployment
-whose URL is posted as a PR comment. Preview deployments are cleaned up when
-the PR closes
-([`.github/workflows/docs-preview-cleanup.yml`](../.github/workflows/docs-preview-cleanup.yml)).
+`main` that touches `docs/**` builds and runs `wrangler deploy` to production
+at <https://jhub-apps.nebari.dev/>, and pull requests upload a preview version
+(`wrangler versions upload --preview-alias <branch>`) whose URL is posted as a
+sticky PR comment. Preview aliases are just pointers at Worker versions, so
+there is nothing to clean up when a PR closes.
