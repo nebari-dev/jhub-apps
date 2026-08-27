@@ -94,9 +94,11 @@ jobs:
         env:
           WRANGLER_OUTPUT: ${{ steps.preview-deploy.outputs.command-output }}
         run: |
+          # The app is served under the hub base path (see the BrowserRouter
+          # basename in ui/src/main.tsx), so link straight to /hub/home.
           URL=$(printf '%s\n' "$WRANGLER_OUTPUT" | grep -Eo 'https://[a-zA-Z0-9-]+\.[a-zA-Z0-9-]+\.workers\.dev' | tail -n1)
-          echo "url=${URL}" >> "$GITHUB_OUTPUT"
-          echo "::notice::Preview URL: ${URL}"
+          echo "url=${URL}/hub/home" >> "$GITHUB_OUTPUT"
+          echo "::notice::Preview URL: ${URL}/hub/home"
 
       - name: Deploy production to the jhub-apps-ui Worker
         id: deploy
