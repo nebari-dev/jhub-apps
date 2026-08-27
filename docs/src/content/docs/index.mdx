@@ -1,0 +1,63 @@
+---
+title: JHub Apps
+description: JupyterHub Apps Launcher, a generalized server launcher. Deploy and share Panel, Bokeh, Streamlit, Plotly Dash, Voila, Gradio, JupyterLab, and custom apps from JupyterHub.
+template: splash
+hero:
+  tagline: JupyterHub Apps Launcher, a generalized server launcher. Deploy and share data apps — dashboards, APIs, or any web server — right from your JupyterHub.
+  actions:
+    - text: Get started
+      link: /installation/
+      icon: right-arrow
+      variant: primary
+    - text: Read the docs
+      link: /intro/
+      icon: open-book
+      variant: minimal
+    - text: View on GitHub
+      link: https://github.com/nebari-dev/jhub-apps
+      icon: external
+      variant: minimal
+---
+
+import { CardGrid, LinkCard } from '@astrojs/starlight/components';
+import FrameworkGrid from '../../components/FrameworkGrid.astro';
+
+JHub Apps (JupyterHub Apps) Launcher turns your JupyterHub into an app
+platform: launch anything a user-supplied command can start — a Flask server, a
+FastAPI service, or a Panel dashboard — and share it with your team or the
+public, with JupyterHub handling authentication and compute.
+
+<img
+  class="landing-screenshot"
+  src="/img/homepage.png"
+  alt="JHub Apps home screen showing deployed app cards"
+/>
+
+## Supported frameworks
+
+<FrameworkGrid />
+
+## Start here
+
+<CardGrid>
+  <LinkCard
+    title="Introduction"
+    href="/intro/"
+    description="What JHub Apps is and what it can launch."
+  />
+  <LinkCard
+    title="Install and setup"
+    href="/installation/"
+    description="Add JHub Apps to your JupyterHub installation."
+  />
+  <LinkCard
+    title="Create your first app"
+    href="/create-apps/general-app/"
+    description="Deploy and share an app from the launcher, step by step."
+  />
+  <LinkCard
+    title="Configuration"
+    href="/configuration/"
+    description="Every JAppsConfig option, with examples."
+  />
+</CardGrid>

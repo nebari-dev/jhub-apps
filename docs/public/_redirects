@@ -1,0 +1,5 @@
+# The Docusaurus site served everything under /docs/ and generated a category
+# index at /docs/category/create-apps; keep those inbound links working.
+/docs/category/create-apps /create-apps/general-app/ 301
+/docs /intro/ 301
+/docs/* /:splat 301

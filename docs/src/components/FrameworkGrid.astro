@@ -1,0 +1,102 @@
+---
+const frameworks = [
+  {
+    logo: '/img/logos/panel.png',
+    name: 'Panel',
+    description: 'Powerful data exploration & web app framework for Python',
+  },
+  {
+    logo: '/img/logos/bokeh.png',
+    name: 'Bokeh',
+    description:
+      'Python library for creating interactive visualizations for modern web browsers',
+  },
+  {
+    logo: '/img/logos/streamlit.png',
+    name: 'Streamlit',
+    description:
+      'Python framework for data scientists and AI/ML engineers to deliver dynamic data apps with only a few lines of code',
+  },
+  {
+    logo: '/img/logos/plotly-dash.png',
+    name: 'Plotly Dash',
+    description: 'Low-code framework for rapidly building data apps in Python',
+  },
+  {
+    logo: '/img/logos/voila.png',
+    name: 'Voila',
+    description: 'Convert a Jupyter Notebook into an interactive dashboard',
+  },
+  {
+    logo: '/img/logos/gradio.png',
+    name: 'Gradio',
+    description:
+      'Quickly build a demo or web application for your machine learning model, API, or any Python function',
+  },
+  {
+    logo: '/img/logos/jupyter.png',
+    name: 'JupyterLab',
+    description:
+      'Highly extensible, feature-rich notebook authoring application and editing environment',
+  },
+  {
+    logo: '/img/logos/custom.png',
+    name: 'Generic Python Command',
+    description: 'Python server, Flask API, and more!',
+  },
+];
+---
+
+<div class="framework-grid">
+  {
+    frameworks.map((f) => (
+      <div class="framework">
+        <span class="logo">
+          <img src={f.logo} alt={`${f.name} logo`} width="675" height="390" loading="lazy" />
+        </span>
+        <div>
+          <p class="name">{f.name}</p>
+          <p class="description">{f.description}</p>
+        </div>
+      </div>
+    ))
+  }
+</div>
+
+<style>
+  .framework-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr));
+    gap: 2rem 3rem;
+    margin-top: 1.5rem;
+  }
+  .framework {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    margin: 0;
+  }
+  .logo {
+    flex: none;
+    display: grid;
+    place-items: center;
+  }
+  /* The logo PNGs carry their own light background, so they stay readable in
+     dark mode as-is — just round the corners so they read as clean tiles. */
+  .logo img {
+    display: block;
+    width: 6.5rem;
+    height: auto;
+    border-radius: 0.5rem;
+  }
+  .name {
+    margin: 0;
+    font-weight: 600;
+    color: var(--sl-color-white);
+  }
+  .description {
+    margin: 0.25rem 0 0;
+    color: var(--sl-color-gray-2);
+    font-size: var(--sl-text-sm);
+  }
+</style>

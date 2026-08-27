@@ -1,0 +1,111 @@
+name: Docs
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/**'
+      - '.github/workflows/docs.yml'
+  pull_request:
+    paths:
+      - 'docs/**'
+      - '.github/workflows/docs.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: docs-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CF_WORKER: jhub-apps-docs
+
+jobs:
+  docs:
+    name: Build and deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+        working-directory: docs
+
+      - name: Test (builds the site into dist/)
+        run: bun test test
+        working-directory: docs
+
+      - name: Compute preview alias
+        id: site
+        env:
+          HEAD_REF: ${{ github.head_ref || github.ref_name }}
+        run: |
+          ALIAS=$(printf '%s' "$HEAD_REF" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g' | cut -c1-50 | sed -e 's/^-*//' -e 's/-*$//')
+          echo "alias=${ALIAS}" >> "$GITHUB_OUTPUT"
+
+      - name: Determine deployability
+        id: candeploy
+        env:
+          CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CF_ACCOUNT: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          OK=true
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            if [ -z "${CF_TOKEN}" ] || [ -z "${CF_ACCOUNT}" ] || [ "${{ github.event.pull_request.head.repo.full_name }}" != "${{ github.repository }}" ]; then
+              OK=false
+              echo "::notice::Cloudflare secrets unavailable; skipping preview deploy (build still gates)."
+            fi
+          fi
+          echo "ok=${OK}" >> "$GITHUB_OUTPUT"
+
+      - name: Upload preview version to the jhub-apps-docs Worker
+        id: preview-deploy
+        if: ${{ github.ref != 'refs/heads/main' && steps.candeploy.outputs.ok == 'true' }}
+        uses: cloudflare/wrangler-action@ebbaa1584979971c8614a24965b4405ff95890e0 # v4.0.0
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: docs
+          # A brand-new Worker can't accept `versions upload`; seed it with a
+          # one-time `deploy` if it doesn't exist yet.
+          preCommands: npx wrangler deployments list > /dev/null 2>&1 || npx wrangler deploy
+          command: versions upload --preview-alias ${{ steps.site.outputs.alias }}
+
+      - name: Extract preview URL
+        id: preview
+        if: ${{ steps.preview-deploy.outcome == 'success' }}
+        env:
+          WRANGLER_OUTPUT: ${{ steps.preview-deploy.outputs.command-output }}
+        run: |
+          URL=$(printf '%s\n' "$WRANGLER_OUTPUT" | grep -Eo 'https://[a-zA-Z0-9-]+\.[a-zA-Z0-9-]+\.workers\.dev' | tail -n1)
+          echo "url=${URL}" >> "$GITHUB_OUTPUT"
+          echo "::notice::Preview URL: ${URL}"
+
+      - name: Deploy production to the jhub-apps-docs Worker
+        id: deploy
+        if: ${{ github.ref == 'refs/heads/main' && steps.candeploy.outputs.ok == 'true' }}
+        uses: cloudflare/wrangler-action@ebbaa1584979971c8614a24965b4405ff95890e0 # v4.0.0
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: docs
+          command: deploy
+
+      - name: Comment preview URL
+        if: ${{ github.event_name == 'pull_request' && steps.preview-deploy.outcome == 'success' }}
+        uses: marocchino/sticky-pull-request-comment@5770ad5eb8f42dd2c4f34da00c94c5381e49af88 # v3.0.5
+        with:
+          header: docs-preview
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          message: |
+            **Docs preview** for `${{ github.event.pull_request.head.ref }}` (via the `${{ env.CF_WORKER }}` Worker):
+            ${{ steps.preview.outputs.url }}
