@@ -1,5 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import '@testing-library/jest-dom/vitest';
+import { toast } from 'sonner';
+
+// Sonner stores toasts in module-level state and (since 2.0.8) replays active
+// ones into any newly mounted <Toaster />, leaking toasts across tests.
+afterEach(() => {
+  toast.dismiss();
+});
 
 declare global {
   interface Window {
