@@ -436,6 +436,19 @@
 }
 
 /* Global Styling */
+
+/* JupyterHub's base template (share/jupyterhub/templates/page.html) always
+   renders a Bootstrap error modal at the end of <body>, outside any block, so
+   japps_page.html cannot drop it. Bootstrap's stylesheet normally hides it
+   (`.modal { display: none }`) and hub JS shows it on AJAX failures, but the
+   React pages replace the `stylesheet` block with this file only — leaving the
+   markup unstyled, so "Error / The error / OK" flashes until React paints over
+   it. The React app has its own notification bar and toasts and never opens
+   this dialog, so hide it outright. */
+#error-dialog {
+  display: none;
+}
+
 main {
   margin: 24px 0;
 }
