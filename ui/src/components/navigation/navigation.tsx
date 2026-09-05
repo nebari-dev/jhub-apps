@@ -246,7 +246,20 @@ export const TopNavigation = (): React.ReactElement => {
                   render={
                     <button
                       type="button"
-                      className={buttonVariants({ variant: 'ghost' })}
+                      className={cn(
+                        buttonVariants({ variant: 'ghost' }),
+                        // Base UI concatenates this render target's classes
+                        // with the trigger's instead of merging them, so
+                        // tailwind-merge never sees the trigger's
+                        // `hover:no-underline` conflict with buttonVariants'
+                        // `hover:underline` and both survive -- underlining the
+                        // name and avatar on hover. An override for a
+                        // buttonVariants class has to sit in this cn() call to
+                        // take effect. (`data-[popup-open]:no-underline` on the
+                        // trigger does work: dropdown-menu.tsx merges the
+                        // trigger className with its own variants in one cn().)
+                        'hover:no-underline',
+                      )}
                     />
                   }
                   id="profile-menu-btn"
