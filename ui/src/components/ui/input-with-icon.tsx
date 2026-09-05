@@ -20,8 +20,12 @@ function InputWithIcon({
 }: InputWithIconProps) {
   return (
     <div className={cn('relative w-full', containerClassName)}>
+      {/* z-10 keeps the icons above the input. The @nebari input renders its own
+          relative wrapper (for the invalid-state icon), and as a positioned
+          sibling that comes later in DOM order it would otherwise paint over
+          these spans -- the input's own background hiding the icon entirely. */}
       {startIcon ? (
-        <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-muted-foreground [&_svg]:size-4">
+        <span className="pointer-events-none absolute inset-y-0 left-0 z-10 flex items-center pl-3 text-muted-foreground [&_svg]:size-4">
           {startIcon}
         </span>
       ) : null}
@@ -30,7 +34,7 @@ function InputWithIcon({
         {...props}
       />
       {endIcon ? (
-        <span className="absolute inset-y-0 right-0 flex items-center pr-3 text-muted-foreground [&_svg]:size-4">
+        <span className="absolute inset-y-0 right-0 z-10 flex items-center pr-3 text-muted-foreground [&_svg]:size-4">
           {endIcon}
         </span>
       ) : null}
