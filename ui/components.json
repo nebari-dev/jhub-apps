@@ -17,5 +17,8 @@
     "lib": "@src/lib",
     "hooks": "@src/hooks"
   },
-  "iconLibrary": "lucide"
+  "iconLibrary": "lucide",
+  "registries": {
+    "@nebari": "https://nebari-dev.github.io/nebari-design/r/{name}.json"
+  }
 }

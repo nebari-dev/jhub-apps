@@ -240,12 +240,10 @@ default.
 
 ### Theme runtime configuration
 
-JHub Apps still reads theme values from `c.JupyterHub.template_vars`, but the
-values are now exposed to the UI as runtime JSON instead of templated CSS. The
-backend serves the resolved configuration from `/services/japps/config.json`
-and the React UI applies the returned `theme.cssVariables` to `:root` before it
-renders. Tailwind utilities reference those CSS custom properties, so updating a
-backend theme value does not require rebuilding the frontend bundle.
+Branding is read from `c.JupyterHub.template_vars` and served to the UI at
+runtime via `/services/japps/config.json` (React pages) and
+`/services/japps/theme.css` (server-rendered JupyterHub pages), so a change only
+needs a hub restart.
 
 - **Example**:
   ```python
@@ -263,10 +261,12 @@ backend theme value does not require rebuilding the frontend bundle.
       "font_url": "https://fonts.googleapis.com/css2?family=Inter&display=swap",
   }
   ```
-- **Runtime flow**:
-  1. The service merges `themes.DEFAULT_THEME` with `c.JupyterHub.template_vars`.
-  2. `/services/japps/config.json` returns structured theme values plus
-     `theme.cssVariables`.
-  3. The UI sets those variables on `document.documentElement`.
-  4. Tailwind color/font tokens consume the variables (for example,
-     `bg-primary` resolves through `--primary-color`).
+- **Notes**:
+  - `themes.DEFAULT_THEME` only sets the logo, favicon and font. With no colour
+    keys set, the UI renders the Nebari design-system theme in both light and
+    dark mode.
+  - Some keys apply in light mode only (`navbar_color`, `navbar_text_color`,
+    `navbar_hover_color`, `text_color`, `h1_color`, `h2_color`).
+  - See [Branding](/branding/) for every supported key, the CSS variable each
+    one becomes, what it affects on the React pages versus the server-rendered
+    pages, how the dark-mode logo is chosen, and screenshots.

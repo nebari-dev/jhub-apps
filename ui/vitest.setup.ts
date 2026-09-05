@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import '@testing-library/jest-dom/vitest';
-import { toast } from 'sonner';
+import { toast } from './src/components/ui/toast';
 
-// Sonner stores toasts in module-level state and (since 2.0.8) replays active
-// ones into any newly mounted <Toaster />, leaking toasts across tests.
+// The Base UI toast manager behind <Toaster /> is module-level state, so a
+// toast left open by one test would show up in the next test's <Toaster />.
 afterEach(() => {
-  toast.dismiss();
+  toast.close();
 });
 
 declare global {
@@ -29,7 +29,7 @@ window.theme = {
   cssVariables: {},
 };
 
-// Polyfills for browser APIs not provided by jsdom but required by Radix/cmdk.
+// Polyfills for browser APIs not provided by jsdom but required by Base UI.
 if (typeof globalThis.ResizeObserver === 'undefined') {
   globalThis.ResizeObserver = class {
     observe() {}

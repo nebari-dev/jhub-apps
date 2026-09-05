@@ -6,6 +6,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@src/components/ui/dialog';
+import { toast } from '@src/components/ui/toast';
 import type {
   AppQueryDeleteProps,
   AppQueryGetProps,
@@ -25,7 +26,6 @@ import type React from 'react';
 import { useEffect, useState } from 'react';
 
 import { useRecoilState } from 'recoil';
-import { toast } from 'sonner';
 import {
   currentNotification,
   currentApp as defaultApp,
@@ -120,7 +120,7 @@ export const Home = (): React.ReactElement => {
           setSubmitting(false);
           setIsDeleteOpen(false);
           queryClient.invalidateQueries({ queryKey: ['app-state'] });
-          toast.success('App deleted successfully');
+          toast.add({ type: 'success', title: 'App deleted successfully' });
         },
         onError: async (error: Error) => {
           setSubmitting(false);
@@ -156,9 +156,11 @@ export const Home = (): React.ReactElement => {
     const sharedApp = currentApp?.shared;
     if (sharedApp && !currentUserData?.admin) {
       setSubmitting(false);
-      toast.error(
-        "You don't have permission to start this app. Please ask the owner to start it.",
-      );
+      toast.add({
+        type: 'error',
+        title:
+          "You don't have permission to start this app. Please ask the owner to start it.",
+      });
       return;
     }
 
@@ -168,14 +170,17 @@ export const Home = (): React.ReactElement => {
         onSuccess: async () => {
           setSubmitting(false);
           queryClient.invalidateQueries({ queryKey: ['app-state'] });
-          toast.success('App started successfully');
+          toast.add({ type: 'success', title: 'App started successfully' });
         },
         onError: (error: unknown) => {
           setSubmitting(false);
           const status = isErrorWithResponse(error)
             ? error.response?.status
             : undefined;
-          toast.error(messageFromStatus(status, 'start'));
+          toast.add({
+            type: 'error',
+            title: messageFromStatus(status, 'start'),
+          });
         },
       },
     );
@@ -190,9 +195,11 @@ export const Home = (): React.ReactElement => {
     const sharedApp = currentApp?.shared;
     if (sharedApp && !currentUserData?.admin) {
       setSubmitting(false);
-      toast.error(
-        "You don't have permission to stop this app. Please ask the owner to stop it.",
-      );
+      toast.add({
+        type: 'error',
+        title:
+          "You don't have permission to stop this app. Please ask the owner to stop it.",
+      });
       return;
     }
 
@@ -202,14 +209,17 @@ export const Home = (): React.ReactElement => {
         onSuccess: () => {
           setSubmitting(false);
           queryClient.invalidateQueries({ queryKey: ['app-state'] });
-          toast.success('Server stopped successfully');
+          toast.add({ type: 'success', title: 'Server stopped successfully' });
         },
         onError: (error: unknown) => {
           setSubmitting(false);
           const status = isErrorWithResponse(error)
             ? error.response?.status
             : undefined;
-          toast.error(messageFromStatus(status, 'stop'));
+          toast.add({
+            type: 'error',
+            title: messageFromStatus(status, 'stop'),
+          });
         },
       },
     );
@@ -234,13 +244,13 @@ export const Home = (): React.ReactElement => {
       });
 
       if (response.status === 200) {
-        toast.success('App started successfully');
+        toast.add({ type: 'success', title: 'App started successfully' });
       }
     } catch (error) {
       const status = isErrorWithResponse(error)
         ? error.response?.status
         : undefined;
-      toast.error(messageFromStatus(status, 'start'));
+      toast.add({ type: 'error', title: messageFromStatus(status, 'start') });
     } finally {
       setSubmitting(false);
     }
@@ -427,7 +437,7 @@ export const Home = (): React.ReactElement => {
         <DialogContent
           data-testid="StartModal"
           className="w-[444px] gap-0 p-0"
-          onOpenAutoFocus={(event) => event.preventDefault()}
+          initialFocus={false}
         >
           <DialogHeader className="p-6 pb-4">
             <DialogTitle className="font-bold">Start App</DialogTitle>
@@ -439,7 +449,7 @@ export const Home = (): React.ReactElement => {
         <DialogContent
           data-testid="StopModal"
           className="w-[444px] gap-0 p-0"
-          onOpenAutoFocus={(event) => event.preventDefault()}
+          initialFocus={false}
         >
           <DialogHeader className="p-6 pb-2">
             <DialogTitle className="font-bold">Stop App</DialogTitle>
@@ -451,7 +461,7 @@ export const Home = (): React.ReactElement => {
         <DialogContent
           data-testid="DeleteModal"
           className="w-[444px] gap-0 p-0"
-          onOpenAutoFocus={(event) => event.preventDefault()}
+          initialFocus={false}
         >
           <DialogHeader className="p-6 pb-4">
             <DialogTitle className="font-bold">Delete App</DialogTitle>
@@ -466,7 +476,7 @@ export const Home = (): React.ReactElement => {
         <DialogContent
           data-testid="StartNotRunningModal"
           className="w-[444px] gap-0 p-0"
-          onOpenAutoFocus={(event) => event.preventDefault()}
+          initialFocus={false}
         >
           <DialogHeader className="p-6 pb-4">
             <DialogTitle className="font-bold">Server Not Running</DialogTitle>

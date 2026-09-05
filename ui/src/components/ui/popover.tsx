@@ -1,42 +1,56 @@
-'use client';
-
-import * as PopoverPrimitive from '@radix-ui/react-popover';
+import { Popover as PopoverPrimitive } from '@base-ui/react/popover';
 import { cn } from '@src/lib/utils';
-import * as React from 'react';
 
+// App-owned (not from the @nebari registry, which has no popover yet). Built on
+// Base UI like the registry components and styled with the same semantic tokens
+// and motion as the registry's dropdown-menu / select popups.
+
+type PopoverContentProps = PopoverPrimitive.Popup.Props &
+  Pick<
+    PopoverPrimitive.Positioner.Props,
+    'align' | 'alignOffset' | 'side' | 'sideOffset' | 'collisionPadding'
+  >;
+
+/** Groups popover open state and sub-parts for trigger/content composition. */
 const Popover = PopoverPrimitive.Root;
 
-const PopoverTrigger = PopoverPrimitive.Trigger;
+/** Element that toggles the popover. Renders a `<button>` unless `render` swaps it. */
+function PopoverTrigger(props: PopoverPrimitive.Trigger.Props) {
+  return <PopoverPrimitive.Trigger data-slot="popover-trigger" {...props} />;
+}
 
-const PopoverContent = React.forwardRef<
-  React.ElementRef<typeof PopoverPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof PopoverPrimitive.Content>
->(
-  (
-    {
-      className,
-      align = 'center',
-      sideOffset = 4,
-      collisionPadding = 8,
-      ...props
-    },
-    ref,
-  ) => (
+/** Portaled popup surface positioned against the trigger. */
+function PopoverContent({
+  className,
+  side = 'bottom',
+  sideOffset = 4,
+  align = 'center',
+  alignOffset = 0,
+  collisionPadding = 8,
+  ...props
+}: PopoverContentProps) {
+  return (
     <PopoverPrimitive.Portal>
-      <PopoverPrimitive.Content
-        ref={ref}
-        align={align}
+      <PopoverPrimitive.Positioner
+        side={side}
         sideOffset={sideOffset}
+        align={align}
+        alignOffset={alignOffset}
         collisionPadding={collisionPadding}
-        className={cn(
-          'z-200 w-72 rounded-md border border-border bg-popover p-4 text-popover-foreground shadow-md outline-hidden data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 origin-(--radix-popover-content-transform-origin)',
-          className,
-        )}
-        {...props}
-      />
+        className="isolate z-50"
+      >
+        <PopoverPrimitive.Popup
+          data-slot="popover-content"
+          className={cn(
+            'z-50 w-72 origin-(--transform-origin) rounded-md border border-border bg-popover p-4 text-popover-foreground shadow-md ring-1 ring-foreground/10 outline-none data-[starting-style]:translate-y-1 data-[starting-style]:opacity-0 data-[ending-style]:translate-y-1 data-[ending-style]:opacity-0 motion-safe:transition-[opacity,transform] motion-safe:duration-(--duration-base) motion-safe:ease-(--ease-emphasized)',
+            className,
+          )}
+          {...props}
+        />
+      </PopoverPrimitive.Positioner>
     </PopoverPrimitive.Portal>
-  ),
-);
-PopoverContent.displayName = PopoverPrimitive.Content.displayName;
+  );
+}
 
+export type { PopoverContentProps };
 export { Popover, PopoverContent, PopoverTrigger };

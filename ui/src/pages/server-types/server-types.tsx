@@ -13,7 +13,7 @@ import {
   navigateToUrl,
 } from '@src/utils/jupyterhub';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { ArrowLeft, Loader2 } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
@@ -323,26 +323,26 @@ export const ServerTypes = (): React.ReactElement => {
             <form className="form" onSubmit={handleSubmit}>
               <div className="pb-9">
                 <RadioGroup
+                  aria-label="Server type"
                   value={selectedServerType}
-                  onValueChange={handleCardClick}
+                  onValueChange={(value) => handleCardClick(String(value))}
                 >
                   {serverTypes?.map((type: AppProfileProps) => (
                     <Card
                       key={`server-type-card-${type.slug}`}
-                      className="server-type-card border-0 shadow-md"
+                      size="sm"
+                      className="server-type-card"
                     >
-                      <Label
-                        htmlFor={type.slug}
-                        className="block cursor-pointer p-6"
+                      <RadioGroupItem
+                        value={type.slug}
+                        id={type.slug}
+                        description={type.description}
+                        className="px-(--card-spacing)"
                       >
-                        <div className="mb-3 flex items-center gap-2">
-                          <RadioGroupItem value={type.slug} id={type.slug} />
-                          <span>{type.display_name}</span>
-                        </div>
-                        <p>{type.description}</p>
-                      </Label>
+                        {type.display_name}
+                      </RadioGroupItem>
                       {type.kubespawner_override?.image && (
-                        <div className="px-6 pb-6">
+                        <div className="px-(--card-spacing)">
                           <Label
                             htmlFor={`${type.slug}-image`}
                             className="mb-1 block"
@@ -378,14 +378,14 @@ export const ServerTypes = (): React.ReactElement => {
                   </Button>
                 </div>
                 <div className="next">
-                  <Button id="submit-btn" type="submit" disabled={submitting}>
-                    {submitting ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                    ) : id ? (
-                      'Save'
-                    ) : (
-                      'Deploy App'
-                    )}
+                  <Button
+                    id="submit-btn"
+                    // Render-element props win in Base UI, so `type="submit"`
+                    // must go on the render element (see app-form.tsx).
+                    render={<button type="submit" />}
+                    loading={submitting}
+                  >
+                    {id ? 'Save' : 'Deploy App'}
                   </Button>
                 </div>
               </div>

@@ -75,7 +75,7 @@ describe('AppFilters', () => {
     });
 
     let menuItem = document.querySelectorAll(
-      'form[name="sort-by-form"] .filter-item',
+      'form[name="sort-by-form"] .filter-item > [role]',
     )[2] as HTMLLabelElement;
     await act(async () => {
       menuItem.click();
@@ -90,7 +90,7 @@ describe('AppFilters', () => {
       expect(form).toBeTruthy();
     });
     menuItem = document.querySelectorAll(
-      'form[name="sort-by-form"] .filter-item',
+      'form[name="sort-by-form"] .filter-item > [role]',
     )[1] as HTMLLabelElement;
     await act(async () => {
       menuItem.click();
@@ -105,7 +105,7 @@ describe('AppFilters', () => {
       expect(form).toBeTruthy();
     });
     menuItem = document.querySelectorAll(
-      'form[name="sort-by-form"] .filter-item',
+      'form[name="sort-by-form"] .filter-item > [role]',
     )[0] as HTMLLabelElement;
     await act(async () => {
       menuItem.click();
@@ -146,7 +146,7 @@ describe('AppFilters', () => {
       expect(form).toBeTruthy();
 
       const filterItems = document.querySelectorAll(
-        '#filters-form .filter-item',
+        '#filters-form .filter-item > [role]',
       ) as NodeListOf<HTMLLabelElement>;
       if (filterItems.length >= 11) {
         const frameworkItem = filterItems[0];
@@ -210,7 +210,7 @@ describe('AppFilters', () => {
       ) as HTMLFormElement;
       if (form !== null) {
         const filterItems = document.querySelectorAll(
-          '#filters-form .filter-item',
+          '#filters-form .filter-item > [role]',
         ) as NodeListOf<HTMLLabelElement>;
         if (filterItems.length >= 11) {
           const frameworkItem1 = filterItems[0];
@@ -276,7 +276,7 @@ describe('AppFilters', () => {
       expect(form).toBeTruthy();
 
       const filterItems = document.querySelectorAll(
-        '#filters-form .filter-item',
+        '#filters-form .filter-item > [role]',
       ) as NodeListOf<HTMLLabelElement>;
       if (filterItems.length >= 6) {
         const statusItem1 = filterItems[5];
@@ -342,7 +342,7 @@ describe('AppFilters', () => {
       expect(groupsLabel).toBeTruthy();
 
       const filterItems = document.querySelectorAll(
-        '#filters-form .filter-item',
+        '#filters-form .filter-item > [role]',
       ) as NodeListOf<HTMLLabelElement>;
 
       const developerCheckbox = Array.from(filterItems).find((item) =>
@@ -498,7 +498,7 @@ describe('AppFilters', () => {
     });
 
     const filterItems = document.querySelectorAll(
-      '#filters-form .filter-item',
+      '#filters-form .filter-item > [role]',
     ) as NodeListOf<HTMLLabelElement>;
     if (filterItems.length >= 1) {
       const frameworkItem = filterItems[0];

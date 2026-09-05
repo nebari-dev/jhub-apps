@@ -1,4 +1,4 @@
-import { Button } from '@src/components/ui/button';
+import { Button, buttonVariants } from '@src/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -19,7 +19,6 @@ import { Textarea } from '@src/components/ui/textarea';
 import {
   Tooltip,
   TooltipContent,
-  TooltipProvider,
   TooltipTrigger,
 } from '@src/components/ui/tooltip';
 import { cn } from '@src/lib/utils';
@@ -40,7 +39,7 @@ import {
 } from '@src/utils/jupyterhub';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { isAxiosError } from 'axios';
-import { AlertCircle, Info, Loader2 } from 'lucide-react';
+import { AlertCircle, Info } from 'lucide-react';
 import type React from 'react';
 import { forwardRef, useCallback, useEffect, useRef, useState } from 'react';
 import { Controller, type SubmitHandler, useForm } from 'react-hook-form';
@@ -74,7 +73,7 @@ const SectionHeading = ({ children }: { children: React.ReactNode }) => (
 );
 
 const FieldError = ({ message }: { message: string }) => (
-  <div className="mb-2 flex items-center gap-1 text-destructive">
+  <div className="mb-2 flex items-center gap-1 text-destructive-foreground">
     <AlertCircle className="h-4 w-4" />
     <span className="text-sm">{message}</span>
   </div>
@@ -101,8 +100,6 @@ export const AppForm = ({
   const [submitting, setSubmitting] = useState(false);
   const [currentUser] = useRecoilState<UserState | undefined>(defaultUser);
   const [description, setDescription] = useState<string>('');
-  const textAreaRef = useRef<HTMLTextAreaElement>(null);
-  const firstErrorRef = useRef<HTMLInputElement | null>(null);
   const appInfoRef = useRef<HTMLDivElement | null>(null);
   const [isHeadless] = useRecoilState<boolean>(defaultIsHeadless);
 
@@ -128,11 +125,9 @@ export const AppForm = ({
 
   const [error, setError] = useState<string | null>(null);
   const [shouldValidate, setShouldValidate] = useState(false);
-  const repoUrlRef = useRef<HTMLInputElement>(null);
   const {
     control,
     handleSubmit,
-    setFocus,
     setValue,
     reset,
     watch,
@@ -295,8 +290,8 @@ export const AppForm = ({
   }, [deployOption, customRef]);
 
   useEffect(() => {
-    if (deployOption === 'git' && repoUrlRef.current) {
-      repoUrlRef.current.focus();
+    if (deployOption === 'git') {
+      document.getElementById('repository.url')?.focus();
     }
   }, [deployOption]);
 
@@ -653,24 +648,26 @@ export const AppForm = ({
       }
     };
 
+    const focusErrorField = (id: string) => {
+      const element = document.getElementById(id);
+      scrollToErrorElement(element);
+      element?.focus();
+    };
+
     setTimeout(() => {
       requestAnimationFrame(() => {
         if (errors.display_name) {
-          scrollToErrorElement(document.getElementById('display_name'));
-          setFocus('display_name');
+          focusErrorField('display_name');
         } else if (errors.framework) {
-          scrollToErrorElement(document.getElementById('framework'));
-          setFocus('framework');
+          focusErrorField('framework');
         } else if (errors.custom_command) {
-          scrollToErrorElement(document.getElementById('custom_command'));
-          setFocus('custom_command');
+          focusErrorField('custom_command');
         } else if (errors.conda_env) {
-          scrollToErrorElement(document.getElementById('conda_env'));
-          setFocus('conda_env');
+          focusErrorField('conda_env');
         }
       });
     }, 0);
-  }, [errors, setFocus]);
+  }, [errors]);
 
   useEffect(() => {
     if (Object.keys(errors).length > 0) {
@@ -698,18 +695,17 @@ export const AppForm = ({
             <Controller
               name="repository.url"
               control={control}
-              render={({ field }) => (
+              render={({ field: { ref, ...field } }) => (
                 <div className="mb-4">
                   <label
                     htmlFor="repository.url"
                     className="mb-1 block text-sm font-medium"
                   >
                     Git Repository URL{' '}
-                    <span className="text-destructive">*</span>
+                    <span className="text-destructive-foreground">*</span>
                   </label>
                   <Input
                     {...field}
-                    ref={repoUrlRef}
                     id="repository.url"
                     placeholder="https://github.com/nebari-dev/jhub-apps-from-git-repo-example.git"
                     required
@@ -717,14 +713,14 @@ export const AppForm = ({
                     value={gitUrl}
                     onChange={(e) => setGitUrl(e.target.value)}
                     disabled={isFetching}
-                    className={cn(
-                      !!error && shouldValidate && 'border-destructive',
-                    )}
+                    aria-invalid={error && shouldValidate ? true : undefined}
                   />
                   <FieldHelper
                     className={cn(
                       'mt-1 block',
-                      !!error && shouldValidate && 'text-destructive',
+                      !!error &&
+                        shouldValidate &&
+                        'text-destructive-foreground',
                     )}
                   >
                     {error && shouldValidate
@@ -736,7 +732,7 @@ export const AppForm = ({
             />
 
             {isFetching && !isUrlValid && (
-              <p className="mb-12 whitespace-pre-wrap text-[#ba18da]">
+              <p className="mb-12 whitespace-pre-wrap text-primary">
                 {displayedText || ' '.repeat(fullText.length)}
               </p>
             )}
@@ -744,7 +740,7 @@ export const AppForm = ({
             <Controller
               name="repository.ref"
               control={control}
-              render={({ field }) => (
+              render={({ field: { ref, ...field } }) => (
                 <div className="mb-4">
                   <label
                     htmlFor="branch"
@@ -766,7 +762,7 @@ export const AppForm = ({
             <Controller
               name="repository.config_directory"
               control={control}
-              render={({ field }) => (
+              render={({ field: { ref, ...field } }) => (
                 <div className="mb-4">
                   <label
                     htmlFor="conda_project_yml"
@@ -804,13 +800,13 @@ export const AppForm = ({
               name="display_name"
               control={control}
               rules={{ required: true }}
-              render={({ field }) => (
+              render={({ field: { ref, ...field } }) => (
                 <div className="mb-4">
                   <label
                     htmlFor="display_name"
                     className="mb-1 block text-sm font-medium"
                   >
-                    Name <span className="text-destructive">*</span>
+                    Name <span className="text-destructive-foreground">*</span>
                   </label>
                   <Input
                     {...field}
@@ -820,7 +816,7 @@ export const AppForm = ({
                     onChange={(e) => setDescription(e.target.value)}
                     required
                     disabled={!isUrlValid}
-                    className={cn(errors.display_name && 'border-destructive')}
+                    aria-invalid={errors.display_name ? true : undefined}
                   />
                   <FieldHelper className="mt-1 block">*Required</FieldHelper>
                 </div>
@@ -830,7 +826,7 @@ export const AppForm = ({
             <Controller
               name="description"
               control={control}
-              render={({ field }) => (
+              render={({ field: { ref, ...field } }) => (
                 <div className="mb-0">
                   <label
                     htmlFor="description"
@@ -840,7 +836,6 @@ export const AppForm = ({
                   </label>
                   <Textarea
                     {...field}
-                    ref={textAreaRef}
                     rows={5}
                     id="description"
                     value={description}
@@ -852,16 +847,14 @@ export const AppForm = ({
                     }}
                     onBlur={field.onBlur}
                     placeholder="Add app description (max. 200 characters)"
-                    className={cn(
-                      description.length > 200 && 'border-destructive',
-                    )}
+                    aria-invalid={description.length > 200 ? true : undefined}
                   />
                   <div className="mt-1 flex justify-end">
                     <span
                       className={cn(
                         'text-xs',
                         description.length > 200
-                          ? 'text-destructive'
+                          ? 'text-destructive-foreground'
                           : 'text-muted-foreground',
                       )}
                     >
@@ -893,20 +886,14 @@ export const AppForm = ({
                     {...field}
                     id="display_name"
                     placeholder="Add app name"
-                    ref={(e) => {
-                      ref(e);
-                      if (errors.display_name) {
-                        firstErrorRef.current = e;
-                      }
-                    }}
                     autoFocus
                     maxLength={255}
-                    className={cn(errors.display_name && 'border-destructive')}
+                    aria-invalid={errors.display_name ? true : undefined}
                   />
                   <FieldHelper
                     className={cn(
                       'mt-1 block',
-                      errors.display_name && 'text-destructive',
+                      errors.display_name && 'text-destructive-foreground',
                     )}
                   >
                     *Required
@@ -918,7 +905,7 @@ export const AppForm = ({
             <Controller
               name="description"
               control={control}
-              render={({ field }) => (
+              render={({ field: { ref, ...field } }) => (
                 <div className="mb-0">
                   <label
                     htmlFor="description"
@@ -928,7 +915,6 @@ export const AppForm = ({
                   </label>
                   <Textarea
                     {...field}
-                    ref={textAreaRef}
                     rows={5}
                     id="description"
                     value={description}
@@ -939,16 +925,14 @@ export const AppForm = ({
                     }}
                     onBlur={field.onBlur}
                     placeholder="Add app description (max. 200 characters)"
-                    className={cn(
-                      description.length > 200 && 'border-destructive',
-                    )}
+                    aria-invalid={description.length > 200 ? true : undefined}
                   />
                   <div className="mt-1 flex justify-end">
                     <span
                       className={cn(
                         'text-xs',
                         description.length > 200
-                          ? 'text-destructive'
+                          ? 'text-destructive-foreground'
                           : 'text-muted-foreground',
                       )}
                     >
@@ -980,11 +964,18 @@ export const AppForm = ({
               >
                 *Framework
               </label>
-              <Select value={field.value || ''} onValueChange={field.onChange}>
+              <Select
+                value={field.value || null}
+                onValueChange={field.onChange}
+                items={frameworks?.map((framework) => ({
+                  value: framework.name,
+                  label: framework.display_name,
+                }))}
+              >
                 <SelectTrigger
                   id="framework"
                   aria-label="Select framework"
-                  className={cn(errors.framework && 'border-destructive')}
+                  aria-invalid={errors.framework ? true : undefined}
                 >
                   <SelectValue placeholder="Select framework" />
                 </SelectTrigger>
@@ -1021,20 +1012,14 @@ export const AppForm = ({
                   {...field}
                   id="custom_command"
                   placeholder="Enter custom command"
-                  ref={(e) => {
-                    ref(e);
-                    if (errors.custom_command) {
-                      firstErrorRef.current = e;
-                    }
-                  }}
                   autoFocus={!!errors.custom_command}
                   maxLength={255}
-                  className={cn(errors.custom_command && 'border-destructive')}
+                  aria-invalid={errors.custom_command ? true : undefined}
                 />
                 <FieldHelper
                   className={cn(
                     'mt-1 block',
-                    errors.custom_command && 'text-destructive',
+                    errors.custom_command && 'text-destructive-foreground',
                   )}
                 >
                   *Required
@@ -1062,13 +1047,13 @@ export const AppForm = ({
                   *Software Environment
                 </label>
                 <Select
-                  value={field.value || ''}
+                  value={field.value || null}
                   onValueChange={field.onChange}
                 >
                   <SelectTrigger
                     id="conda_env"
                     aria-label="Select software environment"
-                    className={cn(errors.conda_env && 'border-destructive')}
+                    aria-invalid={errors.conda_env ? true : undefined}
                   >
                     <SelectValue placeholder="Select software environment" />
                   </SelectTrigger>
@@ -1102,27 +1087,36 @@ export const AppForm = ({
                 {...field}
                 id="filepath"
                 placeholder='Enter the path to the file, e.g. "/shared/users/panel_basic.py"'
-                className={cn(errors.filepath && 'border-destructive')}
+                aria-invalid={errors.filepath ? true : undefined}
               />
             </div>
           )}
         />
 
         <div className="flex flex-row items-center">
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Info className="relative top-1 mr-1 h-4 w-4 text-[#0F10158F]" />
-              </TooltipTrigger>
-              <TooltipContent side="bottom" align="start">
-                <span className="text-[10px] font-semibold">
-                  Keep alive prevents the app from being suspended even when not
-                  in active use. Your app will be instantly available, but it
-                  will consume resources until manually stopped.
-                </span>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger
+              // Plain <button> + buttonVariants so Base UI receives the anchor
+              // ref (dropped by the registry <Button> on React 18).
+              render={
+                <button
+                  type="button"
+                  className={cn(
+                    buttonVariants({ variant: 'ghost', size: 'icon-xs' }),
+                    'text-muted-foreground hover:bg-transparent',
+                  )}
+                />
+              }
+              aria-label="About keep alive"
+            >
+              <Info className="size-4" />
+            </TooltipTrigger>
+            <TooltipContent side="bottom" align="start">
+              Keep alive prevents the app from being suspended even when not in
+              active use. Your app will be instantly available, but it will
+              consume resources until manually stopped.
+            </TooltipContent>
+          </Tooltip>
           <Controller
             name="keep_alive"
             control={control}
@@ -1201,22 +1195,23 @@ export const AppForm = ({
         <div className="next">
           <Button
             id="submit-btn"
-            type="submit"
+            // The registry Button's default render element is
+            // <button type="button" /> and render-element props win, so a
+            // submit button must be requested through `render`.
+            render={<button type="submit" />}
             variant="default"
+            loading={isProcessing}
             disabled={
               frameworksLoading ||
               environmentsLoading ||
               profilesLoading ||
               submitting ||
-              isProcessing ||
               description.length > 200 ||
               (!isDirty && isEditMode && !hasChanges) ||
               !isValid
             }
           >
-            {isProcessing ? (
-              <Loader2 className="h-6 w-6 animate-spin text-[#ba18da]" />
-            ) : profiles && profiles.length > 0 ? (
+            {profiles && profiles.length > 0 ? (
               <>Next</>
             ) : id ? (
               <>Save</>

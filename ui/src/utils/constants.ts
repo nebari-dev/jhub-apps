@@ -12,3 +12,7 @@ export const SORT_TYPES = ['Recently modified', 'Name: A-Z', 'Name: Z-A'];
 export const SERVER_STATUSES = ['Running', 'Ready', 'Pending', 'Unknown'];
 
 export const APP_TO_START_KEY = 'startAppId';
+
+// localStorage key for the light/dark/system preference. Pre-dates the
+// @nebari/use-theme-preference hook; kept so existing users keep their choice.
+export const THEME_STORAGE_KEY = 'jhub-apps:color-mode';

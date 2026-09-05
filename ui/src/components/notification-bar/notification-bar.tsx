@@ -1,11 +1,15 @@
-import { Alert } from '@src/components/ui/alert';
-import { X } from 'lucide-react';
+import { Alert, AlertAction, AlertDescription } from '@src/components/ui/alert';
+import { Button } from '@src/components/ui/button';
+import { cn } from '@src/lib/utils';
+import { CircleCheck, CircleX, Info, TriangleAlert, X } from 'lucide-react';
+
+type Severity = 'error' | 'warning' | 'info' | 'success';
 
 interface NotificationBarProps {
   /**
    * The severity of the notification
    */
-  severity?: 'error' | 'warning' | 'info' | 'success';
+  severity?: Severity;
   /**
    * The message to display in the notification
    */
@@ -16,6 +20,25 @@ interface NotificationBarProps {
   onClose?: () => void;
 }
 
+// The registry Alert has no `info` variant; it maps to `default` plus the
+// theme's info tokens at the call site (className is merged with cn()).
+const alertVariant: Record<
+  Severity,
+  'destructive' | 'warning' | 'default' | 'success'
+> = {
+  error: 'destructive',
+  warning: 'warning',
+  info: 'default',
+  success: 'success',
+};
+
+const severityIcon: Record<Severity, React.ReactNode> = {
+  error: <CircleX aria-hidden="true" />,
+  warning: <TriangleAlert aria-hidden="true" />,
+  info: <Info aria-hidden="true" />,
+  success: <CircleCheck aria-hidden="true" />,
+};
+
 export const NotificationBar = ({
   severity = 'error',
   message,
@@ -25,24 +48,35 @@ export const NotificationBar = ({
     <div className="w-full px-[30px] pb-[25px]">
       <Alert
         id="alert-notification"
-        variant={severity}
+        // Notifications interrupt regardless of severity (they replace the
+        // previous MUI snackbar), so keep the assertive role for all of them.
+        role="alert"
+        variant={alertVariant[severity]}
         data-severity={severity}
+        className={cn(
+          'p-3',
+          severity === 'info' &&
+            'border-info-foreground bg-info text-info-foreground *:data-[slot=alert-description]:text-info-foreground',
+        )}
       >
-        <div className="flex items-start justify-between gap-3">
-          <div className="flex-1" data-testid="alert-message">
-            {message}
-          </div>
-          {onClose ? (
-            <button
+        {severityIcon[severity]}
+        <AlertDescription data-testid="alert-message">
+          {message}
+        </AlertDescription>
+        {onClose ? (
+          <AlertAction className="top-1.5 right-1.5">
+            <Button
               type="button"
+              variant="ghost"
+              size="icon-sm"
               aria-label="Close"
               onClick={onClose}
-              className="-mr-1 -mt-1 inline-flex h-7 w-7 cursor-pointer items-center justify-center rounded-md border-0 bg-transparent p-0 text-current opacity-70 hover:opacity-100 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring"
+              className="text-current hover:bg-transparent hover:opacity-70 active:bg-transparent"
             >
-              <X className="h-4 w-4" />
-            </button>
-          ) : null}
-        </div>
+              <X />
+            </Button>
+          </AlertAction>
+        ) : null}
       </Alert>
     </div>
   );

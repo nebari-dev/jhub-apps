@@ -205,40 +205,65 @@ a:focus {
 }
 
 /* Navbar */
+/* Light-mode neutrals from the design registry (registry/nebari/globals.css),
+   the same values ui/src/index.css resolves, so the server-rendered chrome and
+   the React launcher draw identical borders, raised surfaces and muted text.
+   The dark counterparts live with the other dark tokens further down. */
+:root {
+    --navbar-border-color: oklch(78.06% 0.0056 286.27); /* --border, zinc-300 */
+    --raised-background-color: oklch(100% 0 0); /* --card, white */
+    --muted-text-color: oklch(54.86% 0.0154 285.88); /* --muted-foreground, zinc-600 */
+}
+
 .nav {
     margin-left: 10px;
 }
 
+/* Match the React launcher header (#app-bar in
+   ui/src/components/navigation/navigation.tsx): 56px tall (h-14), flush against
+   the page with no top padding. */
 .navbar {
-    height: 64px;
-    padding-top: 10px;
+    height: 56px;
+    /* Bootstrap's own navbar padding (--bs-navbar-padding-y) would otherwise
+       shrink the content box and push the logo above centre. */
+    padding-top: 0;
+    padding-bottom: 0;
 }
 
+/* The React header separates itself from the page with a 1px bottom border in
+   the --border token (the MenuBar's border-b), not a drop shadow. */
 .navbar.navbar-default {
     background: var(--navbar-background-color);
-    box-shadow: 0px 1.5px 3px 0px rgba(72, 74, 94, 0.16);
-    border: None;
+    box-shadow: none;
+    border: none;
+    border-bottom: 1px solid var(--navbar-border-color);
 }
 
-/* Align the logo (and profile menu) with the React launcher header, which pads
-   its toolbar by 24px (px-6), 16px on narrow viewports. Bootstrap's
-   .container-fluid defaults to ~12px, leaving the logo too far left. */
+/* Center the logo and profile menu on the bar's cross axis, the way the React
+   header's flex row does. Bootstrap's floats leave children of differing
+   heights (a 32px logo, a ~40px profile menu) sitting at different offsets.
+   Padding mirrors the React header: 16px leading (pl-4), 12px trailing (the
+   MenuBar's px-3). */
 .navbar.navbar-default .container-fluid {
-    padding-left: 24px;
-    padding-right: 24px;
+    display: flex;
+    align-items: center;
+    height: 100%;
+    padding-left: 16px;
+    padding-right: 12px;
 }
 
-@media only screen and (max-width: 640px) {
-    .navbar.navbar-default .container-fluid {
-        padding-left: 16px;
-        padding-right: 16px;
-    }
+/* Floats no longer apply inside the flex row, so push the profile menu to the
+   trailing edge explicitly. */
+.navbar.navbar-default .container-fluid .navbar-collapse {
+    margin-left: auto;
 }
 
-/* Remove the inline image's baseline gap, which left the logo sitting a pixel
-   or two lower than the flex-centered logo on the React launcher header. */
+/* Sized to the React header's logo (h-8 w-auto). display:block also drops the
+   inline image's baseline gap. */
 .navbar.navbar-default #jupyterhub-logo img {
     display: block;
+    height: 32px;
+    width: auto;
 }
 
 .navbar.navbar-default .navbar-nav > li > a,
@@ -368,6 +393,11 @@ a:focus {
 }
 
 /* Misc */
+/* Matches the React launcher's version bar (see .version in ui/src/index.css):
+   the card surface with muted text at 13px, not brand-coloured 16px text on
+   white. `bottom` stays 0 here rather than tracking --bottom-banner-height --
+   these pages have no React banner, so the banner script in page.html raises
+   the bar imperatively instead. */
 .version {
     position: fixed;
     bottom: 0;
@@ -375,13 +405,13 @@ a:focus {
     z-index: 10001; /* Make sure it does not overlap */
     width: 100%;
     padding: 5px 20px;
-    background-color: #fff;
-    color: var(--primary-color);
+    background-color: var(--raised-background-color);
+    color: var(--muted-text-color);
     text-align: start;
-    font-size: 1rem;
+    font-size: 0.8125rem;
     font-family: var(--base-font-family);
     word-wrap: break-word;
-    border-top: 1px solid #e6e6e6;
+    border-top: 1px solid var(--navbar-border-color);
 }
 
 /* Ensures admin dashboard server thumbnails with base64 encoded image text do not blow up the page width */
@@ -400,38 +430,42 @@ a:focus {
 
    Brand colors (--primary-color, --secondary-color, --accent-color) come from
    the runtime theme and read well on dark, so they're reused as-is. Only the
-   neutral surface and text tokens are overridden, matching the values in
-   ui/src/index.css so the launcher and these pages agree. These selectors
-   (html[data-bs-theme="dark"]) outrank theme.css's :root block, so the
-   var() consumers throughout this file flip automatically. */
+   neutral surface and text tokens are overridden; the surface values are the
+   design registry's, the same ones ui/src/index.css resolves, so the launcher
+   and these pages agree. These selectors (html[data-bs-theme="dark"]) outrank
+   theme.css's :root block, so the var() consumers throughout this file flip
+   automatically. */
 html[data-bs-theme="dark"] {
     --text-color: hsl(200 14% 96%);
     --heading-color: hsl(200 14% 96%);
     --h2-color: hsl(200 14% 96%);
     --link-text-color: hsl(210 90% 72%);
-    --navbar-background-color: hsl(240 3% 21.4%);
     --navbar-text-color: hsl(200 14% 96%);
     --navbar-hover-color: rgba(255, 255, 255, 0.08);
+
+    /* Nebari dark surface stack, copied verbatim from the design registry
+       (registry/nebari/globals.css) so these cannot drift from the values the
+       React launcher resolves. Order of the stack, lightest last:
+         canvas (the page) -> header (chrome) -> card (raised) -> border.
+       These three are consumed only by the dark-scoped rules below. */
+    --page-background-color: oklch(21.86% 0.0039 286.08); /* --canvas, zinc-975 */
+    --navbar-background-color: oklch(26.94% 0.0037 286.15); /* --header, zinc-950 */
+    --raised-background-color: oklch(33.01% 0.0052 286.11); /* --card, zinc-900 */
+    --navbar-border-color: oklch(47.01% 0.0112 285.96); /* --border, zinc-700 */
+    --muted-text-color: oklch(69.88% 0.0130 286.06); /* --muted-foreground, zinc-400 */
 }
 
 /* Safety net for the page background: guarantees the dark surface even if
    JupyterHub's base stylesheet hardcodes a light body background. */
 [data-bs-theme="dark"] body {
-    background-color: hsl(240 3% 15.3%);
+    background-color: var(--page-background-color);
     color: var(--text-color);
-}
-
-/* Header: match the React launcher's dark navbar (card surface, a bottom
-   border instead of the drop shadow). */
-[data-bs-theme="dark"] .navbar.navbar-default {
-    box-shadow: none;
-    border-bottom: 1px solid hsl(240 4% 37%);
 }
 
 /* Surfaces that were hardcoded light in the rules above. */
 [data-bs-theme="dark"] .btn-secondary,
 [data-bs-theme="dark"] .btn-secondary:hover {
-    background-color: hsl(240 3% 21.4%) !important;
+    background-color: var(--raised-background-color) !important;
 }
 
 [data-bs-theme="dark"] .btn-secondary:hover {
@@ -439,8 +473,8 @@ html[data-bs-theme="dark"] {
 }
 
 [data-bs-theme="dark"] .menu {
-    background-color: hsl(240 3% 15.3%);
-    border-color: hsl(240 4% 37%);
+    background-color: var(--raised-background-color);
+    border-color: var(--navbar-border-color);
 }
 
 [data-bs-theme="dark"] .menu li a {
@@ -449,11 +483,6 @@ html[data-bs-theme="dark"] {
 
 [data-bs-theme="dark"] .menu li:hover {
     background-color: rgba(255, 255, 255, 0.06);
-}
-
-[data-bs-theme="dark"] .version {
-    background-color: hsl(240 3% 21.4%);
-    border-top-color: hsl(240 4% 37%);
 }
 
 /* Logo: mirror the React header. The default Nebari lockup swaps to its
@@ -505,8 +534,11 @@ html[data-bs-theme="dark"] {
     color: #ffffff;
 }
 
+/* The banner inverts: a near-white fill with dark text. Mirrors the React
+   banner's `bg-foreground text-background` fallback, so this is --background
+   (which the registry sets to the same value as --header in dark). */
 [data-bs-theme="dark"] .jhub-banner {
-    color: hsl(240 3% 15.3%);
+    color: oklch(26.94% 0.0037 286.15);
 }
 
 .jhub-banner-bottom {
