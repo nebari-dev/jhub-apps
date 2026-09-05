@@ -1,6 +1,16 @@
-import { Alert } from '@src/components/ui/alert';
-import { Button } from '@src/components/ui/button';
-import { Combobox } from '@src/components/ui/combobox';
+import { Alert, AlertDescription } from '@src/components/ui/alert';
+import { Button, buttonVariants } from '@src/components/ui/button';
+import {
+  Combobox,
+  ComboboxChip,
+  ComboboxChips,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxList,
+  ComboboxValue,
+} from '@src/components/ui/combobox';
 import { DataTablePagination } from '@src/components/ui/data-table-pagination';
 import { InputWithIcon } from '@src/components/ui/input-with-icon';
 import { Switch } from '@src/components/ui/switch';
@@ -13,9 +23,9 @@ import {
 import {
   Tooltip,
   TooltipContent,
-  TooltipProvider,
   TooltipTrigger,
 } from '@src/components/ui/tooltip';
+import { cn } from '@src/lib/utils';
 import type { SharePermissions } from '@src/types/api';
 import type { AppSharingItem } from '@src/types/form';
 import type { UserState } from '@src/types/user';
@@ -57,9 +67,14 @@ export const AppSharing = ({
   const [rowsPerPage] = useState(5);
   const [selectedValue, setSelectedValue] = useState<AppSharingItem[]>([]);
 
+  const getOptionLabel = (option: AppSharingItem) =>
+    option.type === 'user' ? option.name : `${option.name} (Group)`;
+  const getOptionKey = (option: AppSharingItem) =>
+    `${option.type}:${option.name}`;
+
   const sortedPermissions = availablePermissions.sort((a, b) => {
-    const labelA = a.type === 'user' ? a.name : `${a.name} (Group)`;
-    const labelB = b.type === 'user' ? b.name : `${b.name} (Group)`;
+    const labelA = getOptionLabel(a);
+    const labelB = getOptionLabel(b);
 
     if (a.type === 'user' && b.type !== 'user') {
       return -1;
@@ -137,16 +152,9 @@ export const AppSharing = ({
       {currentUser?.share_permissions ? (
         <>
           <div>
-            <Alert
-              id="sharing-notification"
-              variant="warning"
-              className="relative mb-4 pl-12"
-            >
-              <TriangleAlert
-                className="absolute left-4 top-4 h-5 w-5"
-                style={{ color: '#EAB54E' }}
-              />
-              {message}
+            <Alert id="sharing-notification" variant="warning" className="mb-4">
+              <TriangleAlert aria-hidden="true" />
+              <AlertDescription>{message}</AlertDescription>
             </Alert>
           </div>
           <div className="pb-2">
@@ -158,25 +166,52 @@ export const AppSharing = ({
                 className="flex flex-row justify-start"
                 style={{ width: 510 }}
               >
-                <Combobox<AppSharingItem>
+                <Combobox
                   id="share-permissions-autocomplete"
-                  options={sortedPermissions}
+                  items={sortedPermissions}
                   value={selectedValue}
                   multiple
-                  getOptionLabel={(option) =>
-                    option.type === 'user'
-                      ? option.name
-                      : `${option.name} (Group)`
+                  itemToStringLabel={getOptionLabel}
+                  itemToStringValue={getOptionKey}
+                  isItemEqualToValue={(a, b) =>
+                    getOptionKey(a) === getOptionKey(b)
                   }
-                  getOptionKey={(option) => `${option.type}:${option.name}`}
-                  placeholder="Search one or more usernames or group names"
-                  searchPlaceholder="Search…"
-                  triggerClassName="border-input"
-                  onChange={(value) => {
+                  onValueChange={(value) => {
                     setCurrentShare(value);
                     setSelectedValue(value);
                   }}
-                />
+                >
+                  <ComboboxChips>
+                    <ComboboxValue>
+                      {(value: AppSharingItem[]) =>
+                        value.map((item) => (
+                          <ComboboxChip key={getOptionKey(item)}>
+                            {getOptionLabel(item)}
+                          </ComboboxChip>
+                        ))
+                      }
+                    </ComboboxValue>
+                    <ComboboxInput
+                      id="share-permissions-input"
+                      aria-label="Search usernames or group names"
+                      placeholder={
+                        selectedValue.length === 0
+                          ? 'Search one or more usernames or group names'
+                          : undefined
+                      }
+                    />
+                  </ComboboxChips>
+                  <ComboboxContent>
+                    <ComboboxEmpty />
+                    <ComboboxList>
+                      {(item: AppSharingItem) => (
+                        <ComboboxItem key={getOptionKey(item)} value={item}>
+                          {getOptionLabel(item)}
+                        </ComboboxItem>
+                      )}
+                    </ComboboxList>
+                  </ComboboxContent>
+                </Combobox>
               </div>
               <div className="my-auto flex flex-row justify-end">
                 <Button
@@ -184,7 +219,6 @@ export const AppSharing = ({
                   variant="default"
                   onClick={handleShare}
                   disabled={currentShare.length === 0}
-                  className="h-[42px] px-[22px] py-2"
                 >
                   Share
                 </Button>
@@ -193,12 +227,16 @@ export const AppSharing = ({
           </div>
           {currentItems.length > 0 ? (
             <div className="pb-5">
-              <Table aria-label="Individuals and Groups">
+              <Table
+                aria-label="Individuals and Groups"
+                scrollContainerClassName="rounded-none border-0 bg-transparent"
+                className="bg-transparent"
+              >
                 <TableBody>
                   {pagedItems.map((item) => (
                     <TableRow
                       key={item.name}
-                      className="hover:bg-transparent [&>td]:border-0 [&>td]:px-2 [&>td]:py-1"
+                      className="hover:bg-transparent [&>td]:h-auto [&>td]:px-2 [&>td]:py-1"
                     >
                       <TableCell className="text-base">
                         {item.name}{' '}
@@ -211,7 +249,7 @@ export const AppSharing = ({
                           type="button"
                           variant="ghost"
                           size="sm"
-                          className="text-destructive font-semibold text-sm hover:bg-transparent hover:text-destructive"
+                          className="text-destructive-foreground hover:text-destructive-foreground"
                           onClick={() => {
                             setCurrentItems((prev) =>
                               prev.filter((i) => i.name !== item.name),
@@ -284,7 +322,7 @@ export const AppSharing = ({
           {isPublic ? (
             <p className="text-sm">
               This app is accessible to{' '}
-              <span className="text-destructive">
+              <span className="text-destructive-foreground">
                 anyone via its link and sign in is not required.
               </span>
             </p>
@@ -297,37 +335,42 @@ export const AppSharing = ({
         </div>
         {url ? (
           <div className="p-4 pt-0">
-            <TooltipProvider>
-              <Tooltip open={tooltipOpen} onOpenChange={setTooltipOpen}>
-                <InputWithIcon
-                  id="sharing-link"
-                  placeholder="http://"
-                  aria-label="Sharing link"
-                  readOnly
-                  value={getFullAppUrl(url)}
-                  endIcon={
-                    <TooltipTrigger asChild>
+            <Tooltip open={tooltipOpen} onOpenChange={setTooltipOpen}>
+              <InputWithIcon
+                id="sharing-link"
+                placeholder="http://"
+                aria-label="Sharing link"
+                readOnly
+                value={getFullAppUrl(url)}
+                endIcon={
+                  <TooltipTrigger
+                    // Plain <button> + buttonVariants so Base UI receives the
+                    // anchor ref (dropped by the registry <Button> on React 18).
+                    render={
                       <button
                         type="button"
-                        id="copy-to-clipboard"
-                        aria-label="Copy to clipboard"
-                        className="pointer-events-auto inline-flex h-6 w-6 cursor-pointer items-center justify-center rounded border-0 bg-transparent text-muted-foreground hover:text-foreground"
-                        onClick={() => {
-                          // istanbul ignore next
-                          if (url && window.isSecureContext) {
-                            navigator.clipboard.writeText(getFullAppUrl(url));
-                            setTooltipOpen(true);
-                          }
-                        }}
-                      >
-                        <Copy className="h-4 w-4" />
-                      </button>
-                    </TooltipTrigger>
-                  }
-                />
-                <TooltipContent side="top">Copied to clipboard!</TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+                        className={cn(
+                          buttonVariants({ variant: 'ghost', size: 'icon-xs' }),
+                          'pointer-events-auto text-muted-foreground hover:text-foreground',
+                        )}
+                      />
+                    }
+                    id="copy-to-clipboard"
+                    aria-label="Copy to clipboard"
+                    onClick={() => {
+                      // istanbul ignore next
+                      if (url && window.isSecureContext) {
+                        navigator.clipboard.writeText(getFullAppUrl(url));
+                        setTooltipOpen(true);
+                      }
+                    }}
+                  >
+                    <Copy />
+                  </TooltipTrigger>
+                }
+              />
+              <TooltipContent side="top">Copied to clipboard!</TooltipContent>
+            </Tooltip>
           </div>
         ) : null}
       </div>

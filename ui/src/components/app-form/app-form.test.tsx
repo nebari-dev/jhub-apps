@@ -604,8 +604,10 @@ describe('AppForm', () => {
       </RecoilRoot>,
     );
 
+    // Base UI applies `id` to the switch's hidden <input>; the toggle itself is
+    // the role="switch" button carrying aria-checked.
     const switchInput = baseElement.querySelector(
-      '#keep_alive',
+      '[role="switch"]',
     ) as HTMLButtonElement;
 
     if (switchInput) {

@@ -270,3 +270,11 @@ backend theme value does not require rebuilding the frontend bundle.
   3. The UI sets those variables on `document.documentElement`.
   4. Tailwind color/font tokens consume the variables (for example,
      `bg-primary` resolves through `--primary-color`).
+- **Defaults**: `themes.DEFAULT_THEME` only sets the logo, favicon and font.
+  Colours default to the [Nebari design system](https://github.com/nebari-dev/nebari-design)
+  theme built into the UI, which includes matching light and dark palettes;
+  a colour you set (e.g. `primary_color`) overrides the corresponding token in
+  both modes, while `navbar_color`, `navbar_text_color`, `navbar_hover_color`
+  and `text_color` apply to light mode only. Server-rendered JupyterHub pages
+  (login, spawn, admin) have no dark mode and fall back to hex renderings of the
+  same Nebari colours via `/services/japps/theme.css`.

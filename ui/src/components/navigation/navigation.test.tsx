@@ -8,6 +8,8 @@ import userEvent from '@testing-library/user-event';
 import MockAdapter from 'axios-mock-adapter';
 import { BrowserRouter } from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
+import { ThemeProvider } from '@src/hooks/theme-provider';
+import { THEME_STORAGE_KEY } from '@src/utils/constants';
 import { Navigation } from '..';
 import {
   isHeadless as defaultIsHeadless,
@@ -33,13 +35,15 @@ describe('Navigation', () => {
 
   test('renders default top navigation successfully', () => {
     const { baseElement } = render(
+      <ThemeProvider storageKey={THEME_STORAGE_KEY}>
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
             <Navigation />
           </BrowserRouter>
         </QueryClientProvider>
-      </RecoilRoot>,
+      </RecoilRoot>
+      </ThemeProvider>,
     );
 
     expect(baseElement.querySelector('#toolbar')).toBeTruthy();
@@ -50,13 +54,15 @@ describe('Navigation', () => {
     queryClient.setQueryData(['service-data'], servicesFull);
 
     const { baseElement } = render(
+      <ThemeProvider storageKey={THEME_STORAGE_KEY}>
       <RecoilRoot initializeState={({ set }) => set(defaultUser, currentUser)}>
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
             <Navigation />
           </BrowserRouter>
         </QueryClientProvider>
-      </RecoilRoot>,
+      </RecoilRoot>
+      </ThemeProvider>,
     );
 
     expect(baseElement.querySelector('[data-testid="nav-drawer"]')).toBeTruthy();
@@ -70,13 +76,15 @@ describe('Navigation', () => {
     queryClient.setQueryData(['app-state'], serverApps);
 
     const { baseElement } = render(
+      <ThemeProvider storageKey={THEME_STORAGE_KEY}>
       <RecoilRoot initializeState={({ set }) => set(defaultUser, currentUser)}>
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
             <Navigation />
           </BrowserRouter>
         </QueryClientProvider>
-      </RecoilRoot>,
+      </RecoilRoot>
+      </ThemeProvider>,
     );
 
     expect(baseElement.querySelector('[data-testid="nav-drawer"]')).toBeTruthy();
@@ -87,24 +95,28 @@ describe('Navigation', () => {
     mock.onGet(new RegExp('/services')).reply(500, { message: 'Some error' });
     queryClient.setQueryData(['service-data'], null);
     const { baseElement } = render(
+      <ThemeProvider storageKey={THEME_STORAGE_KEY}>
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
           <Navigation />
         </QueryClientProvider>
-      </RecoilRoot>,
+      </RecoilRoot>
+      </ThemeProvider>,
     );
     expect(baseElement.querySelectorAll('nav li')).not.toHaveLength(0);
   });
 
   test('does not render navigation when headless', async () => {
     const { baseElement } = render(
+      <ThemeProvider storageKey={THEME_STORAGE_KEY}>
       <RecoilRoot initializeState={({ set }) => set(defaultIsHeadless, true)}>
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
             <Navigation />
           </BrowserRouter>
         </QueryClientProvider>
-      </RecoilRoot>,
+      </RecoilRoot>
+      </ThemeProvider>,
     );
 
     waitFor(() => {
@@ -118,11 +130,13 @@ describe('Navigation', () => {
   test('handles profile menu click', async () => {
     const user = userEvent.setup();
     const { baseElement } = render(
+      <ThemeProvider storageKey={THEME_STORAGE_KEY}>
       <RecoilRoot initializeState={({ set }) => set(defaultUser, currentUser)}>
         <QueryClientProvider client={queryClient}>
           <Navigation />
         </QueryClientProvider>
-      </RecoilRoot>,
+      </RecoilRoot>
+      </ThemeProvider>,
     );
     const button = baseElement.querySelector(
       '#profile-menu-btn',
@@ -152,11 +166,13 @@ describe('Navigation', () => {
     document.documentElement.classList.remove('dark');
     const user = userEvent.setup();
     const { baseElement } = render(
+      <ThemeProvider storageKey={THEME_STORAGE_KEY}>
       <RecoilRoot initializeState={({ set }) => set(defaultUser, currentUser)}>
         <QueryClientProvider client={queryClient}>
           <Navigation />
         </QueryClientProvider>
-      </RecoilRoot>,
+      </RecoilRoot>
+      </ThemeProvider>,
     );
 
     await user.click(
@@ -176,7 +192,7 @@ describe('Navigation', () => {
     await waitFor(() => {
       expect(document.documentElement.classList.contains('dark')).toBe(true);
     });
-    expect(window.localStorage.getItem('jhub-apps:color-mode')).toBe('dark');
+    expect(window.localStorage.getItem(THEME_STORAGE_KEY)).toBe('dark');
 
     // The profile menu items remain unchanged aside from the added toggle.
     expect(

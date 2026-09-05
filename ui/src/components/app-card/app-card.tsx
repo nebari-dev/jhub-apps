@@ -4,7 +4,6 @@ import { Card } from '@src/components/ui/card';
 import {
   Tooltip,
   TooltipContent,
-  TooltipProvider,
   TooltipTrigger,
 } from '@src/components/ui/tooltip';
 import type { AppProfileProps } from '@src/types/api';
@@ -213,7 +212,7 @@ export const AppCard = ({
 
   return (
     <div
-      className={`card border-0 ${isAppCard ? '' : 'service'}`}
+      className={`card relative border-0 ${isAppCard ? '' : 'service'}`}
       id={`card-${id}`}
     >
       <a
@@ -243,7 +242,9 @@ export const AppCard = ({
         <Card
           id={`card-${id}`}
           tabIndex={0}
-          className="relative h-full rounded border-0 shadow-md overflow-hidden dark:border dark:border-border dark:shadow-none"
+          // The registry Card is a padded, gapped column; this card paints its
+          // own header/body layout, so zero those out at the call site.
+          className="relative h-full gap-0 rounded-md border-0 py-0 shadow-md dark:border dark:border-border dark:shadow-none"
         >
           <div
             className={`card-content-header ${isAppCard ? '' : 'card-content-header-service'}`}
@@ -259,11 +260,6 @@ export const AppCard = ({
                     />
                   </div>
                 </div>
-                <ContextMenu
-                  id={`card-menu-${id}`}
-                  lastModified={lastModified}
-                  items={menuItems}
-                />
               </>
             ) : null}
             <div className="h-full w-full">
@@ -317,21 +313,21 @@ export const AppCard = ({
                   <div className="mt-2 flex items-center gap-2">
                     <span className="iconic shrink-0">{getIcon()}</span>
                     <div className="card-title text-[1rem] font-bold leading-tight">
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
+                      <Tooltip>
+                        <TooltipTrigger
+                          render={
                             <span
                               className="card-content-truncate"
                               style={{ maxWidth: '220px' }}
-                            >
-                              {title}
-                            </span>
-                          </TooltipTrigger>
-                          <TooltipContent side="top" align="start">
-                            {title}
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
+                            />
+                          }
+                        >
+                          {title}
+                        </TooltipTrigger>
+                        <TooltipContent side="top" align="start">
+                          {title}
+                        </TooltipContent>
+                      </Tooltip>
                     </div>
                   </div>
                   <div className="card-description mt-2 text-xs text-muted-foreground">
@@ -362,6 +358,16 @@ export const AppCard = ({
           </div>
         </Card>
       </a>
+      {/* Rendered as a sibling of the card link (absolutely positioned over
+          its header by .context-menu) so the menu button is not nested inside
+          an <a>, which would make every click navigate. */}
+      {framework ? (
+        <ContextMenu
+          id={`card-menu-${id}`}
+          lastModified={lastModified}
+          items={menuItems}
+        />
+      ) : null}
     </div>
   );
 };

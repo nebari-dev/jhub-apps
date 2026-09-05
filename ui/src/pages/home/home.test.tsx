@@ -1,4 +1,4 @@
-import { Toaster } from '@src/components/ui/sonner';
+import { Toaster } from '@src/components/ui/toast';
 import { app, apps } from '@src/data/api';
 import { currentUser } from '@src/data/user';
 import axios from '@src/utils/axios';
@@ -764,11 +764,13 @@ describe('Home', () => {
       startBtn.click();
     });
 
+    // Error toasts are also mirrored into a visually hidden role="alert"
+    // region, so the message appears twice.
     await waitFor(() => {
       expect(
-        within(document.body).getByText(
+        within(document.body).getAllByText(
           /You don't have permission to start this app. Please ask the owner to start it./,
-        ),
+        )[0],
       ).toBeInTheDocument();
     });
   });
@@ -814,9 +816,9 @@ describe('Home', () => {
 
     await waitFor(() => {
       expect(
-        within(document.body).getByText(
+        within(document.body).getAllByText(
           /You don't have permission to stop this app. Please ask the owner/,
-        ),
+        )[0],
       ).toBeInTheDocument();
     });
   });

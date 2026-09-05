@@ -1,291 +1,441 @@
-/* JupyterHub's wrapper template bundles Bootstrap 5, whose utilities
-   (.bg-primary, .text-primary, .border-primary, etc.) collide with Tailwind's
-   and are declared `!important`. The `important` flag marks Tailwind utilities
-   `!important` too, so the later-loaded index.css wins the tie on source order
-   and theming (along with every other utility) applies over Bootstrap. */
+/* Tailwind utilities are emitted with `!important`. Historically this beat
+   JupyterHub's bundled Bootstrap 5, whose utilities share names (.bg-primary,
+   .text-primary, …) and are themselves `!important`. The React pages no longer
+   load Bootstrap's stylesheet, but the flag is kept: the app's own
+   per-component CSS (src/** / *.css) is written assuming utilities win, and
+   utilities also beat React inline `style={}` (see banner.tsx). */
 @import "tailwindcss" important;
 
-/* v4-native replacement for the tailwindcss-animate plugin: supplies the
-   animate-in / animate-out / fade-* / zoom-* / slide-* utilities that the
-   shadcn overlay components (dialog, sheet, popover, select, dropdown) use. */
-@import "tw-animate-css";
-
-@layer base {
-  /* `animate-out` runs the `exit` keyframes with animation-fill-mode: none, and
-     `exit` declares only a `to` state. So the moment the animation finishes the
-     animated values are dropped and the element repaints at full opacity — one
-     visible flash before Radix unmounts it on animationend. Measured on a
-     closing dropdown: opacity 0.001 at 141ms, then 1 at 150ms, then removed at
-     158ms. Holding the last frame removes the flash.
-
-     Applied here rather than as a `fill-mode-forwards` utility on each overlay
-     so components re-added via `npx shadcn add` are covered too. Scoped to the
-     closed state, so entrances are untouched, and inert on the many elements
-     that carry data-state without an exit animation (triggers, checked items).
-     Kept in `base` so an explicit fill-mode-* utility still wins. */
-  [data-state="closed"] {
-    --tw-animation-fill-mode: forwards;
-  }
-}
-
-/* Dark mode is toggled by a `.dark` class on <html> (see src/theme), not by
-   the OS preference, so replace v4's default prefers-color-scheme variant. */
+/* Dark mode is toggled by a `.dark` class on <html> (see
+   src/hooks/use-theme-preference.ts, installed from @nebari/use-theme-preference),
+   not by the OS preference, so replace v4's default prefers-color-scheme variant. */
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  /* Match the MUI default breakpoints currently in use. v4 ships its own
-     defaults additively, so clear them first — otherwise `2xl` (and any future
-     built-in) would leak in on top of this list. */
+  /* Layout breakpoints the page shell (header, sidebar, grid) was built
+     against. v4 ships its own defaults additively, so clear them first —
+     otherwise `2xl` (and any future built-in) would leak in on top of this list. */
   --breakpoint-*: initial;
   --breakpoint-sm: 600px;
   --breakpoint-md: 900px;
   --breakpoint-lg: 1200px;
   --breakpoint-xl: 1536px;
-
-  /* Type scale nudged down ~6% from Tailwind's defaults for a slightly more
-     compact, MUI-like feel without shrinking body text too far. Applies across
-     every text-* utility; paired line-heights are scaled proportionally. The
-     inherited default (non-utility text) is reduced to match further down.
-     Overrides only xs–5xl; 6xl and up keep Tailwind's defaults. */
-  --text-xs: 0.6875rem; /* 12 -> 11 */
-  --text-xs--line-height: 1rem;
-  --text-sm: 0.8125rem; /* 14 -> 13 */
-  --text-sm--line-height: 1.25rem;
-  --text-base: 0.9375rem; /* 16 -> 15 */
-  --text-base--line-height: 1.5rem;
-  --text-lg: 1.0625rem; /* 18 -> 17 */
-  --text-lg--line-height: 1.75rem;
-  --text-xl: 1.1875rem; /* 20 -> 19 */
-  --text-xl--line-height: 1.75rem;
-  --text-2xl: 1.375rem; /* 24 -> 22 */
-  --text-2xl--line-height: 2rem;
-  --text-3xl: 1.6875rem; /* 30 -> 27 */
-  --text-3xl--line-height: 2.25rem;
-  --text-4xl: 2.0625rem; /* 36 -> 33 */
-  --text-4xl--line-height: 2.5rem;
-  --text-5xl: 2.75rem; /* 48 -> 44 */
-  --text-5xl--line-height: 1;
-
-  /* Raw brand palette mirrors src/theme/colors.tsx so Tailwind classes can
-     render exact MUI palette values during coexistence. */
-  --color-brand-purple: #ba18da;
-  --color-brand-purple-light: #ba18da10;
-  --color-brand-purple-dark: #9b00ce;
-  --color-brand-green: #18817a;
-  --color-brand-green-light: #18817a10;
-  --color-brand-green-dark: #12635e;
-  --color-brand-red: #d72d47;
-  --color-brand-orange: #f66a0a;
-  --color-brand-black: #0f1015;
-  --color-brand-disabled: #0f101561;
-
-  /* `initial` clears v4's built-in gray/blue ramps so undefined keys (950, and
-     the OKLCH values at every shade) can't bleed through this palette. */
-  --color-gray-*: initial;
-  --color-gray-50: rgba(0, 0, 0, 0.08);
-  --color-gray-100: #e1e3e4;
-  --color-gray-200: #eeeeee;
-  --color-gray-300: #e0e0e0;
-  --color-gray-400: #90969c;
-  --color-gray-500: #5b5f63;
-  --color-gray-600: #44474a;
-  --color-gray-700: #3c3c3b;
-  --color-gray-800: #242628;
-  --color-gray-900: #1a1c1d;
-
-  --color-blue-*: initial;
-  --color-blue-50: #fafbfc;
-  --color-blue-100: #2491ff;
-  --color-blue-200: #2491ff;
-  --color-blue-300: #2491ff;
-  --color-blue-400: #2491ff;
-  --color-blue-500: #005ea2;
-  --color-blue-600: #1a4480;
-  --color-blue-700: #1a4480;
-  --color-blue-800: #1a4480;
-  --color-blue-900: #162e51;
-
-  --animate-accordion-down: accordion-down 0.2s ease-out;
-  --animate-accordion-up: accordion-up 0.2s ease-out;
-
-  @keyframes accordion-down {
-    from {
-      height: 0;
-    }
-    to {
-      height: var(--radix-accordion-content-height);
-    }
-  }
-  @keyframes accordion-up {
-    from {
-      height: var(--radix-accordion-content-height);
-    }
-    to {
-      height: 0;
-    }
-  }
 }
 
 /* Everything whose value resolves through *another* CSS variable belongs in an
    `inline` block. Without `inline`, v4 emits e.g. `--color-background:
-   hsl(var(--background))` into :root, so the substitution happens once at :root
-   and every element inherits that one computed colour. A `.dark` class on a
-   nested element then cannot re-resolve it — only the class on <html> works,
-   because <html> is :root. `inline` instead inlines the value into each utility
-   (`background-color: hsl(var(--background))`), so it resolves per element, the
-   way v3's generated utilities did. Same reason the runtime-config vars and
-   --radius live here. Tokens with literal values are unaffected either way and
-   stay in the plain @theme block above. */
+   var(--background)` into :root, so the substitution happens once at :root and
+   every element inherits that one computed colour. A `.dark` class on a nested
+   element then cannot re-resolve it — only the class on <html> works, because
+   <html> is :root. `inline` instead inlines the value into each utility
+   (`background-color: var(--background)`), so it resolves per element.
+
+   Token values themselves live in the :root / .dark blocks below and come from
+   the @nebari/theme registry item (`npx shadcn add @nebari/theme`). */
 @theme inline {
-  --font-sans: var(--app-font-family, Inter, sans-serif);
+  /* Fonts. The runtime theme served from /services/japps/config.json sets
+     --app-font-family (and loads the webfont) before React renders; it wins
+     over the registry's default stack. */
+  --font-sans: var(
+    --app-font-family,
+    "Geist Variable",
+    ui-sans-serif,
+    system-ui,
+    sans-serif
+  );
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
 
-  --radius-lg: var(--radius);
-  --radius-md: calc(var(--radius) - 2px);
+  /* @nebari/theme motion tokens. */
+  --duration-fast: 100ms;
+  --duration-base: 200ms;
+  --duration-slow: 350ms;
+  --duration-loading: 1600ms;
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-emphasized: cubic-bezier(0.2, 0, 0, 1);
+  --animate-fade-in: nebari-fade-in var(--duration-base) var(--ease-standard)
+    both;
+  --animate-fade-out: nebari-fade-out var(--duration-base) var(--ease-standard)
+    both;
+  --animate-slide-up-fade: nebari-slide-up-fade var(--duration-base)
+    var(--ease-emphasized) both;
+  --animate-slide-down-fade: nebari-slide-down-fade var(--duration-base)
+    var(--ease-emphasized) both;
+  --animate-skeleton-pulse: nebari-skeleton-pulse var(--duration-loading)
+    var(--ease-standard) infinite;
+
   --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
 
-  /* shadcn semantic tokens. Kept as hsl(var(--x)) indirection so the
-     :root / .dark blocks below remain the single source of truth. */
-  --color-background: hsl(var(--background));
-  --color-foreground: hsl(var(--foreground));
-  --color-card: hsl(var(--card));
-  --color-card-foreground: hsl(var(--card-foreground));
-  --color-popover: hsl(var(--popover));
-  --color-popover-foreground: hsl(var(--popover-foreground));
-  /* Runtime config `--primary-color` (hex) wins; falls back to the shadcn HSL
-     token so standalone dev mode still works. */
-  --color-primary: var(--primary-color, hsl(var(--primary)));
-  --color-primary-foreground: hsl(var(--primary-foreground));
-  --color-primary-dark: var(--primary-color-dark, #9b00ce);
-  --color-primary-light: var(--primary-color-light, #ba18da10);
-  --color-secondary: hsl(var(--secondary));
-  --color-secondary-foreground: hsl(var(--secondary-foreground));
-  --color-muted: hsl(var(--muted));
-  --color-muted-foreground: hsl(var(--muted-foreground));
-  /* Neutral hover/focus highlight for menu, select, and command items. Driven
-     by the semantic --accent tokens (a pale brand tint in light mode, a neutral
-     slate in dark) rather than the brand primary vars, which theme.ts sets as
-     inline styles on <html> and would otherwise force a purple hover
-     regardless of color mode. */
-  --color-accent: hsl(var(--accent));
-  --color-accent-foreground: hsl(var(--accent-foreground));
-  --color-destructive: hsl(var(--destructive));
-  --color-destructive-foreground: hsl(var(--destructive-foreground));
-  --color-border: hsl(var(--border));
-  --color-input: hsl(var(--input));
-  /* Focus ring follows the themed primary color. */
-  --color-ring: var(--primary-color, hsl(var(--ring)));
-  /* Top header bar — runtime navbar theme with sensible defaults. */
-  --color-navbar: var(--navbar-background-color, #ffffff);
-  --color-navbar-foreground: var(--navbar-text-color, #2e2f33);
+  /* @nebari/theme semantic colour tokens → Tailwind utilities. */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-scrim: var(--scrim);
+  --color-canvas: var(--canvas);
+  --color-canvas-foreground: var(--canvas-foreground);
+  --color-header: var(--header);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  /* Custom branding: an operator's `primary_color` (delivered as
+     --primary-color / --primary-color-dark / --primary-color-light on <html>
+     by src/utils/theme.ts) wins over the registry brand colour; the registry
+     token is the default. */
+  --color-primary: var(--primary-color, var(--primary));
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-hover: var(--primary-color-dark, var(--primary-hover));
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted-foreground-strong: var(--muted-foreground-strong);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-border-strong: var(--border-strong);
+  /* Focus ring follows the (possibly branded) primary colour. */
+  --color-ring: var(--primary-color, var(--ring));
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--primary-color, var(--sidebar-primary));
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  /* The active sidebar item is tinted with the brand's light colour when one
+     is configured (matches the branded "Home" pill of the previous UI). */
+  --color-sidebar-accent: var(--primary-color-light, var(--sidebar-accent));
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--primary-color, var(--sidebar-ring));
+
+  /* App header token contract (nebari-landing Header / nebari-ui skill).
+     @nebari/theme does not ship these; the app defines them in :root / .dark
+     below, layered over the runtime navbar branding variables. */
+  --color-header-background: var(--header-background);
+  --color-header-border: var(--header-border);
+  --color-header-foreground: var(--header-text);
+  --color-header-action-hover: var(--header-action-hover);
+  --color-sign-out-foreground: var(--sign-out-foreground);
+
+  @keyframes nebari-fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes nebari-fade-out {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+  @keyframes nebari-slide-up-fade {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  @keyframes nebari-slide-down-fade {
+    from {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    to {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+  }
+  @keyframes nebari-skeleton-pulse {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+  }
 }
 
-/* Runtime config from /services/japps/config.json sets theme variables such as
-   --app-font-family and --primary-color before React renders. */
 @layer base {
+  /* Light tokens from @nebari/theme. Runtime branding from
+     /services/japps/config.json (--primary-color, --navbar-background-color,
+     --app-font-family, …) is set as inline style on <html> by
+     src/utils/theme.ts and consumed through the fallbacks wired up above. */
   :root {
-    /* shadcn semantic tokens (HSL triples; consumed via hsl(var(--name))). */
-    --background: 210 25% 99%;
-    --foreground: 225 17% 7%;
-    --card: 0 0% 100%;
-    --card-foreground: 225 17% 7%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 225 17% 7%;
-    --primary: 289 81% 47%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 0 0% 93%;
-    --secondary-foreground: 225 17% 7%;
-    --muted: 0 0% 96%;
-    --muted-foreground: 210 4% 37%;
-    --accent: 289 81% 95%;
-    --accent-foreground: 289 81% 30%;
-    --destructive: 351 67% 51%;
-    --destructive-foreground: 0 0% 100%;
-    --border: 0 0% 88%;
-    --input: 0 0% 88%;
-    --ring: 289 81% 47%;
-    --radius: 0.5rem;
+    --radius: 0.625rem;
+    --background: oklch(97.91% 0 0);
+    --foreground: oklch(26.94% 0.0037 286.15);
+    --scrim: rgba(0, 0, 0, 0.5);
+    --canvas: oklch(100% 0 0);
+    --canvas-foreground: oklch(26.94% 0.0037 286.15);
+    --header: oklch(97.91% 0 0);
+    --header-foreground: oklch(26.94% 0.0037 286.15);
+    --card: oklch(100% 0 0);
+    --card-foreground: oklch(26.94% 0.0037 286.15);
+    --popover: oklch(100% 0 0);
+    --popover-foreground: oklch(26.94% 0.0037 286.15);
+    --primary: oklch(55.06% 0.1886 311.45);
+    --primary-foreground: oklch(100% 0 0);
+    --primary-hover: oklch(47.01% 0.1577 311.26);
+    --secondary: oklch(95.04% 0.0042 236.5);
+    --secondary-foreground: oklch(32.95% 0.0209 254.12);
+    --muted: oklch(94.94% 0.0013 286.37);
+    --muted-foreground: oklch(54.86% 0.0154 285.88);
+    --muted-foreground-strong: oklch(47.01% 0.0112 285.96);
+    --accent: oklch(95.04% 0.0042 236.5);
+    --accent-foreground: oklch(32.95% 0.0209 254.12);
+    --info: oklch(95.08% 0.0232 264.46);
+    --info-foreground: oklch(55.04% 0.2158 264.34);
+    --destructive: oklch(95.06% 0.0247 29.93);
+    --destructive-foreground: oklch(54.97% 0.2151 27.33);
+    --warning: oklch(95.02% 0.0692 92.11);
+    --warning-foreground: oklch(46.91% 0.096 91.9);
+    --success: oklch(94.94% 0.0433 149.41);
+    --success-foreground: oklch(47.01% 0.1313 149.41);
+    --border: oklch(78.06% 0.0056 286.27);
+    --input: oklch(69.88% 0.013 286.06);
+    --border-strong: oklch(61.96% 0.0134 286);
+    --ring: oklch(61.98% 0.2159 311.67);
+    --chart-1: oklch(61.98% 0.2159 311.67);
+    --chart-2: oklch(61.96% 0.0932 187.62);
+    --chart-3: oklch(70.05% 0.1417 86.43);
+    --chart-4: oklch(62.1% 0.188 264.3);
+    --chart-5: oklch(61.95% 0.1718 149.7);
+    --sidebar: oklch(97.91% 0 0);
+    --sidebar-foreground: oklch(26.94% 0.0037 286.15);
+    --sidebar-primary: oklch(55.06% 0.1886 311.45);
+    --sidebar-primary-foreground: oklch(100% 0 0);
+    --sidebar-accent: oklch(95.04% 0.0042 236.5);
+    --sidebar-accent-foreground: oklch(32.95% 0.0209 254.12);
+    --sidebar-border: oklch(78.06% 0.0056 286.27);
+    --sidebar-ring: oklch(61.98% 0.2159 311.67);
 
-    /* Legacy color tokens preserved for existing CSS files. */
-    --primary-light: #ba18da10;
-    --primary-dark: #9b00ce;
-    --secondary-light: #20aaa110;
-    --secondary-dark: #12635e;
-    --white: #ffffff;
-    --black: #000000;
-    --gray-lightest: #f0f0f0;
-    --gray-lighter: #e6e6e6;
-    --gray-light: #adadad;
-    --gray: #757575;
-    --gray-dark: #454545;
-    --gray-darker: #171717;
-    --gray-darkest: #5c5c5c;
-    --success: #00a91c;
-    --success-light: #ecf3ec;
-    --warning: #ffbe2e;
-    --warning-light: #fde68a;
-    --error: #d54309;
-    --error-light: #f4e3db;
-    --info: #00bde3;
-    --info-light: #e7f6f8;
+    /* Raw Nebari palette ramps shipped by @nebari/theme. */
+    --primary-magenta-50: oklch(97.93% 0.0118 313.22);
+    --primary-magenta-100: oklch(95.07% 0.0323 311.75);
+    --primary-magenta-200: oklch(86.93% 0.0881 311.32);
+    --primary-magenta-300: oklch(77.96% 0.1496 311.14);
+    --primary-magenta-400: oklch(69.98% 0.1926 311.48);
+    --primary-magenta-500: oklch(61.98% 0.2159 311.67);
+    --primary-magenta-600: oklch(55.06% 0.1886 311.45);
+    --primary-magenta-700: oklch(47.01% 0.1577 311.26);
+    --primary-magenta-800: oklch(39.93% 0.1238 311.55);
+    --primary-magenta-900: oklch(32.97% 0.0867 312);
+    --primary-magenta-950: oklch(27.03% 0.0852 311.77);
+    --accent-teal-50: oklch(97.94% 0.016 187.35);
+    --accent-teal-100: oklch(95.02% 0.0407 187.03);
+    --accent-teal-200: oklch(86.97% 0.0671 187.76);
+    --accent-teal-300: oklch(77.96% 0.0893 187.3);
+    --accent-teal-400: oklch(69.9% 0.0995 187.56);
+    --accent-teal-500: oklch(61.96% 0.0932 187.62);
+    --accent-teal-600: oklch(55.09% 0.0808 187.38);
+    --accent-teal-700: oklch(47% 0.0677 188.28);
+    --accent-teal-800: oklch(39.98% 0.0539 188.08);
+    --accent-teal-900: oklch(33.02% 0.0392 187.72);
+    --accent-teal-950: oklch(27.14% 0.0398 187.08);
+    --highlight-yellow-50: oklch(98.03% 0.0183 86.15);
+    --highlight-yellow-100: oklch(94.96% 0.0461 86.46);
+    --highlight-yellow-200: oklch(87.03% 0.0889 86.52);
+    --highlight-yellow-300: oklch(77.95% 0.1259 85.96);
+    --highlight-yellow-400: oklch(70.05% 0.1417 86.43);
+    --highlight-yellow-500: oklch(62.04% 0.1267 87.01);
+    --highlight-yellow-600: oklch(55.01% 0.1117 86.53);
+    --highlight-yellow-700: oklch(46.93% 0.096 86.63);
+    --highlight-yellow-800: oklch(40.14% 0.0731 87);
+    --highlight-yellow-900: oklch(32.9% 0.0514 85.56);
+    --highlight-yellow-950: oklch(26.86% 0.0514 86.55);
+    --neutral-50: oklch(97.94% 0.0013 286.38);
+    --neutral-100: oklch(95.04% 0.0042 236.5);
+    --neutral-200: oklch(87.02% 0.0106 247.95);
+    --neutral-300: oklch(77.94% 0.0168 253.93);
+    --neutral-400: oklch(70% 0.0253 250.17);
+    --neutral-500: oklch(62.01% 0.0331 251.43);
+    --neutral-600: oklch(54.87% 0.0393 252.47);
+    --neutral-700: oklch(46.94% 0.0327 253.44);
+    --neutral-800: oklch(40% 0.0269 250.57);
+    --neutral-900: oklch(32.95% 0.0209 254.12);
+    --neutral-950: oklch(26.95% 0.0219 254.2);
+    --zinc-50: oklch(97.91% 0 0);
+    --zinc-100: oklch(94.94% 0.0013 286.37);
+    --zinc-200: oklch(87.08% 0.0041 286.31);
+    --zinc-300: oklch(78.06% 0.0056 286.27);
+    --zinc-400: oklch(69.88% 0.013 286.06);
+    --zinc-500: oklch(61.96% 0.0134 286);
+    --zinc-600: oklch(54.86% 0.0154 285.88);
+    --zinc-700: oklch(47.01% 0.0112 285.96);
+    --zinc-800: oklch(39.94% 0.0066 286.1);
+    --zinc-900: oklch(33.01% 0.0052 286.11);
+    --zinc-950: oklch(26.94% 0.0037 286.15);
+    --zinc-975: oklch(21.86% 0.0039 286.08);
+    --blue-50: oklch(97.93% 0.0083 271.33);
+    --blue-100: oklch(95.08% 0.0232 264.46);
+    --blue-200: oklch(87.12% 0.0567 264.22);
+    --blue-300: oklch(78.02% 0.095 264.35);
+    --blue-400: oklch(69.95% 0.1433 264.44);
+    --blue-500: oklch(62.1% 0.188 264.3);
+    --blue-600: oklch(55.04% 0.2158 264.34);
+    --blue-700: oklch(47.06% 0.2174 264.33);
+    --blue-800: oklch(40.02% 0.1811 264.47);
+    --blue-900: oklch(33.01% 0.1387 264.4);
+    --blue-950: oklch(27.02% 0.0864 264.19);
+    --green-50: oklch(97.94% 0.0182 150.56);
+    --green-100: oklch(94.94% 0.0433 149.41);
+    --green-200: oklch(87.04% 0.0814 149.55);
+    --green-300: oklch(78.09% 0.1374 149.53);
+    --green-400: oklch(69.96% 0.1814 149.67);
+    --green-500: oklch(61.95% 0.1718 149.7);
+    --green-600: oklch(55.08% 0.1525 149.53);
+    --green-700: oklch(47.01% 0.1313 149.41);
+    --green-800: oklch(40.02% 0.1082 149.72);
+    --green-900: oklch(32.88% 0.0887 149.73);
+    --green-950: oklch(27.13% 0.0631 149.76);
+    --red-50: oklch(97.91% 0.0087 26.02);
+    --red-100: oklch(95.06% 0.0247 29.93);
+    --red-200: oklch(86.96% 0.0594 27.38);
+    --red-300: oklch(78.02% 0.1024 27.78);
+    --red-400: oklch(69.96% 0.166 27.34);
+    --red-500: oklch(62.07% 0.2077 27.48);
+    --red-600: oklch(54.97% 0.2151 27.33);
+    --red-700: oklch(46.91% 0.19 27.4);
+    --red-800: oklch(39.97% 0.1611 27.26);
+    --red-900: oklch(33.1% 0.1332 27.42);
+    --red-950: oklch(27.06% 0.089 26.98);
+    --yellow-50: oklch(97.95% 0.0179 89.36);
+    --yellow-100: oklch(95.02% 0.0692 92.11);
+    --yellow-200: oklch(87.09% 0.1248 91.93);
+    --yellow-300: oklch(78.1% 0.1564 91.73);
+    --yellow-400: oklch(69.92% 0.1414 91.77);
+    --yellow-500: oklch(62.13% 0.1269 92.02);
+    --yellow-600: oklch(54.88% 0.1114 91.56);
+    --yellow-700: oklch(46.91% 0.096 91.9);
+    --yellow-800: oklch(40.15% 0.0821 92.02);
+    --yellow-900: oklch(33.09% 0.0677 92.2);
+    --yellow-950: oklch(26.96% 0.0539 91.43);
+    --black: oklch(0% 0 0);
+    --white: oklch(100% 0 0);
+    --foundation-black: oklch(20.76% 0.0135 258.37);
+    --foundation-white: oklch(100% 0 0);
 
-    /* Misc Colors */
-    --text-color: #1c1d26;
-    --link-text-color: #276be9;
+    /* jhub-apps tokens (not provided by the registry).
+
+       Header contract: the runtime navbar branding (--navbar-background-color,
+       --navbar-text-color, --navbar-hover-color) applies in light mode only —
+       operators configure a single light palette, and the previous UI likewise
+       ignored it in dark mode. */
+    --header-background: var(--navbar-background-color, var(--header));
+    --header-text: var(--navbar-text-color, var(--header-foreground));
+    --header-border: var(--border);
+    /* Hover/pressed surface values from the nebari-ui header token contract. */
+    --header-action-hover: var(--navbar-hover-color, #d9d9dc);
+    --sign-out-foreground: var(--destructive-foreground);
+
+    /* Body links. --link-text-color is the operator's `text_color`; like the
+       navbar branding it is a light-mode value, so dark mode falls back to the
+       theme foreground instead of rendering a dark link on a dark surface. */
+    --link-color: var(--link-text-color, var(--foreground));
   }
 
   .dark {
-    /* Main background (#262628), matched to the provenance collector dark theme. */
-    --background: 240 3% 15.3%;
-    /* Default text color (#f3f5f6). */
-    --foreground: 200 14% 96%;
-    /* Header / card / table surface color (#353538). */
-    --card: 240 3% 21.4%;
-    --card-foreground: 200 14% 96%;
-    /* Dropdown / popover surface — matches the page background (#262628). */
-    --popover: 240 3% 15.3%;
-    --popover-foreground: 200 14% 96%;
-    --primary: 289 81% 60%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 225 10% 18%;
-    --secondary-foreground: 200 14% 96%;
-    --muted: 225 10% 16%;
-    --muted-foreground: 0 0% 65%;
-    /* Neutral slate highlight for menu/select item hover & focus (#404955). */
-    --accent: 214 14% 29%;
-    --accent-foreground: 200 14% 96%;
-    --destructive: 351 67% 51%;
-    --destructive-foreground: 0 0% 100%;
-    /* Card / table / header border (#5a5a61) — light enough to read against the card surface. */
-    --border: 240 4% 37%;
-    /* Input borders (search box, form fields) use the same light gray. */
-    --input: 240 4% 37%;
-    --ring: 289 81% 60%;
+    --background: oklch(26.94% 0.0037 286.15);
+    --foreground: oklch(97.91% 0 0);
+    --scrim: rgba(0, 0, 0, 0.6);
+    --canvas: oklch(21.86% 0.0039 286.08);
+    --canvas-foreground: oklch(97.91% 0 0);
+    --header: oklch(26.94% 0.0037 286.15);
+    --header-foreground: oklch(97.91% 0 0);
+    --card: oklch(33.01% 0.0052 286.11);
+    --card-foreground: oklch(97.91% 0 0);
+    --popover: oklch(33.01% 0.0052 286.11);
+    --popover-foreground: oklch(97.91% 0 0);
+    --primary: oklch(61.98% 0.2159 311.67);
+    --primary-foreground: oklch(0% 0 0);
+    --primary-hover: oklch(69.98% 0.1926 311.48);
+    --secondary: oklch(40% 0.0269 250.57);
+    --secondary-foreground: oklch(95.04% 0.0042 236.5);
+    --muted: oklch(39.94% 0.0066 286.1);
+    --muted-foreground: oklch(69.88% 0.013 286.06);
+    --muted-foreground-strong: oklch(78.06% 0.0056 286.27);
+    --accent: oklch(40% 0.0269 250.57);
+    --accent-foreground: oklch(95.04% 0.0042 236.5);
+    --info: oklch(33.01% 0.1387 264.4);
+    --info-foreground: oklch(69.95% 0.1433 264.44);
+    --destructive: oklch(33.1% 0.1332 27.42);
+    --destructive-foreground: oklch(78.02% 0.1024 27.78);
+    --warning: oklch(33.09% 0.0677 92.2);
+    --warning-foreground: oklch(87.09% 0.1248 91.93);
+    --success: oklch(32.88% 0.0887 149.73);
+    --success-foreground: oklch(87.04% 0.0814 149.55);
+    --border: oklch(47.01% 0.0112 285.96);
+    --input: oklch(54.86% 0.0154 285.88);
+    --border-strong: oklch(61.96% 0.0134 286);
+    --ring: oklch(69.98% 0.1926 311.48);
+    --chart-1: oklch(69.98% 0.1926 311.48);
+    --chart-2: oklch(69.9% 0.0995 187.56);
+    --chart-3: oklch(77.95% 0.1259 85.96);
+    --chart-4: oklch(69.95% 0.1433 264.44);
+    --chart-5: oklch(69.96% 0.1814 149.67);
+    --sidebar: oklch(26.94% 0.0037 286.15);
+    --sidebar-foreground: oklch(97.91% 0 0);
+    --sidebar-primary: oklch(61.98% 0.2159 311.67);
+    --sidebar-primary-foreground: oklch(0% 0 0);
+    --sidebar-accent: oklch(40% 0.0269 250.57);
+    --sidebar-accent-foreground: oklch(95.04% 0.0042 236.5);
+    --sidebar-border: oklch(47.01% 0.0112 285.96);
+    --sidebar-ring: oklch(69.98% 0.1926 311.48);
+
+    /* Dark mode ignores the light-mode-only branding variables (see :root). */
+    --header-background: var(--header);
+    --header-text: var(--header-foreground);
+    --header-action-hover: #4a4a50;
+    --link-color: var(--foreground);
   }
 
   /* Default all borders to the theme's border token. Without this, Tailwind's
      `border-*` utilities only set width and fall back to currentColor, which
      renders white in dark mode (following the near-white body text color). */
   * {
-    border-color: hsl(var(--border));
+    border-color: var(--border);
+  }
+
+  /* Page shell per the Nebari app layout (see nebari-landing): the page body
+     sits on --canvas (white in light, near-black in dark) while the header and
+     sidebar keep the gray --header / --sidebar surfaces, so they read as a
+     distinct frame in both modes. */
+  html {
+    background: var(--canvas);
+  }
+
+  body {
+    color: var(--foreground);
   }
 }
 
 /* Global Styling */
-html {
-  background: #fafbfc;
-}
-html.dark {
-  background: hsl(240 3% 15.3%);
-}
-/* Base text color follows the theme token so default-colored text (headings,
-   labels, table cells) is legible in both light and dark modes. The 15px base
-   (down from the browser default 16px) reduces inherited text sizes across the
-   board for a slightly more compact feel; the Tailwind text-* scale is reduced
-   in step (see the --text-* overrides in the @theme block above). */
-body {
-  color: hsl(var(--foreground));
-  font-size: 15px;
-}
 main {
   margin: 24px 0;
 }
@@ -317,15 +467,11 @@ h2 {
 }
 
 hr {
-  color: var(--gray-lightest);
-}
-
-p {
-  font-size: 15px;
+  color: var(--border);
 }
 
 a {
-  color: var(--link-text-color);
+  color: var(--link-color);
   text-decoration: none;
 }
 

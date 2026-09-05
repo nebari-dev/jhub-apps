@@ -25,22 +25,19 @@ interface StatusChipProps {
   size?: 'small' | 'medium';
 }
 
-// Tailwind utilities, not inline styles: the config sets `important: true`
-// (to beat JupyterHub's Bootstrap), so the Badge variant's `bg-primary` would
-// override an inline `backgroundColor`. Returning classes lets twMerge drop the
-// default variant's color utilities and apply the status color instead.
+// Status colours come from the theme's semantic status tokens (success /
+// warning / secondary), so the chip follows light/dark automatically. Returning
+// classes lets twMerge drop the Badge's default variant colours.
 const getStatusClasses = (status: string): string => {
   switch (status) {
     case 'Ready':
-      // Green outline in light mode; in dark mode a neutral light-gray outline
-      // pill with light text reads more cleanly on the dark card background.
-      return 'bg-card text-[rgb(46,125,50)] border-[rgb(46,125,50)] hover:bg-card dark:bg-card dark:text-foreground dark:border-muted-foreground';
+      return 'border-success-foreground bg-card text-success-foreground';
     case 'Pending':
-      return 'bg-[rgb(234,181,78)] text-black border-transparent hover:bg-[rgb(234,181,78)]';
+      return 'border-warning-foreground bg-warning text-warning-foreground';
     case 'Running':
-      return 'bg-[rgb(46,125,50)] text-white border-transparent hover:bg-[rgb(46,125,50)]';
+      return 'border-success-foreground bg-success text-success-foreground';
     default:
-      return 'bg-[rgb(121,121,124)] text-white border-transparent hover:bg-[rgb(121,121,124)]';
+      return 'bg-secondary text-secondary-foreground';
   }
 };
 
@@ -64,7 +61,7 @@ export const StatusChip = ({
       data-testid="status-chip"
       data-status={status}
       className={cn(
-        'font-semibold rounded-full',
+        'rounded-full font-semibold',
         getStatusClasses(status),
         sizeClasses,
         hasStopButton ? 'pr-1' : '',
