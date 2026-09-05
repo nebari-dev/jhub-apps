@@ -1195,7 +1195,10 @@ export const AppForm = ({
         <div className="next">
           <Button
             id="submit-btn"
-            type="submit"
+            // The registry Button's default render element is
+            // <button type="button" /> and render-element props win, so a
+            // submit button must be requested through `render`.
+            render={<button type="submit" />}
             variant="default"
             loading={isProcessing}
             disabled={

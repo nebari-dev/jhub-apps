@@ -378,7 +378,13 @@ export const ServerTypes = (): React.ReactElement => {
                   </Button>
                 </div>
                 <div className="next">
-                  <Button id="submit-btn" type="submit" loading={submitting}>
+                  <Button
+                    id="submit-btn"
+                    // Render-element props win in Base UI, so `type="submit"`
+                    // must go on the render element (see app-form.tsx).
+                    render={<button type="submit" />}
+                    loading={submitting}
+                  >
                     {id ? 'Save' : 'Deploy App'}
                   </Button>
                 </div>

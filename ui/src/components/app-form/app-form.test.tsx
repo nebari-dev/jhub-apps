@@ -98,6 +98,24 @@ describe('AppForm', () => {
     });
   });
 
+  test('renders the submit control as a real submit button', () => {
+    const { baseElement } = render(
+      <RecoilRoot>
+        <QueryClientProvider client={queryClient}>
+          <BrowserRouter>
+            <AppForm isEditMode={false} />
+          </BrowserRouter>
+        </QueryClientProvider>
+      </RecoilRoot>,
+    );
+    // The registry Button defaults its render element to type="button";
+    // the form relies on native submit to run react-hook-form validation.
+    expect(baseElement.querySelector('#submit-btn')).toHaveAttribute(
+      'type',
+      'submit',
+    );
+  });
+
   test('marks description as over-limit when more than 200 characters', () => {
     const { baseElement } = render(
       <RecoilRoot>
