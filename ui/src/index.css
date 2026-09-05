@@ -449,6 +449,32 @@
   display: none;
 }
 
+/* JupyterHub's page.html renders <div class="version"> in its footer block when
+   display_version is set. hub.css styles it for the server-rendered pages, but
+   those rules never reach here (the stylesheet block loads this file alone), so
+   the div used to render as unstyled text at the top of the document and blip
+   there until React painted. Styling it here means it is a pinned bottom bar
+   from the very first paint -- no flash -- and display_version keeps working.
+
+   Pinned above a bottom banner rather than under it, mirroring what page.html's
+   banner script does for the server-rendered pages; --bottom-banner-height is
+   published by the Banner component and falls back to 0px when unset. */
+.version {
+  position: fixed;
+  bottom: var(--bottom-banner-height, 0px);
+  left: 0;
+  z-index: 30;
+  width: 100%;
+  padding: 5px 20px;
+  border-top: 1px solid var(--border);
+  background-color: var(--card);
+  color: var(--muted-foreground);
+  font-family: var(--app-font-family);
+  font-size: 0.8125rem;
+  text-align: start;
+  word-wrap: break-word;
+}
+
 main {
   margin: 24px 0;
 }
