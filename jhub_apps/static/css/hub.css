@@ -205,40 +205,62 @@ a:focus {
 }
 
 /* Navbar */
+/* Header border, matching --border in ui/src/index.css so the server-rendered
+   navbar and the React launcher header draw the same line. Light value here;
+   the dark override lives with the other dark tokens below. */
+:root {
+    --navbar-border-color: oklch(78.06% 0.0056 286.27);
+}
+
 .nav {
     margin-left: 10px;
 }
 
+/* Match the React launcher header (#app-bar in
+   ui/src/components/navigation/navigation.tsx): 56px tall (h-14), flush against
+   the page with no top padding. */
 .navbar {
-    height: 64px;
-    padding-top: 10px;
+    height: 56px;
+    /* Bootstrap's own navbar padding (--bs-navbar-padding-y) would otherwise
+       shrink the content box and push the logo above centre. */
+    padding-top: 0;
+    padding-bottom: 0;
 }
 
+/* The React header separates itself from the page with a 1px bottom border in
+   the --border token (the MenuBar's border-b), not a drop shadow. */
 .navbar.navbar-default {
     background: var(--navbar-background-color);
-    box-shadow: 0px 1.5px 3px 0px rgba(72, 74, 94, 0.16);
-    border: None;
+    box-shadow: none;
+    border: none;
+    border-bottom: 1px solid var(--navbar-border-color);
 }
 
-/* Align the logo (and profile menu) with the React launcher header, which pads
-   its toolbar by 24px (px-6), 16px on narrow viewports. Bootstrap's
-   .container-fluid defaults to ~12px, leaving the logo too far left. */
+/* Center the logo and profile menu on the bar's cross axis, the way the React
+   header's flex row does. Bootstrap's floats leave children of differing
+   heights (a 32px logo, a ~40px profile menu) sitting at different offsets.
+   Padding mirrors the React header: 16px leading (pl-4), 12px trailing (the
+   MenuBar's px-3). */
 .navbar.navbar-default .container-fluid {
-    padding-left: 24px;
-    padding-right: 24px;
+    display: flex;
+    align-items: center;
+    height: 100%;
+    padding-left: 16px;
+    padding-right: 12px;
 }
 
-@media only screen and (max-width: 640px) {
-    .navbar.navbar-default .container-fluid {
-        padding-left: 16px;
-        padding-right: 16px;
-    }
+/* Floats no longer apply inside the flex row, so push the profile menu to the
+   trailing edge explicitly. */
+.navbar.navbar-default .container-fluid .navbar-collapse {
+    margin-left: auto;
 }
 
-/* Remove the inline image's baseline gap, which left the logo sitting a pixel
-   or two lower than the flex-centered logo on the React launcher header. */
+/* Sized to the React header's logo (h-8 w-auto). display:block also drops the
+   inline image's baseline gap. */
 .navbar.navbar-default #jupyterhub-logo img {
     display: block;
+    height: 32px;
+    width: auto;
 }
 
 .navbar.navbar-default .navbar-nav > li > a,
@@ -412,6 +434,7 @@ html[data-bs-theme="dark"] {
     --navbar-background-color: hsl(240 3% 21.4%);
     --navbar-text-color: hsl(200 14% 96%);
     --navbar-hover-color: rgba(255, 255, 255, 0.08);
+    --navbar-border-color: oklch(47.01% 0.0112 285.96);
 }
 
 /* Safety net for the page background: guarantees the dark surface even if
