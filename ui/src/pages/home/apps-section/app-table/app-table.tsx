@@ -85,11 +85,7 @@ export const AppTable = ({ apps }: AppTableProps): React.ReactElement => {
 
   return (
     <div className="h-full w-full">
-      <Table
-        aria-label="App table"
-        className="min-w-[650px]"
-        scrollContainerClassName="shadow-lg dark:shadow-none"
-      >
+      <Table aria-label="App table" className="min-w-[650px]">
         <TableHeader>
           <TableRow className="app-header">
             <TableHead className="font-semibold">Name</TableHead>

@@ -243,8 +243,9 @@ export const AppCard = ({
           id={`card-${id}`}
           tabIndex={0}
           // The registry Card is a padded, gapped column; this card paints its
-          // own header/body layout, so zero those out at the call site.
-          className="relative h-full gap-0 rounded-md border-0 py-0 shadow-md dark:border dark:border-border dark:shadow-none"
+          // own header/body layout, so zero those out at the call site and
+          // keep the registry's default border/surface styling.
+          className="relative h-full gap-0 rounded-md py-0 shadow-none"
         >
           <div
             className={`card-content-header ${isAppCard ? '' : 'card-content-header-service'}`}
