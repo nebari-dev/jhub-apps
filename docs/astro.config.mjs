@@ -34,6 +34,7 @@ export default defineConfig({
         { label: 'Introduction', link: '/intro/' },
         { label: 'Install and setup', link: '/installation/' },
         { label: 'Configuration', link: '/configuration/' },
+        { label: 'Branding', link: '/branding/' },
         {
           label: 'Create Apps',
           items: [
