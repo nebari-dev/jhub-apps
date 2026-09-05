@@ -167,7 +167,6 @@ export const AppSharing = ({
                 style={{ width: 510 }}
               >
                 <Combobox
-                  id="share-permissions-autocomplete"
                   items={sortedPermissions}
                   value={selectedValue}
                   multiple
@@ -181,7 +180,9 @@ export const AppSharing = ({
                     setSelectedValue(value);
                   }}
                 >
-                  <ComboboxChips>
+                  {/* Base UI's Combobox root renders no element, so the id
+                      lives on the field box. */}
+                  <ComboboxChips id="share-permissions-autocomplete">
                     <ComboboxValue>
                       {(value: AppSharingItem[]) =>
                         value.map((item) => (
