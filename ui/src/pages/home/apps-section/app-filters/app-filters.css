@@ -1,6 +1,6 @@
 /* Intentionally empty.
- * The popover content (#filters-list) is positioned by Radix's Floating UI.
- * Do not set `position`/`top` here — overriding them breaks collision
- * detection so the panel can no longer flip above the trigger near the
- * bottom of the viewport.
+ * The popover content (#filters-list) is positioned by Base UI's Positioner
+ * (Floating UI). Do not set `position`/`top` here — overriding them breaks
+ * collision detection so the panel can no longer flip above the trigger near
+ * the bottom of the viewport.
  */

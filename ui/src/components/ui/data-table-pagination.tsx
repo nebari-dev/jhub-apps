@@ -1,3 +1,6 @@
+// App-owned: a compact prev/next pager composed from the @nebari/button
+// primitive (the registry data-table item is a full TanStack table, which the
+// sharing list does not need).
 import { Button } from '@src/components/ui/button';
 import { cn } from '@src/lib/utils';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
@@ -39,8 +42,8 @@ export function DataTablePagination({
       <div className="flex items-center gap-1">
         <Button
           type="button"
-          variant="ghost-secondary"
-          size="icon"
+          variant="ghost"
+          size="icon-sm"
           aria-label="previous page"
           data-testid="previous-page"
           disabled={page === 0}
@@ -50,8 +53,8 @@ export function DataTablePagination({
         </Button>
         <Button
           type="button"
-          variant="ghost-secondary"
-          size="icon"
+          variant="ghost"
+          size="icon-sm"
           aria-label="next page"
           data-testid="next-page"
           disabled={page >= totalPages - 1}

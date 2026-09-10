@@ -9,5 +9,5 @@ window.jhdata = {
 };
 
 window.theme = {
-  logo: '/img/logo.svg',
+  logo: '/img/Nebari-Logo-Horizontal-Lockup-Black-text.svg',
 };

@@ -1,6 +1,5 @@
 import { AppForm } from '@src/components';
 import { Button } from '@src/components/ui/button';
-import { Label } from '@src/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@src/components/ui/radio-group';
 import { APP_BASE_URL } from '@src/utils/constants';
 import { navigateToUrl } from '@src/utils/jupyterhub';
@@ -56,17 +55,15 @@ export const CreateApp = (): React.ReactElement => {
             aria-label="deployOption"
             name="deployOption"
             value={deployOption}
-            onValueChange={setDeployOption}
-            className="mb-4 gap-3"
+            onValueChange={(value) => setDeployOption(String(value))}
+            className="mb-4"
           >
-            <div className="flex items-center gap-2">
-              <RadioGroupItem value="launcher" id="deploy-launcher" />
-              <Label htmlFor="deploy-launcher">Deploy from App Launcher</Label>
-            </div>
-            <div className="flex items-center gap-2">
-              <RadioGroupItem value="git" id="deploy-git" />
-              <Label htmlFor="deploy-git">Deploy from Git Repository</Label>
-            </div>
+            <RadioGroupItem value="launcher" id="deploy-launcher">
+              Deploy from App Launcher
+            </RadioGroupItem>
+            <RadioGroupItem value="git" id="deploy-git">
+              Deploy from Git Repository
+            </RadioGroupItem>
           </RadioGroup>
         </div>
         <div>

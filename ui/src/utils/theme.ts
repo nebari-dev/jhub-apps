@@ -29,29 +29,16 @@ export interface RuntimeConfig {
   banners?: RuntimeBannersConfig;
 }
 
+// Frontend fallback used when /services/japps/config.json cannot be loaded
+// (e.g. the Vite dev server). Colours and fonts are intentionally *not*
+// defaulted here: the @nebari/theme tokens in src/index.css are the default
+// look, and an operator's branding (`c.JupyterHub.template_vars`) arrives as
+// `cssVariables` from the server and overrides them (see the var() fallbacks
+// wired up in index.css).
 const DEFAULT_THEME: RuntimeThemeConfig = {
   logo: '/services/japps/static/img/Nebari-Logo-Horizontal-Lockup-Black-text.svg',
   favicon: '/services/japps/static/favicon.ico',
-  font: {
-    family: "'Inter', sans-serif",
-  },
-  cssVariables: {
-    '--app-font-family': "'Inter', sans-serif",
-    '--primary-color': '#ba18da',
-    '--primary-color-light': '#BA18DA10',
-    '--primary-color-dark': '#9b00ce',
-    '--secondary-color': '#18817a',
-    '--secondary-color-dark': '#12635e',
-    '--accent-color': '#eda61d',
-    '--accent-color-dark': '#a16d14',
-    '--text-color': '#1c1d26',
-    '--link-text-color': '#1c1d26',
-    '--heading-color': '#0f1015',
-    '--h2-color': '#0f1015',
-    '--navbar-background-color': '#ffffff',
-    '--navbar-text-color': '#2E2F33',
-    '--navbar-hover-color': '#00000008',
-  },
+  cssVariables: {},
 };
 
 const CONFIG_PATH = `${API_BASE_URL.replace(/\/$/, '')}/config.json`;

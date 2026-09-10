@@ -116,7 +116,7 @@ export const EnvironmentVariables = ({
               </div>
               <Button
                 type="button"
-                variant="ghost-secondary"
+                variant="ghost"
                 size="icon"
                 onClick={() => handleRemoveRow(index)}
                 aria-label="Remove"

@@ -1,23 +1,44 @@
-import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
-import { Badge } from '@src/components/ui/badge';
-import { Button } from '@src/components/ui/button';
+import { Menu as MenuPrimitive } from '@base-ui/react/menu';
+import { Button, buttonVariants } from '@src/components/ui/button';
+import {
+  Drawer,
+  DrawerBody,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+} from '@src/components/ui/drawer';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuRadioGroup,
+  DropdownMenuPortal,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@src/components/ui/dropdown-menu';
-import { Sheet, SheetContent } from '@src/components/ui/sheet';
-import { useColorMode } from '@src/hooks/use-color-mode';
+import {
+  MenuBarActions,
+  MenuBarBrand,
+  NavigationMenu,
+} from '@src/components/ui/navigation-menu';
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarGroup,
+  SidebarGroupLabel,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarMenuLabel,
+  SidebarProvider,
+} from '@src/components/ui/sidebar';
+import { useTheme } from '@src/hooks/theme-provider';
 import { useMediaQuery } from '@src/hooks/use-media-query';
+import { isThemeMode, type ThemeMode } from '@src/hooks/use-theme-preference';
 import { cn } from '@src/lib/utils';
 import type { ServersData } from '@src/types/api';
 import type { JhApp, JhService, JhServiceFull } from '@src/types/jupyterhub';
 import type { UserState } from '@src/types/user';
 import axios from '@src/utils/axios';
-import { type ColorMode, isColorMode } from '@src/utils/color-mode';
 import { APP_BASE_URL } from '@src/utils/constants';
 import {
   getAppLogoUrl,
@@ -30,6 +51,7 @@ import {
   ChevronDown,
   ChevronUp,
   Home as HomeIcon,
+  LogOut,
   Menu,
   Monitor,
   Moon,
@@ -47,7 +69,7 @@ import {
 export const TopNavigation = (): React.ReactElement => {
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const isMobileBreakpoint = useMediaQuery('(max-width: 599.95px)');
-  const [mobileSheetOpen, setMobileSheetOpen] = useState(false);
+  const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
   const [currentUser] = useRecoilState<UserState | undefined>(defaultUser);
   const [, setCurrentNotification] = useRecoilState<string | undefined>(
     currentNotification,
@@ -56,7 +78,7 @@ export const TopNavigation = (): React.ReactElement => {
   const [services, setServices] = useState<JhService[]>([]);
   const [pinnedApps, setPinnedApps] = useState<JhApp[]>([]);
   const [isHeadless] = useRecoilState<boolean>(defaultIsHeadless);
-  const { colorMode, isDark, setColorMode } = useColorMode();
+  const { themeMode, isDarkMode, setThemeMode } = useTheme();
 
   const {
     isLoading: appsLoading,
@@ -125,228 +147,276 @@ export const TopNavigation = (): React.ReactElement => {
 
   useEffect(() => {
     if (!isMobileBreakpoint) {
-      setMobileSheetOpen(false);
+      setMobileDrawerOpen(false);
     }
   }, [isMobileBreakpoint]);
 
-  const drawerContent = (
-    <div>
-      <ul className="m-0 list-none p-0 pb-4">
-        <li className="mt-4">
-          <button
-            type="button"
-            onClick={() => navigateToUrl(`${APP_BASE_URL}`)}
-            className="relative mx-2 flex w-[calc(100%-1rem)] cursor-pointer items-center rounded-lg border-0 bg-(--primary-color-light,#BA18DA10) px-6 py-2 text-left before:absolute before:bottom-0 before:left-0 before:top-0 before:w-2 before:rounded-l-lg before:bg-(--primary-color,#BA18DA) before:content-[''] hover:bg-muted dark:hover:bg-accent"
-          >
-            <HomeIcon className="mr-2 h-6 w-6 text-foreground" />
-            <span className="relative top-[2px] text-sm font-medium leading-tight">
-              Home
-            </span>
-          </button>
-        </li>
-      </ul>
-      <ul className="m-0 list-none px-1 py-0">
-        <li>
-          <p className="m-0 px-6 py-1 text-sm font-semibold uppercase text-muted-foreground">
-            Services
-          </p>
-        </li>
-        {pinnedApps.map((item) => (
-          <li key={`pinned-${item.name}`}>
-            <a
-              href={item.url}
-              className="block w-full rounded px-6 py-2 text-sm text-foreground no-underline hover:bg-muted hover:no-underline dark:hover:bg-accent"
+  const logoUrl = getAppLogoUrl(isDarkMode);
+  const initials = (currentUser?.name ?? '?').slice(0, 2).toUpperCase();
+
+  const sidebarContent = (
+    <SidebarContent className="pt-4">
+      <SidebarGroup>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              active
+              variant="ghost"
+              render={<a href={APP_BASE_URL} />}
             >
-              {item.name}
-            </a>
-          </li>
-        ))}
-        {services.map((item) => (
-          <li key={`service-${item.name}`}>
-            <a
-              href={item.url}
-              className="block w-full rounded px-6 py-2 text-sm text-foreground no-underline hover:bg-muted hover:no-underline dark:hover:bg-accent"
-            >
-              {item.name}
-            </a>
-          </li>
-        ))}
-      </ul>
-    </div>
+              <HomeIcon aria-hidden="true" />
+              <SidebarMenuLabel>Home</SidebarMenuLabel>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarGroup>
+      <SidebarGroup className="mt-2">
+        <SidebarGroupLabel>Services</SidebarGroupLabel>
+        <SidebarMenu>
+          {pinnedApps.map((item) => (
+            <SidebarMenuItem key={`pinned-${item.name}`}>
+              <SidebarMenuButton variant="ghost" render={<a href={item.url} />}>
+                <SidebarMenuLabel>{item.name}</SidebarMenuLabel>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          ))}
+          {services.map((item) => (
+            <SidebarMenuItem key={`service-${item.name}`}>
+              <SidebarMenuButton variant="ghost" render={<a href={item.url} />}>
+                <SidebarMenuLabel>{item.name}</SidebarMenuLabel>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          ))}
+        </SidebarMenu>
+      </SidebarGroup>
+    </SidebarContent>
   );
 
   return (
-    <div hidden={isHeadless}>
-      <header
-        id="app-bar"
-        className="fixed inset-x-0 top-(--top-banner-height,0px) z-1201 border-b border-border bg-navbar shadow-md dark:bg-card dark:shadow-none"
-      >
-        <div
-          id="toolbar"
-          className="flex min-h-16 items-center gap-2 px-4 sm:px-6"
+    <SidebarProvider>
+      <div hidden={isHeadless}>
+        <NavigationMenu
+          id="app-bar"
+          className="fixed inset-x-0 top-(--top-banner-height,0px) z-40 h-14 justify-between border-header-border bg-header-background pl-4 text-header-foreground"
         >
-          <button
-            type="button"
-            aria-label="open drawer"
-            onClick={() => setMobileSheetOpen((prev) => !prev)}
-            className="mr-2 inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border-0 bg-transparent text-navbar-foreground hover:bg-muted dark:text-foreground sm:hidden!"
-          >
-            <Menu className="h-6 w-6" />
-          </button>
-          <div className="max-sm:hidden grow">
-            <a href={APP_BASE_URL}>
-              <img
-                id="app-logo"
-                src={getAppLogoUrl(isDark)}
-                alt="logo"
-                // In dark mode the default logo swaps to its white-text variant
-                // (like the landing page). If a custom/branded logo has no such
-                // variant, the URL is unchanged — fall back to monochrome-white
-                // so it stays legible on the dark navbar.
-                className={cn(
-                  'h-7 w-auto',
-                  isDark &&
-                    getAppLogoUrl(isDark) === getAppLogoUrl(false) &&
-                    'brightness-0 invert',
-                )}
-              />
-            </a>
-          </div>
-          <div className="max-sm:hidden">
-            <DropdownMenu
-              open={profileMenuOpen}
-              onOpenChange={setProfileMenuOpen}
+          <div id="toolbar" className="flex min-w-0 flex-1 items-center gap-2">
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              aria-label="open drawer"
+              onClick={() => setMobileDrawerOpen((prev) => !prev)}
+              className="text-header-foreground hover:bg-header-action-hover active:bg-header-action-hover sm:hidden"
             >
-              <DropdownMenuTrigger asChild>
-                <Button
+              <Menu className="size-5" />
+            </Button>
+            <MenuBarBrand href={APP_BASE_URL} aria-label="Go to homepage">
+              {logoUrl ? (
+                <img
+                  id="app-logo"
+                  src={logoUrl}
+                  alt="logo"
+                  // In dark mode the default logo swaps to its white-text
+                  // variant (like the landing page). If a custom/branded logo
+                  // has no such variant, the URL is unchanged — fall back to
+                  // monochrome-white so it stays legible on the dark header.
+                  className={cn(
+                    'h-8 w-auto',
+                    isDarkMode &&
+                      logoUrl === getAppLogoUrl(false) &&
+                      'brightness-0 invert',
+                  )}
+                />
+              ) : null}
+            </MenuBarBrand>
+          </div>
+
+          <MenuBarActions className="gap-2">
+            {currentUser ? (
+              <DropdownMenu
+                modal={false}
+                open={profileMenuOpen}
+                onOpenChange={setProfileMenuOpen}
+              >
+                <DropdownMenuTrigger
+                  // Rendered as a plain <button> (styled via buttonVariants)
+                  // rather than the registry <Button>: under React 18 the ref
+                  // Base UI needs to anchor the menu is dropped by a
+                  // function-component render target.
+                  render={
+                    <button
+                      type="button"
+                      className={cn(
+                        buttonVariants({ variant: 'ghost' }),
+                        // Base UI concatenates this render target's classes
+                        // with the trigger's instead of merging them, so
+                        // tailwind-merge never sees the trigger's
+                        // `hover:no-underline` conflict with buttonVariants'
+                        // `hover:underline` and both survive -- underlining the
+                        // name and avatar on hover. An override for a
+                        // buttonVariants class has to sit in this cn() call to
+                        // take effect. (`data-[popup-open]:no-underline` on the
+                        // trigger does work: dropdown-menu.tsx merges the
+                        // trigger className with its own variants in one cn().)
+                        'hover:no-underline',
+                      )}
+                    />
+                  }
                   id="profile-menu-btn"
                   variant="ghost"
-                  className="button-menu bg-transparent font-bold text-navbar-foreground hover:bg-muted focus:bg-transparent focus-visible:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 dark:text-foreground"
-                  aria-haspopup="true"
+                  aria-label="Account menu"
+                  className="h-auto px-2.5 py-1 font-medium text-header-foreground hover:bg-header-action-hover hover:no-underline focus-visible:ring-offset-0 active:bg-header-action-hover data-[popup-open]:bg-header-action-hover data-[popup-open]:no-underline"
                 >
-                  {currentUser?.name}{' '}
-                  {currentUser?.admin && (
-                    <Badge
-                      variant="secondary"
-                      className="chip ml-2 bg-secondary text-secondary-foreground dark:border-border"
-                    >
-                      admin
-                    </Badge>
-                  )}
+                  <span
+                    aria-hidden="true"
+                    className="flex size-7 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground"
+                  >
+                    {initials}
+                  </span>
+                  <span className="max-sm:hidden">{currentUser.name}</span>
                   {profileMenuOpen ? (
-                    <ChevronUp className="h-4 w-4" />
+                    <ChevronUp aria-hidden="true" />
                   ) : (
-                    <ChevronDown className="h-4 w-4" />
+                    <ChevronDown aria-hidden="true" />
                   )}
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                id="profile-menu-list"
-                align="end"
-                sideOffset={12}
-                className="w-72"
-              >
-                <div className="px-2 py-1.5">
-                  <DropdownMenuRadioGroup
-                    aria-label="Theme"
-                    value={colorMode}
-                    onValueChange={(value) => {
-                      if (isColorMode(value)) {
-                        setColorMode(value);
-                      }
-                    }}
-                    className="flex items-center gap-1 rounded-lg bg-muted p-1 dark:bg-card"
+                </DropdownMenuTrigger>
+                <DropdownMenuPortal>
+                  <DropdownMenuContent
+                    id="profile-menu-list"
+                    align="end"
+                    sideOffset={8}
+                    className="w-[248px] p-2"
                   >
-                    <ThemeOption value="light" label="Light mode" text="Light">
-                      <Sun className="h-4 w-4" />
-                    </ThemeOption>
-                    <ThemeOption value="dark" label="Dark mode" text="Dark">
-                      <Moon className="h-4 w-4" />
-                    </ThemeOption>
-                    <ThemeOption
-                      value="system"
-                      label="System theme"
-                      text="System"
+                    <div className="border-b px-1.5 pb-2">
+                      <p className="text-sm font-medium text-foreground">
+                        {currentUser.name}
+                      </p>
+                      {currentUser.admin && (
+                        <p className="text-xs text-muted-foreground">
+                          Administrator
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="py-2">
+                      <MenuPrimitive.RadioGroup
+                        aria-label="Theme"
+                        value={themeMode}
+                        onValueChange={(value) => {
+                          if (isThemeMode(value)) {
+                            setThemeMode(value);
+                          }
+                        }}
+                        className="flex h-[34px] items-center gap-1 rounded-md bg-muted p-1"
+                      >
+                        <ThemeOption
+                          value="light"
+                          label="Light mode"
+                          text="Light"
+                        >
+                          <Sun className="h-4 w-4" />
+                        </ThemeOption>
+                        <ThemeOption value="dark" label="Dark mode" text="Dark">
+                          <Moon className="h-4 w-4" />
+                        </ThemeOption>
+                        <ThemeOption
+                          value="system"
+                          label="System theme"
+                          text="System"
+                        >
+                          <Monitor className="h-4 w-4" />
+                        </ThemeOption>
+                      </MenuPrimitive.RadioGroup>
+                    </div>
+
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      onClick={() => navigateToUrl(`${APP_BASE_URL}/token`)}
                     >
-                      <Monitor className="h-4 w-4" />
-                    </ThemeOption>
-                  </DropdownMenuRadioGroup>
-                </div>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  onSelect={() => navigateToUrl(`${APP_BASE_URL}/token`)}
-                >
-                  Tokens
-                </DropdownMenuItem>
-                {currentUser?.admin && (
-                  <DropdownMenuItem
-                    onSelect={() => navigateToUrl(`${APP_BASE_URL}/admin`)}
-                  >
-                    Admin
-                  </DropdownMenuItem>
-                )}
-                <DropdownMenuItem
-                  onSelect={() => navigateToUrl(`${APP_BASE_URL}/logout`)}
-                >
-                  Logout
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-        </div>
-      </header>
-      <nav>
-        <aside
+                      Tokens
+                    </DropdownMenuItem>
+                    {currentUser.admin && (
+                      <DropdownMenuItem
+                        onClick={() => navigateToUrl(`${APP_BASE_URL}/admin`)}
+                      >
+                        Admin
+                      </DropdownMenuItem>
+                    )}
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      className="leading-5 text-sign-out-foreground data-[highlighted]:text-sign-out-foreground"
+                      onClick={() => navigateToUrl(`${APP_BASE_URL}/logout`)}
+                    >
+                      <LogOut className="size-4 shrink-0" aria-hidden="true" />
+                      Logout
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenuPortal>
+              </DropdownMenu>
+            ) : null}
+          </MenuBarActions>
+        </NavigationMenu>
+
+        <Sidebar
           data-testid="nav-drawer"
-          className={cn(
-            'fixed left-0 top-[calc(4rem_+_var(--top-banner-height,0px))] z-1200 h-[calc(100%_-_4rem_-_var(--top-banner-height,0px)_-_var(--bottom-banner-height,0px))] w-56 border-r border-border bg-background shadow-sm max-sm:hidden',
-          )}
+          aria-label="Main"
+          className="fixed left-0 top-[calc(3.5rem_+_var(--top-banner-height,0px))] z-30 h-[calc(100%_-_3.5rem_-_var(--top-banner-height,0px)_-_var(--bottom-banner-height,0px))] rounded-none border-r border-sidebar-border max-sm:hidden"
         >
-          {drawerContent}
-        </aside>
-        <Sheet open={mobileSheetOpen} onOpenChange={setMobileSheetOpen}>
-          <SheetContent
-            side="left"
-            className="w-56 p-0 sm:hidden!"
+          {sidebarContent}
+        </Sidebar>
+
+        <Drawer
+          side="left"
+          open={mobileDrawerOpen}
+          onOpenChange={setMobileDrawerOpen}
+        >
+          <DrawerContent
             data-testid="nav-drawer-mobile"
+            className="data-[swipe-axis=x]:[--drawer-content-width:16rem]"
           >
-            {drawerContent}
-          </SheetContent>
-        </Sheet>
-      </nav>
-    </div>
+            <DrawerHeader>
+              <DrawerTitle>Menu</DrawerTitle>
+            </DrawerHeader>
+            <DrawerBody className="p-0">
+              <nav aria-label="Main">{sidebarContent}</nav>
+            </DrawerBody>
+          </DrawerContent>
+        </Drawer>
+      </div>
+    </SidebarProvider>
   );
 };
 
-// A single segment of the light/dark/system control. Uses the raw Radix radio
-// item so the group renders as a compact segmented toggle (matching the Nebari
-// landing page) rather than the standard checkmark-style menu radio item.
+// A single segment of the light/dark/system control. A menu *radio* item
+// (role="menuitemradio" + aria-checked) that only looks like a segmented
+// control — see the nebari-ui header recipe for why tabs would be the wrong
+// semantics here.
 const ThemeOption = ({
   value,
   label,
   text,
   children,
 }: {
-  value: ColorMode;
+  value: ThemeMode;
   label: string;
   text: string;
   children: React.ReactNode;
 }): React.ReactElement => (
-  <DropdownMenuPrimitive.RadioItem
+  <MenuPrimitive.RadioItem
     value={value}
     aria-label={label}
     title={label}
     // Keep the menu open after switching so the change is immediately visible.
-    onSelect={(event) => event.preventDefault()}
+    closeOnClick={false}
     className={cn(
-      'flex min-w-0 flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-md px-2 py-1.5 text-sm outline-hidden transition-colors focus-visible:ring-[3px] focus-visible:ring-ring/50',
-      'text-muted-foreground hover:text-foreground',
-      'data-[state=checked]:bg-background data-[state=checked]:text-foreground data-[state=checked]:shadow-xs',
+      'flex h-auto flex-1 cursor-pointer items-center justify-center gap-1 rounded-sm border border-transparent px-1.5 py-0.5 text-sm font-medium outline-none focus-visible:ring-2 focus-visible:ring-ring',
+      'text-muted-foreground-strong hover:text-foreground',
+      'data-checked:border-border-strong data-checked:bg-card data-checked:text-foreground data-checked:shadow-[0_1px_3px_0_rgba(0,0,0,0.10)]',
     )}
   >
     {children}
     <span>{text}</span>
-  </DropdownMenuPrimitive.RadioItem>
+  </MenuPrimitive.RadioItem>
 );
 
 export default TopNavigation;

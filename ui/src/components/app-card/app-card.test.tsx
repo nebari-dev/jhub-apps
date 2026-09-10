@@ -157,10 +157,14 @@ describe('AppCard', () => {
     expect(menu).toBeInTheDocument();
     await userEvent.setup().click(menu);
 
-    const btn = baseElement.querySelectorAll(
-      '[role="menuitem"]',
-    )[0] as HTMLElement;
-    expect(btn).toBeInTheDocument();
+    // Base UI mounts the menu popup asynchronously after the trigger opens it.
+    const btn = await waitFor(() => {
+      const item = baseElement.querySelectorAll(
+        '[role="menuitem"]',
+      )[0] as HTMLElement;
+      expect(item).toBeInTheDocument();
+      return item;
+    });
     await userEvent.setup().click(btn);
   });
 
@@ -188,10 +192,14 @@ describe('AppCard', () => {
     ) as HTMLButtonElement;
     await userEvent.setup().click(menu);
 
-    const btn = baseElement.querySelectorAll(
-      '[role="menuitem"]',
-    )[0] as HTMLElement;
-    expect(btn).toBeInTheDocument();
+    // Base UI mounts the menu popup asynchronously after the trigger opens it.
+    const btn = await waitFor(() => {
+      const item = baseElement.querySelectorAll(
+        '[role="menuitem"]',
+      )[0] as HTMLElement;
+      expect(item).toBeInTheDocument();
+      return item;
+    });
     expect(btn).toHaveTextContent('Start');
     expect(btn).not.toHaveAttribute('disabled', 'disabled');
     await userEvent.setup().click(btn);
@@ -262,10 +270,14 @@ describe('AppCard', () => {
     ) as HTMLButtonElement;
     await userEvent.setup().click(menu);
 
-    const btn = baseElement.querySelectorAll(
-      '[role="menuitem"]',
-    )[1] as HTMLElement;
-    expect(btn).toBeInTheDocument();
+    // Base UI mounts the menu popup asynchronously after the trigger opens it.
+    const btn = await waitFor(() => {
+      const item = baseElement.querySelectorAll(
+        '[role="menuitem"]',
+      )[1] as HTMLElement;
+      expect(item).toBeInTheDocument();
+      return item;
+    });
     expect(btn).toHaveTextContent('Stop');
     expect(btn).not.toHaveAttribute('disabled', 'disabled');
     await userEvent.setup().click(btn);
@@ -316,10 +328,14 @@ describe('AppCard', () => {
     ) as HTMLButtonElement;
     await userEvent.setup().click(menu);
 
-    const btn = baseElement.querySelectorAll(
-      '[role="menuitem"]',
-    )[2] as HTMLElement;
-    expect(btn).toBeInTheDocument();
+    // Base UI mounts the menu popup asynchronously after the trigger opens it.
+    const btn = await waitFor(() => {
+      const item = baseElement.querySelectorAll(
+        '[role="menuitem"]',
+      )[2] as HTMLElement;
+      expect(item).toBeInTheDocument();
+      return item;
+    });
     expect(btn).toHaveTextContent('Edit');
     expect(btn).not.toHaveAttribute('disabled', 'disabled');
     await userEvent.setup().click(btn);
@@ -355,10 +371,14 @@ describe('AppCard', () => {
     ) as HTMLButtonElement;
     await userEvent.setup().click(menu);
 
-    const btn = baseElement.querySelectorAll(
-      '[role="menuitem"]',
-    )[2] as HTMLElement;
-    expect(btn).toBeInTheDocument();
+    // Base UI mounts the menu popup asynchronously after the trigger opens it.
+    const btn = await waitFor(() => {
+      const item = baseElement.querySelectorAll(
+        '[role="menuitem"]',
+      )[2] as HTMLElement;
+      expect(item).toBeInTheDocument();
+      return item;
+    });
     expect(btn).toHaveTextContent('Edit');
     expect(btn).not.toHaveAttribute('disabled', 'disabled');
     await userEvent.setup().click(btn);
@@ -390,10 +410,14 @@ describe('AppCard', () => {
     ) as HTMLButtonElement;
     await userEvent.setup().click(menu);
 
-    const btn = baseElement.querySelectorAll(
-      '[role="menuitem"]',
-    )[3] as HTMLElement;
-    expect(btn).toBeInTheDocument();
+    // Base UI mounts the menu popup asynchronously after the trigger opens it.
+    const btn = await waitFor(() => {
+      const item = baseElement.querySelectorAll(
+        '[role="menuitem"]',
+      )[3] as HTMLElement;
+      expect(item).toBeInTheDocument();
+      return item;
+    });
     expect(btn).toHaveTextContent('Delete');
     expect(btn).not.toHaveAttribute('disabled', 'disabled');
     await userEvent.setup().click(btn);
@@ -423,16 +447,16 @@ describe('AppCard', () => {
     ) as HTMLButtonElement;
     await userEvent.setup().click(menu);
 
-    const btn = baseElement.querySelectorAll(
-      '[role="menuitem"]',
-    )[3] as HTMLElement;
-    expect(btn).toBeInTheDocument();
+    // Base UI mounts the menu popup asynchronously after the trigger opens it.
+    const btn = await waitFor(() => {
+      const item = baseElement.querySelectorAll(
+        '[role="menuitem"]',
+      )[3] as HTMLElement;
+      expect(item).toBeInTheDocument();
+      return item;
+    });
     expect(btn).toHaveTextContent('Delete');
     expect(btn).not.toHaveAttribute('disabled', 'disabled');
-    await userEvent.setup().click(btn);
-
-    await userEvent.setup().click(menu);
-
     await userEvent.setup().click(btn);
 
     const deleteBtn = await waitFor(

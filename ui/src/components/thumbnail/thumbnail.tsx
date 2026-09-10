@@ -1,7 +1,9 @@
+import { Alert, AlertAction, AlertDescription } from '@src/components/ui/alert';
 import { Button } from '@src/components/ui/button';
 import { Dialog, DialogContent } from '@src/components/ui/dialog';
 import { cn } from '@src/lib/utils';
-import { ImageIcon, Trash2, Upload, X } from 'lucide-react';
+import { CircleX, ImageIcon, Trash2, Upload, X } from 'lucide-react';
+import type React from 'react';
 import { useEffect, useRef, useState } from 'react';
 
 export interface ThumbnailProps {
@@ -39,7 +41,7 @@ export const Thumbnail = ({
   currentFile,
   setCurrentFile,
   ...props
-}: ThumbnailProps & JSX.IntrinsicElements['input']) => {
+}: ThumbnailProps & React.JSX.IntrinsicElements['input']) => {
   const [dragging, setDragging] = useState(false);
   const [open, setOpen] = useState(false);
   const [error, setError] = useState<string | undefined>(undefined);
@@ -115,25 +117,27 @@ export const Thumbnail = ({
   return (
     <div id={`thumbnail-${id}`} className="flex w-full flex-col">
       {error ? (
-        <div className="mb-4 flex items-center rounded bg-[#FDEDED] p-2 text-[rgb(95,33,32)]">
-          <X className="mr-2 h-5 w-5 text-destructive" />
-          <p className="m-0 w-full flex-1 text-sm text-gray-500">
-            <span className="text-[#5f2120]">
+        <Alert variant="destructive" className="mb-4">
+          <CircleX aria-hidden="true" />
+          <AlertDescription>
+            <p className="m-0">
               <span className="font-semibold">File is too large.</span> Maximum
               file size is 5MB.
-            </span>
-          </p>
-          <Button
-            type="button"
-            variant="ghost-secondary"
-            size="icon"
-            onClick={() => setError(undefined)}
-            className="h-8 w-8 text-gray-500"
-            aria-label="Dismiss error"
-          >
-            <X />
-          </Button>
-        </div>
+            </p>
+          </AlertDescription>
+          <AlertAction className="top-1 right-1">
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon-sm"
+              onClick={() => setError(undefined)}
+              className="text-current hover:bg-transparent hover:opacity-70 active:bg-transparent"
+              aria-label="Dismiss error"
+            >
+              <X />
+            </Button>
+          </AlertAction>
+        </Alert>
       ) : null}
       {/* biome-ignore lint/a11y/noStaticElementInteractions: drag-and-drop target for file upload */}
       <div
@@ -149,7 +153,7 @@ export const Thumbnail = ({
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
       >
-        <div className="h-[130px] rounded bg-[#90969c]">
+        <div className="h-[130px] rounded-md bg-muted-foreground">
           {hasSelection ? (
             <div className="m-auto">
               <button
@@ -166,7 +170,7 @@ export const Thumbnail = ({
                       : currentImage
                   }
                   alt="App thumbnail"
-                  className="max-h-[130px] max-w-[225px] rounded"
+                  className="max-h-[130px] max-w-[225px] rounded-md"
                 />
               </button>
             </div>
@@ -178,7 +182,7 @@ export const Thumbnail = ({
               className="flex h-[130px] w-[225px] cursor-pointer flex-col items-center justify-center border-0 bg-transparent p-0 text-current focus:outline-solid focus:outline-2 focus:outline-primary"
               onClick={handleBrowseThumbnails}
             >
-              <ImageIcon className="h-16! w-16! text-white" />
+              <ImageIcon className="size-16 text-background" />
             </button>
           )}
           <input

@@ -109,10 +109,12 @@ export const App = (): React.ReactElement => {
       <Navigation />
       <main
         data-headless={isHeadless ? 'true' : undefined}
+        // Offsets: the fixed header is h-14 (56px) + 16px breathing room; the
+        // fixed sidebar is the Nebari Sidebar's expanded width (w-64) + 8px.
         className={
           isHeadless
-            ? 'grow bg-background pl-1 pr-1 pt-1'
-            : 'grow bg-background pl-1 pr-1 pt-[calc(72px_+_var(--top-banner-height,0px))] pb-(--bottom-banner-height,0px) sm:pl-[264px]'
+            ? 'grow bg-canvas pl-1 pr-1 pt-1'
+            : 'grow bg-canvas pl-1 pr-1 pt-[calc(72px_+_var(--top-banner-height,0px))] pb-(--bottom-banner-height,0px) sm:pl-[264px]'
         }
       >
         {notification ? (

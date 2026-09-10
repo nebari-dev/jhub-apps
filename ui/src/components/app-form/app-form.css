@@ -20,7 +20,7 @@
 }
 
 .form-paragraph-link {
-  color: var(--link-text-color);
+  color: var(--link-color);
   text-decoration: underline;
 }
 
@@ -44,24 +44,24 @@
   position: absolute;
   top: 10px;
   left: 10px;
-  color: hsl(var(--foreground));
+  color: var(--foreground);
   transition: all 0.2s;
   pointer-events: none;
 }
 
 /* Styles when the description container is focused */
 .description-container:focus-within {
-  border-color: purple;
+  border-color: var(--color-primary);
 }
 
 /* Styles for moving the placeholder text on focus */
 .description-container:focus-within .placeholder-text {
   top: -10px;
   left: 10px;
-  background: hsl(var(--background));
+  background: var(--background);
   padding: 0 5px;
   font-size: 0.8em;
-  color: purple;
+  color: var(--color-primary);
 }
 
 /* Styles for hiding placeholder text when content is present */
@@ -71,7 +71,7 @@
 
 .description_text-field:empty:before {
   content: attr(data-placeholder);
-  color: hsl(var(--muted-foreground));
+  color: var(--muted-foreground);
   pointer-events: none;
   display: block; /* For IE */
 }
@@ -81,7 +81,7 @@
 }
 
 .description_text-field--not-empty + label {
-  color: hsl(var(--foreground));
+  color: var(--foreground);
 }
 
 .description-label {
@@ -90,9 +90,9 @@
   top: 16px;
   font-size: 12px;
   transition: all 0.2s ease-in-out;
-  background: hsl(var(--background));
+  background: var(--background);
   padding: 0 5px;
-  color: hsl(var(--muted-foreground));
+  color: var(--muted-foreground);
   pointer-events: none;
 }
 
@@ -101,7 +101,7 @@
 .description_text-field:focus + .description-label {
   top: -8px; /* Adjust as needed */
   font-size: 0.75rem;
-  color: #ba18da; /* Active label color */
+  color: var(--color-primary); /* Active label color */
 }
 
 /* Styles to hide the placeholder when content is present */
@@ -115,7 +115,7 @@
   position: absolute;
   left: 15px;
   top: 16px;
-  color: hsl(var(--muted-foreground)) !important; /* Placeholder color */
+  color: var(--muted-foreground) !important; /* Placeholder color */
   pointer-events: none;
   display: block; /* For IE */
 }
@@ -128,16 +128,16 @@
 .form-control {
   position: relative;
   width: 100%;
-  border: 1px solid hsl(var(--border)) !important;
+  border: 1px solid var(--border) !important;
   border-radius: 4px;
   transition: border-color 0.3s;
 }
 .form-control:hover {
-  border-color: hsl(var(--foreground)) !important;
+  border-color: var(--foreground) !important;
 }
 
 .form-control:focus-within {
-  border: 2px solid #ba18da !important;
+  border: 2px solid var(--color-primary) !important;
 }
 
 .form-helper-text {
@@ -154,7 +154,7 @@
 }
 
 .exceeding-characters {
-  color: red;
+  color: var(--destructive-foreground);
 }
 
 .form-control.outer-div {
@@ -168,8 +168,8 @@
   width: 100%;
   padding: 20px 10px 10px;
   box-sizing: border-box;
-  border: 1px solid hsl(var(--border));
-  font-family: var(--app-font-family, "Inter", sans-serif);
+  border: 1px solid var(--border);
+  font-family: var(--font-sans);
   font-size: 16px;
   line-height: 20px;
   overflow: hidden;
@@ -195,7 +195,7 @@
   padding: 20px 10px 10px;
   box-sizing: border-box;
   border: none;
-  font-family: var(--app-font-family, "Inter", sans-serif);
+  font-family: var(--font-sans);
   font-size: 16px;
   line-height: 20px;
   background-color: transparent;
@@ -221,7 +221,7 @@
   top: -15px;
   left: 8px;
   transform: translateY(50%);
-  color: hsl(var(--muted-foreground));
+  color: var(--muted-foreground);
   background-color: transparent;
   transition: all 0.2s ease;
   pointer-events: none;
@@ -231,12 +231,12 @@
 .description_text-field:not(:empty) + .description-label {
   top: -8px; /* Adjust as needed */
   font-size: 0.75rem;
-  color: #ba18da; /* Active label color */
+  color: var(--color-primary); /* Active label color */
 }
 
 .description_text-field:not(:focus):not(:placeholder-shown)
   + .description-label {
-  color: lime !important;
+  color: var(--color-primary) !important;
 }
 .form-control:focus-within .form-helper-text {
   display: block;
@@ -249,7 +249,7 @@
     transform 0.3s ease,
     color 0.3s ease;
   transform-origin: left top;
-  color: hsl(var(--muted-foreground));
+  color: var(--muted-foreground);
   pointer-events: none;
 }
 
@@ -258,5 +258,5 @@
   transform: translateY(5px);
   font-size: 12px;
   font-weight: 500;
-  color: #ba18da;
+  color: var(--color-primary);
 }

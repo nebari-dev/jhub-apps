@@ -6,8 +6,8 @@
   padding-bottom: 8px;
 }
 .card-dialog-note {
-  color: hsl(var(--muted-foreground));
-  font-family: var(--app-font-family, "Inter", sans-serif);
+  color: var(--muted-foreground);
+  font-family: var(--font-sans);
   font-size: 14px;
   font-style: normal;
   font-weight: 400;
@@ -20,6 +20,6 @@
   align-items: center;
   gap: 8px;
   align-self: stretch;
-  background: hsl(var(--muted));
+  background: var(--muted);
   margin-bottom: 0px;
 }

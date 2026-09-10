@@ -1,18 +1,16 @@
-import * as SeparatorPrimitive from '@radix-ui/react-separator';
+import { Separator as SeparatorPrimitive } from '@base-ui/react/separator';
 import { cn } from '@src/lib/utils';
-import * as React from 'react';
 
-const Separator = React.forwardRef<
-  React.ElementRef<typeof SeparatorPrimitive.Root>,
-  React.ComponentPropsWithoutRef<typeof SeparatorPrimitive.Root>
->(
-  (
-    { className, orientation = 'horizontal', decorative = true, ...props },
-    ref,
-  ) => (
-    <SeparatorPrimitive.Root
-      ref={ref}
-      decorative={decorative}
+// App-owned (not from the @nebari registry, which has no separator yet). Built
+// on Base UI's accessible Separator and coloured with the theme border token.
+function Separator({
+  className,
+  orientation = 'horizontal',
+  ...props
+}: SeparatorPrimitive.Props) {
+  return (
+    <SeparatorPrimitive
+      data-slot="separator"
       orientation={orientation}
       className={cn(
         'shrink-0 bg-border',
@@ -21,8 +19,7 @@ const Separator = React.forwardRef<
       )}
       {...props}
     />
-  ),
-);
-Separator.displayName = SeparatorPrimitive.Root.displayName;
+  );
+}
 
 export { Separator };

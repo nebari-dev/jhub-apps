@@ -1,7 +1,11 @@
 .card {
   height: 246px;
   width: 286px;
-  border-radius: 0.25rem;
+  border-radius: var(--radius-md);
+  /* Contain the z-indexes used inside the card (.card-content-content,
+     .context-menu) so they can't escape and paint over portaled popups
+     (menus, popovers, tooltips sit at z-50 in the root stacking context). */
+  isolation: isolate;
 }
 
 .card.service {
@@ -75,13 +79,13 @@
 
 /* Card content Hovering effect */
 .card-content-container:not(.no-hover) {
-  background: hsl(var(--card));
+  background: var(--card);
   position: relative;
   overflow: hidden;
 }
 
 .card-content-container {
-  background: hsl(var(--card));
+  background: var(--card);
   position: relative;
   overflow: hidden;
   transition: all 0.5s ease-in-out;

@@ -354,6 +354,29 @@ def test_get_theme_css_renders_variables_and_font_import():
     assert "--primary-color: #123456;" in css
 
 
+def test_get_runtime_config_omits_brand_colors_by_default():
+    # The React UI ships the Nebari theme (light + dark); only operator-set
+    # colours are sent so the default does not force one colour onto dark mode.
+    config = Mock(JupyterHub=Mock(template_vars={}))
+
+    runtime_config = get_runtime_config(config)
+
+    css_variables = runtime_config["theme"]["cssVariables"]
+    assert "--primary-color" not in css_variables
+    assert "--navbar-background-color" not in css_variables
+    assert runtime_config["theme"]["colors"]["primary"] is None
+    assert css_variables["--app-font-family"] == "'Inter', sans-serif"
+
+
+def test_get_theme_css_falls_back_to_nebari_colors_for_server_pages():
+    config = Mock(JupyterHub=Mock(template_vars={}))
+
+    css = get_theme_css(config)
+
+    assert "--primary-color: #9547c0;" in css
+    assert "--navbar-background-color: #f8f8f8;" in css
+
+
 @patch("jhub_apps.service.routes.get_jupyterhub_config")
 def test_api_theme_css(get_jupyterhub_config, client):
     get_jupyterhub_config.return_value = Mock(

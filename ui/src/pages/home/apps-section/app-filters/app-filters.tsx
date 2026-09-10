@@ -1,5 +1,6 @@
 import { ButtonGroup } from '@src/components';
-import { Button } from '@src/components/ui/button';
+import { Button, buttonVariants } from '@src/components/ui/button';
+import { ButtonGroup as SegmentedButtonGroup } from '@src/components/ui/button-group';
 import { Checkbox } from '@src/components/ui/checkbox';
 import {
   Popover,
@@ -8,6 +9,7 @@ import {
 } from '@src/components/ui/popover';
 import { RadioGroup, RadioGroupItem } from '@src/components/ui/radio-group';
 import { Separator } from '@src/components/ui/separator';
+import { cn } from '@src/lib/utils';
 import type { AppFrameworkProps, ServersData } from '@src/types/api';
 import type { JhApp } from '@src/types/jupyterhub';
 import type { UserState } from '@src/types/user';
@@ -207,21 +209,26 @@ export const AppFilters = ({
     <div className="flex flex-wrap items-center gap-4 pb-8">
       <div className="flex-1 min-w-[200px]">
         <Popover open={filtersOpen} onOpenChange={handleFiltersOpenChange}>
-          <PopoverTrigger asChild>
-            <Button
-              id="filters-btn"
-              variant="secondary"
-              disabled={frameworksLoading || false}
-              className="border-0 bg-transparent text-base font-semibold dark:border dark:bg-secondary"
-            >
-              <Filter className="h-4 w-4" />
-              Filters
-              {filtersOpen ? (
-                <ChevronUp className="h-4 w-4" />
-              ) : (
-                <ChevronDown className="h-4 w-4" />
-              )}
-            </Button>
+          {/* Base UI triggers render a plain <button> styled with
+              buttonVariants: under React 18 the anchor ref would be dropped by
+              the registry's function-component <Button>. */}
+          <PopoverTrigger
+            render={
+              <button
+                type="button"
+                className={buttonVariants({ variant: 'outline' })}
+              />
+            }
+            id="filters-btn"
+            disabled={frameworksLoading || false}
+          >
+            <Filter aria-hidden="true" />
+            Filters
+            {filtersOpen ? (
+              <ChevronUp aria-hidden="true" />
+            ) : (
+              <ChevronDown aria-hidden="true" />
+            )}
           </PopoverTrigger>
           <PopoverContent
             id="filters-list"
@@ -241,10 +248,9 @@ export const AppFilters = ({
                   const id = `framework-${framework.name}`;
                   const checked = draftFrameworks.includes(framework.name);
                   return (
-                    <label
+                    <div
                       key={framework.name}
-                      htmlFor={id}
-                      className="filter-item flex items-center gap-2 w-[120px] py-1 text-sm cursor-pointer"
+                      className="filter-item w-[120px] py-1"
                     >
                       <Checkbox
                         id={id}
@@ -256,9 +262,10 @@ export const AppFilters = ({
                             setDraftFrameworks,
                           )
                         }
-                      />
-                      {framework.display_name}
-                    </label>
+                      >
+                        {framework.display_name}
+                      </Checkbox>
+                    </div>
                   );
                 })}
               </div>
@@ -271,11 +278,7 @@ export const AppFilters = ({
                   const id = `status-${status}`;
                   const checked = draftServerStatuses.includes(status);
                   return (
-                    <label
-                      key={status}
-                      htmlFor={id}
-                      className="filter-item flex items-center gap-2 w-[120px] py-1 text-sm cursor-pointer"
-                    >
+                    <div key={status} className="filter-item w-[120px] py-1">
                       <Checkbox
                         id={id}
                         checked={checked}
@@ -286,9 +289,10 @@ export const AppFilters = ({
                             setDraftServerStatuses,
                           )
                         }
-                      />
-                      {status}
-                    </label>
+                      >
+                        {status}
+                      </Checkbox>
+                    </div>
                   );
                 })}
               </div>
@@ -302,20 +306,17 @@ export const AppFilters = ({
                     const id = `group-${group}`;
                     const checked = draftGroups.includes(group);
                     return (
-                      <label
-                        key={group}
-                        htmlFor={id}
-                        className="filter-item flex items-center gap-2 w-[120px] py-1 text-sm cursor-pointer"
-                      >
+                      <div key={group} className="filter-item w-[120px] py-1">
                         <Checkbox
                           id={id}
                           checked={checked}
                           onCheckedChange={() =>
                             toggleInList(draftGroups, group, setDraftGroups)
                           }
-                        />
-                        {group}
-                      </label>
+                        >
+                          {group}
+                        </Checkbox>
+                      </div>
                     );
                   })
                 ) : (
@@ -330,23 +331,17 @@ export const AppFilters = ({
               </p>
               <RadioGroup
                 aria-label="Ownership"
+                orientation="horizontal"
                 value={draftOwnershipValue}
-                onValueChange={setDraftOwnershipValue}
-                className="flex flex-row gap-4"
+                onValueChange={(value) => setDraftOwnershipValue(String(value))}
               >
-                {OWNERSHIP_TYPES.map((value) => {
-                  const id = `ownership-${value}`;
-                  return (
-                    <label
-                      key={value}
-                      htmlFor={id}
-                      className="filter-item flex items-center gap-2 text-sm cursor-pointer"
-                    >
-                      <RadioGroupItem value={value} id={id} />
+                {OWNERSHIP_TYPES.map((value) => (
+                  <div key={value} className="filter-item">
+                    <RadioGroupItem value={value} id={`ownership-${value}`}>
                       {value}
-                    </label>
-                  );
-                })}
+                    </RadioGroupItem>
+                  </div>
+                ))}
               </RadioGroup>
               <div className="mt-4 -mx-4 bg-muted px-2 py-2">
                 <ButtonGroup>
@@ -354,7 +349,7 @@ export const AppFilters = ({
                     id="clear-filters-btn"
                     data-testid="clear-filters-btn"
                     type="button"
-                    variant="ghost-secondary"
+                    variant="ghost"
                     size="sm"
                     onClick={handleClearFilters}
                   >
@@ -378,20 +373,22 @@ export const AppFilters = ({
 
       <div className="flex items-center gap-6">
         <Popover open={sortByOpen} onOpenChange={setSortByOpen}>
-          <PopoverTrigger asChild>
-            <Button
-              id="sort-by-btn"
-              variant="secondary"
-              className="border-0 bg-transparent text-base font-semibold dark:border dark:bg-secondary"
-            >
-              <SortAsc className="h-4 w-4" />
-              {currentSortValue}
-              {sortByOpen ? (
-                <ChevronUp className="h-4 w-4" />
-              ) : (
-                <ChevronDown className="h-4 w-4" />
-              )}
-            </Button>
+          <PopoverTrigger
+            render={
+              <button
+                type="button"
+                className={buttonVariants({ variant: 'outline' })}
+              />
+            }
+            id="sort-by-btn"
+          >
+            <SortAsc aria-hidden="true" />
+            {currentSortValue}
+            {sortByOpen ? (
+              <ChevronUp aria-hidden="true" />
+            ) : (
+              <ChevronDown aria-hidden="true" />
+            )}
           </PopoverTrigger>
           <PopoverContent
             id="sort-by-list"
@@ -402,61 +399,49 @@ export const AppFilters = ({
               <RadioGroup
                 aria-label="Sort by"
                 value={currentSortValue}
-                onValueChange={handleSortByClick}
+                onValueChange={(value) => handleSortByClick(String(value))}
                 className="gap-2"
               >
-                {SORT_TYPES.map((value) => {
-                  const id = `sort-${value}`;
-                  return (
-                    <label
-                      key={value}
-                      htmlFor={id}
-                      className="filter-item flex items-center gap-2 text-sm cursor-pointer"
-                    >
-                      <RadioGroupItem value={value} id={id} />
+                {SORT_TYPES.map((value) => (
+                  <div key={value} className="filter-item">
+                    <RadioGroupItem value={value} id={`sort-${value}`}>
                       {value}
-                    </label>
-                  );
-                })}
+                    </RadioGroupItem>
+                  </div>
+                ))}
               </RadioGroup>
             </form>
           </PopoverContent>
         </Popover>
 
-        <div className="flex items-center rounded border border-border">
+        <SegmentedButtonGroup aria-label="View">
           <Button
             onClick={toggleView}
-            disabled={isGridViewActive}
             aria-label="Grid View"
-            variant="ghost"
+            aria-pressed={isGridViewActive}
+            variant="outline"
             size="icon"
-            className={`h-9 w-9 rounded-r-none border-r border-border ${
-              isGridViewActive ? 'bg-muted dark:bg-card' : 'bg-transparent'
-            }`}
+            className={cn(
+              isGridViewActive && 'bg-muted text-foreground hover:bg-muted',
+              !isGridViewActive && 'text-muted-foreground',
+            )}
           >
-            <LayoutGrid
-              className={`h-4 w-4 ${
-                isGridViewActive ? 'text-foreground' : 'text-muted-foreground'
-              }`}
-            />
+            <LayoutGrid aria-hidden="true" />
           </Button>
           <Button
             onClick={toggleView}
-            disabled={!isGridViewActive}
             aria-label="Table View"
-            variant="ghost"
+            aria-pressed={!isGridViewActive}
+            variant="outline"
             size="icon"
-            className={`h-9 w-9 rounded-l-none ${
-              !isGridViewActive ? 'bg-muted dark:bg-card' : 'bg-transparent'
-            }`}
+            className={cn(
+              !isGridViewActive && 'bg-muted text-foreground hover:bg-muted',
+              isGridViewActive && 'text-muted-foreground',
+            )}
           >
-            <Rows3
-              className={`h-4 w-4 ${
-                !isGridViewActive ? 'text-foreground' : 'text-muted-foreground'
-              }`}
-            />
+            <Rows3 aria-hidden="true" />
           </Button>
-        </div>
+        </SegmentedButtonGroup>
       </div>
     </div>
   );

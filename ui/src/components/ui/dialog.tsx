@@ -1,120 +1,189 @@
-import * as DialogPrimitive from '@radix-ui/react-dialog';
+import { Dialog as DialogPrimitive } from '@base-ui/react/dialog';
+import { Button } from '@src/components/ui/button';
 import { cn } from '@src/lib/utils';
-import { X } from 'lucide-react';
-import * as React from 'react';
+import { XIcon } from 'lucide-react';
+import type * as React from 'react';
 
-const Dialog = DialogPrimitive.Root;
+type DialogProps = DialogPrimitive.Root.Props;
 
-const DialogTrigger = DialogPrimitive.Trigger;
+/**
+ * Dialog groups modal state, trigger, overlay, content, title, and description.
+ * Base UI handles focus trapping, Escape dismissal, and focus restoration.
+ */
+function Dialog({ children, ...props }: DialogProps) {
+  return (
+    <DialogPrimitive.Root {...props}>
+      {children ?? <span data-slot="dialog" hidden />}
+    </DialogPrimitive.Root>
+  );
+}
 
-const DialogPortal = DialogPrimitive.Portal;
+type DialogTriggerProps = DialogPrimitive.Trigger.Props;
+type DialogPortalProps = React.ComponentProps<typeof DialogPrimitive.Portal>;
+type DialogOverlayProps = DialogPrimitive.Backdrop.Props;
+type DialogContentProps = DialogPrimitive.Popup.Props & {
+  /** Renders the default top-right close button. */
+  showCloseButton?: boolean;
+  /** Props forwarded to the Base UI Portal. */
+  portalProps?: DialogPortalProps;
+  /** Class name for the full-screen positioning viewport. */
+  viewportClassName?: string;
+  /** Class name for the backdrop overlay. */
+  overlayClassName?: string;
+};
 
-const DialogClose = DialogPrimitive.Close;
+/** Button that opens the dialog. */
+function DialogTrigger(props: DialogTriggerProps) {
+  return <DialogPrimitive.Trigger data-slot="dialog-trigger" {...props} />;
+}
 
-const DialogOverlay = React.forwardRef<
-  React.ElementRef<typeof DialogPrimitive.Overlay>,
-  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Overlay>
->(({ className, ...props }, ref) => (
-  <DialogPrimitive.Overlay
-    ref={ref}
-    className={cn(
-      // Above the app's elevated stacking (nav z-1201, leftover card z-111)
-      // so the modal overlay covers all page content.
-      'fixed inset-0 z-1300 bg-black/80 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
-      className,
-    )}
-    {...props}
-  />
-));
-DialogOverlay.displayName = DialogPrimitive.Overlay.displayName;
+/** Portal used to render the dialog overlay and content outside the page flow. */
+function DialogPortal(props: DialogPortalProps) {
+  return <DialogPrimitive.Portal data-slot="dialog-portal" {...props} />;
+}
 
-const DialogContent = React.forwardRef<
-  React.ElementRef<typeof DialogPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>
->(({ className, children, ...props }, ref) => (
-  <DialogPortal>
-    <DialogOverlay />
-    <DialogPrimitive.Content
-      ref={ref}
+/** Full-screen backdrop shown behind the dialog content. */
+function DialogOverlay({ className, ...props }: DialogOverlayProps) {
+  return (
+    <DialogPrimitive.Backdrop
+      data-slot="dialog-overlay"
+      className={(state) =>
+        cn(
+          'fixed inset-0 z-50 bg-scrim data-[starting-style]:opacity-0 data-[ending-style]:opacity-0 motion-safe:transition-[opacity] motion-safe:duration-(--duration-base) motion-safe:ease-(--ease-standard)',
+          typeof className === 'function' ? className(state) : className,
+        )
+      }
+      {...props}
+    />
+  );
+}
+
+/**
+ * Centered dialog surface with the default overlay, viewport, and optional
+ * top-right close button.
+ */
+function DialogContent({
+  className,
+  children,
+  showCloseButton = true,
+  portalProps,
+  viewportClassName,
+  overlayClassName,
+  ...props
+}: DialogContentProps) {
+  return (
+    <DialogPortal {...portalProps}>
+      <DialogOverlay className={overlayClassName} />
+      <DialogPrimitive.Viewport
+        data-slot="dialog-viewport"
+        className={cn(
+          'fixed inset-0 z-50 flex min-h-full items-center justify-center overflow-y-auto p-4',
+          viewportClassName,
+        )}
+      >
+        <DialogPrimitive.Popup
+          data-slot="dialog-content"
+          className={(state) =>
+            cn(
+              'relative grid max-h-[min(calc(100vh-2rem),42rem)] w-full max-w-lg gap-4 overflow-hidden rounded-md border border-border bg-popover p-6 text-popover-foreground shadow-lg outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background data-[starting-style]:translate-y-2 data-[starting-style]:scale-95 data-[starting-style]:opacity-0 data-[ending-style]:translate-y-2 data-[ending-style]:scale-95 data-[ending-style]:opacity-0 motion-safe:transition-[opacity,transform] motion-safe:duration-(--duration-base) motion-safe:ease-(--ease-emphasized)',
+              typeof className === 'function' ? className(state) : className,
+            )
+          }
+          {...props}
+        >
+          {children}
+          {showCloseButton && (
+            <DialogClose
+              render={
+                <Button
+                  className="absolute top-4 right-4"
+                  size="icon-sm"
+                  variant="ghost"
+                />
+              }
+            >
+              <XIcon aria-hidden="true" />
+              <span className="sr-only">Close</span>
+            </DialogClose>
+          )}
+        </DialogPrimitive.Popup>
+      </DialogPrimitive.Viewport>
+    </DialogPortal>
+  );
+}
+
+/** Button that closes the dialog. */
+function DialogClose(props: DialogPrimitive.Close.Props) {
+  return <DialogPrimitive.Close data-slot="dialog-close" {...props} />;
+}
+
+/** Layout wrapper for dialog title and description. */
+function DialogHeader({ className, ...props }: React.ComponentProps<'div'>) {
+  return (
+    <div
+      data-slot="dialog-header"
+      className={cn('grid gap-1.5 text-left', className)}
+      {...props}
+    />
+  );
+}
+
+/** Layout wrapper for confirmation or cancellation actions. */
+function DialogFooter({ className, ...props }: React.ComponentProps<'div'>) {
+  return (
+    <div
+      data-slot="dialog-footer"
       className={cn(
-        // Deliberately fade + zoom only, with no slide variants. Centering uses
-        // the `translate` property (Tailwind v4 moved translate-* off
-        // `transform`), while the enter/exit keyframes drive `transform` — so
-        // the two now compose instead of overriding each other. The v3 recipe
-        // relied on them overriding: its slide variants re-stated the -50%
-        // centering offset inside the keyframe, leaving a ~2% nudge of net
-        // motion. Under v4 that -50% stacks on top of the centering instead,
-        // and the dialog flies in from half its own width off-center.
-        'fixed left-[50%] top-[50%] z-1300 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border border-border bg-background p-6 shadow-2xl duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 sm:rounded-lg',
+        'flex flex-col-reverse gap-2 sm:flex-row sm:justify-end',
         className,
       )}
       {...props}
-    >
-      {children}
-      <DialogPrimitive.Close className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-hidden focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
-        <X className="h-4 w-4" />
-        <span className="sr-only">Close</span>
-      </DialogPrimitive.Close>
-    </DialogPrimitive.Content>
-  </DialogPortal>
-));
-DialogContent.displayName = DialogPrimitive.Content.displayName;
+    />
+  );
+}
 
-const DialogHeader = ({
+/** Accessible dialog title. */
+function DialogTitle({ className, ...props }: DialogPrimitive.Title.Props) {
+  return (
+    <DialogPrimitive.Title
+      data-slot="dialog-title"
+      className={(state) =>
+        cn(
+          'font-semibold text-foreground text-lg',
+          typeof className === 'function' ? className(state) : className,
+        )
+      }
+      {...props}
+    />
+  );
+}
+
+/** Accessible dialog description. */
+function DialogDescription({
   className,
   ...props
-}: React.HTMLAttributes<HTMLDivElement>) => (
-  <div
-    className={cn(
-      'flex flex-col space-y-1.5 text-center sm:text-left',
-      className,
-    )}
-    {...props}
-  />
-);
-DialogHeader.displayName = 'DialogHeader';
+}: DialogPrimitive.Description.Props) {
+  return (
+    <DialogPrimitive.Description
+      data-slot="dialog-description"
+      className={(state) =>
+        cn(
+          'text-muted-foreground text-sm',
+          typeof className === 'function' ? className(state) : className,
+        )
+      }
+      {...props}
+    />
+  );
+}
 
-const DialogFooter = ({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLDivElement>) => (
-  <div
-    className={cn(
-      'flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2',
-      className,
-    )}
-    {...props}
-  />
-);
-DialogFooter.displayName = 'DialogFooter';
-
-const DialogTitle = React.forwardRef<
-  React.ElementRef<typeof DialogPrimitive.Title>,
-  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Title>
->(({ className, ...props }, ref) => (
-  <DialogPrimitive.Title
-    ref={ref}
-    className={cn(
-      'text-lg font-semibold leading-none tracking-tight',
-      className,
-    )}
-    {...props}
-  />
-));
-DialogTitle.displayName = DialogPrimitive.Title.displayName;
-
-const DialogDescription = React.forwardRef<
-  React.ElementRef<typeof DialogPrimitive.Description>,
-  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Description>
->(({ className, ...props }, ref) => (
-  <DialogPrimitive.Description
-    ref={ref}
-    className={cn('text-sm text-muted-foreground', className)}
-    {...props}
-  />
-));
-DialogDescription.displayName = DialogPrimitive.Description.displayName;
-
+export type {
+  DialogContentProps,
+  DialogOverlayProps,
+  DialogPortalProps,
+  DialogProps,
+  DialogTriggerProps,
+};
 export {
   Dialog,
   DialogClose,

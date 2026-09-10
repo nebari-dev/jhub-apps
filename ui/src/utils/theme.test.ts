@@ -69,9 +69,14 @@ describe('runtime theme config', () => {
 
     await loadRuntimeConfig();
 
+    // No brand colours are defaulted on the frontend: the @nebari/theme tokens
+    // apply until the server delivers an operator's branding.
     expect(
       document.documentElement.style.getPropertyValue('--primary-color'),
-    ).toBe('#ba18da');
+    ).toBe('');
+    expect(window.theme?.logo).toBe(
+      '/services/japps/static/img/Nebari-Logo-Horizontal-Lockup-Black-text.svg',
+    );
   });
 
   test('stores banners from the runtime config on window', async () => {

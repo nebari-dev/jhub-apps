@@ -198,12 +198,14 @@ DEFAULT_CSS_VARIABLES = {
     "--h4-font-size": "0.875rem",
     "--h5-font-size": "0.85rem",
     "--h6-font-size": "0.825rem",
-    "--light-text-color": "#f1f1f6",
-    "--danger-color": "#e60f66",
-    "--danger-color-dark": "#b81a53",
-    "--gray-color": "#EEEEEE",
-    "--gray-color-dark": "#E0E0E0",
-    "--blue-link-color": "#276BE9",
+    # Nebari palette (sRGB hex of the @nebari/theme tokens): --foreground (dark),
+    # --red-600 / --red-700, --zinc-100 / --zinc-200, --blue-600.
+    "--light-text-color": "#f8f8f8",
+    "--danger-color": "#d2161c",
+    "--danger-color-dark": "#ac030f",
+    "--gray-color": "#eeeeef",
+    "--gray-color-dark": "#d4d4d7",
+    "--blue-link-color": "#2e63ed",
     "--button-hover-shadow": "0 3px 0 var(--text-color)",
     "--focus-width": "2px",
     "--focus-shadow": "5px 5px 7px rgba(0, 0, 0, 0.1)",
@@ -283,7 +285,10 @@ def get_theme_css(config):
     @import plus a :root block of CSS custom properties — served at
     /services/japps/theme.css and consumed by jhub_apps/static/css/hub.css.
     """
-    theme = get_theme(config)
+    # Server-rendered pages have no dark mode and no registry tokens to fall
+    # back on, so fill in the Nebari default colours underneath the operator's
+    # theme. config.json deliberately does not include these defaults.
+    theme = {**themes.SERVER_PAGE_DEFAULT_COLORS, **get_theme(config)}
     css_variables = get_theme_css_variables(theme)
     lines = []
     font_url = theme.get("font_url")
