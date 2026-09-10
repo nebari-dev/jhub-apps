@@ -6,7 +6,7 @@
       "name": "jhub-apps-docs",
       "dependencies": {
         "@astrojs/starlight": "^0.41.3",
-        "@nebari/starlight": "^0.3.0",
+        "@nebari/starlight": "^1.1.0",
         "astro": "^7.0.6",
         "vanilla-cookieconsent": "^3.1.0",
       },
@@ -211,7 +211,7 @@
 
     "@napi-rs/wasm-runtime": ["@napi-rs/wasm-runtime@1.2.3", "", { "dependencies": { "@tybys/wasm-util": "^0.10.3" }, "peerDependencies": { "@emnapi/core": "^1.7.1 || ^2.0.0-alpha.4", "@emnapi/runtime": "^1.7.1 || ^2.0.0-alpha.4" } }, "sha512-UMduMbqO5s5zF2NkNacMT/yK5Y5QiKvWr2+50bzIIxFDwVJ2h49b+oyjaCGPhJxd2/gC2x39EHv/gHVuu36x2Q=="],
 
-    "@nebari/starlight": ["@nebari/starlight@0.3.0", "", { "peerDependencies": { "@astrojs/starlight": ">=0.33.0 <1.0.0", "astro": ">=7.0.6" } }, "sha512-c7GXiRJrr+pac5kOTxvDI20eGWapet03gMyCQQJLt0n1oTqylTWcMLcN/JzCH4saQtm+RYz2tcbcseDE9CVCqw=="],
+    "@nebari/starlight": ["@nebari/starlight@1.1.0", "", { "peerDependencies": { "@astrojs/starlight": ">=0.33.0 <1.0.0", "astro": ">=7.0.6" } }, "sha512-Hmt9IoJzyXD1crDrzvxYQ/7YxPYMKLBPyeslvHvbi1xQ/Tb7ouTOHmTjGi4UkFj1aKhPTXket9d/qp5wAJD93g=="],
 
     "@oslojs/encoding": ["@oslojs/encoding@1.1.0", "", {}, "sha512-70wQhgYmndg4GCPxPPxPGevRKqTIJ2Nh4OkiMWmDAVYsTQ+Ta7Sq+rPevXyXGdzr30/qZBnyOalCszoMxlyldQ=="],
 
