@@ -12,6 +12,18 @@ import {
 } from '../../store';
 import { ServerTypes } from './server-types';
 
+vi.mock('react-router-dom', async () => {
+  // Require the actual module to spread its properties
+  const actual = await vi.importActual('react-router-dom');
+
+  return {
+    ...actual,
+    useLocation: () => ({
+      search: '?type=type1',
+    }),
+  };
+});
+
 describe('ServerTypes', () => {
   const queryClient = new QueryClient({
     defaultOptions: {
@@ -214,17 +226,6 @@ describe('ServerTypes', () => {
   });
 
   test('clicks back to deploy app', async () => {
-    vi.mock('react-router-dom', async () => {
-      // Require the actual module to spread its properties
-      const actual = await vi.importActual('react-router-dom');
-
-      return {
-        ...actual,
-        useLocation: () => ({
-          search: '?type=type1',
-        }),
-      };
-    });
     const { baseElement } = render(
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
@@ -242,17 +243,6 @@ describe('ServerTypes', () => {
   });
 
   test('clicks back to edit app', async () => {
-    vi.mock('react-router-dom', async () => {
-      // Require the actual module to spread its properties
-      const actual = await vi.importActual('react-router-dom');
-
-      return {
-        ...actual,
-        useLocation: () => ({
-          search: '?type=type1',
-        }),
-      };
-    });
     const mockSearchParamsGet = vi.spyOn(URLSearchParams.prototype, 'get');
     mockSearchParamsGet.mockReturnValue('app-1');
     const { baseElement } = render(
