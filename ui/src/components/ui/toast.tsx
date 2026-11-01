@@ -120,6 +120,21 @@ function withToastA11yDefaults<T extends ToastA11yOptions>(options: T): T {
   return Object.keys(patch).length > 0 ? { ...options, ...patch } : options;
 }
 
+/**
+ * Applies {@link withToastA11yDefaults} to an `update` argument, which is
+ * either a patch or a function of the previous toast that returns one.
+ */
+function withUpdateA11yDefaults<Updates>(updates: Updates): Updates {
+  if (typeof updates === 'function') {
+    return ((prevToast: unknown) =>
+      withToastA11yDefaults(
+        (updates as (prev: unknown) => ToastA11yOptions)(prevToast),
+      )) as Updates;
+  }
+
+  return withToastA11yDefaults(updates as ToastA11yOptions) as Updates;
+}
+
 /** Applies {@link withToastA11yDefaults} to one state of a promise toast. */
 function withPromiseStateA11yDefaults<State>(state: State): State {
   // Base UI resolves the string form to a description-only toast, which carries
@@ -162,7 +177,8 @@ function createToastManager<
   return {
     ...manager,
     add: (options) => manager.add(withToastA11yDefaults(options)),
-    update: (id, updates) => manager.update(id, withToastA11yDefaults(updates)),
+    update: (id, updates) =>
+      manager.update(id, withUpdateA11yDefaults(updates)),
     promise: (promiseValue, options) =>
       manager.promise(promiseValue, withPromiseA11yDefaults(options)),
   };
@@ -183,7 +199,7 @@ function useToastManager<
       ...manager,
       add: (options) => manager.add(withToastA11yDefaults(options)),
       update: (id, updates) =>
-        manager.update(id, withToastA11yDefaults(updates)),
+        manager.update(id, withUpdateA11yDefaults(updates)),
       promise: (promiseValue, options) =>
         manager.promise(promiseValue, withPromiseA11yDefaults(options)),
     }),
