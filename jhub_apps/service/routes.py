@@ -15,6 +15,7 @@ from fastapi import (
     UploadFile,
     status,
 )
+from fastapi.concurrency import run_in_threadpool
 from fastapi.encoders import jsonable_encoder
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel, ValidationError
@@ -330,7 +331,8 @@ async def app_from_git(
     which is a processing action.
     """
     logger.info("Getting app configuration from git repository")
-    response = _get_app_configuration_from_git(repo)
+    # The clone blocks for up to a minute, so keep it off the event loop
+    response = await run_in_threadpool(_get_app_configuration_from_git, repo)
     return response
 
 
