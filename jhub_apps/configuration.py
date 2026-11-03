@@ -142,7 +142,10 @@ def install_jhub_apps(c, spawner_to_subclass, *, oauth_no_confirm=False):
                 "self",
                 "access:services",
                 "list:services",
-                "admin:auth_state",
+                # The service reads a user's own auth_state with that user's token,
+                # to evaluate a callable KubeSpawner.profile_list.
+                # Unfiltered, this scope would expose every user's auth_state.
+                "admin:auth_state!user",
             ],
         },
     ]
